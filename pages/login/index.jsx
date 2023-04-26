@@ -2,11 +2,9 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/bootstrap.css";
+import { googleIcon,facebookIcon, loginBg} from "theme/icon";
+// import "react-phone-input-2/lib/bootstrap.css";
 
-import { Header } from "@/components/Header";
-// Import Layouts
 
 export default function Login() {
   const router = useRouter();
@@ -17,6 +15,10 @@ export default function Login() {
   const handleTabChange = (index) => {
     setActiveTab(index);
   };
+
+  <div className="social">
+  <a src={googleIcon} alt="Google Icon" />
+</div>
 
   return (
     <React.Fragment>
@@ -43,78 +45,51 @@ export default function Login() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="h-screen w-screen inline-flex flex-col relative bg-white">
-        <Header />
-        <div className="inline-flex flex-col relative w-full h-full px-5 py-10">
-          <div className="inline-flex flex-col justify-start space-y-1 relative">
-            <span className="line-clamp-1 font-bold text-[#262727] text-xl">
-              Login to Account
-            </span>
-            <span className="line-clamp-1 font-regular text-[#77787b] text-md">
-              Hello, login and start using our EC tool
-            </span>
-          </div>
-
-          <div className="inline-flex flex-row items-center relative bg-gray-100 rounded-full py-2 px-3 mt-8">
-            {["Buyer", "Miller"].map((data, index) => {
-              let background = "transparent";
-              let shadow = "";
-
-              if (activeTab === index) {
-                background = "bg-white";
-                shadow = "shadow-sm";
-              }
-
-              return (
-                <div
-                  key={index}
-                  className={`inline-flex w-full items-center justify-center relative rounded-full py-2 px-4 transition-all ${background} ${shadow}`}
-                  onClick={() => handleTabChange(index)}
-                >
-                  <span className="line-clamp-1 font-regular text-[#77787b] text-md">
-                    {data}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="w-full inline-flex flex-col space-y-8 relative py-2 px-3 mt-10">
-            <div className="w=full inline-flex flex-col space-y-3 relative">
-              <label className="text-md text-[#77787b] font-semibold">
-                Phone Number
-              </label>
-              <div className="w-full rounded-full ring-1 ring-[#77787b] py-2 px-3">
-                <PhoneInput
-                  country={"in"}
-                  placeholder="91********"
-                  className="w-full rounded-full outline-none"
-                  enableSearch={false}
-                  countryCodeEditable={false}
-                  value={phone}
-                  onChange={(ph) => setPhone(ph)}
-                />
-              </div>
-            </div>
-
-            <button
-              onClick={() => router.push("export-costing")}
-              className="w-full rounded-full py-3 px-4 bg-[#2475c0] text-white text-center text-md font-semibold"
-            >
-              Request OTP
-            </button>
-          </div>
-          <div
-            onClick={() => router.push("signup")}
-            className="inline-flex w-full items-center justify-start relative rounded-full mt-6 px-4 transition-all bg-transparent"
-          >
-            <span className="line-clamp-1 font-regular text-[#77787b] text-md">
-              Not registered yet?{" "}
-              <span className="text-[#4fb28b] cursor-pointer">Sign up.</span>
-            </span>
+      <div className="flex flex-col h-screen p">
+        <div className=" w-auto h-56 bg-[#194969] ">
+          <div className="text-white text-2xl">
+          <h1>ACCOUNT LOGIN</h1>
           </div>
         </div>
+        <div className="h-full bg-[#ffffff] w-full inline-flex flex-col space-y-8 relative mt-10 px-8">
+          <div className="w-full inline-flex flex-col space-y-8 relative ">
+           <div className="w=full inline-flex flex-col space-y-3 relative">
+             <div className="mt-2">
+             <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+             <label for="floating_outlined" className="absolute text-xs text-[#4F5655] text-900 -translate-y-2 scale-75 top-2  z-10 origin-[0] bg-white px-1 left-2">Email</label>
+            </div>
+          </div>
+        </div>
+        <button
+              onClick={() => router.push("export-costing")}
+              className="w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold"
+            >
+              Log in
+            </button>
+
+            <div class="relative flex items-center">
+             <div class="flex-grow border-t border-gray-400"></div>
+             <span class="flex-shrink mx-4 text-gray-400">or login with</span>
+             <div class="flex-grow border-t border-gray-400"></div>
+           </div>
+
+           <div className="flex flex-row items-center pt-7 justify-center">
+            <span className="pr-6  ">{googleIcon}</span>
+            <span className="pl-6  ">{facebookIcon}</span>
+           </div>
+         
+        
+          <div className="pt-48 bottom-0 left-0 right-0 flex justify-center ">
+           <span className="line-clamp-1 font-regular text-[#77787b] text-md" >
+             Don't have an account? {" "}
+             <span onClick={() => router.push("signup")} className="text-[#0B7764] cursor-pointer">Register now</span>
+           </span>
+          </div>
+        
+
       </div>
+</div>
+
     </React.Fragment>
   );
 }
