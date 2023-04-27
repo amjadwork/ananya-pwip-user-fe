@@ -61,6 +61,9 @@ a {
   background-image: url('/assets/onboarding.png');
    /* animation: colorbox 5s infinite ease-in-out; */
 }
+.loginbg{
+  background-image: url('/assets/loginBg.svg');
+}
 
 .hide-scroll-bar {
   -ms-overflow-style: none;  /* Internet Explorer 10+ */
