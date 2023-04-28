@@ -99,7 +99,7 @@ export default function Login() {
            value={name}
            required 
            onChange={handleNameChange}
-           className="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+           className="block w-full rounded border border-gray-400 px-4 py-3 text-gray-900 focus:outline-1 focus:outline-gray-500  sm:text-sm sm:leading-6"
            />
            <label htmlFor="name" className="absolute text-base text-[#4F5655] text-900 -translate-y-10 scale-75 top-1 origin-[0] bg-white px-1 left-3">Name</label>
          
@@ -111,17 +111,17 @@ export default function Login() {
             value={email}
             required 
             onChange={handleEmailChange}
-            className="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-inset focus-ring-1 focus:ring-[#003559] sm:text-sm sm:leading-6"/>
+            className="block w-full rounded border border-gray-400 px-4 py-3 text-gray-900  focus:outline-1 focus:outline-gray-500 sm:text-sm sm:leading-6"/>
             <label htmlFor="email" className="absolute text-base text-[#4F5655] text-900 translate-y-6 scale-75 top-3 z-10 origin-[0] bg-white px-1 left-3">Email</label>
           </div>
 
-          <div class="flex items-center mt-0">
+          <div className="flex items-center mt-0">
            <input 
            id="checkbox" 
            type="checkbox" 
            checked={agreedToTerms} onChange={() => setAgreedToTerms(!agreedToTerms)}
            value="" 
-           className="w-4 h-4 bg-gray-100 border-gray-300 rounded focus:ring-[#0B7764] focus:ring-2 "/>
+           className="w-4 h-4 bg-gray-100 border-gray-300 rounded "/>
            <label htmlFor="checkbox" className="ml-2 text-sm font-medium text-gray-400">I agree with the <a href="#" className="text-[#005F81] hover:underline">Terms and Conditions</a> of PWIP </label>
          </div>
     
