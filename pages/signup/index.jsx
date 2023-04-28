@@ -95,6 +95,7 @@ export default function Login() {
            id="name" 
            name="name" 
            type="text" 
+           autoComplete="off"
            value={name}
            required 
            onChange={handleNameChange}
@@ -106,6 +107,7 @@ export default function Login() {
             id="email" 
             name="email" 
             type="email" 
+            autoComplete="off"
             value={email}
             required 
             onChange={handleEmailChange}

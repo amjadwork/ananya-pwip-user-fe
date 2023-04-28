@@ -84,7 +84,14 @@ export default function OTP() {
 
         <div id="otp" class="flex flex-row justify-center text-center px-2 mt-5">
            {otp.map((value, index) => (
-            <input class="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="first" maxlength="1" required  key={index}
+            <input className="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" 
+            type="text" 
+            inputmode="numeric" 
+            id="first" 
+            maxlength="1" 
+            autoComplete="off"
+            required  
+            key={index}
             onChange={(event) => handleInputChange(event, index)}
             ref={(ref) => (inputRefs.current[index] = ref)}/> 
             ))}
