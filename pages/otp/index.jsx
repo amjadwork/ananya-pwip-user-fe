@@ -1,21 +1,30 @@
-import React, {useState,useRef} from "react";
+import React, {useState,useRef,useEffect} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import { verifyIcon, backIcon} from "theme/icon";
 
 export default function OTP() {
   const router = useRouter();
+  //email value from the query parameter in login/sign-up page
+  const { email } = router.query
 
   const [otp, setOtp] = React.useState(['', '', '', '', '', '']);
+  // const [otpValid, setOtpValid] = useState(false);
   const inputRefs = useRef([]);
 
+  // const validateOtp = (otp) => {
+  //   const isValid = otp.every((value) => !isNaN(value));
+  //   setOtpValid(isValid);
+  // };
 
   const handleInputChange = (event, index) => {
     const { value } = event.target;
     const otpValues = [...otp];
     otpValues[index] = value;
     setOtp(otpValues);
+    // console.log(otp)
+
+    // validateOtp(otpValues);
 
     // Move focus to the next input field
     if (value && index < inputRefs.current.length - 1) {
@@ -27,6 +36,12 @@ export default function OTP() {
         inputRefs.current[index - 1].focus();
       }
   };
+
+  //to access previous state of array and then update it accordingly
+  useEffect(() => {
+    console.log(otp)
+  }, [otp]) 
+
 
   return (
     <React.Fragment>
@@ -64,25 +79,21 @@ export default function OTP() {
 
            <div className=" mt-0 flex-col  text-slate-500">
             <div className="flex justify-center">Just enter the OTP sent to</div>
-            <div className="flex justify-center">johndoe@gmail.com</div>
+            <div className="flex justify-center">{email}</div>
            </div>
 
         <div id="otp" class="flex flex-row justify-center text-center px-2 mt-5">
            {otp.map((value, index) => (
-            <input class="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="number" id="first" maxlength="1" required  key={index}
+            <input class="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="first" maxlength="1" required  key={index}
             onChange={(event) => handleInputChange(event, index)}
             ref={(ref) => (inputRefs.current[index] = ref)}/> 
-
-            // <input class="m-1 border border-gray-400 h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="second" maxlength="1"  required/> 
-            // <input class="m-1 border border-gray-400 h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="third" maxlength="1" required/> 
-            // <input class="m-1 border border-gray-400 h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="fourth" maxlength="1" required/>
-            // <input class="m-1 border border-gray-400 h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="fifth" maxlength="1" required/> 
-            // <input class="m-1 border border-gray-400 h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="sixth" maxlength="1" required/>
             ))}
             </div>
             <button
               onClick={() => router.push("export-costing")}
-              className="w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold"
+              className={'w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold ${otpValid ? "" : "opacity-50 cursor-not-allowed"}'}
+              // disabled={!otpValid}
+
             >
               Verify OTP
             </button>
@@ -93,8 +104,8 @@ export default function OTP() {
            <div className="line-clamp-1 font-regular text-[#77787b] text-md flex justify-center">
              Didn't receive the OTP yet? {" "} </div>
             <div className="text-[#0B7764] cursor-pointer flex justify-center gap-4">
-           <div onClick={() => router.push("login")} >Change email </div>
-           or
+          <div onClick={() => router.back()} >Change email </div>
+          <div className="text-[#77787b]">or</div>
            <div onClick={() => router.push("#")} >Resend OTP</div>
           </div>
           </div>

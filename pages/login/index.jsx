@@ -1,29 +1,32 @@
-import React, {useState}from "react";
+import React, {useState, useEffect} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-
 import { googleIcon,facebookIcon} from "theme/icon";
 
 export default function Login() {
   const router = useRouter();
 
-  // const [email, setEmail] = useState("");
-  // const [isValid, setIsValid] = useState(false);
-  // const emailRegex = /^\S+@\S+\.\S+$/;
+  const [email, setEmail] = useState("");
+  const [isValid, setIsValid] = useState(false);
+  const emailRegex = /^\S+@\S+\.\S+$/;
 
-  // const handleEmailChange = (e) => {
-  //   setEmail(e.target.value);
-  //   validateEmail();
-  // };
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+    setIsValid(emailRegex.test(e.target.value));
+  };
 
-  // const validateEmail = () => {
-  //   if (emailRegex.test(email)) {
-  //     setIsValid(true);
-  //   } else {
-  //     setIsValid(false);
-  //   }
-  // };
+  //use the previous state to update the current state
+  useEffect(() => {
+    console.log(email)
+  }, [email]) 
 
+  const handleLogin = () => {
+    router.push({
+      pathname: "/otp", //directing to otp verification page
+      query: {email}, //sending stored email state
+    });
+    
+  };
 
   return (
     <React.Fragment>
@@ -64,17 +67,18 @@ export default function Login() {
              id="email" 
              name="email" 
              type="email" 
-             autocomplete="email" 
+             value={email}
              required 
-             //onChange={handleEmailChange}
+             onChange={handleEmailChange}
              className="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-             <label for="floating_outlined" className="absolute text-s text-[#4F5655] text-900 -translate-y-2 scale-75 top-1  z-10 origin-[0] bg-white px-1 left-3">Email</label>
+             <label htmlFor="floating_outlined" className="absolute text-s text-[#4F5655] text-900 -translate-y-2 scale-75 top-1  z-10 origin-[0] bg-white px-1 left-3">Email</label>
             </div>
           </div>
         </div>
         <button
-              onClick={() => router.push("otp")}
+              onClick={handleLogin}
               className="w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold"
+              disabled={!isValid}
             >
               Log in
             </button>
