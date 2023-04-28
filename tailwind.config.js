@@ -18,7 +18,12 @@ module.exports = {
   //   "bg-white",
   // ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'sans': ['Gilroy','arial'],
+        'serif': ['DM-sans'],
+      },
+    },
   },
   plugins: [],
 };
