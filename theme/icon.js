@@ -24,46 +24,6 @@ export const facebookIcon = (
 </svg>
 );
 
-export const loginBg = (
-<svg width="360" height="221" viewBox="0 0 360 221" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="mask0_197_4858" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="360" height="221">
-<path d="M0 0H360V221H0V0Z" fill="#003559"/>
-</mask>
-<g mask="url(#mask0_197_4858)">
-<g opacity="0.3" filter="url(#filter0_d_197_4858)">
-<path d="M360 135C360 229.993 282.993 307 188 307C93.007 307 16 229.993 16 135C16 40.007 93.007 -37 188 -37C282.993 -37 360 40.007 360 135Z" fill="#194969"/>
-<path d="M270 60.5C270 161.844 187.844 244 86.5 244C-14.8443 244 -97 161.844 -97 60.5C-97 -40.8443 -14.8443 -123 86.5 -123C187.844 -123 270 -40.8443 270 60.5Z" fill="#476D87"/>
-<path d="M216 -31C216 84.9798 121.98 179 6 179C-109.98 179 -204 84.9798 -204 -31C-204 -146.98 -109.98 -241 6 -241C121.98 -241 216 -146.98 216 -31Z" fill="#4C718A"/>
-</g>
-<g opacity="0.2" filter="url(#filter1_d_197_4858)">
-<circle cx="74.5" cy="20.5" r="156.5" fill="#4C718A"/>
-</g>
-</g>
-<defs>
-<filter id="filter0_d_197_4858" x="-345" y="-378" width="846" height="830" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="4"/>
-<feGaussianBlur stdDeviation="70.5"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.03 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_197_4858"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_197_4858" result="shape"/>
-</filter>
-<filter id="filter1_d_197_4858" x="-182" y="-232" width="513" height="513" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="4"/>
-<feGaussianBlur stdDeviation="50"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_197_4858"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_197_4858" result="shape"/>
-</filter>
-</defs>
-</svg>
-);
-
 export const verifyIcon = (
 <svg width="64" height="78" viewBox="0 0 64 78" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M21.5 37.27L28.5 44.27L44.25 28.5199M60 39.02C60 56.1996 41.2611 68.6945 34.443 72.6722C33.6681 73.1242 33.2807 73.3503 32.7339 73.4675C32.3095 73.5585 31.6905 73.5585 31.2661 73.4675C30.7193 73.3503 30.3319 73.1242 29.557 72.6722C22.7389 68.6945 4 56.1996 4 39.02V22.2815C4 19.4832 4 18.084 4.45766 16.8813C4.86196 15.8189 5.51894 14.8708 6.3718 14.1192C7.33723 13.2684 8.64729 12.7771 11.2674 11.7946L30.0337 4.75717C30.7613 4.48431 31.1252 4.34788 31.4994 4.29379C31.8314 4.24582 32.1686 4.24582 32.5006 4.29379C32.8748 4.34788 33.2387 4.48431 33.9663 4.75717L52.7326 11.7946C55.3527 12.7771 56.6628 13.2684 57.6282 14.1192C58.4811 14.8708 59.138 15.8189 59.5423 16.8813C60 18.084 60 19.4832 60 22.2815V39.02Z" stroke="#154566" stroke-width="7.00002" stroke-linecap="round" stroke-linejoin="round"/>

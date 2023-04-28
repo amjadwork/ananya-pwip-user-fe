@@ -1,26 +1,29 @@
-import React from "react";
+import React, {useState}from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-import { googleIcon,facebookIcon, loginBg} from "theme/icon";
-// import "react-phone-input-2/lib/bootstrap.css";
-
+import { googleIcon,facebookIcon} from "theme/icon";
 
 export default function Login() {
   const router = useRouter();
 
-  const [activeTab, setActiveTab] = React.useState(0);
-  // const [email, setEmail]= useState('');
-  // const [isValid, setIsValid]= useState(false);
+  // const [email, setEmail] = useState("");
+  // const [isValid, setIsValid] = useState(false);
+  // const emailRegex = /^\S+@\S+\.\S+$/;
 
-  const handleTabChange = (index) => {
-    setActiveTab(index);
-  };
+  // const handleEmailChange = (e) => {
+  //   setEmail(e.target.value);
+  //   validateEmail();
+  // };
 
-  // function handleEmailChange(event) {
-  //   setEmail(event.target.value);
-  //   setIsValid(event.target.checkValidity());
-  // }
+  // const validateEmail = () => {
+  //   if (emailRegex.test(email)) {
+  //     setIsValid(true);
+  //   } else {
+  //     setIsValid(false);
+  //   }
+  // };
+
 
   return (
     <React.Fragment>
@@ -48,17 +51,24 @@ export default function Login() {
       </Head>
 
       <div className="flex flex-col h-screen ">
-        <div className={`w-full flex-1  loginbg bg-cover  `}>
-          <div className="text-white text-2xl">
-          <h1>ACCOUNT LOGIN</h1>
+        <div className={`w-full h-2/6 loginbg bg-cover`}>
+          <div className="text-white">
+          <div className="pt-20 pl-7 m-0 font-sans text-4xl font-bold">Sign in to your Account </div>
           </div>
         </div>
-        <div className="h-full bg-[#ffffff] w-full inline-flex flex-col space-y-8 relative mt-10 px-8">
+        <div className="h-4/6 bg-[#ffffff] w-full inline-flex flex-col space-y-8 relative mt-10 px-8">
           <div className="w-full inline-flex flex-col space-y-8 relative ">
            <div className="w=full inline-flex flex-col space-y-3 relative">
              <div className="mt-2">
-             <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-             <label for="floating_outlined" className="absolute text-xs text-[#4F5655] text-900 -translate-y-2 scale-75 top-2  z-10 origin-[0] bg-white px-1 left-2">Email</label>
+             <input 
+             id="email" 
+             name="email" 
+             type="email" 
+             autocomplete="email" 
+             required 
+             //onChange={handleEmailChange}
+             className="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+             <label for="floating_outlined" className="absolute text-s text-[#4F5655] text-900 -translate-y-2 scale-75 top-1  z-10 origin-[0] bg-white px-1 left-3">Email</label>
             </div>
           </div>
         </div>
@@ -81,7 +91,7 @@ export default function Login() {
            </div>
          
         
-          <div className="pt-48 bottom-0 left-0 right-0 flex justify-center ">
+          <div className="pt-44 bottom-0 left-0 right-0 flex justify-center ">
            <span className="line-clamp-1 font-regular text-[#77787b] text-md" >
              Don't have an account? {" "}
              <span onClick={() => router.push("signup")} className="text-[#0B7764] cursor-pointer">Register now</span>
