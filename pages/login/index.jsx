@@ -68,16 +68,17 @@ export default function Login() {
              name="email" 
              type="email" 
              value={email}
+             autoComplete="off"
              required 
              onChange={handleEmailChange}
-             className="block w-full rounded border-0 px-4 py-3 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+             className="block w-full rounded border border-gray-400 px-4 py-3 text-gray-900 focus:outline-1 focus:outline-gray-500 sm:text-sm sm:leading-6"/>
              <label htmlFor="floating_outlined" className="absolute text-s text-[#4F5655] text-900 -translate-y-2 scale-75 top-1  z-10 origin-[0] bg-white px-1 left-3">Email</label>
             </div>
           </div>
         </div>
         <button
               onClick={handleLogin}
-              className="w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold"
+              className="w-full rounded py-3 px-4 bg-[#003559] text-white hover:bg-[#175077] text-center text-md font-semibold"
               disabled={!isValid}
             >
               Log in
@@ -95,7 +96,7 @@ export default function Login() {
            </div>
          
         
-          <div className="pt-44 bottom-0 left-0 right-0 flex justify-center ">
+          <div className="pt-34 bottom-0 left-0 right-0 flex justify-center ">
            <span className="line-clamp-1 font-regular text-[#77787b] text-md" >
              Don't have an account? {" "}
              <span onClick={() => router.push("signup")} className="text-[#0B7764] cursor-pointer">Register now</span>

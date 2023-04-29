@@ -68,7 +68,7 @@ export default function OTP() {
 
       <div className="flex flex-col h-screen ">
         <div className={`w-full h-2/6 loginbg bg-cover`}>
-         <div className="pt-10 pl-7" onClick={() => router.push("login")}>{backIcon}</div>
+         <div className="pt-10 pl-7" onClick={() => router.back()}>{backIcon}</div>
           <div className="text-white pt-20 pl-7 font-sans font-bold text-4xl">Hey, you're almost there!</div>
         </div>
         <div className="h-4/6 bg-[#ffffff] w-full  inline-flex flex-col space-y-8 relative mt-10 px-8">
@@ -84,14 +84,21 @@ export default function OTP() {
 
         <div id="otp" class="flex flex-row justify-center text-center px-2 mt-5">
            {otp.map((value, index) => (
-            <input class="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-blue-500" type="text" inputmode="numeric" id="first" maxlength="1" required  key={index}
+            <input className="m-1 border border-gray-400  h-12 w-10 text-center form-control rounded focus:outline-1 focus:outline-gray-500" 
+            type="text" 
+            inputmode="numeric" 
+            id="first" 
+            maxlength="1" 
+            autoComplete="off"
+            required  
+            key={index}
             onChange={(event) => handleInputChange(event, index)}
             ref={(ref) => (inputRefs.current[index] = ref)}/> 
             ))}
             </div>
             <button
               onClick={() => router.push("export-costing")}
-              className={'w-full rounded py-3 px-4 bg-[#003559] text-white text-center text-md font-semibold ${otpValid ? "" : "opacity-50 cursor-not-allowed"}'}
+              className={'w-full rounded py-3 px-4 bg-[#003559] text-white hover:bg-[#175077] text-center text-md font-semibold ${otpValid ? "" : "opacity-50 cursor-not-allowed"}'}
               // disabled={!otpValid}
 
             >
