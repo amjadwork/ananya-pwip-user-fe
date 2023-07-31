@@ -19,7 +19,7 @@ export function Header(props) {
 
   return (
     <header
-      className={`inline-flex items-center w-full px-5 py-4 space-x-4 ${backgroundColor}`}
+      className={`inline-flex items-center w-full h-[94px] px-5 py-4 pb-[28px] space-x-4 bg-pwip-primary fixed top-0`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div

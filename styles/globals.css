@@ -2,10 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* -------------- Gilroy ----------------*/
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("/font/Gilroy/Gilroy-Regular.ttf") format("truetype"),
+    url("/font/Gilroy/Gilroy-Regular.woff") format("woff");
+
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Gilroy";
+  src: url("/font/Gilroy/Gilroy-Bold.woff") format("woff"),
+    url("/font/Gilroy/Gilroy-Bold.ttf") format("truetype");
+
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* -------------- DM-Sans ----------------*/
+
+@font-face {
+  font-family: "DM-Sans";
+  src: url("/font/DMSans/DMSans-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DM-Sans";
+  src: url("/font/DMSans/DMSans-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DM-Sans";
+  src: url("/font/DMSans/DMSans-Italic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
+
 html,
 body {
   padding: 0;
   margin: 0;
+  font-family: "Gilroy";
 }
 
 a {
@@ -15,58 +59,35 @@ a {
 
 * {
   box-sizing: border-box;
+  font-family: "Gilroy";
 }
 
-.react-tel-input .form-control {
-  outline: none !important;
-  color: #77787b !important;
-  border: none !important;
-  padding: 0 60px !important;
-  box-shadow: unset !important;
+/* Hide the scrollbar for the entire app */
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-.react-tel-input .selected-flag:focus:before, .react-tel-input .selected-flag.open:before {
-  border-color: transparent !important;
-  box-shadow: unset !important;
+/* Hide the scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+body::-webkit-scrollbar {
+  display: none;
 }
 
-.react-tel-input .country-list {
-  padding: 12px 0px !important;
-  margin: 18px 0 !important;
-  box-shadow: 0px 4px 12px #0000001a !important;
+/* Hide the scrollbar for the entire app */
+div {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-.react-tel-input .flag-dropdown {
-  border-right: 1px solid #abacae !important;
-}
-
-@keyframes colorbox {
-  0% {
-    background-image: url('/assets/onboarding.png');
-  }
-  40% {
-    background-image: url('/assets/onboarding-2.png');
-  }
-  80% {
-    background-image: url('/assets/onboarding-3.png');
-  }
-  100% {
-    background-image: url('/assets/onboarding-4.png');
-  }
-}
-
-.onboarding {
-  background-image: url('/assets/onboarding.png');
-   /* animation: colorbox 5s infinite ease-in-out; */
-}
-.loginbg{
-  background-image: url('/assets/loginBg.svg');
+/* Hide the scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+div::-webkit-scrollbar {
+  display: none;
 }
 
 .hide-scroll-bar {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
 }
-.hide-scroll-bar::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+.hide-scroll-bar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }

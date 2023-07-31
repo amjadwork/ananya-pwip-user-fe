@@ -35,10 +35,10 @@ export default function Home() {
       </Head>
 
       <div
-        className="h-screen w-screen relative overflow-hidden"
+        className="min-h-screen flex flex-col items-center justify-center"
         style={{ background: `linear-gradient(180deg, #60baf7, #2373bf)` }}
       >
-        <div className="onboarding bg-no-repeat bg-cover inline-flex flex-col justify-end transition-all absolute top-0 left-0 h-full w-full px-5 py-8">
+        <div className="bg-no-repeat bg-cover inline-flex flex-col justify-end h-full p-5">
           <div className="inline-flex flex-col space-y-12">
             <div className="inline-flex flex-col space-y-3">
               <h1 className="text-[36px] text-gray-50">
@@ -54,17 +54,10 @@ export default function Home() {
 
             <div className="inline-flex flex-col space-y-3">
               <button
-                onClick={() => handleNavigation("signup")}
+                onClick={() => handleNavigation("/export-costing")}
                 className="w-full rounded-full py-3 px-4 bg-white text-[#2373bf] text-center text-md font-semibold"
               >
-                Sign up
-              </button>
-              <button
-                onClick={() => handleNavigation("login")}
-                className="w-full rounded-full py-3 px-4 bg-transparent text-white tex text-md font-regular"
-              >
-                Already a member?{" "}
-                <span className="text-underline font-semibold">Login now</span>
+                Login now
               </button>
             </div>
           </div>

@@ -1,4 +1,7 @@
 /** @type {import('tailwindcss').Config} */
+
+import { color } from "./theme/color";
+
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -20,9 +23,15 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'sans': ['Gilroy','arial'],
-        'serif': ['DM-sans'],
+        serif: ["Gilroy", "arial"],
+        sans: ["DM-sans", "sans-serif"],
       },
+    },
+    colors: {
+      transparent: "transparent",
+      current: "currentColor",
+      white: "#FFFFFF",
+      ...color,
     },
   },
   plugins: [],
