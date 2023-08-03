@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
@@ -8,17 +8,8 @@ import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
 import { Header } from "@/components/Header";
-import { Button } from "@/components/Button";
 
-import {
-  chevronDown,
-  pencilIcon,
-  riceAndBagsIcon,
-  handlingAndInspectionIcon,
-  otherChargesIcon,
-  plusIcon,
-  minusIcon,
-} from "../../../../theme/icon";
+import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
 // Import Containers
 // import { UserTypeContainer } from "@/containers/ec/UserType";
@@ -27,6 +18,7 @@ import {
 export default function EditCosting() {
   const router = useRouter();
 
+  const { openBottomSheet, isBottomSheetOpen } = useOverlayContext();
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
 
@@ -121,7 +113,10 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Sona masuri"
                   type="text"
-                  disabled={true}
+                  onClick={() => {
+                    const content = <span>Select Rice</span>;
+                    openBottomSheet(content);
+                  }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
                 />
                 <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
@@ -141,7 +136,6 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: 10%"
                   type="text"
-                  disabled={true}
                   className="inline-flex items-center w-full px-[18px] text-xs font-sans text-center"
                 />
                 <div className="w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400">
@@ -159,7 +153,10 @@ export default function EditCosting() {
                   <input
                     placeholder="Ex: PP Woven"
                     type="text"
-                    disabled={true}
+                    onClick={() => {
+                      const content = <span>Select Bag</span>;
+                      openBottomSheet(content);
+                    }}
                     className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
                   />
                   <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
@@ -188,7 +185,10 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
-                  disabled={true}
+                  onClick={() => {
+                    const content = <span>Select port of origin</span>;
+                    openBottomSheet(content);
+                  }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
                 />
                 <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
@@ -205,7 +205,10 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
-                  disabled={true}
+                  onClick={() => {
+                    const content = <span>Select port of destination</span>;
+                    openBottomSheet(content);
+                  }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
                 />
                 <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
@@ -222,7 +225,10 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
-                  disabled={true}
+                  onClick={() => {
+                    const content = <span>Select the type of container</span>;
+                    openBottomSheet(content);
+                  }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
                 />
                 <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">

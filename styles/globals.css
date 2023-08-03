@@ -91,3 +91,11 @@ div::-webkit-scrollbar {
 .hide-scroll-bar::-webkit-scrollbar {
   display: none; /* Safari and Chrome */
 }
+
+[data-rsbs-backdrop] {
+  z-index: 20 !important;
+}
+
+[data-rsbs-overlay] {
+  z-index: 25 !important;
+}
