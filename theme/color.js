@@ -7,6 +7,7 @@ export const color = {
   "pwip-primary-50": "#DCF3FF",
   "pwip-primary-40": "#F3FCFF",
 
+  "pwip-gray-1100": "#1D2624",
   "pwip-gray-1000": "#3D4544",
   "pwip-gray-900": "#3D4543",
   "pwip-gray-850": "#3B4241",
@@ -17,6 +18,8 @@ export const color = {
   "pwip-gray-600": "#4F5655",
   "pwip-gray-550": "#808080",
   "pwip-gray-500": "#9B9F9E",
+  "pwip-gray-400": "#757575",
+  "pwip-gray-300": "#E9E9E9",
   "pwip-gray-50": "#F3F5F7",
   "pwip-gray-45": "#FBFCFF",
   "pwip-gray-40": "#EDEDED",

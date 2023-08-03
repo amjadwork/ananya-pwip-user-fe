@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { chevronDown } from "../../theme/icon";
 
-const hideBottomBarAtRoutes = ["costing"];
+const hideBottomBarAtRoutes = ["costing", "edit"];
 
 export function Header(props) {
   const router = useRouter();
@@ -26,7 +26,7 @@ export function Header(props) {
     <header
       className={`inline-flex items-center w-full h-[92px] px-5 py-4 ${
         hideBottomBarAtRoutes.includes(activeRoute) ? "" : "pb-[28px]"
-      }  space-x-4 bg-pwip-primary fixed top-0`}
+      }  space-x-4 bg-pwip-primary fixed top-0 z-50`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         {!hideLogo && (

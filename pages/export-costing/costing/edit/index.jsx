@@ -16,223 +16,27 @@ import {
   riceAndBagsIcon,
   handlingAndInspectionIcon,
   otherChargesIcon,
-  eyePreviewIcon,
+  plusIcon,
+  minusIcon,
 } from "../../../../theme/icon";
 
 // Import Containers
 // import { UserTypeContainer } from "@/containers/ec/UserType";
 // Import Layouts
 
-const lineBackgroundColor = ["bg-pwip-teal-900", "bg-pwip-orange-900"];
-
-const breakupArr = [
-  {
-    title: "Rice and bags",
-    icon: riceAndBagsIcon,
-    afterIcon: "/assets/images/costing/road.png",
-    rowItems: [
-      {
-        label: "Cost of rice",
-        inr: 1000,
-        usd: 12.77,
-      },
-      {
-        label: "PPWoven-50 Kg",
-        inr: 99,
-        usd: 11.49,
-      },
-    ],
-  },
-  {
-    title: "Handling and Inspection",
-    icon: handlingAndInspectionIcon,
-    afterIcon: "/assets/images/costing/container.png",
-    rowItems: [
-      {
-        label: "Transportation",
-        inr: 1000,
-        usd: 12.77,
-      },
-      {
-        label: "CFS Handling",
-        inr: 99,
-        usd: 11.49,
-        breakUp: [
-          {
-            label: "Craft paper",
-            inr: 15,
-            usd: 0.49,
-          },
-          {
-            label: "Silica gel",
-            inr: 15,
-            usd: 0.49,
-          },
-          {
-            label: "Loading chargers",
-            inr: 15,
-            usd: 0.49,
-          },
-        ],
-      },
-      {
-        label: "Shipping line locals",
-        inr: 99,
-        usd: 11.49,
-        breakUp: [
-          {
-            label: "THC",
-            inr: 15,
-            usd: 0.49,
-          },
-          {
-            label: "BL",
-            inr: 15,
-            usd: 0.49,
-          },
-          {
-            label: "Surrender",
-            inr: 15,
-            usd: 0.49,
-          },
-        ],
-      },
-      {
-        label: "OFC",
-        inr: 99,
-        usd: 11.49,
-      },
-      {
-        label: "Inspection cost",
-        inr: 99,
-        usd: 11.49,
-      },
-    ],
-  },
-  {
-    title: "Other chargers",
-    icon: otherChargesIcon,
-    afterIcon: "/assets/images/costing/ocean.png",
-    rowItems: [
-      {
-        label: "Finance cost",
-        inr: 1000,
-        usd: 12.77,
-      },
-      {
-        label: "Overheads",
-        inr: 99,
-        usd: 11.49,
-      },
-      {
-        label: "Margin",
-        inr: 99,
-        usd: 11.49,
-      },
-      {
-        label: "20% Export duty",
-        inr: 99,
-        usd: 11.49,
-      },
-      {
-        label: "PWIP Fulfilment ",
-        inr: 99,
-        usd: 11.49,
-      },
-    ],
-  },
-];
-
 export default function EditCosting() {
   const router = useRouter();
-  const { openBottomSheet } = useOverlayContext();
 
-  const [showBreakup, setShowBreakup] = useState(false);
+  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [activeTab, setActiveTab] = React.useState(0);
 
-  const handleOpenBottomSheet = (itemIndex) => {
-    const selectedBreakup = breakupArr[itemIndex].rowItems.filter((d) => {
-      if (d?.breakUp?.length) {
-        return d;
-      }
-    });
-
-    const content = (
-      <div className="inline-flex flex-col w-full">
-        {selectedBreakup.map((selected, selectedIndex) => {
-          return (
-            <div
-              key={selected.label + selectedIndex}
-              className="inline-flex flex-col w-full"
-            >
-              <div className="border-b-[1px] border-b-pwip-gray-50 inline-flex items-center justify-between w-full px-7 py-5">
-                <div className="w-[60%] inline-flex items-center justify-between text-pwip-gray-1000 text-sm font-bold font-sans">
-                  <span>{selected.label}</span>
-                  <span>:</span>
-                </div>
-                <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-1000 text-sm font-bold font-sans">
-                  <span>₹{selected.inr}</span>
-                </div>
-                <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-1000 text-sm font-bold font-sans">
-                  <span>${selected.usd}</span>
-                </div>
-              </div>
-
-              <div className="inline-flex items-center h-auto px-7 relative border-b-[1px] border-b-pwip-gray-40">
-                <div className="inline-flex items-center justify-center flex-col h-full">
-                  <div
-                    className={`h-3 w-3 rounded-full absolute top-[14px] ${lineBackgroundColor[selectedIndex]}`}
-                  />
-                  <div
-                    className={`h-[70%] w-1 absolute top-5 ${lineBackgroundColor[selectedIndex]}`}
-                  />
-                  <div
-                    className={`h-3 w-3 rounded-full absolute bottom-[15px] ${lineBackgroundColor[selectedIndex]}`}
-                  />
-                </div>
-                <div className="w-full">
-                  {selected?.breakUp?.map((item, index) => {
-                    return (
-                      <div
-                        key={item.label + index * 12}
-                        className="inline-flex items-center justify-between w-full py-3 pl-3"
-                      >
-                        <div className="w-[60%] inline-flex items-center justify-between text-pwip-gray-800 text-xs font-normal font-sans">
-                          <span>{item.label}</span>
-                          <span>:</span>
-                        </div>
-                        <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-800 text-xs font-normal font-sans">
-                          <span>₹{item.inr}</span>
-                        </div>
-                        <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-800 text-xs font-normal font-sans">
-                          <span>${item.usd}</span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    );
-    openBottomSheet(content);
-  };
-
-  const handleShare = () => {
-    if (navigator && navigator.share) {
-      navigator
-        .share({
-          title: "Export consting",
-          text: "1121 steam 5% Broken, Chennai - Singapore, ₹42000 ($345)",
-          url:
-            window.location.origin +
-            "/preview/costing/123?utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03",
-        })
-        .then(() => console.log("Successful share"))
-        .catch((error) => console.log("Error sharing", error));
+  React.useEffect(() => {
+    const element = document.getElementById("fixedMenuSection");
+    if (element) {
+      const height = element.offsetHeight;
+      setMainContainerHeight(height);
     }
-  };
+  }, []);
 
   return (
     <React.Fragment>
@@ -262,7 +66,218 @@ export default function EditCosting() {
       <AppLayout>
         <Header />
 
-        {/*  */}
+        <div
+          id="fixedMenuSection"
+          className="fixed top-[92px] h-[auto] w-full bg-pwip-gray-45 z-10 py-5 px-5"
+        >
+          <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
+            <div
+              onClick={() => setActiveTab(0)}
+              className={`w-[50%] h-full inline-flex items-center justify-center ${
+                activeTab === 0 ? "bg-white" : "opacity-40"
+              } rounded-full`}
+            >
+              <span className="text-pwip-gray-1100 font-sans font-bold text-sm">
+                Costing
+              </span>
+            </div>
+
+            <div
+              onClick={() => setActiveTab(1)}
+              className={`w-[50%] h-full inline-flex items-center justify-center ${
+                activeTab === 1 ? "bg-white" : "opacity-40"
+              } rounded-full`}
+            >
+              <span className="text-pwip-gray-1100 font-sans font-bold text-sm">
+                Breakup
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`min-h-screen h-full w-full bg-pwip-gray-45 pb-[140px] overflow-auto px-5 hide-scroll-bar`}
+          style={{
+            paddingTop: mainContainerHeight + 92 + "px",
+          }}
+        >
+          <div className="inline-flex flex-col w-full space-y-4">
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Costing Name
+              </label>
+              <input
+                placeholder="Ex: Sona Masuri"
+                type="text"
+                className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+              />
+            </div>
+
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Rice Name
+              </label>
+              <div className="inline-flex items-center relative">
+                <input
+                  placeholder="Ex: Sona masuri"
+                  type="text"
+                  disabled={true}
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                  {chevronDown}
+                </div>
+              </div>
+            </div>
+
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Rice Name
+              </label>
+              <div className="inline-flex items-center relative h-[40px] mt-[4px]  w-full border-[1px] border-pwip-gray-650 rounded-md bg-white">
+                <div className="w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-r-[1px] border-r-pwip-gray-650 rounded-l-md text-pwip-gray-400">
+                  {minusIcon}
+                </div>
+                <input
+                  placeholder="Ex: 10%"
+                  type="text"
+                  disabled={true}
+                  className="inline-flex items-center w-full px-[18px] text-xs font-sans text-center"
+                />
+                <div className="w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400">
+                  {plusIcon}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="inline-flex flex-col w-full">
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  Bag type
+                </label>
+                <div className="inline-flex items-center relative">
+                  <input
+                    placeholder="Ex: PP Woven"
+                    type="text"
+                    disabled={true}
+                    className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                  />
+                  <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                    {chevronDown}
+                  </div>
+                </div>
+              </div>
+
+              <div className="inline-flex flex-col w-full">
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  Bag size
+                </label>
+                <input
+                  placeholder="Ex: 5 kg"
+                  type="text"
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+              </div>
+            </div>
+
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Select port of orgin
+              </label>
+              <div className="inline-flex items-center relative">
+                <input
+                  placeholder="Ex: Mumbai india"
+                  type="text"
+                  disabled={true}
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                  {chevronDown}
+                </div>
+              </div>
+            </div>
+
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Select port of destination
+              </label>
+              <div className="inline-flex items-center relative">
+                <input
+                  placeholder="Ex: Mumbai india"
+                  type="text"
+                  disabled={true}
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                  {chevronDown}
+                </div>
+              </div>
+            </div>
+
+            <div className="inline-flex flex-col w-full">
+              <label className="text-sm font-normal text-pwip-gray-600">
+                Container type
+              </label>
+              <div className="inline-flex items-center relative">
+                <input
+                  placeholder="Ex: Mumbai india"
+                  type="text"
+                  disabled={true}
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                  {chevronDown}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="inline-flex flex-col w-full">
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  No of containers
+                </label>
+                <input
+                  placeholder="Ex: 10"
+                  type="text"
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+              </div>
+
+              <div className="inline-flex flex-col w-full">
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  Containers weight
+                </label>
+                <input
+                  placeholder="Ex: 1000 kg"
+                  type="text"
+                  className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+              </div>
+            </div>
+
+            <div className="!mt-10 inline-flex flex-col w-full space-y-10">
+              <div className="inline-flex items-center space-x-4 w-full">
+                <input
+                  type="checkbox"
+                  className="inline-flex items-center h-[20px] w-[20px] rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  20% Export duty
+                </label>
+              </div>
+
+              <div className="inline-flex items-center space-x-4 w-full">
+                <input
+                  type="checkbox"
+                  className="inline-flex items-center h-[20px] w-[20px] rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                />
+                <label className="text-sm font-normal text-pwip-gray-600">
+                  Full fill through PWIP
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
       </AppLayout>
     </React.Fragment>
   );
