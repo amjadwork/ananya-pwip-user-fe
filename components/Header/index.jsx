@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { chevronDown } from "../../theme/icon";
+import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
 
 const hideBottomBarAtRoutes = ["costing", "edit"];
 
@@ -10,9 +10,12 @@ export function Header(props) {
   // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
   // const component = props.component;
   const hideLogo = props.hideLogo || false;
-  // const handleBack = props.handleBack;
 
   const [activeRoute, setActiveRoute] = React.useState("");
+
+  const handleBack = () => {
+    router.back();
+  };
 
   React.useEffect(() => {
     if (router) {
@@ -29,9 +32,21 @@ export function Header(props) {
       }  space-x-4 bg-pwip-primary fixed top-0 z-10`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
-        {!hideLogo && (
-          <img src="/assets/images/logo-white.png" className="h-full" />
-        )}
+        <div className="inline-flex items-center">
+          {!hideLogo && !hideBottomBarAtRoutes.includes(activeRoute) && (
+            <img src="/assets/images/logo-white.png" className="h-full" />
+          )}
+
+          {hideBottomBarAtRoutes.includes(activeRoute) && (
+            <div
+              className="inline-flex items-center space-x-2 text-white"
+              onClick={() => handleBack()}
+            >
+              {arrowLeftBackIcon}
+              <span className="text-sm font-bold font-sans">Back</span>
+            </div>
+          )}
+        </div>
         <div
           // onClick={() => (handleBack ? handleBack() : router.back())}
           className="inline-flex items-center justify-center space-x-3 text-white text-sm"
