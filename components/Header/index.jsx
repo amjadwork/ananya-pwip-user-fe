@@ -1,50 +1,44 @@
+import React from "react";
 import { useRouter } from "next/router";
+import { chevronDown } from "../../theme/icon";
+
+const hideBottomBarAtRoutes = ["costing"];
 
 export function Header(props) {
   const router = useRouter();
-  const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
-  const component = props.component;
-  const hideLogo = props.hideLogo || false;
-  const handleBack = props.handleBack;
 
-  if (component) {
-    return (
-      <header
-        className={`inline-flex items-center w-full px-5 py-4 space-x-4 ${backgroundColor}`}
-      >
-        {component}
-      </header>
-    );
-  }
+  // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
+  // const component = props.component;
+  const hideLogo = props.hideLogo || false;
+  // const handleBack = props.handleBack;
+
+  const [activeRoute, setActiveRoute] = React.useState("");
+
+  React.useEffect(() => {
+    if (router) {
+      const splitedRoutes = router.route.split("/");
+
+      setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
+    }
+  }, []);
 
   return (
     <header
-      className={`inline-flex items-center w-full h-[94px] px-5 py-4 pb-[28px] space-x-4 bg-pwip-primary fixed top-0`}
+      className={`inline-flex items-center w-full h-[92px] px-5 py-4 ${
+        hideBottomBarAtRoutes.includes(activeRoute) ? "" : "pb-[28px]"
+      }  space-x-4 bg-pwip-primary fixed top-0`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
-        <div
-          onClick={() => (handleBack ? handleBack() : router.back())}
-          className="inline-flex items-center justify-center space-x-3"
-        >
-          <svg
-            className="h-5 w-5 text-gray-200"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span className="text-gray-200 text-md">Back</span>
-        </div>
         {!hideLogo && (
-          <img
-            src="https://pwip.co/assets/web/img/web/whiteness-meter-lp/logo-white.png"
-            className="h-5"
-          />
+          <img src="/assets/images/logo-white.png" className="h-full" />
         )}
+        <div
+          // onClick={() => (handleBack ? handleBack() : router.back())}
+          className="inline-flex items-center justify-center space-x-3 text-white text-sm"
+        >
+          <span className="font-sans">1 USD = 81 INR | FOB</span>
+          {chevronDown}
+        </div>
       </div>
     </header>
   );

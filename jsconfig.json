@@ -6,7 +6,8 @@
         "@/styles/*": ["/styles/*"],
         "@/constants/*": ["/constants/*"],
         "@/layouts/*": ["/layouts/*"],
-        "@/containers/*": ["/containers/*"]
+        "@/containers/*": ["/containers/*"],
+        "@/context/*": ["/context/*"]
       }
     }
   }

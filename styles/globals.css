@@ -6,8 +6,8 @@
 
 @font-face {
   font-family: "Gilroy";
-  src: url("/font/Gilroy/Gilroy-Regular.ttf") format("truetype"),
-    url("/font/Gilroy/Gilroy-Regular.woff") format("woff");
+  src: url("/assets/font/Gilroy/Gilroy-Regular.ttf") format("truetype"),
+    url("/assets/font/Gilroy/Gilroy-Regular.woff") format("woff");
 
   font-weight: normal;
   font-style: normal;
@@ -15,8 +15,8 @@
 
 @font-face {
   font-family: "Gilroy";
-  src: url("/font/Gilroy/Gilroy-Bold.woff") format("woff"),
-    url("/font/Gilroy/Gilroy-Bold.ttf") format("truetype");
+  src: url("/assets/font/Gilroy/Gilroy-Bold.woff") format("woff"),
+    url("/assets/font/Gilroy/Gilroy-Bold.ttf") format("truetype");
 
   font-weight: bold;
   font-style: normal;
@@ -26,21 +26,21 @@
 
 @font-face {
   font-family: "DM-Sans";
-  src: url("/font/DMSans/DMSans-Regular.ttf") format("truetype");
+  src: url("/assets/font/DMSans/DMSans-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "DM-Sans";
-  src: url("/font/DMSans/DMSans-Bold.ttf") format("truetype");
+  src: url("/assets/font/DMSans/DMSans-Bold.ttf") format("truetype");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
   font-family: "DM-Sans";
-  src: url("/font/DMSans/DMSans-Italic.ttf") format("truetype");
+  src: url("/assets/font/DMSans/DMSans-Italic.ttf") format("truetype");
   font-weight: normal;
   font-style: italic;
 }
