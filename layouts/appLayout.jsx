@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 
 import { BottomNavBar } from "@/components/BottomNavBar";
 
-const hideBottomBarAtRoutes = ["costing"];
+const hideBottomBarAtRoutes = ["costing", "edit"];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();

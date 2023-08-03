@@ -8,6 +8,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
 import { Header } from "@/components/Header";
+import { Button } from "@/components/Button";
 
 import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
@@ -88,7 +89,7 @@ export default function EditCosting() {
         </div>
 
         <div
-          className={`min-h-screen h-full w-full bg-pwip-gray-45 pb-[140px] overflow-auto px-5 hide-scroll-bar`}
+          className={`min-h-screen h-full w-full bg-pwip-gray-45 pb-[32px] overflow-auto px-5 hide-scroll-bar`}
           style={{
             paddingTop: mainContainerHeight + 92 + "px",
           }}
@@ -281,6 +282,16 @@ export default function EditCosting() {
                   Full fill through PWIP
                 </label>
               </div>
+            </div>
+
+            <div className="w-full !mt-[32px]">
+              <Button
+                type="primary"
+                label="Update consting"
+                // onClick={() => {
+                //   router.push("/export-costing/costing");
+                // }}
+              />
             </div>
           </div>
         </div>
