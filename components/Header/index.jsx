@@ -33,7 +33,7 @@ export function Header(props) {
       window.navigator.standalone;
 
     if (isInStandaloneMode()) {
-      setEnvironmentBasedClasses("h-[110px]");
+      setEnvironmentBasedClasses("h-[130px]");
     } else {
       setEnvironmentBasedClasses("h-[92px]");
     }
