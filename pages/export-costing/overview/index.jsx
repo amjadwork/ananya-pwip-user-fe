@@ -31,10 +31,10 @@ export default function SelectionOverview() {
     <React.Fragment>
       <Head>
         <meta charSet="utf-8" />
-        <meta
+        {/* <meta
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-        />
+        /> */}
 
         <title>Export Costing by pwip</title>
 
