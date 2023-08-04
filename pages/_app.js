@@ -7,7 +7,11 @@ function MyPWIPApp({ Component, pageProps }) {
   return (
     <OverlayProvider>
       <Head>
-        <meta name="apple-mobile-web-app-status-bar-style" content="#005F81" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+        <meta name="theme-color" content="#005F81" />
       </Head>
       <Component {...pageProps} />
     </OverlayProvider>
