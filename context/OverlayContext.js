@@ -46,7 +46,11 @@ export function OverlayProvider({ children }) {
       onClick={closeBottomSheet}
       className="inline-flex items-center justify-center fixed top-0 left-0 h-screen w-screen z-0"
     >
-      <BottomSheet open={isBottomSheetOpen} onDismiss={closeBottomSheet}>
+      <BottomSheet
+        open={isBottomSheetOpen}
+        onDismiss={closeBottomSheet}
+        snapPoints={({ minHeight, maxHeight }) => [minHeight, maxHeight - 72]}
+      >
         <div className="w-full h-auto pb-8">{bottomSheetChildren}</div>
       </BottomSheet>
     </div>

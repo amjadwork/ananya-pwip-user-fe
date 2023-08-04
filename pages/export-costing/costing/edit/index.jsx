@@ -13,13 +13,14 @@ import { Button } from "@/components/Button";
 import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
 // Import Containers
-// import { UserTypeContainer } from "@/containers/ec/UserType";
+import SelectVariantContainer from "@/containers/ec/SelectVariant";
+
 // Import Layouts
 
 export default function EditCosting() {
   const router = useRouter();
 
-  const { openBottomSheet, isBottomSheetOpen } = useOverlayContext();
+  const { openBottomSheet } = useOverlayContext();
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
 
@@ -115,7 +116,15 @@ export default function EditCosting() {
                   placeholder="Ex: Sona masuri"
                   type="text"
                   onClick={() => {
-                    const content = <span>Select Rice</span>;
+                    const content = (
+                      <div>
+                        <SelectVariantContainer
+                          roundedTop={false}
+                          noTop={true}
+                          noPaddingBottom={true}
+                        />
+                      </div>
+                    );
                     openBottomSheet(content);
                   }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
