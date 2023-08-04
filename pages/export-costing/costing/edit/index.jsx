@@ -118,6 +118,7 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Sona masuri"
                   type="text"
+                  readOnly={true}
                   onClick={() => {
                     const content = (
                       <div>
@@ -166,6 +167,7 @@ export default function EditCosting() {
                   <input
                     placeholder="Ex: PP Woven"
                     type="text"
+                    readOnly={true}
                     onClick={() => {
                       const content = (
                         <div>
@@ -206,6 +208,7 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
+                  readOnly={true}
                   onClick={() => {
                     const content = (
                       <div>
@@ -235,6 +238,7 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
+                  readOnly={true}
                   onClick={() => {
                     const content = (
                       <div>
@@ -264,6 +268,7 @@ export default function EditCosting() {
                 <input
                   placeholder="Ex: Mumbai india"
                   type="text"
+                  readOnly={true}
                   onClick={() => {
                     const content = (
                       <div>
