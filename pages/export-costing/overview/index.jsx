@@ -150,7 +150,7 @@ export default function SelectionOverview() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g clip-path="url(#clip0_2718_16947)">
+            <g clipPath="url(#clip0_2718_16947)">
               <rect width="350" height="344" rx="10" fill="#F3FAFF" />
               <path
                 d="M386.007 -72.7889V417.054C386.007 428.797 379.478 438.952 369.997 443.871C366.058 445.948 361.62 447.084 356.909 447.084H217.949C217.894 447.172 217.839 447.197 217.785 447.226L216.987 447.084H-7.891C-23.9558 447.084 -36.9927 433.661 -36.9927 417.054V-72.7889C-36.9927 -74.352 -36.8834 -75.9187 -36.6356 -77.4235C-36.2239 -80.2692 -35.4223 -82.9983 -34.3219 -85.527V-85.5561C-33.4693 -87.4618 -32.4491 -89.2544 -31.2904 -90.9305C-30.9042 -91.4989 -30.4924 -92.0381 -30.0516 -92.5811C-29.4722 -93.379 -28.8127 -94.1187 -28.0949 -94.8C-27.7634 -95.1425 -27.4063 -95.5105 -27.0492 -95.853C-25.9743 -96.8477 -24.8157 -97.7878 -23.606 -98.6404C-22.808 -99.2088 -21.9809 -99.7226 -21.0992 -100.204C-19.8312 -100.943 -18.483 -101.57 -17.0766 -102.08C-13.8155 -103.304 -10.2885 -103.989 -6.62666 -103.989H355.638C359.992 -103.989 364.124 -103.049 367.873 -101.344C368.398 -101.089 368.919 -100.834 369.443 -100.546C371.812 -99.3218 374.016 -97.7586 375.973 -95.9405C376.359 -95.5688 376.745 -95.2008 377.102 -94.8292C377.875 -94.0895 378.563 -93.2916 379.197 -92.4389C379.609 -91.8997 380.024 -91.3568 380.382 -90.8175C381.125 -89.7354 381.814 -88.5986 382.448 -87.4035C383.052 -86.2083 383.606 -84.9586 384.073 -83.7052C384.79 -81.7995 385.286 -79.8101 385.614 -77.7333C385.698 -77.194 385.778 -76.6256 385.836 -76.0572C385.945 -74.975 386 -73.8965 386 -72.7852L386.007 -72.7889Z"
@@ -404,9 +404,9 @@ export default function SelectionOverview() {
                 width="25.8833"
                 height="32.3884"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feColorMatrix
                   in="SourceAlpha"
                   type="matrix"
@@ -439,9 +439,9 @@ export default function SelectionOverview() {
                 width="30.3561"
                 height="38.4902"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feColorMatrix
                   in="SourceAlpha"
                   type="matrix"
@@ -475,8 +475,8 @@ export default function SelectionOverview() {
                 y2="39.55"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="white" />
-                <stop offset="1" stop-color="white" stop-opacity="0" />
+                <stop stopColor="white" />
+                <stop offset="1" stopColor="white" stopOpacity="0" />
               </linearGradient>
               <clipPath id="clip0_2718_16947">
                 <rect width="350" height="344" rx="10" fill="white" />

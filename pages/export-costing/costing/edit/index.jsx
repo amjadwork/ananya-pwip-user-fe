@@ -14,6 +14,9 @@ import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
 // Import Containers
 import SelectVariantContainer from "@/containers/ec/SelectVariant";
+import SelectLocationContainer from "@/containers/ec/SelectLocation";
+import SelectBagsContainer from "@/containers/ec/SelectBags";
+import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
 // Import Layouts
 
@@ -164,7 +167,15 @@ export default function EditCosting() {
                     placeholder="Ex: PP Woven"
                     type="text"
                     onClick={() => {
-                      const content = <span>Select Bag</span>;
+                      const content = (
+                        <div>
+                          <SelectBagsContainer
+                            roundedTop={false}
+                            noTop={true}
+                            noPaddingBottom={true}
+                          />
+                        </div>
+                      );
                       openBottomSheet(content);
                     }}
                     className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
@@ -196,7 +207,16 @@ export default function EditCosting() {
                   placeholder="Ex: Mumbai india"
                   type="text"
                   onClick={() => {
-                    const content = <span>Select port of origin</span>;
+                    const content = (
+                      <div>
+                        <SelectLocationContainer
+                          title="Select Port of Origin"
+                          roundedTop={false}
+                          noTop={true}
+                          noPaddingBottom={true}
+                        />
+                      </div>
+                    );
                     openBottomSheet(content);
                   }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
@@ -216,7 +236,16 @@ export default function EditCosting() {
                   placeholder="Ex: Mumbai india"
                   type="text"
                   onClick={() => {
-                    const content = <span>Select port of destination</span>;
+                    const content = (
+                      <div>
+                        <SelectLocationContainer
+                          title="Select Port of Destination"
+                          roundedTop={false}
+                          noTop={true}
+                          noPaddingBottom={true}
+                        />
+                      </div>
+                    );
                     openBottomSheet(content);
                   }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
@@ -236,7 +265,15 @@ export default function EditCosting() {
                   placeholder="Ex: Mumbai india"
                   type="text"
                   onClick={() => {
-                    const content = <span>Select the type of container</span>;
+                    const content = (
+                      <div>
+                        <SelectCargoContainersContainer
+                          roundedTop={false}
+                          noTop={true}
+                          noPaddingBottom={true}
+                        />
+                      </div>
+                    );
                     openBottomSheet(content);
                   }}
                   className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
