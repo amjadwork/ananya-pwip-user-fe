@@ -50,6 +50,7 @@ export function OverlayProvider({ children }) {
         open={isBottomSheetOpen}
         onDismiss={closeBottomSheet}
         snapPoints={({ minHeight, maxHeight }) => [minHeight, maxHeight - 72]}
+        initialFocusRef={false}
       >
         <div className="w-full h-auto pb-8">{bottomSheetChildren}</div>
       </BottomSheet>
