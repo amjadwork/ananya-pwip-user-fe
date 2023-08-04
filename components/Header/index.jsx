@@ -12,6 +12,8 @@ export function Header(props) {
   const hideLogo = props.hideLogo || false;
 
   const [activeRoute, setActiveRoute] = React.useState("");
+  const [environmentBasedClasses, setEnvironmentBasedClasses] =
+    React.useState("");
 
   const handleBack = () => {
     router.back();
@@ -25,9 +27,21 @@ export function Header(props) {
     }
   }, []);
 
+  React.useEffect(() => {
+    const isInStandaloneMode = () =>
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone;
+
+    if (isInStandaloneMode()) {
+      setEnvironmentBasedClasses("h-[110px]");
+    } else {
+      setEnvironmentBasedClasses("h-[92px]");
+    }
+  }, []);
+
   return (
     <header
-      className={`inline-flex items-center w-full h-[92px] px-5 py-4 ${
+      className={`inline-flex items-center w-full ${environmentBasedClasses} px-5 py-4 ${
         hideBottomBarAtRoutes.includes(activeRoute) ? "" : "pb-[28px]"
       }  space-x-4 bg-pwip-primary fixed top-0 z-10`}
     >
