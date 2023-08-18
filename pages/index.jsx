@@ -1,23 +1,43 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useSession, signIn, getSession, getCsrfToken } from "next-auth/react";
 
 export default function Home() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleNavigation = (path) => {
     router.push(path);
   };
 
+  const handleLogin = async () => {
+    try {
+      const callbackUrl = process.env.AUTH0_ISSUER_BASE_URL; //"dev-342qasi42nz80wtj.us.auth0.com";
+      await signIn("auth0", callbackUrl);
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+
+  const redirectToApp = async () => {
+    try {
+      handleNavigation("/export-costing");
+    } catch (error) {
+      console.error("Error during login:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (session) {
+      redirectToApp();
+    }
+  }, [session]);
+
   return (
     <React.Fragment>
       <Head>
         <meta charSet="utf-8" />
-        {/* <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-        /> */}
-
         <title>Home | pwip - Export Costing </title>
 
         <meta name="Reciplay" content="Reciplay" />
@@ -54,7 +74,7 @@ export default function Home() {
 
             <div className="inline-flex flex-col space-y-3">
               <button
-                onClick={() => handleNavigation("/export-costing")}
+                onClick={() => handleLogin()}
                 className="w-full rounded-full py-3 px-4 bg-white text-[#2373bf] text-center text-md font-semibold"
               >
                 Login now
