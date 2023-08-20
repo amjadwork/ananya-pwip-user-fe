@@ -1,7 +1,7 @@
 import { put, takeLatest } from "redux-saga/effects";
 import {
   SET_COSTING_SELECTION_SUCCESS,
-  SET_COSTING_SELECTION_FAILURE,
+  RESET_COSTING_SELECTION_SUCCESS,
 } from "../actions/types/costing.types";
 import {
   setCostingSelection,
@@ -19,5 +19,5 @@ function* resetCostingSheet() {
 
 export default function* costingSaga() {
   yield takeLatest(SET_COSTING_SELECTION_SUCCESS, setCostingSheet);
-  yield takeLatest(SET_COSTING_SELECTION_FAILURE, resetCostingSheet);
+  yield takeLatest(RESET_COSTING_SELECTION_SUCCESS, resetCostingSheet);
 }

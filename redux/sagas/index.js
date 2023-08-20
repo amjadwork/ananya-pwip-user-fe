@@ -2,9 +2,10 @@ import { all } from "redux-saga/effects";
 import authSaga from "./auth.saga";
 import productsSaga from "./products.saga";
 import costingSaga from "./costing.saga";
+import locationSaga from "./location.saga";
 
 function* rootSaga() {
-  yield all([authSaga(), productsSaga(), costingSaga()]);
+  yield all([authSaga(), productsSaga(), costingSaga(), locationSaga()]);
 }
 
 export default rootSaga;

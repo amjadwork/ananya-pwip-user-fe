@@ -98,7 +98,7 @@ const SelectVariantContainer = (props) => {
 
                   <div className="inline-flex items-center justify-between">
                     <span className="text-pwip-gray-700 text-xs font-bold font-sans line-clamp-1">
-                      5% Broken
+                      {items.brokenPercentage || 5}% Broken
                     </span>
                     <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
                       {items.sourceRates.sourceName}
@@ -117,6 +117,12 @@ const SelectVariantContainer = (props) => {
                 <div
                   key={items._id + index}
                   onClick={() => {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        product: items,
+                      })
+                    );
                     router.push("/export-costing/select-pod");
                   }}
                   className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"

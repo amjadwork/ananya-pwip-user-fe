@@ -5,11 +5,10 @@ import { useSelector, useDispatch } from "react-redux";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
+import { fetchDestinationRequest } from "@/redux/actions/location.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
-
-import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 
 // Import Containers
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
@@ -18,11 +17,19 @@ import SelectLocationContainer from "@/containers/ec/SelectLocation";
 function SelectPortOfDestination() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
-  console.log(selectedCosting);
+  const selectedCosting = useSelector((state) => state.costing);
+
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   React.useEffect(() => {
+    if (!selectedCosting.product) {
+      router.replace("/export-costing");
+    }
+  }, [selectedCosting]);
+
+  React.useEffect(() => {
+    dispatch(fetchDestinationRequest());
+
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;

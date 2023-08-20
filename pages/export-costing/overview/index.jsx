@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-// import { useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -20,9 +20,16 @@ function SelectionOverview() {
   const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [selectedCostingOptions, setSelectedCostingOptions] =
+    React.useState(null);
 
-  // const user = useSelector((state) => state.auth.user);
-  // const token = useSelector((state) => state.auth.token);
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+
+  React.useEffect(() => {
+    if (selectedCosting) {
+      setSelectedCostingOptions(selectedCosting);
+    }
+  }, [selectedCosting]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -30,7 +37,11 @@ function SelectionOverview() {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, []);
+  }, [selectedCostingOptions]);
+
+  if (!selectedCostingOptions) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -71,26 +82,30 @@ function SelectionOverview() {
             className="inline-flex items-center w-full p-[8px] space-x-[10px] bg-pwip-primary-40 rounded-[5px] border-[1px] border-pwip-primary-400 mb-[28px]"
           >
             <img
-              src="https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+              src={
+                selectedCostingOptions.product.images[0] ||
+                "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+              }
               className="bg-cover h-[62px] w-[62px] rounded-md"
             />
             <div className="w-full inline-flex flex-col space-y-1">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                  Sona masuri Parboiled
+                  {selectedCostingOptions.product.variantName}
                 </span>
                 <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                  ₹32/Kg
+                  ₹{selectedCostingOptions.product.sourceRates.price}/
+                  {selectedCostingOptions.product.sourceRates.unit}
                 </span>
               </div>
 
               <span className="text-pwip-gray-700 font-sans text-xs font-bold">
-                5% Broken
+                {selectedCostingOptions.product.brokenPercentage || 5}% Broken
               </span>
 
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                  Tamil nadu
+                  {selectedCostingOptions.product.sourceRates.sourceName}
                 </span>
 
                 <div className="inline-flex items-center justify-end text-pwip-primary-400 space-x-1">
@@ -112,23 +127,19 @@ function SelectionOverview() {
             <div className="h-[62px] w-[62px] overflow-hidden bg-cover rounded-md">
               {dummyRemoveMeCityIcon}
             </div>
-            <div className="w-full inline-flex flex-col space-y-1">
+            <div className="w-full inline-flex h-[62px] py-2 justify-between flex-col space-y-1">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                  Singapore port
+                  {selectedCostingOptions.portOfDestination.portName}
                 </span>
                 <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                  SING
+                  {selectedCostingOptions.portOfDestination.portCode}
                 </span>
               </div>
 
-              <span className="text-pwip-gray-700 font-sans text-xs font-bold">
-                5% Broken
-              </span>
-
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                  Singapore
+                  {selectedCostingOptions.portOfDestination.country}
                 </span>
 
                 <div className="inline-flex items-center justify-end text-pwip-primary-400 space-x-1">
