@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 
+import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -143,7 +144,7 @@ const breakupArr = [
   },
 ];
 
-export default function CostingOverview() {
+function CostingOverview() {
   const router = useRouter();
   const { openBottomSheet } = useOverlayContext();
 
@@ -491,3 +492,5 @@ export default function CostingOverview() {
     </React.Fragment>
   );
 }
+
+export default withAuth(CostingOverview);

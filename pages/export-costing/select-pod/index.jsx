@@ -1,7 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
 
+import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -13,9 +15,11 @@ import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 // Import Layouts
 
-export default function SelectPortOfDestination() {
+function SelectPortOfDestination() {
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  console.log(selectedCosting);
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   React.useEffect(() => {
@@ -57,8 +61,11 @@ export default function SelectPortOfDestination() {
         <SelectLocationContainer
           roundedTop={true}
           title="Select Port of Destination"
+          showSelectedVariant={true}
         />
       </AppLayout>
     </React.Fragment>
   );
 }
+
+export default withAuth(SelectPortOfDestination);

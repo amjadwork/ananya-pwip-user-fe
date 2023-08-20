@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 
+import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -530,7 +531,7 @@ const BreakupForm = () => {
   );
 };
 
-export default function EditCosting() {
+function EditCosting() {
   const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -615,3 +616,5 @@ export default function EditCosting() {
     </React.Fragment>
   );
 }
+
+export default withAuth(EditCosting);

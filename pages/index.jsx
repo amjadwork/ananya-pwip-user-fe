@@ -1,11 +1,15 @@
 import React, { useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSession, signIn, getSession, getCsrfToken } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
+import { useDispatch } from "react-redux";
+
+import { setAuthData } from "redux/actions/auth.actions";
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
+  const dispatch = useDispatch();
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -14,7 +18,7 @@ export default function Home() {
   const handleLogin = async () => {
     try {
       const callbackUrl = process.env.AUTH0_ISSUER_BASE_URL; //"dev-342qasi42nz80wtj.us.auth0.com";
-      await signIn("auth0", callbackUrl);
+      await signIn("auth0", { callbackUrl });
     } catch (error) {
       console.error("Error during login:", error);
     }
@@ -29,7 +33,8 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (session) {
+    if (session && session.accessToken) {
+      dispatch(setAuthData(session.user, session.accessToken));
       redirectToApp();
     }
   }, [session]);

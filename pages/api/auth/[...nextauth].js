@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Auth0Provider from "next-auth/providers/auth0";
+
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -26,8 +27,8 @@ export const authOptions = {
     async signIn() {
       return true;
     },
-    async redirect({ baseUrl }) {
-      return baseUrl;
+    async redirect(data) {
+      return data.baseUrl;
     },
     async session({ session, token }) {
       if (token) {

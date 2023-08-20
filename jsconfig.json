@@ -8,7 +8,9 @@
         "@/layouts/*": ["/layouts/*"],
         "@/containers/*": ["/containers/*"],
         "@/context/*": ["/context/*"],
-        "@/configs/*": ["/configs/*"]
+        "@/configs/*": ["/configs/*"],
+        "@/redux/*": ["/redux/*"],
+        "@/hoc/*": ["/hoc/*"]
       }
     }
   }

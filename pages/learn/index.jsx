@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
+import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -11,7 +12,7 @@ import { Header } from "@/components/Header";
 import { riceAndBagsIcon } from "../../theme/icon";
 // Import Layouts
 
-export default function Learn() {
+function Learn() {
   const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -103,3 +104,5 @@ export default function Learn() {
     </React.Fragment>
   );
 }
+
+export default withAuth(Learn);

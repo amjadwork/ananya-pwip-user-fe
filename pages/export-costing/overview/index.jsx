@@ -1,7 +1,9 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+// import { useSelector } from "react-redux";
 
+import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -14,10 +16,13 @@ import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 // import { UserTypeContainer } from "@/containers/ec/UserType";
 // Import Layouts
 
-export default function SelectionOverview() {
+function SelectionOverview() {
   const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+
+  // const user = useSelector((state) => state.auth.user);
+  // const token = useSelector((state) => state.auth.token);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -496,3 +501,5 @@ export default function SelectionOverview() {
     </React.Fragment>
   );
 }
+
+export default withAuth(SelectionOverview);

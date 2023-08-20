@@ -1,6 +1,10 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductsRequest } from "../../redux/actions/products.actions";
+
+import withAuth from "@/hoc/withAuth";
 
 import AppLayout from "@/layouts/appLayout.jsx";
 
@@ -11,18 +15,33 @@ import { Header } from "@/components/Header";
 import SelectVariantContainer from "@/containers/ec/SelectVariant";
 // Import Layouts
 
-export default function ExportCosting() {
+function ExportCosting() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const token = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
+  async function getProductList() {
+    try {
+      dispatch(fetchProductsRequest());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   React.useEffect(() => {
+    if (token) {
+      getProductList();
+    }
+
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, []);
+  }, [token]);
 
   return (
     <React.Fragment>
@@ -57,3 +76,5 @@ export default function ExportCosting() {
     </React.Fragment>
   );
 }
+
+export default withAuth(ExportCosting);

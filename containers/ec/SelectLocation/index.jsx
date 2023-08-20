@@ -1,6 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { dummyRemoveMeCityIcon } from "../../../theme/icon";
+import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 
 const SelectLocationContainer = (props) => {
   const router = useRouter();
@@ -10,6 +10,7 @@ const SelectLocationContainer = (props) => {
     noTop = false,
     noPaddingBottom = false,
     title = "",
+    showSelectedVariant = false,
   } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -30,6 +31,47 @@ const SelectLocationContainer = (props) => {
           !noTop ? "top-[72px]" : "top-[18px]"
         }  h-[auto] w-full bg-white z-10 py-6 px-5`}
       >
+        {showSelectedVariant && (
+          <div
+            onClick={() => {
+              router.back();
+            }}
+            className="inline-flex items-center w-full p-[8px] space-x-[10px] bg-pwip-primary-40 rounded-[5px] border-[1px] border-pwip-primary-400 mb-[28px]"
+          >
+            <img
+              src="https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+              className="bg-cover h-[62px] w-[62px] rounded-md"
+            />
+            <div className="w-full inline-flex flex-col space-y-1">
+              <div className="inline-flex items-center justify-between w-full">
+                <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
+                  Sona masuri Parboiled
+                </span>
+                <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
+                  ₹32/Kg
+                </span>
+              </div>
+
+              <span className="text-pwip-gray-700 font-sans text-xs font-bold">
+                5% Broken
+              </span>
+
+              <div className="inline-flex items-center justify-between w-full">
+                <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
+                  Tamil nadu
+                </span>
+
+                <div className="inline-flex items-center justify-end text-pwip-primary-400 space-x-1">
+                  <span className="text-xs font-medium font-sans line-clamp-1">
+                    Edit
+                  </span>
+                  {pencilIcon}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
           {title}
         </h2>
