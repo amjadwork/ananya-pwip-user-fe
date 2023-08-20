@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 
@@ -26,6 +27,111 @@ import {
 
 const lineBackgroundColor = ["bg-pwip-teal-900", "bg-pwip-orange-900"];
 
+function inrToUsd(inrAmount, exchangeRate) {
+  return (inrAmount / exchangeRate).toFixed(2);
+}
+
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function extractBreakUpItems(breakUpObject) {
+  const breakUpItems = [];
+
+  for (const key in breakUpObject) {
+    if (
+      key !== "_destinationPortId" &&
+      key !== "_containerId" &&
+      key !== "createdAt" &&
+      key !== "updatedAt" &&
+      key !== "_id" &&
+      key !== "shlCharge" &&
+      key !== "chaCharge"
+    ) {
+      const formattedLabel = capitalizeFirstLetter(
+        key.replace(/([A-Z])/g, " $1").trim()
+      ); // Convert to spaced words
+      const breakUpItem = {
+        inr: breakUpObject[key],
+        label: formattedLabel,
+      };
+      breakUpItems.push(breakUpItem);
+    }
+  }
+
+  return breakUpItems;
+}
+
+function updateCharges(response, chargesToUpdate) {
+  const updatedCharges = chargesToUpdate.map((chargeGroup) => {
+    const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
+      let updatedInr;
+
+      switch (rowItem.label) {
+        case "Cost of rice":
+          updatedInr = response.details.variantObject.exmillPrice;
+          break;
+        case "PPWoven-50 Kg":
+          updatedInr = response.details.packageDetails.cost;
+          break;
+        case "Transportation":
+          updatedInr =
+            response.details.transportationObject.transportationCharge;
+          break;
+        case "CFS Handling":
+          updatedInr = response.details.chaObject.chaDetailObject.chaCharge;
+          rowItem.breakUp = extractBreakUpItems(
+            response.breakup.chaObject.chaDetailObject
+          );
+
+          break;
+        case "Shipping line locals":
+          updatedInr = response.details.shlObject.shlDetailObject.shlCharge;
+          rowItem.breakUp = extractBreakUpItems(
+            response.breakup.shlObject.shlDetailObject
+          );
+
+          break;
+        case "OFC":
+          updatedInr = response.details.ofcObject.ofcCharge;
+          break;
+        case "Inspection cost":
+          updatedInr = response.costing.inspectionCost;
+          break;
+        case "Finance cost":
+          updatedInr = response.costing.financeCost;
+          break;
+        case "Overheads":
+          updatedInr = response.costing.overHeadCharge;
+          break;
+        case "Margin":
+          updatedInr = response.costing.margin;
+          break;
+        case "20% Export duty":
+          updatedInr = response.costing.exportDutyCharge || 0;
+          break;
+        case "PWIP Fulfilment":
+          updatedInr = response.costing.pwipFullfillment || 0;
+          break;
+        // Add more cases for other labels if needed
+        default:
+          updatedInr = rowItem.inr; // Use the original inr value if not found in mappings
+          break;
+      }
+
+      return {
+        ...rowItem,
+        inr: updatedInr,
+        usd: inrToUsd(updatedInr || 0, 83.16),
+      };
+    });
+
+    return { ...chargeGroup, rowItems: updatedRowItems };
+  });
+
+  return updatedCharges;
+}
+
 const breakupArr = [
   {
     title: "Rice and bags",
@@ -34,13 +140,13 @@ const breakupArr = [
     rowItems: [
       {
         label: "Cost of rice",
-        inr: 1000,
-        usd: 12.77,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "PPWoven-50 Kg",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
     ],
   },
@@ -51,62 +157,62 @@ const breakupArr = [
     rowItems: [
       {
         label: "Transportation",
-        inr: 1000,
-        usd: 12.77,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "CFS Handling",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
         breakUp: [
           {
             label: "Craft paper",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
           {
             label: "Silica gel",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
           {
             label: "Loading chargers",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
         ],
       },
       {
         label: "Shipping line locals",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
         breakUp: [
           {
             label: "THC",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
           {
             label: "BL",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
           {
             label: "Surrender",
-            inr: 15,
-            usd: 0.49,
+            inr: 0,
+            usd: 0,
           },
         ],
       },
       {
         label: "OFC",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "Inspection cost",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
     ],
   },
@@ -117,28 +223,28 @@ const breakupArr = [
     rowItems: [
       {
         label: "Finance cost",
-        inr: 1000,
-        usd: 12.77,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "Overheads",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "Margin",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
       {
         label: "20% Export duty",
-        inr: 99,
-        usd: 11.49,
+        inr: 0,
+        usd: 0,
       },
       {
-        label: "PWIP Fulfilment ",
-        inr: 99,
-        usd: 11.49,
+        label: "PWIP Fulfilment",
+        inr: 0,
+        usd: 0,
       },
     ],
   },
@@ -146,16 +252,28 @@ const breakupArr = [
 
 function CostingOverview() {
   const router = useRouter();
+  const generatedCosting = useSelector(
+    (state) => state.costing.generatedCosting
+  ); // Use api reducer slice
+
   const { openBottomSheet } = useOverlayContext();
 
   const [showBreakup, setShowBreakup] = useState(false);
+  const [breakupChargesData, setBreakupChargesData] = useState(false);
+
+  useEffect(() => {
+    const updatedCharges = updateCharges(generatedCosting, breakupArr);
+    setBreakupChargesData(updatedCharges);
+  }, [generatedCosting]);
 
   const handleOpenBottomSheet = (itemIndex) => {
-    const selectedBreakup = breakupArr[itemIndex].rowItems.filter((d) => {
-      if (d?.breakUp?.length) {
-        return d;
+    const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
+      (d) => {
+        if (d?.breakUp?.length) {
+          return d;
+        }
       }
-    });
+    );
 
     const content = (
       <div className="inline-flex flex-col w-full">
@@ -184,10 +302,10 @@ function CostingOverview() {
                     className={`h-3 w-3 rounded-full absolute top-[14px] ${lineBackgroundColor[selectedIndex]}`}
                   />
                   <div
-                    className={`h-[70%] w-1 absolute top-5 ${lineBackgroundColor[selectedIndex]}`}
+                    className={`h-[85%] w-1 absolute top-5 ${lineBackgroundColor[selectedIndex]}`}
                   />
                   <div
-                    className={`h-3 w-3 rounded-full absolute bottom-[15px] ${lineBackgroundColor[selectedIndex]}`}
+                    className={`h-3 w-3 rounded-full absolute bottom-[16px] ${lineBackgroundColor[selectedIndex]}`}
                   />
                 </div>
                 <div className="w-full">
@@ -292,7 +410,11 @@ function CostingOverview() {
               >
                 <div className="inline-flex items-center justify-between w-full">
                   <span className="text-pwip-gray-1000 text-lg font-normal font-sans line-clamp-1">
-                    Chennai - Singapore
+                    {generatedCosting?.details?.originPortObject
+                      ?.originPortName || "-/-"}{" "}
+                    -{" "}
+                    {generatedCosting?.details?.destinationObject?.portName ||
+                      "-/-"}
                   </span>
                   <div
                     className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
@@ -309,26 +431,29 @@ function CostingOverview() {
                 </div>
 
                 <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                  FOB
+                  {generatedCosting?.grandTotalFob ? "FOB" : "CIF"}
                 </span>
 
                 <div className="inline-flex items-center justify-between w-full mt-2">
                   <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                    1121 steam
+                    {generatedCosting?.details?.variantObject?.variantName ||
+                      "-/-"}
                   </span>
                   <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
                     <span className="text-base font-medium font-sans line-clamp-1">
-                      ₹42000
+                      ₹{generatedCosting?.grandTotal || 0}
                     </span>
 
                     <span className="text-base font-medium font-sans line-clamp-1">
-                      $345
+                      ${inrToUsd(generatedCosting?.grandTotal || 0, 83.16)}
                     </span>
                   </div>
                 </div>
                 <div className="inline-flex items-center justify-between w-full text-pwip-gray-500">
                   <span className="text-sm font-normal font-sans line-clamp-1">
-                    5% broken
+                    {generatedCosting?.details?.variantObject
+                      ?.brokenPercentage || 0}
+                    % broken
                   </span>
                   <div className="inline-flex items-center justify-end  space-x-4">
                     <span className="text-sm font-medium font-sans line-clamp-1">
@@ -356,8 +481,8 @@ function CostingOverview() {
                 </div>
 
                 <div className="inline-flex flex-col w-full">
-                  {breakupArr.map((item, index) => {
-                    const hasBreakup = breakupArr[index].rowItems.some(
+                  {breakupChargesData.map((item, index) => {
+                    const hasBreakup = breakupChargesData[index].rowItems.some(
                       (d) => d?.breakUp?.length
                     );
                     return (
@@ -462,14 +587,14 @@ function CostingOverview() {
                       className={`w-[20%] text-right py-4 px-4 inline-flex items-center justify-end`}
                     >
                       <span className="text-pwip-gray-1000 text-base font-bold">
-                        ₹42000
+                        ₹{generatedCosting?.grandTotal || 0}
                       </span>
                     </div>
                     <div
                       className={`w-[20%] text-right py-4 px-4 inline-flex items-center justify-end`}
                     >
                       <span className="text-pwip-gray-1000 text-base font-bold">
-                        $345
+                        ${inrToUsd(generatedCosting?.grandTotal || 0, 83.16)}
                       </span>
                     </div>
                   </div>
