@@ -356,6 +356,10 @@ function CostingOverview() {
     }
   };
 
+  if (!generatedCosting) {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <Head>
