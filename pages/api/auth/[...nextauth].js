@@ -27,8 +27,11 @@ export const authOptions = {
     async signIn() {
       return true;
     },
-    async redirect() {
-      return process.env.AUTH0_REDIRECT_UI;
+    async redirect({ url, baseUrl }) {
+      console.log("****", url, baseUrl);
+      return url.startsWith(baseUrl)
+        ? Promise.resolve(url)
+        : Promise.resolve(baseUrl);
     },
     async session({ session, token }) {
       if (token) {
