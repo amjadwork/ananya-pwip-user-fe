@@ -27,8 +27,8 @@ export const authOptions = {
     async signIn() {
       return true;
     },
-    async redirect(data) {
-      return data.baseUrl;
+    async redirect() {
+      return process.env.AUTH0_REDIRECT_UI;
     },
     async session({ session, token }) {
       if (token) {
