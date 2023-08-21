@@ -507,20 +507,20 @@ function SelectionOverview() {
             type="primary"
             label="Generate consting"
             onClick={async () => {
-              // const body = {
-              //   destinationPortId: selectedCostingOptions.portOfDestination._id,
-              //   sourceId: selectedCostingOptions.product.sourceRates._sourceId,
-              //   sourceRateId: selectedCostingOptions.product.sourceRates._id,
-              //   shipmentTermType: "FOB",
-              //   unit: "kg",
-              // };
               const body = {
-                destinationPortId: "64c8faa3a44a155e83222c86",
-                sourceId: "64c8f815a44a155e8322270a",
-                sourceRateId: "64ccc92f05a19dbda621c273",
+                destinationPortId: selectedCostingOptions.portOfDestination._id,
+                sourceId: selectedCostingOptions.product.sourceRates._sourceId,
+                sourceRateId: selectedCostingOptions.product.sourceRates._id,
                 shipmentTermType: "FOB",
                 unit: "kg",
               };
+              // const body = {
+              //   destinationPortId: "64c8faa3a44a155e83222c86",
+              //   sourceId: "64c8f815a44a155e8322270a",
+              //   sourceRateId: "64ccc92f05a19dbda621c273",
+              //   shipmentTermType: "FOB",
+              //   unit: "kg",
+              // };
               await dispatch(generateQuickCostingRequest(body));
               router.push("/export-costing/costing");
             }}
