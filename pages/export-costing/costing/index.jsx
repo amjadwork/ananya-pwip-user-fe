@@ -53,6 +53,7 @@ function extractBreakUpItems(breakUpObject) {
       ); // Convert to spaced words
       const breakUpItem = {
         inr: breakUpObject[key],
+        usd: inrToUsd(breakUpObject[key] || 0, 83.16),
         label: formattedLabel,
       };
       breakUpItems.push(breakUpItem);
@@ -122,7 +123,7 @@ function updateCharges(response, chargesToUpdate) {
       return {
         ...rowItem,
         inr: updatedInr,
-        usd: inrToUsd(updatedInr || 0, 83.16),
+        usd: inrToUsd(updatedInr || 0, 83.16) || 0,
       };
     });
 
