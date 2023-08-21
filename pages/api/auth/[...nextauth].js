@@ -29,9 +29,7 @@ export const authOptions = {
     },
     async redirect({ url, baseUrl }) {
       console.log("****", url, baseUrl);
-      return url.startsWith(baseUrl)
-        ? Promise.resolve(url)
-        : Promise.resolve(baseUrl);
+      return Promise.resolve(url);
     },
     async session({ session, token }) {
       if (token) {
