@@ -70,49 +70,51 @@ function updateCharges(response, chargesToUpdate) {
 
       switch (rowItem.label) {
         case "Cost of rice":
-          updatedInr = response.details.variantObject.exmillPrice;
+          updatedInr = response.costing.exmillPrice;
           break;
         case "PPWoven-50 Kg":
-          updatedInr = response.details.packageDetails.cost;
+          updatedInr = response.costing.package;
           break;
         case "Transportation":
-          updatedInr =
-            response.details.transportationObject.transportationCharge;
+          updatedInr = response.costing.transportCharge;
           break;
         case "CFS Handling":
-          updatedInr = response.details.chaObject.chaDetailObject.chaCharge;
+          updatedInr = response.costing.cfsHandling;
           rowItem.breakUp = extractBreakUpItems(
             response.breakup.chaObject.chaDetailObject
           );
 
           break;
         case "Shipping line locals":
-          updatedInr = response.details.shlObject.shlDetailObject.shlCharge;
+          updatedInr = response.costing.shlCost;
           rowItem.breakUp = extractBreakUpItems(
             response.breakup.shlObject.shlDetailObject
           );
 
           break;
         case "OFC":
-          updatedInr = response.details.ofcObject.ofcCharge;
+          updatedInr = response.costing.ofcCost;
           break;
         case "Inspection cost":
-          updatedInr = response.costing.inspectionCost;
+          updatedInr = response.constants.inspectionCharge;
           break;
         case "Finance cost":
-          updatedInr = response.costing.financeCost;
+          updatedInr = response.constants.financeCost;
           break;
         case "Overheads":
-          updatedInr = response.costing.overHeadCharge;
+          updatedInr = response.constants.overHeadCharge;
           break;
         case "Margin":
-          updatedInr = response.costing.margin;
+          updatedInr = response.constants.margin;
           break;
         case "20% Export duty":
-          updatedInr = response.costing.exportDutyCharge || 0;
+          updatedInr =
+            response.constants.exportDutyCharge ||
+            response.costing.exportDutyCharge ||
+            0;
           break;
         case "PWIP Fulfilment":
-          updatedInr = response.costing.pwipFullfillment || 0;
+          updatedInr = response.constants.pwipFullfillment || 0;
           break;
         // Add more cases for other labels if needed
         default:
