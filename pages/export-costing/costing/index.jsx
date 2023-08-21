@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 
@@ -64,72 +64,74 @@ function extractBreakUpItems(breakUpObject) {
 }
 
 function updateCharges(response, chargesToUpdate) {
-  const updatedCharges = chargesToUpdate.map((chargeGroup) => {
-    const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
-      let updatedInr;
+  if (response) {
+    const updatedCharges = chargesToUpdate.map((chargeGroup) => {
+      const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
+        let updatedInr;
 
-      switch (rowItem.label) {
-        case "Cost of rice":
-          updatedInr = response.costing.exmillPrice;
-          break;
-        case "PPWoven-50 Kg":
-          updatedInr = response.costing.package;
-          break;
-        case "Transportation":
-          updatedInr = response.costing.transportCharge;
-          break;
-        case "CFS Handling":
-          updatedInr = response.costing.cfsHandling;
-          rowItem.breakUp = extractBreakUpItems(
-            response.breakup.chaObject.chaDetailObject
-          );
+        switch (rowItem.label) {
+          case "Cost of rice":
+            updatedInr = response.costing.exmillPrice;
+            break;
+          case "PPWoven-50 Kg":
+            updatedInr = response.costing.package;
+            break;
+          case "Transportation":
+            updatedInr = response.costing.transportCharge;
+            break;
+          case "CFS Handling":
+            updatedInr = response.costing.cfsHandling;
+            rowItem.breakUp = extractBreakUpItems(
+              response.breakup.chaObject.chaDetailObject
+            );
 
-          break;
-        case "Shipping line locals":
-          updatedInr = response.costing.shlCost;
-          rowItem.breakUp = extractBreakUpItems(
-            response.breakup.shlObject.shlDetailObject
-          );
+            break;
+          case "Shipping line locals":
+            updatedInr = response.costing.shlCost;
+            rowItem.breakUp = extractBreakUpItems(
+              response.breakup.shlObject.shlDetailObject
+            );
 
-          break;
-        case "OFC":
-          updatedInr = response.costing.ofcCost;
-          break;
-        case "Inspection cost":
-          updatedInr = response.constants.inspectionCharge;
-          break;
-        case "Finance cost":
-          updatedInr = response.constants.financeCost;
-          break;
-        case "Overheads":
-          updatedInr = response.constants.overHeadCharge;
-          break;
-        case "Margin":
-          updatedInr = response.constants.margin;
-          break;
-        case "20% Export duty":
-          updatedInr = response.constants.exportDutyCharge || 0;
-          break;
-        case "PWIP Fulfilment":
-          updatedInr = response.constants.pwipFullfillment || 0;
-          break;
-        // Add more cases for other labels if needed
-        default:
-          updatedInr = rowItem.inr; // Use the original inr value if not found in mappings
-          break;
-      }
+            break;
+          case "OFC":
+            updatedInr = response.costing.ofcCost;
+            break;
+          case "Inspection cost":
+            updatedInr = response.constants.inspectionCharge;
+            break;
+          case "Finance cost":
+            updatedInr = response.constants.financeCost;
+            break;
+          case "Overheads":
+            updatedInr = response.constants.overHeadCharge;
+            break;
+          case "Margin":
+            updatedInr = response.constants.margin;
+            break;
+          case "20% Export duty":
+            updatedInr = response.constants.exportDutyCharge || 0;
+            break;
+          case "PWIP Fulfilment":
+            updatedInr = response.constants.pwipFullfillment || 0;
+            break;
+          // Add more cases for other labels if needed
+          default:
+            updatedInr = rowItem.inr; // Use the original inr value if not found in mappings
+            break;
+        }
 
-      return {
-        ...rowItem,
-        inr: updatedInr,
-        usd: inrToUsd(updatedInr || 0, 83.16) || 0,
-      };
+        return {
+          ...rowItem,
+          inr: updatedInr,
+          usd: inrToUsd(updatedInr || 0, 83.16) || 0,
+        };
+      });
+
+      return { ...chargeGroup, rowItems: updatedRowItems };
     });
 
-    return { ...chargeGroup, rowItems: updatedRowItems };
-  });
-
-  return updatedCharges;
+    return updatedCharges;
+  }
 }
 
 const breakupArr = [
@@ -262,9 +264,11 @@ function CostingOverview() {
   const [breakupChargesData, setBreakupChargesData] = useState([]);
 
   useEffect(() => {
-    const updatedCharges = updateCharges(generatedCosting, breakupArr);
-    if (updatedCharges) {
-      setBreakupChargesData(updatedCharges);
+    if (generatedCosting && breakupArr) {
+      const updatedCharges = updateCharges(generatedCosting, breakupArr);
+      if (updatedCharges) {
+        setBreakupChargesData(updatedCharges);
+      }
     }
   }, [generatedCosting]);
 
