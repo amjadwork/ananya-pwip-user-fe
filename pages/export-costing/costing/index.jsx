@@ -108,10 +108,7 @@ function updateCharges(response, chargesToUpdate) {
           updatedInr = response.constants.margin;
           break;
         case "20% Export duty":
-          updatedInr =
-            response.constants.exportDutyCharge ||
-            response.costing.exportDutyCharge ||
-            0;
+          updatedInr = response.constants.exportDutyCharge || 0;
           break;
         case "PWIP Fulfilment":
           updatedInr = response.constants.pwipFullfillment || 0;
@@ -262,11 +259,13 @@ function CostingOverview() {
   const { openBottomSheet } = useOverlayContext();
 
   const [showBreakup, setShowBreakup] = useState(false);
-  const [breakupChargesData, setBreakupChargesData] = useState(false);
+  const [breakupChargesData, setBreakupChargesData] = useState([]);
 
   useEffect(() => {
     const updatedCharges = updateCharges(generatedCosting, breakupArr);
-    setBreakupChargesData(updatedCharges);
+    if (updatedCharges) {
+      setBreakupChargesData(updatedCharges);
+    }
   }, [generatedCosting]);
 
   const handleOpenBottomSheet = (itemIndex) => {
