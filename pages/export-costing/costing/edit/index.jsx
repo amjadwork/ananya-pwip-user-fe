@@ -535,7 +535,7 @@ function EditCosting() {
   const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
-  const [activeTab, setActiveTab] = React.useState(1);
+  const [activeTab, setActiveTab] = React.useState(0);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");

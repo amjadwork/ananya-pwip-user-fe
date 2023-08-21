@@ -1,7 +1,7 @@
 export const color = {
   "pwip-white-100": "#FCFDFF",
 
-  "pwip-primary": "#005F81",
+  "pwip-primary": "#14517B",
   "pwip-primary-400": "#24A3D0",
   "pwip-primary-100": "#F5FAFF",
   "pwip-primary-50": "#DCF3FF",

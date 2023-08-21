@@ -43,7 +43,7 @@ export function OverlayProvider({ children }) {
 
   const bottomSheet = (
     <div
-      onClick={closeBottomSheet}
+      // onClick={closeBottomSheet}
       className="inline-flex items-center justify-center fixed top-0 left-0 h-screen w-screen z-0"
     >
       <BottomSheet

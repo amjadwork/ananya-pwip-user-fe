@@ -512,7 +512,7 @@ function SelectionOverview() {
                 sourceId: selectedCostingOptions.product.sourceRates._sourceId,
                 sourceRateId: selectedCostingOptions.product.sourceRates._id,
                 shipmentTermType: "FOB",
-                unit: "kg",
+                unit: "mt",
               };
 
               await dispatch(generateQuickCostingRequest(body));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 
@@ -11,6 +11,8 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
+
+import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
 
 import {
   chevronDown,
@@ -26,6 +28,42 @@ import {
 // Import Layouts
 
 const lineBackgroundColor = ["bg-pwip-teal-900", "bg-pwip-orange-900"];
+
+function getCostingToSaveHistoryPayload(inputJson) {
+  return {
+    costingName: "test2",
+    brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
+    unit: inputJson.details.variantObject.unit,
+    _variantId: inputJson.details.variantObject._variantId,
+    _bagId: inputJson.details.packageDetails._id,
+    bagSize: inputJson.details.packageDetails.weight,
+    _sourceId: inputJson.details.sourceObject._id,
+    _originId: inputJson.details.originPortObject._originId,
+    _destinationId: inputJson.details.destinationObject._destinationId,
+    _containerId: inputJson.details.ofcObject._containerId,
+    containersCount: 3, // Adjust as needed
+    containerWeight: inputJson.details.ofcObject.containerObject.weight,
+    isExportDuty: false,
+    isPwipFullfillment: false,
+    termOfAgreement: "FOB",
+    costOfRice: inputJson.details.variantObject.exmillPrice,
+    bagPrice: inputJson.costing.package,
+    transportation: inputJson.details.transportationObject.transportationCharge,
+    cfsHandling: inputJson.costing.cfsHandling,
+    shippingLineLocals: inputJson.costing.shlCost,
+    OFC: inputJson.details.ofcObject.ofcCharge,
+    inspectionCost: inputJson.constants.inspectionCharge,
+    insurance: inputJson.constants.insurance,
+    financeCost: inputJson.constants.financeCost,
+    overhead: inputJson.constants.overHeadCharge,
+    margin: inputJson.constants.margin,
+    exportDuty: inputJson.constants.exportDutyCharge,
+    pwipFullfillment: inputJson.constants.pwipFullfillment,
+    FOB: inputJson.grandTotalFob,
+    CIF: inputJson.grandTotalCif,
+    grandTotal: inputJson.grandTotal,
+  };
+}
 
 function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);
@@ -254,25 +292,36 @@ const breakupArr = [
 
 function CostingOverview() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
-  ); // Use api reducer slice
+  );
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
 
-  const { openBottomSheet } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
 
   const [showBreakup, setShowBreakup] = useState(false);
   const [breakupChargesData, setBreakupChargesData] = useState([]);
+  const [selectedUnit, setSelectedUnit] = React.useState({
+    label: "Metric ton",
+    value: "mt",
+  });
 
   useEffect(() => {
     if (generatedCosting && breakupArr) {
       const updatedCharges = updateCharges(generatedCosting, breakupArr);
       if (updatedCharges) {
         setBreakupChargesData(updatedCharges);
+
+        const saveHistoryPayload =
+          getCostingToSaveHistoryPayload(generatedCosting);
+        console.log("saveHistoryPayload", saveHistoryPayload);
       }
     }
   }, [generatedCosting]);
 
-  const handleOpenBottomSheet = (itemIndex) => {
+  const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
       (d) => {
         if (d?.breakUp?.length) {
@@ -344,6 +393,75 @@ function CostingOverview() {
     openBottomSheet(content);
   };
 
+  const handleOpenUnitSelectBottomSheet = () => {
+    const content = (
+      <React.Fragment>
+        <div
+          id="fixedMenuSection"
+          className={`h-[auto] w-full bg-white z-10 py-6 px-5`}
+        >
+          <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
+            Select unit of measurement
+          </h2>
+        </div>
+
+        <div
+          className={`h-full w-full bg-white pb-8 overflow-auto px-5 hide-scroll-bar`}
+        >
+          <div className="grid grid-cols-3 gap-6">
+            {[
+              {
+                label: "Metric ton",
+                value: "mt",
+              },
+              {
+                label: "Killogram",
+                value: "kg",
+              },
+              {
+                label: "Quintal",
+                value: "qt",
+              },
+            ].map((items, index) => {
+              return (
+                <div
+                  key={items.label + index}
+                  onClick={() => {
+                    closeBottomSheet();
+                    setSelectedUnit(items);
+                    const body = {
+                      destinationPortId: selectedCosting.portOfDestination._id,
+                      sourceId: selectedCosting.product.sourceRates._sourceId,
+                      sourceRateId: selectedCosting.product.sourceRates._id,
+                      shipmentTermType: "FOB",
+                      unit: items?.value || "mt",
+                    };
+                    dispatch(generateQuickCostingRequest(body));
+                  }}
+                  className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col items-center space-t"
+                  style={{
+                    boxShadow:
+                      "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
+                  }}
+                >
+                  <div className="w-[42px] pt-3 inline-flex items-center justify-center">
+                    <img src="/assets/images/units/weight.png" />
+                  </div>
+                  <div className="p-3 flex w-fill flex-col space-y-[4px]">
+                    <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
+                      {items.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+    openBottomSheet(content);
+  };
+
   const handleShare = () => {
     if (navigator && navigator.share) {
       navigator
@@ -401,11 +519,11 @@ function CostingOverview() {
                   Your Costing Bill
                 </span>
                 <div
-                  // onClick={() => (handleBack ? handleBack() : router.back())}
+                  onClick={() => handleOpenUnitSelectBottomSheet()}
                   className="inline-flex items-center space-x-3 text-pwip-gray-1000 text-sm cursor-pointer"
                 >
                   <span className="text-sm font-normal font-sans line-clamp-1">
-                    Metric tons
+                    {selectedUnit?.label}
                   </span>
                   {chevronDown}
                 </div>
@@ -467,7 +585,7 @@ function CostingOverview() {
                   </span>
                   <div className="inline-flex items-center justify-end  space-x-4">
                     <span className="text-sm font-medium font-sans line-clamp-1">
-                      Per Metric ton
+                      Per {selectedUnit?.label}
                     </span>
                   </div>
                 </div>
@@ -500,7 +618,7 @@ function CostingOverview() {
                         <div
                           onClick={() => {
                             if (hasBreakup) {
-                              handleOpenBottomSheet(index);
+                              handleOpenBreakUpBottomSheet(index);
                             }
                           }}
                           className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40"
