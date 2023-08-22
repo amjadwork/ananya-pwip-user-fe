@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
-
+import { inrToUsd } from "@/utils/helper";
 import { useOverlayContext } from "@/context/OverlayContext";
 
 import withAuth from "@/hoc/withAuth";
@@ -63,10 +63,6 @@ function getCostingToSaveHistoryPayload(inputJson) {
     CIF: inputJson.grandTotalCif,
     grandTotal: inputJson.grandTotal,
   };
-}
-
-function inrToUsd(inrAmount, exchangeRate) {
-  return (inrAmount / exchangeRate).toFixed(2);
 }
 
 function capitalizeFirstLetter(str) {

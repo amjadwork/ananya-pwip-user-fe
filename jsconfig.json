@@ -10,7 +10,8 @@
         "@/context/*": ["/context/*"],
         "@/configs/*": ["/configs/*"],
         "@/redux/*": ["/redux/*"],
-        "@/hoc/*": ["/hoc/*"]
+        "@/hoc/*": ["/hoc/*"],
+        "@/utils/*": ["/utils/*"]
       }
     }
   }

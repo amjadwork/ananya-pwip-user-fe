@@ -7,6 +7,8 @@ export function Button(props) {
   const label = props.label;
   const onClick = props.onClick || null;
   const type = props.type || "primary";
+  const buttonType = props.buttonType || "button";
+  const disabled = props.disabled || false;
 
   let additionalClass = "";
 
@@ -26,8 +28,10 @@ export function Button(props) {
 
   return (
     <button
+      type={buttonType}
       className={`inline-flex items-center justify-center w-full px-3 py-2 rounded min-h-[50px] ${additionalClass}`}
       onClick={onClick}
+      disabled={disabled}
     >
       <span className="text-xs font-sans text-center font-bold">{label}</span>
     </button>
