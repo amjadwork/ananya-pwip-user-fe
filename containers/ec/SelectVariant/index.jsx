@@ -1,9 +1,17 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
-import { setCostingSelection } from "@/redux/actions/costing.actions.js";
+import { useOverlayContext } from "@/context/OverlayContext";
+
+import {
+  setCostingSelection,
+  setCustomCostingSelection,
+} from "@/redux/actions/costing.actions.js";
 
 const SelectVariantContainer = (props) => {
+  const isFromEdit = props.isFromEdit || false;
+
+  const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products); // Use api reducer slice
@@ -67,13 +75,26 @@ const SelectVariantContainer = (props) => {
               <div
                 key={items._id + index}
                 onClick={() => {
-                  dispatch(
-                    setCostingSelection({
-                      ...selectedCosting,
-                      product: items,
-                    })
-                  );
-                  router.push("/export-costing/select-pod");
+                  if (isFromEdit) {
+                    dispatch(
+                      setCustomCostingSelection({
+                        ...selectedCosting,
+                        customCostingSelection: {
+                          ...selectedCosting.customCostingSelection,
+                          product: items,
+                        },
+                      })
+                    );
+                    closeBottomSheet();
+                  } else {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        product: items,
+                      })
+                    );
+                    router.push("/export-costing/select-pod");
+                  }
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
                 style={{
@@ -117,13 +138,26 @@ const SelectVariantContainer = (props) => {
                 <div
                   key={items._id + index}
                   onClick={() => {
-                    dispatch(
-                      setCostingSelection({
-                        ...selectedCosting,
-                        product: items,
-                      })
-                    );
-                    router.push("/export-costing/select-pod");
+                    if (isFromEdit) {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            product: items,
+                          },
+                        })
+                      );
+                      closeBottomSheet();
+                    } else {
+                      dispatch(
+                        setCostingSelection({
+                          ...selectedCosting,
+                          product: items,
+                        })
+                      );
+                      router.push("/export-costing/select-pod");
+                    }
                   }}
                   className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
                 >

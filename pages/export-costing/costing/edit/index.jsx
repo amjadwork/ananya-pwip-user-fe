@@ -175,18 +175,17 @@ const CostingForm = () => {
 
       formikRef.setValues({
         costingName: "",
-        _variantId: selectedAndGeneratedCosting.product,
-        costOfRice:
-          selectedAndGeneratedCosting.generatedCosting?.costing?.exmillPrice ||
-          0,
+        _variantId:
+          selectedAndGeneratedCosting?.customCostingSelection?.product ||
+          selectedAndGeneratedCosting?.product,
         brokenPercentage:
-          selectedAndGeneratedCosting.product.brokenPercentage || 0,
+          selectedAndGeneratedCosting?.customCostingSelection?.product
+            ?.brokenPercentage || 0,
         _bagId:
           selectedAndGeneratedCosting.generatedCosting.details.packageDetails,
         bagSize:
           selectedAndGeneratedCosting.generatedCosting.details.packageDetails
             .weight,
-        bagPrice: selectedAndGeneratedCosting.generatedCosting.costing.package,
         _originId:
           selectedAndGeneratedCosting.generatedCosting.details.originPortObject,
         _destinationId:
@@ -217,11 +216,11 @@ const CostingForm = () => {
       initialValues={{
         costingName: "",
         _variantId: {},
-        costOfRice: "",
+        // costOfRice: "",
         brokenPercentage: "",
         _bagId: {},
         bagSize: "",
-        bagPrice: "",
+        // bagPrice: "",
         _originId: {},
         _destinationId: {},
         _containerId: {},
@@ -284,6 +283,7 @@ const CostingForm = () => {
                         roundedTop={false}
                         noTop={true}
                         noPaddingBottom={true}
+                        isFromEdit={true}
                       />
                     </div>
                   );
@@ -297,7 +297,7 @@ const CostingForm = () => {
             </div>
           </div>
 
-          <div className="inline-flex flex-col w-full">
+          {/* <div className="inline-flex flex-col w-full">
             <label className="text-sm font-normal text-pwip-gray-600">
               Rice Price
             </label>
@@ -312,7 +312,7 @@ const CostingForm = () => {
                 className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="inline-flex flex-col w-full">
             <label className="text-sm font-normal text-pwip-gray-600">
@@ -387,7 +387,7 @@ const CostingForm = () => {
             </div>
           </div>
 
-          <div className="inline-flex flex-col w-full">
+          {/* <div className="inline-flex flex-col w-full">
             <label className="text-sm font-normal text-pwip-gray-600">
               Bag Price
             </label>
@@ -402,7 +402,7 @@ const CostingForm = () => {
                 className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="inline-flex flex-col w-full">
             <label className="text-sm font-normal text-pwip-gray-600">
@@ -594,7 +594,9 @@ const BreakupForm = () => {
 
       formikRef.setValues({
         costOfRice:
-          selectedAndGeneratedCosting.generatedCosting?.costing?.exmillPrice ||
+          selectedAndGeneratedCosting?.customCostingSelection?.product
+            ?.sourceRates?.price ||
+          selectedAndGeneratedCosting?.product?.sourceRates?.price ||
           0,
         bagPrice: selectedAndGeneratedCosting.generatedCosting.costing.package,
         transportation:
@@ -802,6 +804,10 @@ function EditCosting() {
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
+
+  // const selectedAndGeneratedCosting = useSelector((state) => state.costing);
+
+  // console.log("selectedAndGeneratedCosting **", selectedAndGeneratedCosting);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
