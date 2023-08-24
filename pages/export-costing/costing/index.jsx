@@ -97,7 +97,7 @@ function extractBreakUpItems(breakUpObject) {
   return breakUpItems;
 }
 
-function updateCharges(response, chargesToUpdate) {
+function updateCharges(response, chargesToUpdate, generatedCosting) {
   if (response) {
     const updatedCharges = chargesToUpdate.map((chargeGroup) => {
       const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
@@ -107,9 +107,9 @@ function updateCharges(response, chargesToUpdate) {
           case "Cost of rice":
             updatedInr = response.costing.exmillPrice;
             break;
-          case "PPWoven-50 Kg":
-            updatedInr = response.costing.package;
-            break;
+          // case "PPWoven-50 Kg":
+          //   updatedInr = response.costing.package;
+          //   break;
           case "Transportation":
             updatedInr = response.costing.transportCharge;
             break;
@@ -128,7 +128,9 @@ function updateCharges(response, chargesToUpdate) {
 
             break;
           case "OFC":
-            updatedInr = response.costing.ofcCost;
+            updatedInr = generatedCosting?.grandTotalFob
+              ? 0
+              : response.costing.ofcCost;
             break;
           case "Inspection cost":
             updatedInr = response.constants.inspectionCharge;
@@ -152,6 +154,10 @@ function updateCharges(response, chargesToUpdate) {
           default:
             updatedInr = rowItem.inr; // Use the original inr value if not found in mappings
             break;
+        }
+
+        if (rowItem?.category === "bags") {
+          updatedInr = response.costing.package;
         }
 
         return {
@@ -181,6 +187,7 @@ const breakupArr = [
       },
       {
         label: "PPWoven-50 Kg",
+        category: "bags",
         inr: 0,
         usd: 0,
       },
@@ -277,11 +284,11 @@ const breakupArr = [
         inr: 0,
         usd: 0,
       },
-      {
-        label: "PWIP Fulfilment",
-        inr: 0,
-        usd: 0,
-      },
+      // {
+      //   label: "PWIP Fulfilment",
+      //   inr: 0,
+      //   usd: 0,
+      // },
     ],
   },
 ];
@@ -304,9 +311,19 @@ function CostingOverview() {
     value: "mt",
   });
 
+  React.useEffect(() => {
+    if (selectedCosting) {
+      breakupArr[0].rowItems[1].label = `${selectedCosting?.generatedCosting?.details?.packageDetails?.bag}-${selectedCosting?.generatedCosting?.details?.packageDetails?.weight}${selectedCosting?.generatedCosting?.details?.packageDetails?.unit}`;
+    }
+  }, [breakupArr, selectedCosting]);
+
   useEffect(() => {
     if (generatedCosting && breakupArr) {
-      const updatedCharges = updateCharges(generatedCosting, breakupArr);
+      const updatedCharges = updateCharges(
+        generatedCosting,
+        breakupArr,
+        generatedCosting
+      );
       if (updatedCharges) {
         setBreakupChargesData(updatedCharges);
 

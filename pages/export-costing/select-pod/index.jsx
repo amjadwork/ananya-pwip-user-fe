@@ -5,7 +5,10 @@ import { useSelector, useDispatch } from "react-redux";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
-import { fetchDestinationRequest } from "@/redux/actions/location.actions";
+import {
+  fetchDestinationRequest,
+  fetchOriginRequest,
+} from "@/redux/actions/location.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -29,6 +32,7 @@ function SelectPortOfDestination() {
 
   React.useEffect(() => {
     dispatch(fetchDestinationRequest());
+    dispatch(fetchOriginRequest());
 
     const element = document.getElementById("fixedMenuSection");
     if (element) {

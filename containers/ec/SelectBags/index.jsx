@@ -1,9 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
+import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
+
+import { useOverlayContext } from "@/context/OverlayContext";
 import { dummyRemoveMeCityIcon } from "../../../theme/icon";
 
 const SelectBagsContainer = (props) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const selectedCosting = useSelector((state) => state.costing);
+  const packagingBags = useSelector((state) => state.bags);
+
+  const { closeBottomSheet } = useOverlayContext();
 
   const {
     roundedTop = false,
@@ -13,6 +23,13 @@ const SelectBagsContainer = (props) => {
   } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [packagingBagsData, setPackagingBagsData] = React.useState([]);
+
+  React.useEffect(() => {
+    if (packagingBags && !packagingBags?.error && packagingBags?.bags?.length) {
+      setPackagingBagsData([...packagingBags?.bags]);
+    }
+  }, [packagingBags]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -48,12 +65,21 @@ const SelectBagsContainer = (props) => {
         }}
       >
         <div className="grid grid-cols-2 gap-6">
-          {[1, 2, 3, 4].map((items, index) => {
+          {[...packagingBagsData].map((items, index) => {
             return (
               <div
-                key={items + index}
+                key={items._id + index}
                 onClick={() => {
-                  router.push("/export-costing/overview");
+                  dispatch(
+                    setCustomCostingSelection({
+                      ...selectedCosting,
+                      customCostingSelection: {
+                        ...selectedCosting.customCostingSelection,
+                        bags: items,
+                      },
+                    })
+                  );
+                  closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
                 style={{
@@ -66,7 +92,7 @@ const SelectBagsContainer = (props) => {
                 </div>
                 <div className="p-3 flex w-fill flex-col space-y-[4px]">
                   <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    Jute Bags
+                    {items?.bag || ""}
                   </span>
                 </div>
               </div>

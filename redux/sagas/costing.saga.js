@@ -1,5 +1,5 @@
 import { call, put, takeLatest, select } from "redux-saga/effects";
-import axios from "axios";
+
 import {
   SET_COSTING_SELECTION_SUCCESS,
   RESET_COSTING_SELECTION_SUCCESS,
@@ -15,6 +15,8 @@ import {
   fetchGeneratedCostingSuccess,
   fetchGeneratedCostingFailure,
 } from "../actions/costing.actions";
+
+import { api } from "@/utils/helper";
 
 function* setCostingSheetOptions(action) {
   const { product, portOfDestination } = action.payload;
@@ -45,8 +47,8 @@ function* generateQuickCostingSheet(action) {
     };
 
     const response = yield call(
-      axios.post,
-      "https://api-stage.pwip.co/api" + "/quick-costing",
+      api.post,
+      "/quick-costing",
       { ...body },
       {
         headers: {
@@ -54,6 +56,7 @@ function* generateQuickCostingSheet(action) {
         },
       }
     );
+    console.log(response);
     yield put(fetchGeneratedCostingSuccess(response.data));
   } catch (error) {
     yield put(fetchGeneratedCostingFailure(error));

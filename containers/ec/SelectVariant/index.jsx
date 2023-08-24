@@ -2,6 +2,10 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
+import {
+  fetchDestinationRequest,
+  fetchOriginRequest,
+} from "@/redux/actions/location.actions";
 
 import {
   setCostingSelection,
@@ -85,6 +89,8 @@ const SelectVariantContainer = (props) => {
                         },
                       })
                     );
+                    dispatch(fetchDestinationRequest());
+                    dispatch(fetchOriginRequest());
                     closeBottomSheet();
                   } else {
                     dispatch(
@@ -148,6 +154,8 @@ const SelectVariantContainer = (props) => {
                           },
                         })
                       );
+                      dispatch(fetchDestinationRequest());
+                      dispatch(fetchOriginRequest());
                       closeBottomSheet();
                     } else {
                       dispatch(

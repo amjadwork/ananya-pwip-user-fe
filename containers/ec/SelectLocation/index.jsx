@@ -2,9 +2,18 @@ import React from "react";
 import { useRouter } from "next/router";
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 import { useSelector, useDispatch } from "react-redux";
-import { setCostingSelection } from "@/redux/actions/costing.actions.js";
+import { useOverlayContext } from "@/context/OverlayContext";
+
+import {
+  setCostingSelection,
+  setCustomCostingSelection,
+} from "@/redux/actions/costing.actions.js";
 
 const SelectLocationContainer = (props) => {
+  const isFromEdit = props.isFromEdit || false;
+  const locationType = props.locationType || "destination";
+
+  const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -24,10 +33,16 @@ const SelectLocationContainer = (props) => {
   const [destinationList, setDestinationList] = React.useState([]);
 
   React.useEffect(() => {
-    if (locationsData.locations.destinations.length) {
+    if (
+      locationsData?.locations?.destinations?.length &&
+      locationType === "destination"
+    ) {
       setDestinationList(locationsData.locations.destinations);
     }
-  }, [locationsData]);
+    if (locationsData?.locations?.origin?.length && locationType === "origin") {
+      setDestinationList(locationsData.locations.origin);
+    }
+  }, [locationsData, locationType]);
 
   React.useEffect(() => {
     if (selectedCosting && selectedCosting.product) {
@@ -128,13 +143,41 @@ const SelectLocationContainer = (props) => {
               <div
                 key={items._id + index}
                 onClick={() => {
-                  dispatch(
-                    setCostingSelection({
-                      ...selectedCosting,
-                      portOfDestination: items,
-                    })
-                  );
-                  router.push("/export-costing/overview");
+                  if (isFromEdit) {
+                    if (locationType === "destination") {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfDestination: items,
+                          },
+                        })
+                      );
+                    }
+
+                    if (locationType === "origin") {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfOrigin: items,
+                          },
+                        })
+                      );
+                    }
+
+                    closeBottomSheet();
+                  } else {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        portOfDestination: items,
+                      })
+                    );
+                    router.push("/export-costing/overview");
+                  }
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
                 style={{
@@ -170,13 +213,40 @@ const SelectLocationContainer = (props) => {
                 key={items._id + index}
                 className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
                 onClick={() => {
-                  dispatch(
-                    setCostingSelection({
-                      ...selectedCosting,
-                      portOfDestination: items,
-                    })
-                  );
-                  router.push("/export-costing/overview");
+                  if (isFromEdit) {
+                    if (locationType === "destination") {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfDestination: items,
+                          },
+                        })
+                      );
+                    }
+
+                    if (locationType === "origin") {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfOrigin: items,
+                          },
+                        })
+                      );
+                    }
+                    closeBottomSheet();
+                  } else {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        portOfDestination: items,
+                      })
+                    );
+                    router.push("/export-costing/overview");
+                  }
                 }}
               >
                 <div className="h-[46px] w-[46px] rounded-sm bg-pwip-primary-50">

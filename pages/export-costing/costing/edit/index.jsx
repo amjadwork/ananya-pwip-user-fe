@@ -15,6 +15,8 @@ import { Button } from "@/components/Button";
 
 import { inrToUsd } from "@/utils/helper";
 
+import { fetchPackagingBagsRequest } from "@/redux/actions/packaging.actions.js";
+
 import {
   chevronDown,
   plusIcon,
@@ -33,7 +35,7 @@ import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
 // Import Layouts
 
-const breakupArr = [
+let breakupArr = [
   {
     title: "Rice and bags",
     icon: riceAndBagsIcon,
@@ -182,13 +184,19 @@ const CostingForm = () => {
           selectedAndGeneratedCosting?.customCostingSelection?.product
             ?.brokenPercentage || 0,
         _bagId:
+          selectedAndGeneratedCosting?.customCostingSelection?.bags ||
           selectedAndGeneratedCosting.generatedCosting.details.packageDetails,
         bagSize:
+          selectedAndGeneratedCosting?.customCostingSelection?.bags?.weight ||
           selectedAndGeneratedCosting.generatedCosting.details.packageDetails
             .weight,
         _originId:
-          selectedAndGeneratedCosting.generatedCosting.details.originPortObject,
+          selectedAndGeneratedCosting?.customCostingSelection?.portOfOrigin ||
+          selectedAndGeneratedCosting?.generatedCosting?.details
+            ?.originPortObject,
         _destinationId:
+          selectedAndGeneratedCosting?.customCostingSelection
+            ?.portOfDestination ||
           selectedAndGeneratedCosting.generatedCosting.details
             .destinationObject,
         _containerId:
@@ -413,7 +421,10 @@ const CostingForm = () => {
                 placeholder="Ex: Mumbai india"
                 type="text"
                 name="_originId"
-                defaultValue={values?._originId?.originPortName}
+                defaultValue={
+                  values?._originId?.portName ||
+                  values?._originId?.originPortName
+                }
                 readOnly={true}
                 onChange={handleChange}
                 onBlur={handleBlur}
@@ -425,6 +436,8 @@ const CostingForm = () => {
                         roundedTop={false}
                         noTop={true}
                         noPaddingBottom={true}
+                        isFromEdit={true}
+                        locationType="origin"
                       />
                     </div>
                   );
@@ -459,6 +472,8 @@ const CostingForm = () => {
                         roundedTop={false}
                         noTop={true}
                         noPaddingBottom={true}
+                        isFromEdit={true}
+                        locationType="destination"
                       />
                     </div>
                   );
@@ -598,7 +613,9 @@ const BreakupForm = () => {
             ?.sourceRates?.price ||
           selectedAndGeneratedCosting?.product?.sourceRates?.price ||
           0,
-        bagPrice: selectedAndGeneratedCosting.generatedCosting.costing.package,
+        bagPrice:
+          selectedAndGeneratedCosting?.customCostingSelection?.bags?.cost ||
+          selectedAndGeneratedCosting.generatedCosting.costing.package,
         transportation:
           selectedAndGeneratedCosting.generatedCosting.costing.transportCharge,
         cfsHandling:
@@ -661,19 +678,9 @@ const BreakupForm = () => {
         <form className="inline-flex flex-col w-full" onSubmit={handleSubmit}>
           <div className="inline-flex flex-col w-full">
             {breakupArr.map((item, index) => {
-              const hasBreakup = breakupArr[index].rowItems.some(
-                (d) => d?.breakUp?.length
-              );
               return (
                 <React.Fragment key={item.title + index}>
-                  <div
-                    //   onClick={() => {
-                    //     if (hasBreakup) {
-                    //       handleOpenBottomSheet(index);
-                    //     }
-                    //   }}
-                    className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40"
-                  >
+                  <div className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40">
                     <div className="inline-flex items-center justify-between w-full p-3 border-[1px] border-pwip-gray-40">
                       <div className="inline-flex items-center space-x-2 w-full">
                         {item.icon}
@@ -805,11 +812,20 @@ function EditCosting() {
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
 
-  // const selectedAndGeneratedCosting = useSelector((state) => state.costing);
-
-  // console.log("selectedAndGeneratedCosting **", selectedAndGeneratedCosting);
+  const selectedCosting = useSelector((state) => state.costing);
 
   React.useEffect(() => {
+    if (selectedCosting) {
+      breakupArr[0].rowItems[1].label = selectedCosting.customCostingSelection
+        ?.bags
+        ? `${selectedCosting.customCostingSelection?.bags?.bag}-${selectedCosting.customCostingSelection?.bags?.weight}${selectedCosting.customCostingSelection?.bags?.unit}`
+        : `${selectedCosting?.generatedCosting?.details?.packageDetails?.bag}-${selectedCosting?.generatedCosting?.details?.packageDetails?.weight}${selectedCosting?.generatedCosting?.details?.packageDetails?.unit}`;
+    }
+  }, [breakupArr, selectedCosting]);
+
+  React.useEffect(() => {
+    dispatch(fetchPackagingBagsRequest());
+
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
