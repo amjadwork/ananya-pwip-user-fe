@@ -10,6 +10,11 @@ import {
   // Custom costing
   SET_CUSTOM_COSTING_SELECTION_SUCCESS,
   SET_CUSTOM_COSTING_SELECTION_FAILURE,
+
+  // GENERATE COSTING
+  GENERATE_CUSTON_COSTING_REQUEST,
+  GENERATE_CUSTON_COSTING_SUCCESS,
+  GENERATE_CUSTON_COSTING_FAILURE,
 } from "./types/costing.types";
 
 export const setCostingSelection = (selected) => ({
@@ -44,4 +49,19 @@ export const fetchGeneratedCostingSuccess = (costing) => ({
 
 export const fetchGeneratedCostingFailure = () => ({
   type: GENERATE_COSTING_FAILURE,
+});
+
+// generate custom costing
+export const generateCustomCostingRequest = (requestData) => ({
+  type: GENERATE_CUSTON_COSTING_REQUEST,
+  payload: requestData,
+});
+
+export const fetchGeneratedCustomCostingSuccess = (costing) => ({
+  type: GENERATE_CUSTON_COSTING_SUCCESS,
+  payload: costing,
+});
+
+export const fetchGeneratedCustomCostingFailure = () => ({
+  type: GENERATE_CUSTON_COSTING_FAILURE,
 });

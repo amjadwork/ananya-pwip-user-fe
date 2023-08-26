@@ -6,6 +6,7 @@ import {
   GENERATE_COSTING_REQUEST,
   SET_CUSTOM_COSTING_SELECTION_REQUEST,
   RESET_CUSTOM_COSTING_SELECTION_REQUEST,
+  GENERATE_CUSTON_COSTING_REQUEST,
 } from "../actions/types/costing.types";
 import {
   setCostingSelection,
@@ -14,6 +15,8 @@ import {
   resetCustomCostingSelection,
   fetchGeneratedCostingSuccess,
   fetchGeneratedCostingFailure,
+  fetchGeneratedCustomCostingSuccess,
+  fetchGeneratedCustomCostingFailure,
 } from "../actions/costing.actions";
 
 import { api } from "@/utils/helper";
@@ -63,11 +66,37 @@ function* generateQuickCostingSheet(action) {
   }
 }
 
+function* generateCustomCostingSheet(action) {
+  const body = action.payload;
+
+  try {
+    const authState = yield select((state) => state.auth);
+
+    const headers = {
+      Authorization: `Bearer ${authState.token}`,
+    };
+
+    const response = yield call(
+      api.post,
+      "/custom-costing",
+      { ...body },
+      {
+        headers: {
+          ...headers,
+        },
+      }
+    );
+
+    yield put(fetchGeneratedCustomCostingSuccess(response.data));
+  } catch (error) {
+    yield put(fetchGeneratedCustomCostingFailure(error));
+  }
+}
+
 export default function* costingSaga() {
   yield takeLatest(SET_COSTING_SELECTION_SUCCESS, setCostingSheetOptions);
   yield takeLatest(RESET_COSTING_SELECTION_SUCCESS, resetCostingSheetOptions);
   yield takeLatest(GENERATE_COSTING_REQUEST, generateQuickCostingSheet);
-
   yield takeLatest(
     SET_CUSTOM_COSTING_SELECTION_REQUEST,
     setCustomCostingSheetOptions
@@ -76,4 +105,5 @@ export default function* costingSaga() {
     RESET_CUSTOM_COSTING_SELECTION_REQUEST,
     resetCustomCostingSheetOptions
   );
+  yield takeLatest(GENERATE_CUSTON_COSTING_REQUEST, generateCustomCostingSheet);
 }

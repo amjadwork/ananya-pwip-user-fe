@@ -5,6 +5,8 @@ import {
   GENERATE_COSTING_FAILURE,
   SET_CUSTOM_COSTING_SELECTION_SUCCESS,
   SET_CUSTOM_COSTING_SELECTION_FAILURE,
+  GENERATE_CUSTON_COSTING_SUCCESS,
+  GENERATE_CUSTON_COSTING_FAILURE,
 } from "../actions/types/costing.types";
 
 const initialState = {
@@ -59,6 +61,16 @@ const costingReducer = (state = initialState, action) => {
           bags: null,
           containers: null,
         },
+      };
+    case GENERATE_CUSTON_COSTING_SUCCESS:
+      return {
+        ...state,
+        generatedCosting: action.payload,
+      };
+    case GENERATE_CUSTON_COSTING_FAILURE:
+      return {
+        ...state,
+        generatedCosting: null,
       };
     default:
       return state;

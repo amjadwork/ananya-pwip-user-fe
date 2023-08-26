@@ -18,6 +18,7 @@ import { generatePayloadForCustomCosting } from "@/utils/helper";
 import { fetchPackagingBagsRequest } from "@/redux/actions/packaging.actions";
 import { fetchContainersRequest } from "@/redux/actions/container.actions";
 import { fetchMyCostingFailure } from "@/redux/actions/myCosting.actions";
+import { generateCustomCostingRequest } from "@/redux/actions/costing.actions";
 
 // Import Containers
 import CostingForm from "containers/ec/Forms/CostingForm";
@@ -43,7 +44,7 @@ function EditCosting() {
     }
     return null;
   });
-  console.log("selectedMyCostingFromHistory", selectedMyCostingFromHistory);
+
   useEffect(() => {
     if (
       formik &&
@@ -280,10 +281,9 @@ function EditCosting() {
 
                       const payload =
                         generatePayloadForCustomCosting(givenData);
-                      console.log(payload);
-
-                      // dispatch(fetchMyCostingFailure());
-                      // router.replace("/export-costing/costing");
+                      dispatch(generateCustomCostingRequest(payload));
+                      dispatch(fetchMyCostingFailure());
+                      router.replace("/export-costing/costing");
                     }}
                   />
                 </div>
