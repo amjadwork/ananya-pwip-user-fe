@@ -1,11 +1,15 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
+
 import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
+import { fetchMyCostingFailure } from "@/redux/actions/myCosting.actions";
 
 const hideBottomBarAtRoutes = ["costing", "edit"];
 
 export function Header(props) {
   const router = useRouter();
+  const dispatch = useDispatch();
 
   // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
   // const component = props.component;
@@ -16,6 +20,9 @@ export function Header(props) {
     React.useState("");
 
   const handleBack = () => {
+    if (activeRoute === "edit") {
+      dispatch(fetchMyCostingFailure());
+    }
     router.back();
   };
 

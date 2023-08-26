@@ -13,7 +13,7 @@ import { api } from "@/utils/helper";
 
 function* fetchDestinationLocation() {
   try {
-    const authState = yield select((state) => state.auth); // Assuming your token is stored in auth reducer
+    const authState = yield select((state) => state.auth);
     const selectedSourceId = yield select(
       (state) => state.costing.product.sourceRates._sourceId
     );
@@ -47,7 +47,7 @@ function* fetchDestinationLocation() {
 
 function* fetchOriginLocation() {
   try {
-    const authState = yield select((state) => state.auth); // Assuming your token is stored in auth reducer
+    const authState = yield select((state) => state.auth);
     const selectedSourceId = yield select(
       (state) => state.costing.product.sourceRates._sourceId
     );

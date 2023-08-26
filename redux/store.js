@@ -12,7 +12,7 @@ const sagaMiddleware = createSagaMiddleware();
 const persistConfig = {
   key: "root", // Key in local storage
   storage, // Storage engine
-  whitelist: ["auth", "products", "location", "costing", "bags"], // List of reducers to persist
+  whitelist: ["auth", "products", "locations", "costing", "bags", "myCosting"], // List of reducers to persist
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

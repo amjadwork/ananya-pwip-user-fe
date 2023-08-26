@@ -8,7 +8,7 @@ import { api } from "@/utils/helper";
 
 function* fetchProducts() {
   try {
-    const authState = yield select((state) => state.auth); // Assuming your token is stored in auth reducer
+    const authState = yield select((state) => state.auth);
 
     const headers = {
       Authorization: `Bearer ${authState.token}`,

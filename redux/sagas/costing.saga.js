@@ -40,7 +40,7 @@ function* generateQuickCostingSheet(action) {
   const body = action.payload;
 
   try {
-    const authState = yield select((state) => state.auth); // Assuming your token is stored in auth reducer
+    const authState = yield select((state) => state.auth);
 
     const headers = {
       Authorization: `Bearer ${authState.token}`,
@@ -56,7 +56,7 @@ function* generateQuickCostingSheet(action) {
         },
       }
     );
-    console.log(response);
+
     yield put(fetchGeneratedCostingSuccess(response.data));
   } catch (error) {
     yield put(fetchGeneratedCostingFailure(error));

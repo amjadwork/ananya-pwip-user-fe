@@ -11,12 +11,11 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 
 import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
+import { saveCostingRequest } from "@/redux/actions/myCosting.actions";
 
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 
-// Import Containers
-// import { UserTypeContainer } from "@/containers/ec/UserType";
-// Import Layouts
+import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 function SelectionOverview() {
   const router = useRouter();
@@ -25,8 +24,25 @@ function SelectionOverview() {
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [selectedCostingOptions, setSelectedCostingOptions] =
     React.useState(null);
+  const [isGenerated, setIsGenerated] = React.useState(false);
 
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+
+  React.useEffect(() => {
+    if (selectedCosting && selectedCosting?.generatedCosting && isGenerated) {
+      const saveHistoryPayload = getCostingToSaveHistoryPayload(
+        selectedCosting?.generatedCosting
+      );
+
+      const payloadBody = {
+        ...saveHistoryPayload,
+      };
+
+      dispatch(saveCostingRequest(payloadBody));
+      setIsGenerated(false);
+      router.push("/export-costing/costing");
+    }
+  }, [selectedCosting, isGenerated]);
 
   React.useEffect(() => {
     if (selectedCosting) {
@@ -50,10 +66,6 @@ function SelectionOverview() {
     <React.Fragment>
       <Head>
         <meta charSet="utf-8" />
-        {/* <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-        /> */}
 
         <title>Export Costing by pwip</title>
 
@@ -516,7 +528,7 @@ function SelectionOverview() {
               };
 
               await dispatch(generateQuickCostingRequest(body));
-              router.push("/export-costing/costing");
+              setIsGenerated(true);
             }}
           />
         </div>

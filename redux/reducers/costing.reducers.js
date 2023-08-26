@@ -16,7 +16,7 @@ const initialState = {
     portOfOrigin: null,
     portOfDestination: null,
     bags: null,
-    container: null,
+    containers: null,
   },
 };
 
@@ -57,7 +57,7 @@ const costingReducer = (state = initialState, action) => {
           portOfOrigin: null,
           portOfDestination: null,
           bags: null,
-          container: null,
+          containers: null,
         },
       };
     default:

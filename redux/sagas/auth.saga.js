@@ -1,5 +1,5 @@
 import { takeLatest, put } from "redux-saga/effects";
-import { setAuthData } from "../actions/auth.actions"; // Import your action creator
+import { setAuthData } from "../actions/auth.actions";
 import { AUTH_SUCCESS } from "../actions/types/auth.types";
 
 function* handleAuthSuccess(action) {

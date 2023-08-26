@@ -14,8 +14,11 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 
 import { inrToUsd } from "@/utils/helper";
+// import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
-import { fetchPackagingBagsRequest } from "@/redux/actions/packaging.actions.js";
+import { fetchPackagingBagsRequest } from "@/redux/actions/packaging.actions";
+import { fetchContainersRequest } from "@/redux/actions/container.actions";
+import { fetchMyCostingFailure } from "@/redux/actions/myCosting.actions";
 
 import {
   chevronDown,
@@ -166,57 +169,76 @@ let breakupArr = [
 ];
 
 const CostingForm = () => {
+  const router = useRouter();
+
   const formik = useRef();
+  const dispatch = useDispatch();
 
   const { openBottomSheet } = useOverlayContext();
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
+  const selectedMyCostingFromHistory = useSelector((state) => {
+    if (
+      state.myCosting &&
+      state.myCosting.currentCostingFromHistory &&
+      state.myCosting.currentCostingFromHistory.length
+    ) {
+      return state.myCosting.currentCostingFromHistory[0];
+    }
+    return null;
+  });
+  const myCosting = useSelector((state) => state.myCosting);
 
   useEffect(() => {
-    if (formik && formik.current && selectedAndGeneratedCosting) {
+    if (
+      formik &&
+      formik.current &&
+      selectedAndGeneratedCosting &&
+      selectedMyCostingFromHistory
+    ) {
       const formikRef = formik.current;
 
       formikRef.setValues({
-        costingName: "",
+        costingName: selectedMyCostingFromHistory?.costingName || "",
         _variantId:
           selectedAndGeneratedCosting?.customCostingSelection?.product ||
-          selectedAndGeneratedCosting?.product,
+          selectedMyCostingFromHistory?.details?.variantObject,
         brokenPercentage:
           selectedAndGeneratedCosting?.customCostingSelection?.product
-            ?.brokenPercentage || 0,
+            ?.brokenPercentage ||
+          selectedMyCostingFromHistory?.details?.variantObject
+            ?.brokenPercentage ||
+          0,
         _bagId:
           selectedAndGeneratedCosting?.customCostingSelection?.bags ||
-          selectedAndGeneratedCosting.generatedCosting.details.packageDetails,
+          selectedMyCostingFromHistory?.details.packageDetails,
         bagSize:
           selectedAndGeneratedCosting?.customCostingSelection?.bags?.weight ||
-          selectedAndGeneratedCosting.generatedCosting.details.packageDetails
-            .weight,
+          selectedMyCostingFromHistory?.details.packageDetails.weight,
         _originId:
           selectedAndGeneratedCosting?.customCostingSelection?.portOfOrigin ||
-          selectedAndGeneratedCosting?.generatedCosting?.details
-            ?.originPortObject,
+          selectedMyCostingFromHistory?.details?.originPortObject,
         _destinationId:
           selectedAndGeneratedCosting?.customCostingSelection
             ?.portOfDestination ||
-          selectedAndGeneratedCosting.generatedCosting.details
-            .destinationObject,
+          selectedMyCostingFromHistory?.details.destinationObject,
         _containerId:
-          selectedAndGeneratedCosting.generatedCosting.breakup.chaObject
-            .chaContainerObject,
+          selectedAndGeneratedCosting?.customCostingSelection?.containers ||
+          selectedMyCostingFromHistory?.details?.containerObject,
         containersCount: 1,
         containerWeight:
-          selectedAndGeneratedCosting.generatedCosting.breakup.chaObject
-            .chaContainerObject.weight,
-        exportDuty: selectedAndGeneratedCosting.generatedCosting.constants
-          .exportDutyCharge
+          selectedAndGeneratedCosting?.customCostingSelection?.containers
+            ?.weight ||
+          selectedMyCostingFromHistory?.details?.containerObject.weight,
+        exportDuty: selectedMyCostingFromHistory?.constants?.exportDutyCharge
           ? true
           : false,
-        pwipFullfillment: selectedAndGeneratedCosting.generatedCosting.constants
+        pwipFullfillment: selectedMyCostingFromHistory?.constants
           .pwipFullfillment
           ? true
           : false,
       });
     }
-  }, [formik, selectedAndGeneratedCosting]);
+  }, [formik, selectedAndGeneratedCosting, selectedMyCostingFromHistory]);
 
   return (
     <Formik
@@ -590,6 +612,10 @@ const CostingForm = () => {
               buttonType="submit"
               label="Update costing"
               disabled={isSubmitting}
+              onClick={() => {
+                dispatch(fetchMyCostingFailure());
+                router.replace("/export-costing/costing");
+              }}
             />
           </div>
         </form>
@@ -602,45 +628,55 @@ const BreakupForm = () => {
   const formik = useRef();
 
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
+  const selectedMyCostingFromHistory = useSelector((state) => {
+    if (
+      state.myCosting &&
+      state.myCosting.currentCostingFromHistory &&
+      state.myCosting.currentCostingFromHistory.length
+    ) {
+      return state.myCosting.currentCostingFromHistory[0];
+    }
+    return null;
+  });
 
   useEffect(() => {
-    if (formik && formik.current && selectedAndGeneratedCosting) {
+    if (
+      formik &&
+      formik.current &&
+      selectedAndGeneratedCosting &&
+      selectedMyCostingFromHistory
+    ) {
       const formikRef = formik.current;
 
       formikRef.setValues({
         costOfRice:
           selectedAndGeneratedCosting?.customCostingSelection?.product
             ?.sourceRates?.price ||
-          selectedAndGeneratedCosting?.product?.sourceRates?.price ||
+          selectedMyCostingFromHistory?.costing?.exmillPrice ||
           0,
         bagPrice:
           selectedAndGeneratedCosting?.customCostingSelection?.bags?.cost ||
-          selectedAndGeneratedCosting.generatedCosting.costing.package,
-        transportation:
-          selectedAndGeneratedCosting.generatedCosting.costing.transportCharge,
-        cfsHandling:
-          selectedAndGeneratedCosting.generatedCosting.costing.cfsHandling,
-        shl: selectedAndGeneratedCosting.generatedCosting.costing.shlCost,
-        ofc: selectedAndGeneratedCosting.generatedCosting.costing.ofcCost,
+          selectedMyCostingFromHistory?.costing?.package,
+        transportation: selectedMyCostingFromHistory?.costing?.transportCharge,
+        cfsHandling: selectedMyCostingFromHistory?.costing?.cfsHandling,
+        shl: selectedMyCostingFromHistory?.costing?.shlCost,
+        ofc: selectedMyCostingFromHistory?.costing?.ofcCost,
         inspectionCost:
-          selectedAndGeneratedCosting.generatedCosting.constants
-            .inspectionCharge,
-        financeCost:
-          selectedAndGeneratedCosting.generatedCosting.constants.financeCost,
-        overheads:
-          selectedAndGeneratedCosting.generatedCosting.constants.overHeadCharge,
-        margin: selectedAndGeneratedCosting.generatedCosting.constants.margin,
-        // exportDuty: selectedAndGeneratedCosting.generatedCosting.constants
+          selectedMyCostingFromHistory?.constants?.inspectionCharge,
+        financeCost: selectedMyCostingFromHistory?.constants?.financeCost,
+        overheads: selectedMyCostingFromHistory?.constants?.overHeadCharge,
+        margin: selectedMyCostingFromHistory?.constants?.margin,
+        // exportDuty: selectedMyCostingFromHistory?.constants
         //   .exportDutyCharge
         //   ? true
         //   : false,
-        // pwipFullfillment: selectedAndGeneratedCosting.generatedCosting.constants
+        // pwipFullfillment: selectedMyCostingFromHistory?.constants
         //   .pwipFullfillment
         //   ? true
         //   : false,
       });
     }
-  }, [formik, selectedAndGeneratedCosting]);
+  }, [formik, selectedAndGeneratedCosting, selectedMyCostingFromHistory]);
 
   return (
     <Formik
@@ -794,9 +830,10 @@ const BreakupForm = () => {
               type="primary"
               buttonType="submit"
               label="Update costing"
-              // onClick={() => {
-              //   router.push("/export-costing/costing");
-              // }}
+              onClick={() => {
+                dispatch(fetchMyCostingFailure());
+                router.replace("/export-costing/costing");
+              }}
             />
           </div>
         </form>
@@ -825,6 +862,7 @@ function EditCosting() {
 
   React.useEffect(() => {
     dispatch(fetchPackagingBagsRequest());
+    dispatch(fetchContainersRequest());
 
     const element = document.getElementById("fixedMenuSection");
     if (element) {

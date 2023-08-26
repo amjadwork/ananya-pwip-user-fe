@@ -11,8 +11,13 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
+// import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
+import {
+  updateCostingRequest,
+  fetchMyCostingRequest,
+} from "@/redux/actions/myCosting.actions";
 
 import {
   chevronDown,
@@ -23,47 +28,7 @@ import {
   eyePreviewIcon,
 } from "../../../theme/icon";
 
-// Import Containers
-// import { UserTypeContainer } from "@/containers/ec/UserType";
-// Import Layouts
-
 const lineBackgroundColor = ["bg-pwip-teal-900", "bg-pwip-orange-900"];
-
-function getCostingToSaveHistoryPayload(inputJson) {
-  return {
-    costingName: "test2",
-    brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
-    unit: inputJson.details.variantObject.unit,
-    _variantId: inputJson.details.variantObject._variantId,
-    _bagId: inputJson.details.packageDetails._id,
-    bagSize: inputJson.details.packageDetails.weight,
-    _sourceId: inputJson.details.sourceObject._id,
-    _originId: inputJson.details.originPortObject._originId,
-    _destinationId: inputJson.details.destinationObject._destinationId,
-    _containerId: inputJson.details.ofcObject._containerId,
-    containersCount: 3, // Adjust as needed
-    containerWeight: inputJson.details.ofcObject.containerObject.weight,
-    isExportDuty: false,
-    isPwipFullfillment: false,
-    termOfAgreement: "FOB",
-    costOfRice: inputJson.details.variantObject.exmillPrice,
-    bagPrice: inputJson.costing.package,
-    transportation: inputJson.details.transportationObject.transportationCharge,
-    cfsHandling: inputJson.costing.cfsHandling,
-    shippingLineLocals: inputJson.costing.shlCost,
-    OFC: inputJson.details.ofcObject.ofcCharge,
-    inspectionCost: inputJson.constants.inspectionCharge,
-    insurance: inputJson.constants.insurance,
-    financeCost: inputJson.constants.financeCost,
-    overhead: inputJson.constants.overHeadCharge,
-    margin: inputJson.constants.margin,
-    exportDuty: inputJson.constants.exportDutyCharge,
-    pwipFullfillment: inputJson.constants.pwipFullfillment,
-    FOB: inputJson.grandTotalFob,
-    CIF: inputJson.grandTotalCif,
-    grandTotal: inputJson.grandTotal,
-  };
-}
 
 function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -301,15 +266,32 @@ function CostingOverview() {
     (state) => state.costing.generatedCosting
   );
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  const myCosting = useSelector((state) => state.myCosting);
 
   const { openBottomSheet, closeBottomSheet } = useOverlayContext();
 
   const [showBreakup, setShowBreakup] = useState(false);
   const [breakupChargesData, setBreakupChargesData] = useState([]);
+  const [isChangingUnit, setIsChangingUnit] = useState(false);
   const [selectedUnit, setSelectedUnit] = React.useState({
     label: "Metric ton",
     value: "mt",
   });
+
+  React.useEffect(() => {
+    if (
+      selectedCosting &&
+      selectedCosting?.generatedCosting &&
+      selectedUnit &&
+      isChangingUnit
+    ) {
+      const payloadBody = {
+        unit: selectedUnit?.value,
+      };
+      setIsChangingUnit(false);
+      dispatch(updateCostingRequest(payloadBody));
+    }
+  }, [selectedCosting, selectedUnit, isChangingUnit]);
 
   React.useEffect(() => {
     if (selectedCosting) {
@@ -326,10 +308,6 @@ function CostingOverview() {
       );
       if (updatedCharges) {
         setBreakupChargesData(updatedCharges);
-
-        const saveHistoryPayload =
-          getCostingToSaveHistoryPayload(generatedCosting);
-        console.log("saveHistoryPayload", saveHistoryPayload);
       }
     }
   }, [generatedCosting]);
@@ -450,6 +428,7 @@ function CostingOverview() {
                       unit: items?.value || "mt",
                     };
                     dispatch(generateQuickCostingRequest(body));
+                    setIsChangingUnit(true);
                   }}
                   className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col items-center space-t"
                   style={{
@@ -559,8 +538,13 @@ function CostingOverview() {
                   </span>
                   <div
                     className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
-                    onClick={() => {
+                    onClick={async () => {
                       setShowBreakup(false);
+                      await dispatch(
+                        fetchMyCostingRequest(
+                          myCosting.myRecentSavedCosting._id
+                        )
+                      );
                       router.push("/export-costing/costing/edit");
                     }}
                   >

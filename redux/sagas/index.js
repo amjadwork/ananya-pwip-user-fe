@@ -4,6 +4,8 @@ import productsSaga from "./products.saga";
 import costingSaga from "./costing.saga";
 import locationSaga from "./location.saga";
 import packagingBagsSaga from "./packaging.saga";
+import containerSaga from "./container.saga";
+import myCostingSaga from "./myCosting.saga";
 
 function* rootSaga() {
   yield all([
@@ -12,6 +14,8 @@ function* rootSaga() {
     costingSaga(),
     locationSaga(),
     packagingBagsSaga(),
+    containerSaga(),
+    myCostingSaga(),
   ]);
 }
 

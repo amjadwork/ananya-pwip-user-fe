@@ -1,9 +1,19 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { dummyRemoveMeCityIcon } from "../../../theme/icon";
+import { useSelector, useDispatch } from "react-redux";
+import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
+import { useOverlayContext } from "@/context/OverlayContext";
+
+// import { dummyRemoveMeCityIcon } from "../../../theme/icon";
 
 const SelectCargoContainersContainer = (props) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const containersData = useSelector((state) => state.containers);
+  const selectedCosting = useSelector((state) => state.costing);
+
+  const { closeBottomSheet } = useOverlayContext();
 
   const {
     roundedTop = false,
@@ -13,6 +23,13 @@ const SelectCargoContainersContainer = (props) => {
   } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [containersList, setContainersList] = React.useState([]);
+
+  React.useEffect(() => {
+    if (containersData && containersData?.containers.length) {
+      setContainersList([...containersData?.containers]);
+    }
+  }, [containersData]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -48,12 +65,21 @@ const SelectCargoContainersContainer = (props) => {
         }}
       >
         <div className="grid grid-cols-2 gap-6">
-          {[1, 2].map((items, index) => {
+          {[...containersList].map((items, index) => {
             return (
               <div
-                key={items + index}
+                key={items._id + index}
                 onClick={() => {
-                  router.push("/export-costing/overview");
+                  dispatch(
+                    setCustomCostingSelection({
+                      ...selectedCosting,
+                      customCostingSelection: {
+                        ...selectedCosting.customCostingSelection,
+                        containers: items,
+                      },
+                    })
+                  );
+                  closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
                 style={{
@@ -66,7 +92,7 @@ const SelectCargoContainersContainer = (props) => {
                 </div>
                 <div className="p-3 flex w-fill flex-col space-y-[4px]">
                   <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    Dry Container- 20FT
+                    {items.type || ""} - {items.size}
                   </span>
                 </div>
               </div>

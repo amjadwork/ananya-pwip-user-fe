@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
 
 import { useOverlayContext } from "@/context/OverlayContext";
-import { dummyRemoveMeCityIcon } from "../../../theme/icon";
 
 const SelectBagsContainer = (props) => {
   const router = useRouter();
