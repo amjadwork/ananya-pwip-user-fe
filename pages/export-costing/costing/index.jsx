@@ -17,6 +17,7 @@ import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
   fetchMyCostingRequest,
+  saveCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
 import {
@@ -27,6 +28,21 @@ import {
   otherChargesIcon,
   eyePreviewIcon,
 } from "../../../theme/icon";
+
+const unitOptions = [
+  {
+    label: "Metric ton",
+    value: "mt",
+  },
+  {
+    label: "Killogram",
+    value: "kg",
+  },
+  {
+    label: "Quintal",
+    value: "qt",
+  },
+];
 
 const lineBackgroundColor = ["bg-pwip-teal-900", "bg-pwip-orange-900"];
 
@@ -62,7 +78,7 @@ function extractBreakUpItems(breakUpObject) {
   return breakUpItems;
 }
 
-function updateCharges(response, chargesToUpdate, generatedCosting) {
+function updateCharges(response, chargesToUpdate) {
   if (response) {
     const updatedCharges = chargesToUpdate.map((chargeGroup) => {
       const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
@@ -81,21 +97,19 @@ function updateCharges(response, chargesToUpdate, generatedCosting) {
           case "CFS Handling":
             updatedInr = response.costing.cfsHandling;
             rowItem.breakUp = extractBreakUpItems(
-              response.breakup.chaObject.chaDetailObject
+              response?.breakup?.chaObject?.chaDetailObject
             );
 
             break;
           case "Shipping line locals":
             updatedInr = response.costing.shlCost;
             rowItem.breakUp = extractBreakUpItems(
-              response.breakup.shlObject.shlDetailObject
+              response?.breakup?.shlObject?.shlDetailObject
             );
 
             break;
           case "OFC":
-            updatedInr = generatedCosting?.grandTotalFob
-              ? 0
-              : response.costing.ofcCost;
+            updatedInr = response?.grandTotalFob ? 0 : response.costing.ofcCost;
             break;
           case "Inspection cost":
             updatedInr = response.constants.inspectionCharge;
@@ -139,7 +153,7 @@ function updateCharges(response, chargesToUpdate, generatedCosting) {
   }
 }
 
-const breakupArr = [
+let breakupArr = [
   {
     title: "Rice and bags",
     icon: riceAndBagsIcon,
@@ -277,6 +291,7 @@ function CostingOverview() {
     label: "Metric ton",
     value: "mt",
   });
+  const [generatedCostingData, setGeneratedCostingData] = useState(null);
 
   React.useEffect(() => {
     if (
@@ -301,16 +316,39 @@ function CostingOverview() {
 
   useEffect(() => {
     if (generatedCosting && breakupArr) {
-      const updatedCharges = updateCharges(
-        generatedCosting,
-        breakupArr,
-        generatedCosting
-      );
+      setGeneratedCostingData(generatedCosting);
+      const updatedCharges = updateCharges(generatedCosting, breakupArr);
       if (updatedCharges) {
         setBreakupChargesData(updatedCharges);
       }
     }
   }, [generatedCosting]);
+
+  useEffect(() => {
+    if (
+      myCosting?.currentCostingFromHistory &&
+      myCosting?.currentCostingFromHistory?.length &&
+      !generatedCosting
+    ) {
+      setGeneratedCostingData(myCosting?.currentCostingFromHistory[0]);
+      const sheet = myCosting?.currentCostingFromHistory[0];
+
+      breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
+
+      const updatedCharges = updateCharges(
+        myCosting?.currentCostingFromHistory[0],
+        breakupArr
+      );
+
+      const selected = unitOptions.find((u) => u.value === sheet.unit);
+
+      setSelectedUnit(selected);
+
+      if (updatedCharges) {
+        setBreakupChargesData(updatedCharges);
+      }
+    }
+  }, [myCosting, generatedCosting]);
 
   const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
@@ -469,7 +507,7 @@ function CostingOverview() {
     }
   };
 
-  if (!generatedCosting) {
+  if (!breakupChargesData.length) {
     return null;
   }
 
@@ -530,21 +568,26 @@ function CostingOverview() {
               >
                 <div className="inline-flex items-center justify-between w-full">
                   <span className="text-pwip-gray-1000 text-lg font-normal font-sans line-clamp-1">
-                    {generatedCosting?.details?.originPortObject
-                      ?.originPortName || "-/-"}{" "}
+                    {generatedCostingData?.details?.originPortObject
+                      ?.originPortName ||
+                      generatedCostingData?.details?.originPortObject
+                        ?.portName ||
+                      "-/-"}{" "}
                     -{" "}
-                    {generatedCosting?.details?.destinationObject?.portName ||
-                      "-/-"}
+                    {generatedCostingData?.details?.destinationObject
+                      ?.portName || "-/-"}
                   </span>
                   <div
                     className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
                     onClick={async () => {
                       setShowBreakup(false);
-                      await dispatch(
-                        fetchMyCostingRequest(
-                          myCosting.myRecentSavedCosting._id
-                        )
-                      );
+                      if (myCosting.myRecentSavedCosting) {
+                        await dispatch(
+                          fetchMyCostingRequest(
+                            myCosting.myRecentSavedCosting._id
+                          )
+                        );
+                      }
                       router.push("/export-costing/costing/edit");
                     }}
                   >
@@ -556,27 +599,27 @@ function CostingOverview() {
                 </div>
 
                 <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                  {generatedCosting?.grandTotalFob ? "FOB" : "CIF"}
+                  {generatedCostingData?.grandTotalFob ? "FOB" : "CIF"}
                 </span>
 
                 <div className="inline-flex items-center justify-between w-full mt-2">
                   <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                    {generatedCosting?.details?.variantObject?.variantName ||
-                      "-/-"}
+                    {generatedCostingData?.details?.variantObject
+                      ?.variantName || "-/-"}
                   </span>
                   <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
                     <span className="text-base font-medium font-sans line-clamp-1">
-                      ₹{generatedCosting?.grandTotal || 0}
+                      ₹{generatedCostingData?.grandTotal || 0}
                     </span>
 
                     <span className="text-base font-medium font-sans line-clamp-1">
-                      ${inrToUsd(generatedCosting?.grandTotal || 0, 83.16)}
+                      ${inrToUsd(generatedCostingData?.grandTotal || 0, 83.16)}
                     </span>
                   </div>
                 </div>
                 <div className="inline-flex items-center justify-between w-full text-pwip-gray-500">
                   <span className="text-sm font-normal font-sans line-clamp-1">
-                    {generatedCosting?.details?.variantObject
+                    {generatedCostingData?.details?.variantObject
                       ?.brokenPercentage || 0}
                     % broken
                   </span>
@@ -712,14 +755,15 @@ function CostingOverview() {
                       className={`w-[20%] text-right py-4 px-4 inline-flex items-center justify-end`}
                     >
                       <span className="text-pwip-gray-1000 text-base font-bold">
-                        ₹{generatedCosting?.grandTotal || 0}
+                        ₹{generatedCostingData?.grandTotal || 0}
                       </span>
                     </div>
                     <div
                       className={`w-[20%] text-right py-4 px-4 inline-flex items-center justify-end`}
                     >
                       <span className="text-pwip-gray-1000 text-base font-bold">
-                        ${inrToUsd(generatedCosting?.grandTotal || 0, 83.16)}
+                        $
+                        {inrToUsd(generatedCostingData?.grandTotal || 0, 83.16)}
                       </span>
                     </div>
                   </div>
@@ -732,6 +776,7 @@ function CostingOverview() {
               type="outline"
               label="Create new"
               onClick={() => {
+                dispatch(saveCostingFailure());
                 router.replace("/export-costing");
               }}
             />

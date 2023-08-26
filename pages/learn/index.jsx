@@ -74,16 +74,16 @@ function Learn() {
               Popular category
             </span>
 
-            <div class="inline-flex items-center overflow-x-auto py-1 px-[1px] space-x-4">
+            <div className="inline-flex items-center overflow-x-auto py-1 px-[1px] space-x-4">
               {["🔥 All", "🌾 Rice", "📦 Exports"].map((tag, tagIndex) => {
                 return (
                   <div
                     key={tag + tagIndex}
-                    class="relative inline-flex items-center justify-center space-x-4 border-[1.5px] border-pwip-primary px-4 py-1 rounded-full"
+                    className="relative inline-flex items-center justify-center space-x-4 border-[1.5px] border-pwip-primary px-4 py-1 rounded-full"
                   >
                     <span
                       id=""
-                      class="w-auto text-pwip-primary font-sans font-normal text-sm select-none inherit"
+                      className="w-auto text-pwip-primary font-sans font-normal text-sm select-none inherit"
                     >
                       {tag}
                     </span>

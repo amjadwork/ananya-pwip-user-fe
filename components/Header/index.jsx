@@ -3,7 +3,10 @@ import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
 
 import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
-import { fetchMyCostingFailure } from "@/redux/actions/myCosting.actions";
+// import {
+//   fetchMyCostingFailure,
+//   saveCostingFailure,
+// } from "@/redux/actions/myCosting.actions";
 
 const hideBottomBarAtRoutes = ["costing", "edit"];
 
@@ -20,9 +23,13 @@ export function Header(props) {
     React.useState("");
 
   const handleBack = () => {
-    if (activeRoute === "edit") {
-      dispatch(fetchMyCostingFailure());
-    }
+    // if (activeRoute === "edit") {
+    //   dispatch(fetchMyCostingFailure());
+    // }
+
+    // if (activeRoute === "costing") {
+    //   dispatch(saveCostingFailure());
+    // }
     router.back();
   };
 

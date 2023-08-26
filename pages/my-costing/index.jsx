@@ -1,21 +1,65 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
+import moment from "moment";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
+import {
+  fetchMyCostingRequest,
+  fetchAllMyCostingsRequest,
+  saveCostingFailure,
+} from "@/redux/actions/myCosting.actions";
+import { fetchGeneratedCostingFailure } from "@/redux/actions/costing.actions";
+
 // Import Components
 import { Header } from "@/components/Header";
+import { inrToUsd } from "@/utils/helper";
+
+import { riceGrainIcon } from "../../theme/icon";
 
 // Import Containers
 
 // Import Layouts
 
+const units = [
+  {
+    label: "Metric ton",
+    value: "mt",
+  },
+  {
+    label: "Killogram",
+    value: "kg",
+  },
+  {
+    label: "Quintal",
+    value: "qt",
+  },
+];
+
 function MyCosting() {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const myCosting = useSelector((state) => state.myCosting);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
+
+  React.useEffect(() => {
+    if (
+      myCosting?.allMyCostingsFromHistory &&
+      myCosting?.allMyCostingsFromHistory?.length
+    ) {
+      setAllMyCostingsData([...myCosting.allMyCostingsFromHistory]);
+    }
+  }, [myCosting]);
+
+  React.useEffect(() => {
+    dispatch(fetchAllMyCostingsRequest());
+  }, []);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -50,9 +94,94 @@ function MyCosting() {
         <Header />
 
         <div
-          className={`relative top-[72px] h-full w-full bg-white z-10 py-6 px-5`}
+          className={`relative top-[92px] h-full w-full bg-pwip-white-100 z-0 py-6 px-5`}
         >
-          {/*  */}
+          <div
+            id="fixedMenuSection"
+            className={`fixed left-0 top-[92px] h-[auto] w-full bg-white z-0 py-3 px-5`}
+          >
+            <input
+              placeholder="Search previous costing"
+              className="h-[48px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
+            />
+          </div>
+          <div
+            className={`min-h-[calc(100vh-196px)] inline-flex flex-col space-y-3 h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
+            style={{
+              paddingTop: mainContainerHeight - 20 + "px",
+              paddingBottom: mainContainerHeight + 20 + "px",
+            }}
+          >
+            {allMyCostingsData?.map((items, index) => {
+              return (
+                <div
+                  key={items._id + index}
+                  className="border-[1px] border-pwip-gray-650 rounded-md px-4 py-3 cursor-pointer"
+                  style={{
+                    boxShadow:
+                      "0px 1.06333327293396px 0px 0px rgba(0, 0, 0, 0.15)",
+                  }}
+                  onClick={async () => {
+                    await dispatch(saveCostingFailure());
+                    await dispatch(fetchGeneratedCostingFailure());
+                    await dispatch(fetchMyCostingRequest(items._id));
+                    router.push("/export-costing/costing");
+                  }}
+                >
+                  <div className="inline-flex items-center justify-between w-full">
+                    <div className="inline-flex items-center space-x-2 max-w-[70%] overflow-hidden">
+                      {riceGrainIcon}
+                      <span className="line-clamp-1 text-sm text-pwip-gray-900 uppercase">
+                        {items?.costingName ||
+                          `${items?.variantName} - ${items?.destinationPortName}`}
+                      </span>
+                    </div>
+
+                    <span className="line-clamp-1 text-sm text-pwip-gray-500">
+                      {moment(items?.createdAt).format("DD/MM/YYYY")}
+                    </span>
+                  </div>
+                  <div className="inline-flex items-center justify-between w-full mt-2">
+                    <div className="inline-flex items-center space-x-2">
+                      <span className="line-clamp-1 text-base text-pwip-gray-1000">
+                        {items?.originPortName} - {items?.destinationPortName}
+                      </span>
+                    </div>
+
+                    <span className="line-clamp-1 text-sm text-pwip-gray-900">
+                      {items?.termOfAgreement}
+                    </span>
+                  </div>
+
+                  <div className="inline-flex items-center justify-between w-full mt-2">
+                    <span className="text-pwip-gray-800 text-xs font-normal font-sans line-clamp-1">
+                      {items?.variantName}
+                    </span>
+                    <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
+                      <span className="text-base font-medium font-sans line-clamp-1">
+                        ₹{items?.grandTotal}
+                      </span>
+
+                      <span className="text-base font-medium font-sans line-clamp-1">
+                        ${inrToUsd(items?.grandTotal, 83.16)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="inline-flex items-center justify-between w-full text-pwip-gray-800">
+                    <span className="text-xs font-normal font-sans line-clamp-1">
+                      5% {items?.brokenPercentage || ""}
+                    </span>
+                    <div className="inline-flex items-center justify-end">
+                      <span className="text-xs font-medium font-sans line-clamp-1 text-pwip-gray-500">
+                        Per {units?.find((u) => u.value === items.unit)?.label}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
         {/*  */}
       </AppLayout>

@@ -4,6 +4,7 @@ import {
   SAVE_COSTING_REQUEST,
   UPDATE_COSTING_REQUEST,
   FETCH_MY_COSTING_REQUEST,
+  FETCH_ALL_MY_COSTINGS_REQUEST,
 } from "../actions/types/myCosting.types";
 import {
   saveCostingSuccess,
@@ -12,6 +13,8 @@ import {
   updateCostingFailure,
   fetchMyCostingSuccess,
   fetchMyCostingFailure,
+  fetchAllMyCostingsSuccess,
+  fetchAllMyCostingsFailure,
 } from "../actions/myCosting.actions";
 
 import { api } from "@/utils/helper";
@@ -94,8 +97,30 @@ function* getMyCostingSheetById(action) {
   }
 }
 
+function* getAllMyCostingSheets(action) {
+  const id = action.payload;
+  try {
+    const authState = yield select((state) => state.auth);
+
+    const headers = {
+      Authorization: `Bearer ${authState.token}`,
+    };
+
+    const response = yield call(api.get, `/myCosting`, {
+      headers: {
+        ...headers,
+      },
+    });
+
+    yield put(fetchAllMyCostingsSuccess(response.data));
+  } catch (error) {
+    yield put(fetchAllMyCostingsFailure(error));
+  }
+}
+
 export default function* myCostingSaga() {
   yield takeLatest(SAVE_COSTING_REQUEST, myCostingSheet);
   yield takeLatest(UPDATE_COSTING_REQUEST, updateMyCostingSheet);
   yield takeLatest(FETCH_MY_COSTING_REQUEST, getMyCostingSheetById);
+  yield takeLatest(FETCH_ALL_MY_COSTINGS_REQUEST, getAllMyCostingSheets);
 }
