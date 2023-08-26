@@ -63,3 +63,34 @@ export function getCostingToSaveHistoryPayload(inputJson) {
     grandTotal: inputJson.grandTotal || 0,
   };
 }
+
+export function generatePayloadForCustomCosting(givenData) {
+  const payload = {
+    shipmentTermType: givenData.shipmentTermType,
+    unit: givenData.unit,
+    _variantId: givenData._variantId._id,
+    sourceRateId: givenData._variantId.sourceRates[0]._id,
+    sourceId: givenData._variantId.sourceRates[0]._sourceId,
+    _originId: givenData._originId._id,
+    _destinationId: givenData._destinationId._id,
+    _containerId: givenData._containerId._id,
+    _bagId: givenData._bagId._id,
+    variantCost: givenData.costOfRice,
+    brokenPercent: givenData.brokenPercentage,
+    containersWeight: givenData.containerWeight * givenData.containersCount,
+    totalContainers: givenData.containersCount,
+    transportationCost: givenData.transportation,
+    bagCost: givenData.bagPrice,
+    ofc: givenData.ofc,
+    inspectionCost: givenData.inspectionCost,
+    insurance: 0, // Assuming insurance cost is not given in the input
+    financeCost: givenData.financeCost,
+    overheads: givenData.overheads,
+    margin: givenData.margin,
+    cfsHandling: givenData.cfsHandling,
+    shl: givenData.shl,
+    exportDuty: givenData.exportDuty,
+    fulfilledByPwip: givenData.pwipFullfillment,
+  };
+  return payload;
+}
