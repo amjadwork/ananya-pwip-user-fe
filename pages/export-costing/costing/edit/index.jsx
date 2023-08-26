@@ -24,6 +24,37 @@ import { generateCustomCostingRequest } from "@/redux/actions/costing.actions";
 import CostingForm from "containers/ec/Forms/CostingForm";
 import BreakupForm from "containers/ec/Forms/BreakupForm";
 
+const initialValues = {
+  costingName: "",
+  _variantId: {},
+  // costOfRice: "",
+  brokenPercentage: "",
+  _bagId: {},
+  bagSize: "",
+  // bagPrice: "",
+  _originId: {},
+  _destinationId: {},
+  _containerId: {},
+  containersCount: "",
+  containerWeight: "",
+  exportDuty: false,
+  pwipFullfillment: false,
+
+  // breakup
+  costOfRice: "",
+  bagPrice: "",
+  transportation: "",
+  cfsHandling: "",
+  shl: "",
+  ofc: "",
+  inspectionCost: "",
+  financeCost: "",
+  overheads: "",
+  margin: "",
+  // exportDuty: false,
+  // pwipFullfillment: false,
+};
+
 function EditCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -202,34 +233,7 @@ function EditCosting() {
           <Formik
             innerRef={formik}
             initialValues={{
-              costingName: "",
-              _variantId: {},
-              // costOfRice: "",
-              brokenPercentage: "",
-              _bagId: {},
-              bagSize: "",
-              // bagPrice: "",
-              _originId: {},
-              _destinationId: {},
-              _containerId: {},
-              containersCount: "",
-              containerWeight: "",
-              exportDuty: false,
-              pwipFullfillment: false,
-
-              // breakup
-              costOfRice: "",
-              bagPrice: "",
-              transportation: "",
-              cfsHandling: "",
-              shl: "",
-              ofc: "",
-              inspectionCost: "",
-              financeCost: "",
-              overheads: "",
-              margin: "",
-              // exportDuty: false,
-              // pwipFullfillment: false,
+              ...initialValues,
             }}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
@@ -291,9 +295,6 @@ function EditCosting() {
               </form>
             )}
           </Formik>
-          {/* {activeTab === 0 && <CostingForm />}
-
-          {activeTab === 1 && <BreakupForm />} */}
         </div>
       </AppLayout>
     </React.Fragment>
