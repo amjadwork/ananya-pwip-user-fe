@@ -97,7 +97,7 @@ export const verifyIcon = (
 export const exportCostingBottomBarIcon = (
   <svg
     width="25"
-    height="23"
+    height="18"
     viewBox="0 0 25 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -119,7 +119,7 @@ export const exportCostingBottomBarIcon = (
 export const learnBottomBarIcon = (
   <svg
     width="25"
-    height="23"
+    height="18"
     viewBox="0 0 25 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -137,7 +137,7 @@ export const learnBottomBarIcon = (
 export const dashboardBottomBarIcon = (
   <svg
     width="23"
-    height="23"
+    height="18"
     viewBox="0 0 23 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -176,7 +176,7 @@ export const dashboardBottomBarIcon = (
 export const myCostingBottomBarIcon = (
   <svg
     width="19"
-    height="23"
+    height="18"
     viewBox="0 0 19 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -187,6 +187,21 @@ export const myCostingBottomBarIcon = (
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const moreBottomBarIcon = (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 18 18"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M2.99994 10.4998C2.99994 11.4165 3.74994 12.1665 4.66661 12.1665C5.58327 12.1665 6.33327 11.4165 6.33327 10.4998C6.33327 9.58317 5.58327 8.83317 4.66661 8.83317C3.74994 8.83317 2.99994 9.58317 2.99994 10.4998ZM14.6666 10.4998C14.6666 11.4165 15.4166 12.1665 16.3333 12.1665C17.2499 12.1665 17.9999 11.4165 17.9999 10.4998C17.9999 9.58317 17.2499 8.83317 16.3333 8.83317C15.4166 8.83317 14.6666 9.58317 14.6666 10.4998ZM8.83327 10.4998C8.83327 11.4165 9.58327 12.1665 10.4999 12.1665C11.4166 12.1665 12.1666 11.4165 12.1666 10.4998C12.1666 9.58317 11.4166 8.83317 10.4999 8.83317C9.58327 8.83317 8.83327 9.58317 8.83327 10.4998Z"
+      fill="#808080"
     />
   </svg>
 );

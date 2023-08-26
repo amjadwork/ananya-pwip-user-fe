@@ -278,6 +278,7 @@ function EditCosting() {
                         selectedMyCostingFromHistory?.unit || "mt";
                       givenData.shipmentTermType =
                         selectedMyCostingFromHistory?.termOfAgreement;
+                      givenData.variantCost = parseFloat(values?.costOfRice);
 
                       const payload =
                         generatePayloadForCustomCosting(givenData);

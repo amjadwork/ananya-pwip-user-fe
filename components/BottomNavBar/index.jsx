@@ -5,6 +5,7 @@ import {
   learnBottomBarIcon,
   dashboardBottomBarIcon,
   myCostingBottomBarIcon,
+  moreBottomBarIcon,
 } from "../../theme/icon";
 
 const options = [
@@ -27,6 +28,11 @@ const options = [
     icon: myCostingBottomBarIcon,
     label: "My Costing",
     path: "my-costing",
+  },
+  {
+    icon: moreBottomBarIcon,
+    label: "More",
+    path: "more",
   },
 ];
 
@@ -62,7 +68,7 @@ export function BottomNavBar(props) {
             <div className="inline-flex items-center justify-center">
               {opt.icon}
             </div>
-            <span className="text-sm font-medium font-sans">{opt.label}</span>
+            <span className="text-xs font-medium font-sans">{opt.label}</span>
           </div>
         );
       })}
