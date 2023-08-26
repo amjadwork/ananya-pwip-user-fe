@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { options } from "@/constants/bottombarOptions";
 
-export function BottomNavBar(props) {
+export function BottomNavBar() {
   const router = useRouter();
 
   const [activeRoute, setActiveRoute] = React.useState("");
