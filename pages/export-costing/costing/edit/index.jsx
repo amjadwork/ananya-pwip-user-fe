@@ -17,12 +17,20 @@ import { generatePayloadForCustomCosting } from "@/utils/helper";
 
 import { fetchPackagingBagsRequest } from "@/redux/actions/packaging.actions";
 import { fetchContainersRequest } from "@/redux/actions/container.actions";
-import { fetchMyCostingFailure } from "@/redux/actions/myCosting.actions";
-import { generateCustomCostingRequest } from "@/redux/actions/costing.actions";
+import {
+  fetchMyCostingFailure,
+  saveCostingRequest,
+} from "@/redux/actions/myCosting.actions";
+import {
+  generateCustomCostingRequest,
+  fetchGeneratedCostingFailure,
+} from "@/redux/actions/costing.actions";
 
 // Import Containers
-import CostingForm from "containers/ec/Forms/CostingForm";
-import BreakupForm from "containers/ec/Forms/BreakupForm";
+import CostingForm from "@/containers/ec/Forms/CostingForm";
+import BreakupForm from "@/containers/ec/Forms/BreakupForm";
+
+import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 const initialValues = {
   costingName: "",
@@ -63,6 +71,7 @@ function EditCosting() {
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
+  const [isGenerated, setIsGenerated] = React.useState(false);
 
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
   const selectedMyCostingFromHistory = useSelector((state) => {
@@ -75,6 +84,29 @@ function EditCosting() {
     }
     return null;
   });
+
+  React.useEffect(() => {
+    console.log(selectedAndGeneratedCosting, isGenerated);
+    if (
+      selectedAndGeneratedCosting &&
+      selectedAndGeneratedCosting?.generatedCosting &&
+      isGenerated
+    ) {
+      const saveHistoryPayload = getCostingToSaveHistoryPayload(
+        selectedAndGeneratedCosting?.generatedCosting
+      );
+
+      const payloadBody = {
+        ...saveHistoryPayload,
+      };
+
+      dispatch(fetchGeneratedCostingFailure());
+
+      dispatch(saveCostingRequest(payloadBody));
+      setIsGenerated(false);
+      router.push("/export-costing/costing");
+    }
+  }, [selectedAndGeneratedCosting, isGenerated]);
 
   useEffect(() => {
     if (
@@ -299,7 +331,7 @@ function EditCosting() {
                         generatePayloadForCustomCosting(givenData);
                       dispatch(generateCustomCostingRequest(payload));
                       dispatch(fetchMyCostingFailure());
-                      router.replace("/export-costing/costing");
+                      setIsGenerated(true);
                     }}
                   />
                 </div>

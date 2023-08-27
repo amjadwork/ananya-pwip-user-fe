@@ -34,14 +34,26 @@ export function getCostingToSaveHistoryPayload(inputJson) {
     brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
     unit: "mt",
     _variantId: inputJson.details.variantObject._variantId,
-    _bagId: inputJson.details.packageDetails._id,
-    bagSize: inputJson.details.packageDetails.weight,
+    _bagId:
+      inputJson?.details?.packageDetails?._id ||
+      inputJson?.details?.packageObject?._id,
+    bagSize:
+      inputJson?.details?.packageDetails?.weight ||
+      inputJson?.details?.packageObject?.weight,
     _sourceId: inputJson.details.sourceObject._id,
-    _originId: inputJson.details.originPortObject._originId,
-    _destinationId: inputJson.details.destinationObject._destinationId,
-    _containerId: inputJson.details.ofcObject._containerId,
+    _originId:
+      inputJson?.details?.originPortObject?._originId ||
+      inputJson?.details?.originObject?._id,
+    _destinationId:
+      inputJson?.details?.destinationObject?._destinationId ||
+      inputJson?.details?.destinationObject?._id,
+    _containerId:
+      inputJson?.details?.ofcObject?._containerId ||
+      inputJson?.details?.ofcObject?.chaDetailObject?._containerId,
     containersCount: 1,
-    containerWeight: inputJson.details.ofcObject.containerObject.weight,
+    containerWeight:
+      inputJson?.details?.ofcObject?.containerObject?.weight ||
+      inputJson?.details?.ofcObject?.chaContainerObject?.weight,
     isExportDuty: inputJson.constants.exportDutyCharge ? true : false,
     isPwipFullfillment: inputJson.constants.pwipFullfillment ? true : false,
     termOfAgreement: inputJson?.grandTotalFob ? "FOB" : "CIF",
