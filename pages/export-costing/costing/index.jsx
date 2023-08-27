@@ -11,11 +11,15 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+import {
+  getCostingToSaveHistoryPayload,
+  generatePayloadForCustomCosting,
+} from "@/utils/helper";
 
 import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
+  generateCustomCostingRequest,
 } from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
@@ -32,6 +36,37 @@ import {
   otherChargesIcon,
   eyePreviewIcon,
 } from "../../../theme/icon";
+
+function extractCustomCostingPayload(data) {
+  return {
+    shipmentTermType: "FOB",
+    currentUnit: "qt",
+    unitToConvert: "qt",
+    _variantId: data.details.variantObject._id,
+    sourceRateId: data.details.variantObject.sourceRates[0]._id,
+    sourceId: data.details.sourceObject._id,
+    _originId: data.details.originPortObject._id,
+    _destinationId: data.details.destinationObject._id,
+    _containerId: data.details.containerObject._id,
+    _bagId: data.details.packageDetails._id,
+    variantCost: data.costing.exmillPrice.toString(),
+    brokenPercent: data.brokenPercentage,
+    containersWeight: data.details.containerObject.weight,
+    totalContainers: 1,
+    transportationCost: data.costing.transportCharge,
+    bagCost: data.costing.package,
+    ofc: data.costing.ofcCost,
+    inspectionCost: data.constants.inspectionCharge,
+    insurance: data.constants.insurance,
+    financeCost: data.constants.financeCost,
+    overheads: data.constants.overHeadCharge,
+    margin: data.constants.margin,
+    cfsHandling: data.costing.cfsHandling,
+    shl: data.costing.shlCost,
+    exportDuty: data.constants.exportDutyCharge !== 0,
+    fulfilledByPwip: data.constants.pwipFullfillment !== 0,
+  };
+}
 
 const unitOptions = [
   {
@@ -343,7 +378,6 @@ function CostingOverview() {
   }, [myCosting, generatedCosting]);
 
   useEffect(() => {
-    console.log("myCosting", myCosting);
     if (
       myCosting &&
       myCosting.myRecentSavedCosting &&
@@ -467,7 +501,24 @@ function CostingOverview() {
                       unit: items?.value || "mt",
                     };
                     setGeneratedCostingData(null);
-                    await dispatch(generateQuickCostingRequest(body));
+
+                    if (
+                      myCosting?.currentCostingFromHistory &&
+                      myCosting?.currentCostingFromHistory?.length &&
+                      myCosting?.currentCostingFromHistory[0]?.isQuickCosting
+                    ) {
+                      await dispatch(generateQuickCostingRequest(body));
+                    } else {
+                      let givenData = {
+                        ...myCosting?.currentCostingFromHistory[0],
+                      };
+                      givenData.unitToConvert = items?.value || "mt";
+
+                      const payload = extractCustomCostingPayload(
+                        myCosting?.currentCostingFromHistory[0]
+                      );
+                      await dispatch(generateCustomCostingRequest(payload));
+                    }
                     setIsChangingUnit(true);
                     setSelectedUnit(items);
                     closeBottomSheet();
