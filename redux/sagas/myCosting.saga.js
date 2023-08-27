@@ -51,6 +51,9 @@ function* updateMyCostingSheet(action) {
 
   try {
     const authState = yield select((state) => state.auth);
+    const currentCostingFromHistory = yield select(
+      (state) => state.myCosting.currentCostingFromHistory
+    );
     const myRecentSavedCosting = yield select(
       (state) => state.myCosting.myRecentSavedCosting
     );
@@ -61,7 +64,9 @@ function* updateMyCostingSheet(action) {
 
     const response = yield call(
       api.patch,
-      `/historyCosting/${myRecentSavedCosting._id}`,
+      `/historyCosting/${
+        myRecentSavedCosting?._id || currentCostingFromHistory[0]?._id
+      }`,
       { ...body },
       {
         headers: {

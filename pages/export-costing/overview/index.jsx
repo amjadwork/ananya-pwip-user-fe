@@ -10,8 +10,14 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 
-import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
-import { saveCostingRequest } from "@/redux/actions/myCosting.actions";
+import {
+  generateQuickCostingRequest,
+  fetchGeneratedCostingFailure,
+} from "@/redux/actions/costing.actions";
+import {
+  saveCostingRequest,
+  fetchMyCostingFailure,
+} from "@/redux/actions/myCosting.actions";
 
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 
@@ -37,6 +43,8 @@ function SelectionOverview() {
       const payloadBody = {
         ...saveHistoryPayload,
       };
+
+      dispatch(fetchGeneratedCostingFailure());
 
       dispatch(saveCostingRequest(payloadBody));
       setIsGenerated(false);
@@ -519,6 +527,7 @@ function SelectionOverview() {
             type="primary"
             label="Generate consting"
             onClick={async () => {
+              await dispatch(fetchMyCostingFailure());
               const body = {
                 destinationPortId: selectedCostingOptions.portOfDestination._id,
                 sourceId: selectedCostingOptions.product.sourceRates._sourceId,

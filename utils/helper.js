@@ -67,7 +67,8 @@ export function getCostingToSaveHistoryPayload(inputJson) {
 export function generatePayloadForCustomCosting(givenData) {
   const payload = {
     shipmentTermType: givenData.shipmentTermType,
-    unit: givenData.unit,
+    currentUnit: givenData.unit,
+    unitToConvert: givenData.unit,
     _variantId: givenData._variantId._id,
     sourceRateId: givenData._variantId.sourceRates[0]._id,
     sourceId: givenData._variantId.sourceRates[0]._sourceId,

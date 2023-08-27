@@ -156,6 +156,17 @@ function EditCosting() {
     }
   }, [breakupArr, selectedAndGeneratedCosting]);
 
+  useEffect(() => {
+    if (
+      selectedMyCostingFromHistory &&
+      !selectedAndGeneratedCosting.generatedCosting
+    ) {
+      const sheet = selectedMyCostingFromHistory;
+
+      breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
+    }
+  }, [selectedMyCostingFromHistory, selectedAndGeneratedCosting]);
+
   React.useEffect(() => {
     dispatch(fetchPackagingBagsRequest());
     dispatch(fetchContainersRequest());

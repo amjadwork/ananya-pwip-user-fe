@@ -11,13 +11,17 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-// import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
-import { generateQuickCostingRequest } from "@/redux/actions/costing.actions";
+import {
+  generateQuickCostingRequest,
+  fetchGeneratedCostingFailure,
+} from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
   fetchMyCostingRequest,
   saveCostingFailure,
+  fetchMyCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
 import {
@@ -294,35 +298,23 @@ function CostingOverview() {
   const [generatedCostingData, setGeneratedCostingData] = useState(null);
 
   React.useEffect(() => {
-    if (
-      selectedCosting &&
-      selectedCosting?.generatedCosting &&
-      selectedUnit &&
-      isChangingUnit
-    ) {
+    if (generatedCosting && selectedUnit && isChangingUnit) {
       const payloadBody = {
+        ...getCostingToSaveHistoryPayload(generatedCosting),
         unit: selectedUnit?.value,
       };
-      setIsChangingUnit(false);
+      dispatch(fetchGeneratedCostingFailure());
       dispatch(updateCostingRequest(payloadBody));
+      dispatch(fetchMyCostingFailure());
+      setIsChangingUnit(false);
     }
-  }, [selectedCosting, selectedUnit, isChangingUnit]);
+  }, [generatedCosting, selectedUnit, isChangingUnit]);
 
   React.useEffect(() => {
     if (selectedCosting) {
       breakupArr[0].rowItems[1].label = `${selectedCosting?.generatedCosting?.details?.packageDetails?.bag}-${selectedCosting?.generatedCosting?.details?.packageDetails?.weight}${selectedCosting?.generatedCosting?.details?.packageDetails?.unit}`;
     }
   }, [breakupArr, selectedCosting]);
-
-  useEffect(() => {
-    if (generatedCosting && breakupArr) {
-      setGeneratedCostingData(generatedCosting);
-      const updatedCharges = updateCharges(generatedCosting, breakupArr);
-      if (updatedCharges) {
-        setBreakupChargesData(updatedCharges);
-      }
-    }
-  }, [generatedCosting]);
 
   useEffect(() => {
     if (
@@ -349,6 +341,17 @@ function CostingOverview() {
       }
     }
   }, [myCosting, generatedCosting]);
+
+  useEffect(() => {
+    console.log("myCosting", myCosting);
+    if (
+      myCosting &&
+      myCosting.myRecentSavedCosting &&
+      !myCosting?.currentCostingFromHistory
+    ) {
+      dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
+    }
+  }, [myCosting]);
 
   const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
@@ -455,9 +458,7 @@ function CostingOverview() {
               return (
                 <div
                   key={items.label + index}
-                  onClick={() => {
-                    closeBottomSheet();
-                    setSelectedUnit(items);
+                  onClick={async () => {
                     const body = {
                       destinationPortId: selectedCosting.portOfDestination._id,
                       sourceId: selectedCosting.product.sourceRates._sourceId,
@@ -465,8 +466,11 @@ function CostingOverview() {
                       shipmentTermType: "FOB",
                       unit: items?.value || "mt",
                     };
-                    dispatch(generateQuickCostingRequest(body));
+                    setGeneratedCostingData(null);
+                    await dispatch(generateQuickCostingRequest(body));
                     setIsChangingUnit(true);
+                    setSelectedUnit(items);
+                    closeBottomSheet();
                   }}
                   className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col items-center space-t"
                   style={{
@@ -777,6 +781,7 @@ function CostingOverview() {
               label="Create new"
               onClick={() => {
                 dispatch(saveCostingFailure());
+                setGeneratedCostingData(null);
                 router.replace("/export-costing");
               }}
             />
