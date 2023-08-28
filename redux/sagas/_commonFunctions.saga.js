@@ -1,5 +1,6 @@
-import { call, select } from "redux-saga/effects";
+import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
+import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 
 export function* makeApiCall(url, method, data) {
   try {
@@ -27,7 +28,12 @@ export function* makeApiCall(url, method, data) {
 
     return response;
   } catch (error) {
-    // console.log("saga", error?.response?.data?.message);
+    yield put(
+      showToastNotificationSuccess({
+        type: "error",
+        message: error?.response?.data?.message || "Something went wrong",
+      })
+    );
     throw error;
   }
 }

@@ -6,6 +6,7 @@ import locationsReducer from "./location.reducers";
 import packagingBagsReducer from "./packaging.reducers";
 import containersReducer from "./container.reducers";
 import myCostingReducer from "./myCosting.reducers";
+import toastOverlayReducer from "./toastOverlay.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   bags: packagingBagsReducer,
   containers: containersReducer,
   myCosting: myCostingReducer,
+  toastOverlay: toastOverlayReducer,
 });
 
 export default rootReducer;

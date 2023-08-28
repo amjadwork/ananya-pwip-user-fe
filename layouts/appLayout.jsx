@@ -1,6 +1,8 @@
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useOverlayContext } from "@/context/OverlayContext";
+import { useSelector } from "react-redux";
 
 import { BottomNavBar } from "@/components/BottomNavBar";
 
@@ -8,6 +10,9 @@ const hideBottomBarAtRoutes = ["costing", "edit"];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
+  const toastOverlay = useSelector((state) => state.toastOverlay);
+
+  const { openToastMessage } = useOverlayContext();
 
   const [activeRoute, setActiveRoute] = React.useState("");
 
@@ -18,6 +23,19 @@ const AppLayout = ({ children }) => {
       setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (toastOverlay) {
+      const { showToastNotification, toastContent } = toastOverlay;
+
+      if (showToastNotification) {
+        openToastMessage({
+          type: "error",
+          message: toastContent?.message || "Something went wrong",
+        });
+      }
+    }
+  }, [toastOverlay]);
 
   return (
     <React.Fragment>
