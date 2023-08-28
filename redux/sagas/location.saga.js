@@ -9,11 +9,10 @@ import {
   fetchOriginSuccess,
   fetchOriginFailure,
 } from "../actions/location.actions";
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* fetchDestinationLocation() {
   try {
-    const authState = yield select((state) => state.auth);
     const selectedSourceId = yield select(
       (state) => state.costing.product.sourceRates._sourceId
     );
@@ -23,22 +22,15 @@ function* fetchDestinationLocation() {
         state.costing.customCostingSelection.product?.sourceRates?._sourceId
     );
 
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
     const response = yield call(
-      api.get,
+      makeApiCall,
       "/location/destination" +
         `?filterBy=source&sourceId=${
           selectedSourceIdFromCustomCosting || selectedSourceId
         }`,
-      {
-        headers: {
-          ...headers,
-        },
-      }
+      "get"
     );
+
     yield put(fetchDestinationSuccess(response.data.destination));
   } catch (error) {
     yield put(fetchDestinationFailure(error));
@@ -47,7 +39,6 @@ function* fetchDestinationLocation() {
 
 function* fetchOriginLocation() {
   try {
-    const authState = yield select((state) => state.auth);
     const selectedSourceId = yield select(
       (state) => state.costing.product.sourceRates._sourceId
     );
@@ -57,21 +48,13 @@ function* fetchOriginLocation() {
         state.costing.customCostingSelection.product?.sourceRates?._sourceId
     );
 
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
     const response = yield call(
-      api.get,
+      makeApiCall,
       "/location/origin" +
         `?filterBySource=${
           selectedSourceIdFromCustomCosting || selectedSourceId
         }`,
-      {
-        headers: {
-          ...headers,
-        },
-      }
+      "get"
     );
     yield put(fetchOriginSuccess(response.data.origin));
   } catch (error) {

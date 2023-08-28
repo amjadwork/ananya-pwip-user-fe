@@ -4,26 +4,17 @@ import {
   fetchProductsSuccess,
   fetchProductsFailure,
 } from "../actions/products.actions";
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* fetchProducts() {
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
     const response = yield call(
-      api.get,
+      makeApiCall,
       "/variant" +
         "?_productId=641e0f2545fe91930399b09b&_categoryId=641e0f2645fe91930399b09e,641e0f2645fe91930399b09f&getBy=source",
-      {
-        headers: {
-          ...headers,
-        },
-      }
+      "get"
     );
+
     yield put(fetchProductsSuccess(response.data));
   } catch (error) {
     yield put(fetchProductsFailure(error));

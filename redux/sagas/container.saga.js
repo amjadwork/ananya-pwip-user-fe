@@ -4,21 +4,11 @@ import {
   fetchContainersSuccess,
   fetchContainersFailure,
 } from "../actions/container.actions";
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* fetchContainers() {
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(api.get, "/container", {
-      headers: {
-        ...headers,
-      },
-    });
+    const response = yield call(makeApiCall, "/container", "get");
 
     yield put(fetchContainersSuccess(response.data));
   } catch (error) {

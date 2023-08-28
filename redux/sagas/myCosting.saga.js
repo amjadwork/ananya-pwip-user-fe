@@ -17,28 +17,15 @@ import {
   fetchAllMyCostingsFailure,
 } from "../actions/myCosting.actions";
 
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* myCostingSheet(action) {
   const body = action.payload;
 
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(
-      api.post,
-      "/saveCosting",
-      { ...body },
-      {
-        headers: {
-          ...headers,
-        },
-      }
-    );
+    const response = yield call(makeApiCall, "/saveCosting", "post", {
+      ...body,
+    });
 
     yield put(saveCostingSuccess(response.data));
   } catch (error) {
@@ -50,7 +37,6 @@ function* updateMyCostingSheet(action) {
   const body = action.payload;
 
   try {
-    const authState = yield select((state) => state.auth);
     const currentCostingFromHistory = yield select(
       (state) => state.myCosting.currentCostingFromHistory
     );
@@ -58,20 +44,14 @@ function* updateMyCostingSheet(action) {
       (state) => state.myCosting.myRecentSavedCosting
     );
 
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
     const response = yield call(
-      api.patch,
+      makeApiCall,
       `/historyCosting/${
         myRecentSavedCosting?._id || currentCostingFromHistory[0]?._id
       }`,
-      { ...body },
+      "patch",
       {
-        headers: {
-          ...headers,
-        },
+        ...body,
       }
     );
 
@@ -84,17 +64,11 @@ function* updateMyCostingSheet(action) {
 function* getMyCostingSheetById(action) {
   const id = action.payload;
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(api.get, `/historyCosting/preview/${id}`, {
-      headers: {
-        ...headers,
-      },
-    });
+    const response = yield call(
+      makeApiCall,
+      `/historyCosting/preview/${id}`,
+      "get"
+    );
 
     yield put(fetchMyCostingSuccess(response.data));
   } catch (error) {
@@ -102,20 +76,9 @@ function* getMyCostingSheetById(action) {
   }
 }
 
-function* getAllMyCostingSheets(action) {
-  const id = action.payload;
+function* getAllMyCostingSheets() {
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(api.get, `/myCosting`, {
-      headers: {
-        ...headers,
-      },
-    });
+    const response = yield call(makeApiCall, `/myCosting`, "get");
 
     yield put(fetchAllMyCostingsSuccess(response.data));
   } catch (error) {

@@ -4,21 +4,11 @@ import {
   fetchPackagingBagsSuccess,
   fetchPackagingBagsFailure,
 } from "../actions/packaging.actions";
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* fetchPackagingBags() {
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(api.get, "/packaging", {
-      headers: {
-        ...headers,
-      },
-    });
+    const response = yield call(makeApiCall, "/packaging", "get");
 
     yield put(fetchPackagingBagsSuccess(response.data));
   } catch (error) {

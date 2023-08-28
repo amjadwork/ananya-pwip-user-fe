@@ -26,7 +26,7 @@ const SelectCargoContainersContainer = (props) => {
   const [containersList, setContainersList] = React.useState([]);
 
   React.useEffect(() => {
-    if (containersData && containersData?.containers.length) {
+    if (containersData && containersData?.containers?.length) {
       setContainersList([...containersData?.containers]);
     }
   }, [containersData]);

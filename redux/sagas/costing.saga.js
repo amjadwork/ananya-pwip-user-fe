@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 
 import {
   SET_COSTING_SELECTION_SUCCESS,
@@ -19,7 +19,7 @@ import {
   fetchGeneratedCustomCostingFailure,
 } from "../actions/costing.actions";
 
-import { api } from "@/utils/helper";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* setCostingSheetOptions(action) {
   const { product, portOfDestination } = action.payload;
@@ -43,22 +43,9 @@ function* generateQuickCostingSheet(action) {
   const body = action.payload;
 
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(
-      api.post,
-      "/quick-costing",
-      { ...body },
-      {
-        headers: {
-          ...headers,
-        },
-      }
-    );
+    const response = yield call(makeApiCall, "/quick-costing", "post", {
+      ...body,
+    });
 
     yield put(fetchGeneratedCostingSuccess(response.data));
   } catch (error) {
@@ -70,22 +57,9 @@ function* generateCustomCostingSheet(action) {
   const body = action.payload;
 
   try {
-    const authState = yield select((state) => state.auth);
-
-    const headers = {
-      Authorization: `Bearer ${authState.token}`,
-    };
-
-    const response = yield call(
-      api.post,
-      "/custom-costing",
-      { ...body },
-      {
-        headers: {
-          ...headers,
-        },
-      }
-    );
+    const response = yield call(makeApiCall, "/custom-costing", "post", {
+      ...body,
+    });
 
     yield put(fetchGeneratedCustomCostingSuccess(response.data));
   } catch (error) {
