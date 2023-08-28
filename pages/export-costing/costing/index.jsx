@@ -11,10 +11,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import {
-  getCostingToSaveHistoryPayload,
-  generatePayloadForCustomCosting,
-} from "@/utils/helper";
+import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 import {
   generateQuickCostingRequest,
@@ -380,16 +377,11 @@ function CostingOverview() {
   }, [myCosting, generatedCosting]);
 
   useEffect(() => {
-    console.log(
-      myCosting?.currentCostingFromHistory,
-      myCosting.myRecentSavedCosting
-    );
     if (
       myCosting &&
       myCosting.myRecentSavedCosting &&
       !myCosting?.currentCostingFromHistory
     ) {
-      console.log("I am here");
       dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
     }
   }, [myCosting]);
