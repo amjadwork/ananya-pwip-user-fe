@@ -86,7 +86,7 @@ function More() {
           className={`inline-flex flex-col w-full bg-white pb-0 overflow-auto px-5 pt-7 hide-scroll-bar relative rounded-2xl`}
           style={{
             top: mainContainerHeight + 73 + "px",
-            paddingBottom: mainContainerHeight - 27 + "px",
+            paddingBottom: mainContainerHeight + 72 + "px",
             height: `calc(100vh - ${mainContainerHeight + 73 + "px"})`,
           }}
         >
