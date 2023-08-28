@@ -512,11 +512,11 @@ function CostingOverview() {
                       let givenData = {
                         ...myCosting?.currentCostingFromHistory[0],
                       };
-                      givenData.unitToConvert = items?.value || "mt";
 
-                      const payload = extractCustomCostingPayload(
-                        myCosting?.currentCostingFromHistory[0]
-                      );
+                      let payload = extractCustomCostingPayload({
+                        ...givenData,
+                      });
+                      payload.unitToConvert = items?.value || "mt";
                       await dispatch(generateCustomCostingRequest(payload));
                     }
                     setIsChangingUnit(true);

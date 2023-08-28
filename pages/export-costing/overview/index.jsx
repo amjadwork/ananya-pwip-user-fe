@@ -42,6 +42,7 @@ function SelectionOverview() {
 
       const payloadBody = {
         ...saveHistoryPayload,
+        isQuickCosting: true,
       };
 
       dispatch(fetchGeneratedCostingFailure());

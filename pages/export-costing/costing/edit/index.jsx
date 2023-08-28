@@ -86,7 +86,6 @@ function EditCosting() {
   });
 
   React.useEffect(() => {
-    console.log(selectedAndGeneratedCosting, isGenerated);
     if (
       selectedAndGeneratedCosting &&
       selectedAndGeneratedCosting?.generatedCosting &&
@@ -98,6 +97,7 @@ function EditCosting() {
 
       const payloadBody = {
         ...saveHistoryPayload,
+        isQuickCosting: false,
       };
 
       dispatch(fetchGeneratedCostingFailure());

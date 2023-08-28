@@ -52,7 +52,24 @@ function More() {
         <div
           className={`relative top-[72px] h-full w-full bg-white z-10 py-6 px-5`}
         >
-          {/*  */}
+          <div
+            id="fixedMenuSection"
+            className={`fixed left-0 top-[72px] h-[auto] w-full bg-pwip-primary z-0 py-3 px-5`}
+          >
+            <input
+              placeholder="Search previous costing"
+              className="h-[48px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
+            />
+          </div>
+          <div
+            className={`min-h-[calc(100vh-196px)] inline-flex flex-col space-y-3 h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
+            style={{
+              paddingTop: mainContainerHeight - 20 + "px",
+              paddingBottom: mainContainerHeight + 20 + "px",
+            }}
+          >
+            {/*  */}
+          </div>
         </div>
         {/*  */}
       </AppLayout>
