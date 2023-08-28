@@ -17,7 +17,7 @@ function* fetchProducts() {
     const response = yield call(
       api.get,
       "/variant" +
-        "?_productId=641e0f2545fe91930399b09b&_categoryId=641e0f2645fe91930399b09e%2C63e95d98acde4c886f2d05fa&getBy=source",
+        "?_productId=641e0f2545fe91930399b09b&_categoryId=641e0f2645fe91930399b09e,641e0f2645fe91930399b09f&getBy=source",
       {
         headers: {
           ...headers,

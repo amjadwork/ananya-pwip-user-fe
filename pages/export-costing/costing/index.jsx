@@ -26,6 +26,7 @@ import {
   fetchMyCostingRequest,
   saveCostingFailure,
   fetchMyCostingFailure,
+  updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
 import {
@@ -334,14 +335,15 @@ function CostingOverview() {
 
   React.useEffect(() => {
     if (generatedCosting && selectedUnit && isChangingUnit) {
+      dispatch(updateCostingFailure());
       const payloadBody = {
         ...getCostingToSaveHistoryPayload(generatedCosting),
         unit: selectedUnit?.value,
       };
-      dispatch(fetchGeneratedCostingFailure());
       dispatch(updateCostingRequest(payloadBody));
-      dispatch(fetchMyCostingFailure());
       setIsChangingUnit(false);
+      dispatch(fetchGeneratedCostingFailure());
+      dispatch(fetchMyCostingFailure());
     }
   }, [generatedCosting, selectedUnit, isChangingUnit]);
 
@@ -378,11 +380,16 @@ function CostingOverview() {
   }, [myCosting, generatedCosting]);
 
   useEffect(() => {
+    console.log(
+      myCosting?.currentCostingFromHistory,
+      myCosting.myRecentSavedCosting
+    );
     if (
       myCosting &&
       myCosting.myRecentSavedCosting &&
       !myCosting?.currentCostingFromHistory
     ) {
+      console.log("I am here");
       dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
     }
   }, [myCosting]);

@@ -20,6 +20,7 @@ import { fetchContainersRequest } from "@/redux/actions/container.actions";
 import {
   fetchMyCostingFailure,
   saveCostingRequest,
+  saveCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 import {
   generateCustomCostingRequest,
@@ -101,7 +102,7 @@ function EditCosting() {
       };
 
       dispatch(fetchGeneratedCostingFailure());
-
+      dispatch(saveCostingFailure());
       dispatch(saveCostingRequest(payloadBody));
       setIsGenerated(false);
       router.push("/export-costing/costing");
