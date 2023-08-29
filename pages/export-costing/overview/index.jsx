@@ -18,6 +18,7 @@ import {
 import {
   saveCostingRequest,
   fetchMyCostingFailure,
+  updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
@@ -33,6 +34,9 @@ function SelectionOverview() {
     React.useState(null);
   const [isGenerated, setIsGenerated] = React.useState(false);
 
+  const shipmentTerm = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.selected
+  );
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
@@ -45,7 +49,7 @@ function SelectionOverview() {
       ...saveHistoryPayload,
       isQuickCosting: true,
     };
-
+    await dispatch(updateCostingFailure());
     await dispatch(saveCostingRequest(payloadBody));
     await dispatch(fetchGeneratedCostingFailure());
     setIsGenerated(false);
@@ -553,7 +557,7 @@ function SelectionOverview() {
                 sourceId:
                   selectedCostingOptions?.product?.sourceRates?._sourceId,
                 sourceRateId: selectedCostingOptions?.product?.sourceRates?._id,
-                shipmentTermType: "FOB",
+                shipmentTermType: shipmentTerm || "FOB",
                 unit: "mt",
               };
 

@@ -1,12 +1,12 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
-// import {
-//   fetchMyCostingFailure,
-//   saveCostingFailure,
-// } from "@/redux/actions/myCosting.actions";
+import {
+  setTermsOfShipmentRequest,
+  // setTermsOfShipmentFailure,
+} from "@/redux/actions/shipmentTerms.actions";
 
 const atRoutes = ["costing", "edit", "my-costing", "more"];
 
@@ -14,6 +14,7 @@ export function Header(props) {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const shipmentTerms = useSelector((state) => state.shipmentTerm);
   // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
   // const component = props.component;
   const hideLogo = props.hideLogo || false;
@@ -45,11 +46,15 @@ export function Header(props) {
     const isInStandaloneMode = () =>
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone;
+    const route = ["costing", "edit", "my-costing", "more"];
 
     if (isInStandaloneMode()) {
-      setEnvironmentBasedClasses("h-[130px]");
+      if (route.includes(activeRoute)) {
+        setEnvironmentBasedClasses("h-[130px]");
+      } else {
+        setEnvironmentBasedClasses("h-[140px]");
+      }
     } else {
-      const route = ["costing", "edit", "my-costing", "more"];
       if (route.includes(activeRoute)) {
         setEnvironmentBasedClasses("h-[72px]");
       } else {
@@ -80,12 +85,32 @@ export function Header(props) {
             </div>
           )}
         </div>
-        <div
-          // onClick={() => (handleBack ? handleBack() : router.back())}
-          className="inline-flex items-center justify-center space-x-3 text-white text-sm"
-        >
-          <span className="font-sans">1 USD = 81 INR | FOB</span>
-          {chevronDown}
+        <div className="text-white inline-flex items-center justify-center">
+          <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
+            <button
+              type="button"
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none"
+            >
+              <span>1 USD = 81 INR</span>
+            </button>
+            <span>|</span>
+            <button
+              type="button"
+              onClick={() => {
+                const action = {
+                  ...shipmentTerms?.shipmentTerm,
+                  showShipmentTermDropdown:
+                    !shipmentTerms?.shipmentTerm?.showShipmentTermDropdown,
+                };
+                dispatch(setTermsOfShipmentRequest(action));
+              }}
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between"
+            >
+              <span>{shipmentTerms?.shipmentTerm?.selected}</span>
+
+              {chevronDown}
+            </button>
+          </div>
         </div>
       </div>
     </header>

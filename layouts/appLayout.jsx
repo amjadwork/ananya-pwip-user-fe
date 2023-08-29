@@ -2,14 +2,19 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useOverlayContext } from "@/context/OverlayContext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { BottomNavBar } from "@/components/BottomNavBar";
+
+import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
 const hideBottomBarAtRoutes = ["costing", "edit"];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const toastOverlay = useSelector((state) => state.toastOverlay);
 
   const { openToastMessage } = useOverlayContext();
@@ -51,6 +56,49 @@ const AppLayout = ({ children }) => {
           {children}
         </main>
         {!hideBottomBarAtRoutes.includes(activeRoute) ? <BottomNavBar /> : null}
+
+        {shipmentTerms?.shipmentTerm?.showShipmentTermDropdown ? (
+          <div
+            id="dropdown"
+            className="z-[1000] fixed top-14 right-5 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44"
+          >
+            <ul
+              className="py-2 text-sm font-sans font-medium text-gray-700"
+              aria-labelledby="dropdownDefaultButton"
+            >
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const action = {
+                      selected: "FOB",
+                      showShipmentTermDropdown: false,
+                    };
+                    dispatch(setTermsOfShipmentRequest(action));
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                >
+                  FOB
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const action = {
+                      selected: "CIF",
+                      showShipmentTermDropdown: false,
+                    };
+                    dispatch(setTermsOfShipmentRequest(action));
+                  }}
+                  className="block px-4 py-2 hover:bg-gray-100 w-full text-left"
+                >
+                  CIF
+                </button>
+              </li>
+            </ul>
+          </div>
+        ) : null}
       </div>
     </React.Fragment>
   );

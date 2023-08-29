@@ -8,6 +8,7 @@ import containerSaga from "./container.saga";
 import myCostingSaga from "./myCosting.saga";
 import toastOverlaySaga from "./toastOverlay.saga";
 import exportCostingSaga from "./exportCosting.saga";
+import shipmentTermsSaga from "./shipmentTerms.saga";
 
 function* rootSaga() {
   yield all([
@@ -20,6 +21,7 @@ function* rootSaga() {
     myCostingSaga(),
     toastOverlaySaga(),
     exportCostingSaga(),
+    shipmentTermsSaga(),
   ]);
 }
 

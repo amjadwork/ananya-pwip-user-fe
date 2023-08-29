@@ -330,6 +330,12 @@ function CostingOverview() {
   );
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const myCosting = useSelector((state) => state.myCosting);
+  const shipmentTerm = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.selected
+  );
+  // const isShipmentTermDropdownOpen = useSelector(
+  //   (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
+  // );
 
   const {
     openBottomSheet,
@@ -346,20 +352,52 @@ function CostingOverview() {
     value: "mt",
   });
   const [generatedCostingData, setGeneratedCostingData] = useState(null);
+  // const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
 
   React.useEffect(() => {
-    if (generatedCosting && selectedUnit && isChangingUnit) {
+    if (generatedCosting && selectedUnit && isChangingUnit && shipmentTerm) {
       dispatch(updateCostingFailure());
       const payloadBody = {
         ...getCostingToSaveHistoryPayload(generatedCosting),
         unit: selectedUnit?.value,
+        shipmentTermType: shipmentTerm || "FOB",
+        termOfAgreement: shipmentTerm || "FOB",
       };
       dispatch(updateCostingRequest(payloadBody));
       setIsChangingUnit(false);
       dispatch(fetchGeneratedCostingFailure());
       dispatch(fetchMyCostingFailure());
     }
-  }, [generatedCosting, selectedUnit, isChangingUnit]);
+  }, [generatedCosting, selectedUnit, isChangingUnit, shipmentTerm]);
+
+  // const handleUpdateAndFetchCostingOnTermsChange = async (updatePayload) => {
+  //   await dispatch(updateCostingRequest(updatePayload));
+  //   await dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
+  // };
+
+  // useEffect(() => {
+  //   if (
+  //     shipmentTerm &&
+  //     !isShipmentTermDropdownOpen &&
+  //     componentShipmentTerm !== shipmentTerm &&
+  //     generatedCostingData
+  //   ) {
+  //     const payloadBody = {
+  //       ...getCostingToSaveHistoryPayload(generatedCostingData),
+  //       unit: selectedUnit?.value,
+  //       shipmentTermType: shipmentTerm || "FOB",
+  //       termOfAgreement: shipmentTerm || "FOB",
+  //     };
+  //     dispatch(fetchMyCostingFailure());
+  //     handleUpdateAndFetchCostingOnTermsChange(payloadBody);
+  //   }
+  // }, [shipmentTerm, isShipmentTermDropdownOpen, generatedCostingData]);
+
+  // useEffect(() => {
+  //   if (shipmentTerm) {
+  //     setComponentShipmentTerm(shipmentTerm);
+  //   }
+  // }, [shipmentTerm]);
 
   React.useEffect(() => {
     if (selectedCosting) {
@@ -513,7 +551,7 @@ function CostingOverview() {
                       destinationPortId: selectedCosting.portOfDestination._id,
                       sourceId: selectedCosting.product.sourceRates._sourceId,
                       sourceRateId: selectedCosting.product.sourceRates._id,
-                      shipmentTermType: "FOB",
+                      shipmentTermType: shipmentTerm || "FOB",
                       unit: items?.value || "mt",
                     };
                     setGeneratedCostingData(null);
@@ -533,6 +571,7 @@ function CostingOverview() {
                         ...givenData,
                       });
                       payload.unitToConvert = items?.value || "mt";
+                      payload.shipmentTermType = shipmentTerm || "FOB";
                       await dispatch(generateCustomCostingRequest(payload));
                     }
                     setIsChangingUnit(true);

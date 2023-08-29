@@ -76,6 +76,9 @@ function EditCosting() {
   const [selectedUnitForPayload, setSelectedUnitForPayload] =
     React.useState("mt");
 
+  const shipmentTerm = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.selected
+  );
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
   const selectedMyCostingFromHistory = useSelector((state) => {
     if (
@@ -328,7 +331,10 @@ function EditCosting() {
                       givenData.unit =
                         selectedMyCostingFromHistory?.unit || "mt";
                       givenData.shipmentTermType =
-                        selectedMyCostingFromHistory?.termOfAgreement;
+                        shipmentTerm ===
+                        selectedMyCostingFromHistory?.termOfAgreement
+                          ? shipmentTerm
+                          : selectedMyCostingFromHistory?.termOfAgreement;
                       givenData.variantCost = parseFloat(values?.costOfRice);
 
                       setSelectedUnitForPayload(
