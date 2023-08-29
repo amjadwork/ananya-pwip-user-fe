@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
+import FileSaver from "file-saver";
+
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { inrToUsd } from "@/utils/helper";
@@ -26,6 +28,11 @@ import {
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
+// import {
+//   downloadCostingRequest,
+//   downloadCostingFailure,
+// } from "@/redux/actions/exportCosting.actions";
+
 import {
   chevronDown,
   pencilIcon,
@@ -33,7 +40,11 @@ import {
   handlingAndInspectionIcon,
   otherChargesIcon,
   eyePreviewIcon,
+  downloadIcon,
+  shareIcon,
 } from "../../../theme/icon";
+import { useSession } from "next-auth/react";
+import axios from "axios";
 
 function extractCustomCostingPayload(data) {
   return {
@@ -312,6 +323,7 @@ let breakupArr = [
 function CostingOverview() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { data: session } = useSession();
 
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
@@ -546,6 +558,42 @@ function CostingOverview() {
     openBottomSheet(content);
   };
 
+  const handleShareBottomSheet = () => {
+    const content = (
+      <React.Fragment>
+        <div className="px-5 mb-6 pt-5">
+          <span className="text-base font-sans font-medium text-pwip-gray-900 text-left">
+            Download or share your costing
+          </span>
+        </div>
+        <div className="inline-flex flex-col w-full space-y-6">
+          <button
+            type="button"
+            onClick={() => {
+              handleDownload();
+            }}
+            className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
+          >
+            {downloadIcon}
+            <span className="text-base font-medium font-sans">Download</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              handleShare();
+            }}
+            className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
+          >
+            {shareIcon}
+            <span className="text-base font-medium font-sans">Share</span>
+          </button>
+        </div>
+      </React.Fragment>
+    );
+    openBottomSheet(content);
+  };
+
   const handleShare = () => {
     if (navigator && navigator.share) {
       navigator
@@ -559,6 +607,37 @@ function CostingOverview() {
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
     }
+  };
+
+  const handleDownload = () => {
+    axios
+      .post(
+        "https://api-stage.pwip.co/api/generateCostingSheet/download",
+        {
+          historyId: myCosting?.currentCostingFromHistory[0]?._id,
+        },
+        {
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: "Bearer " + session?.accessToken,
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        }
+      )
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          myCosting?.currentCostingFromHistory[0]?.costingName + ".pdf"
+        ); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => console.log(error));
   };
 
   if (!breakupChargesData.length) {
@@ -835,7 +914,12 @@ function CostingOverview() {
                 router.replace("/export-costing");
               }}
             />
-            <Button type="subtle" label="Share" onClick={handleShare} />
+            <Button
+              type="subtle"
+              label="Share"
+              onClick={handleShareBottomSheet}
+            />
+            {/* <Button type="subtle" label="Download" onClick={handleDownload} /> */}
           </div>
         </div>
       </AppLayout>

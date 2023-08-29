@@ -2,11 +2,11 @@ import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 
-export function* makeApiCall(url, method, data) {
+export function* makeApiCall(url, method, data, overrideHeaders) {
   try {
     const authState = yield select((state) => state.auth);
 
-    const headers = {
+    let headers = {
       Authorization: `Bearer ${authState.token}`,
     };
 
@@ -19,11 +19,21 @@ export function* makeApiCall(url, method, data) {
         },
       });
     } else {
-      response = yield call(api[method], url, data, {
-        headers: {
-          ...headers,
-        },
-      });
+      if (overrideHeaders) {
+        let headerOfRequest = { ...overrideHeaders };
+
+        headerOfRequest.headers.Authorization = `Bearer ${authState.token}`;
+
+        response = yield call(api[method], url, data, {
+          ...headerOfRequest,
+        });
+      } else {
+        response = yield call(api[method], url, data, {
+          headers: {
+            ...headers,
+          },
+        });
+      }
     }
 
     return response;
