@@ -145,6 +145,7 @@ function More() {
           </div>
           <div
             onClick={() => {
+              localStorage.removeItem("persist:root");
               signOut();
             }}
             className="inline-flex items-center justify-between pb-6 cursor-pointer"
