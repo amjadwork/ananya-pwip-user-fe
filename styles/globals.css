@@ -62,25 +62,18 @@ a {
   font-family: "Gilroy";
 }
 
-/* Hide the scrollbar for the entire app */
+/* Firefox */
 body {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
 }
 
-/* Hide the scrollbar for WebKit browsers (Chrome, Safari, etc.) */
+/* Internet Explorer and Edge */
+body {
+  -ms-overflow-style: none;
+}
+
+/* Chrome and Safari */
 body::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide the scrollbar for the entire app */
-div {
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
-}
-
-/* Hide the scrollbar for WebKit browsers (Chrome, Safari, etc.) */
-div::-webkit-scrollbar {
   display: none;
 }
 
