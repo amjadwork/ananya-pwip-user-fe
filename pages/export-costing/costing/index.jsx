@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import FileSaver from "file-saver";
 
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
