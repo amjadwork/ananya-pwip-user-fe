@@ -31,7 +31,7 @@ function SelectPortOfDestination() {
 
     if (selectedCosting.product && !selectedCosting.portOfDestination) {
       dispatch(fetchDestinationRequest());
-      // dispatch(fetchOriginRequest());
+      dispatch(fetchOriginRequest());
     }
   }, [selectedCosting]);
 
