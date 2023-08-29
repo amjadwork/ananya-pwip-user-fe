@@ -73,7 +73,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen flex flex-col items-center justify-between pb-[112px] pt-8 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-between pb-[124px] pt-8 px-4">
         <div className="inline-flex flex-col items-center h-full w-full">
           <img
             src="/assets/images/logo-blue.png"
