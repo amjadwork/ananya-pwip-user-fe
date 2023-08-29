@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signIn } from "next-auth/react";
@@ -10,6 +10,8 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
   const dispatch = useDispatch();
+
+  const [active, setActive] = useState(0);
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -39,6 +41,18 @@ export default function Home() {
     }
   }, [session]);
 
+  const onboardingIndex = [0, 1, 2];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
+    }, 2000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <React.Fragment>
       <Head>
@@ -59,34 +73,101 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div
-        className="min-h-screen flex flex-col items-center justify-center"
-        style={{ background: `linear-gradient(180deg, #60baf7, #2373bf)` }}
-      >
-        <div className="bg-no-repeat bg-cover inline-flex flex-col justify-end h-full p-5">
-          <div className="inline-flex flex-col space-y-12">
-            <div className="inline-flex flex-col space-y-3">
-              <h1 className="text-[36px] text-gray-50">
-                Export costing
-                <br />
-                by pwip
-              </h1>
-              <span className="text-md text-gray-200">
-                A team driven towards solving daily rice trade problems. Lorem
-                Ipsum
-              </span>
-            </div>
+      <div className="min-h-screen flex flex-col items-center justify-between pb-[72px] pt-8 px-4">
+        <div className="inline-flex flex-col items-center h-full w-full">
+          <img
+            src="/assets/images/logo-blue.png"
+            className="h-[66px] w-[66px]"
+          />
 
-            <div className="inline-flex flex-col space-y-3">
+          <div className="relative w-full h-full mt-[60px]">
+            <div className="relative h-full overflow-hidden rounded-lg">
+              <div className="duration-700 ease-in-out h-[250px]">
+                <img
+                  src="/assets/images/onboarding1.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                    active === 0 ? "block" : "hidden"
+                  }`}
+                  alt="onboarding 1 image"
+                />
+
+                <img
+                  src="/assets/images/onboarding2.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                    active === 1 ? "block" : "hidden"
+                  }`}
+                  alt="onboarding 2 image"
+                />
+
+                <img
+                  src="/assets/images/onboarding2.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                    active === 2 ? "block" : "hidden"
+                  }`}
+                  alt="onboarding 3 image"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-center space-x-3 w-full mt-[48px]">
               <button
-                onClick={() => handleLogin()}
-                className="w-full rounded-full py-3 px-4 bg-white text-[#2373bf] text-center text-md font-semibold"
-              >
-                Login now
-              </button>
+                type="button"
+                onClick={() => setActive(0)}
+                className={`w-5 h-2 rounded-full bg-pwip-primary ${
+                  active !== 0 ? "bg-opacity-30" : ""
+                }`}
+              ></button>
+
+              <button
+                type="button"
+                onClick={() => setActive(1)}
+                className={`w-5 h-2 rounded-full bg-pwip-primary ${
+                  active !== 1 ? "bg-opacity-30" : ""
+                }`}
+              ></button>
+
+              <button
+                type="button"
+                onClick={() => setActive(2)}
+                className={`w-5 h-2 rounded-full bg-pwip-primary ${
+                  active !== 2 ? "bg-opacity-30" : ""
+                }`}
+              ></button>
             </div>
           </div>
+
+          <div className="inline-flex w-full items-center justify-center mt-[30px]">
+            <p
+              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
+                active === 0 ? "block" : "hidden"
+              }`}
+            >
+              Say goodbye to spreadsheets and calculators!
+            </p>
+
+            <p
+              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
+                active === 1 ? "block" : "hidden"
+              }`}
+            >
+              Get Accurate Quotes by Just Entering Rice and Destination Port
+            </p>
+
+            <p
+              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
+                active === 2 ? "block" : "hidden"
+              }`}
+            >
+              Customize the costing, and share or download with your customer
+            </p>
+          </div>
         </div>
+
+        <button
+          onClick={() => handleLogin()}
+          className="w-full rounded-md py-3 px-4 bg-pwip-primary text-pwip-white-100 text-center text-sm font-bold"
+        >
+          Login / Sign up
+        </button>
       </div>
     </React.Fragment>
   );
