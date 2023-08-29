@@ -73,6 +73,8 @@ function EditCosting() {
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
   const [isGenerated, setIsGenerated] = React.useState(false);
+  const [selectedUnitForPayload, setSelectedUnitForPayload] =
+    React.useState("mt");
 
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
   const selectedMyCostingFromHistory = useSelector((state) => {
@@ -99,6 +101,7 @@ function EditCosting() {
       const payloadBody = {
         ...saveHistoryPayload,
         isQuickCosting: false,
+        unit: selectedUnitForPayload,
       };
 
       dispatch(fetchGeneratedCostingFailure());
@@ -327,6 +330,10 @@ function EditCosting() {
                       givenData.shipmentTermType =
                         selectedMyCostingFromHistory?.termOfAgreement;
                       givenData.variantCost = parseFloat(values?.costOfRice);
+
+                      setSelectedUnitForPayload(
+                        selectedMyCostingFromHistory?.unit || "mt"
+                      );
 
                       const payload =
                         generatePayloadForCustomCosting(givenData);

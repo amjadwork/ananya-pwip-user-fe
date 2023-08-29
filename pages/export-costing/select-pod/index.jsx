@@ -28,12 +28,14 @@ function SelectPortOfDestination() {
     if (!selectedCosting.product) {
       router.replace("/export-costing");
     }
+
+    if (selectedCosting.product && !selectedCosting.portOfDestination) {
+      dispatch(fetchDestinationRequest());
+      // dispatch(fetchOriginRequest());
+    }
   }, [selectedCosting]);
 
   React.useEffect(() => {
-    dispatch(fetchDestinationRequest());
-    dispatch(fetchOriginRequest());
-
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;

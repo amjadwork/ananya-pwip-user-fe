@@ -13,6 +13,7 @@ import { Button } from "@/components/Button";
 import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
+  resetCostingSelection,
 } from "@/redux/actions/costing.actions";
 import {
   saveCostingRequest,
@@ -33,30 +34,46 @@ function SelectionOverview() {
   const [isGenerated, setIsGenerated] = React.useState(false);
 
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  const generatedCosting = useSelector(
+    (state) => state.costing.generatedCosting
+  ); // Use api reducer slice
+
+  async function handleSaveCosting() {
+    const saveHistoryPayload = getCostingToSaveHistoryPayload(generatedCosting);
+
+    const payloadBody = {
+      ...saveHistoryPayload,
+      isQuickCosting: true,
+    };
+
+    await dispatch(saveCostingRequest(payloadBody));
+    await dispatch(fetchGeneratedCostingFailure());
+    setIsGenerated(false);
+    router.push("/export-costing/costing");
+  }
 
   React.useEffect(() => {
-    if (selectedCosting && selectedCosting?.generatedCosting && isGenerated) {
-      const saveHistoryPayload = getCostingToSaveHistoryPayload(
-        selectedCosting?.generatedCosting
-      );
-
-      const payloadBody = {
-        ...saveHistoryPayload,
-        isQuickCosting: true,
-      };
-
-      dispatch(fetchGeneratedCostingFailure());
-
-      dispatch(saveCostingRequest(payloadBody));
-      setIsGenerated(false);
-      router.push("/export-costing/costing");
+    if (generatedCosting && isGenerated) {
+      handleSaveCosting();
     }
-  }, [selectedCosting, isGenerated]);
+  }, [generatedCosting, isGenerated]);
 
   React.useEffect(() => {
-    if (selectedCosting) {
+    if (
+      selectedCosting &&
+      selectedCosting?.product &&
+      selectedCosting?.portOfDestination
+    ) {
       setSelectedCostingOptions(selectedCosting);
     }
+
+    // if (
+    //   selectedCosting &&
+    //   !selectedCosting?.product &&
+    //   !selectedCosting?.portOfDestination
+    // ) {
+    //   router.push("/export-costing/select-pod");
+    // }
   }, [selectedCosting]);
 
   React.useEffect(() => {
@@ -107,7 +124,7 @@ function SelectionOverview() {
           >
             <img
               src={
-                selectedCostingOptions.product.images[0] ||
+                selectedCostingOptions?.product?.images[0] ||
                 "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
               }
               className="bg-cover h-[62px] w-[62px] rounded-md"
@@ -115,21 +132,21 @@ function SelectionOverview() {
             <div className="w-full inline-flex flex-col space-y-1">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                  {selectedCostingOptions.product.variantName}
+                  {selectedCostingOptions?.product?.variantName}
                 </span>
                 <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                  ₹{selectedCostingOptions.product.sourceRates.price}/
-                  {selectedCostingOptions.product.sourceRates.unit}
+                  ₹{selectedCostingOptions?.product?.sourceRates?.price}/
+                  {selectedCostingOptions?.product?.sourceRates?.unit}
                 </span>
               </div>
 
               <span className="text-pwip-gray-700 font-sans text-xs font-bold">
-                {selectedCostingOptions.product.brokenPercentage || 5}% Broken
+                {selectedCostingOptions?.product?.brokenPercentage || 5}% Broken
               </span>
 
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                  {selectedCostingOptions.product.sourceRates.sourceName}
+                  {selectedCostingOptions?.product?.sourceRates?.sourceName}
                 </span>
 
                 <div className="inline-flex items-center justify-end text-pwip-primary-400 space-x-1">
@@ -154,16 +171,16 @@ function SelectionOverview() {
             <div className="w-full inline-flex h-[62px] py-2 justify-between flex-col space-y-1">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                  {selectedCostingOptions.portOfDestination.portName}
+                  {selectedCostingOptions?.portOfDestination?.portName}
                 </span>
                 <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                  {selectedCostingOptions.portOfDestination.portCode}
+                  {selectedCostingOptions?.portOfDestination?.portCode}
                 </span>
               </div>
 
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                  {selectedCostingOptions.portOfDestination.country}
+                  {selectedCostingOptions?.portOfDestination?.country}
                 </span>
 
                 <div className="inline-flex items-center justify-end text-pwip-primary-400 space-x-1">
@@ -528,16 +545,20 @@ function SelectionOverview() {
             type="primary"
             label="Generate consting"
             onClick={async () => {
+              await dispatch(fetchGeneratedCostingFailure());
               await dispatch(fetchMyCostingFailure());
               const body = {
-                destinationPortId: selectedCostingOptions.portOfDestination._id,
-                sourceId: selectedCostingOptions.product.sourceRates._sourceId,
-                sourceRateId: selectedCostingOptions.product.sourceRates._id,
+                destinationPortId:
+                  selectedCostingOptions?.portOfDestination?._id,
+                sourceId:
+                  selectedCostingOptions?.product?.sourceRates?._sourceId,
+                sourceRateId: selectedCostingOptions?.product?.sourceRates?._id,
                 shipmentTermType: "FOB",
                 unit: "mt",
               };
 
               await dispatch(generateQuickCostingRequest(body));
+              // await dispatch(resetCostingSelection());
               setIsGenerated(true);
             }}
           />

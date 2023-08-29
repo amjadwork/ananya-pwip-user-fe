@@ -22,7 +22,7 @@ api.interceptors.response.use(
       dispatch(setAuthData(null, null)); // Assuming you have a logout action to clear user state
 
       const router = useRouter();
-      router.push("/"); // Redirect to login page
+      router.replace("/"); // Redirect to login page
     }
     return Promise.reject(error);
   }
@@ -30,7 +30,7 @@ api.interceptors.response.use(
 
 export function getCostingToSaveHistoryPayload(inputJson) {
   return {
-    costingName: `${inputJson.details.variantObject.variantName} - ${inputJson.details.destinationObject.portName}`,
+    costingName: `${inputJson?.details?.variantObject?.variantName} - ${inputJson?.details?.destinationObject?.portName}`,
     brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
     unit: "mt",
     _variantId: inputJson.details.variantObject._variantId,
@@ -40,7 +40,7 @@ export function getCostingToSaveHistoryPayload(inputJson) {
     bagSize:
       inputJson?.details?.packageDetails?.weight ||
       inputJson?.details?.packageObject?.weight,
-    _sourceId: inputJson.details.sourceObject._id,
+    _sourceId: inputJson?.details?.sourceObject?._id,
     _originId:
       inputJson?.details?.originPortObject?._originId ||
       inputJson?.details?.originObject?._id,

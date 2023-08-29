@@ -351,11 +351,15 @@ function CostingOverview() {
   }, [breakupArr, selectedCosting]);
 
   useEffect(() => {
+    console.log("here top", myCosting, generatedCosting);
+
     if (
       myCosting?.currentCostingFromHistory &&
       myCosting?.currentCostingFromHistory?.length &&
       !generatedCosting
     ) {
+      console.log("here", myCosting, generatedCosting);
+
       setGeneratedCostingData(myCosting?.currentCostingFromHistory[0]);
       const sheet = myCosting?.currentCostingFromHistory[0];
 
