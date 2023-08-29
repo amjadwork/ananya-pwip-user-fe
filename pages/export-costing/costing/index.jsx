@@ -695,7 +695,7 @@ function CostingOverview() {
         <Header />
 
         <div
-          className={`min-h-screen h-full w-full bg-white overflow-auto px-5 pb-8 pt-[98px] inline-flex flex-col justify-between hide-scroll-bar`}
+          className={`min-h-screen h-full w-full bg-white overflow-auto px-5 pb-8 pt-[78px] inline-flex flex-col justify-between hide-scroll-bar`}
         >
           <div className="inline-flex flex-col w-full h-full py-[20px]">
             <div className="inline-flex flex-col w-full space-y-2">

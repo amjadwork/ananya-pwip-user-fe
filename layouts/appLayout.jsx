@@ -40,7 +40,7 @@ const AppLayout = ({ children }) => {
   return (
     <React.Fragment>
       <Head>{/* Common head content */}</Head>
-      <div className="h-full flex flex-col bg-pwip-primary hide-scroll-bar">
+      <div className="h-full flex flex-col bg-white hide-scroll-bar">
         <main
           className={`flex-grow ${
             hideBottomBarAtRoutes.includes(activeRoute)

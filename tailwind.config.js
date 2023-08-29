@@ -81,6 +81,7 @@ module.exports = {
     "text-gray-200",
     "text-blue-200",
     "bg-blue-800",
+    "bottom-[82px]",
   ],
   theme: {
     extend: {

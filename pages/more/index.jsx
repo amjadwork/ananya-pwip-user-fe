@@ -62,7 +62,7 @@ function More() {
 
         <div
           id="fixedMenuSection"
-          className={`fixed h-[auto] top-[72px] w-full bg-pwip-primary z-10 py-6 px-5`}
+          className={`h-[auto] mt-[72px] w-full bg-pwip-primary z-10 py-6 px-5`}
         >
           <div className="inline-flex items-center space-x-5">
             <div className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
@@ -83,11 +83,11 @@ function More() {
         </div>
 
         <div
-          className={`inline-flex flex-col w-full bg-white pb-0 overflow-auto px-5 pt-7 hide-scroll-bar relative rounded-2xl`}
+          className={`inline-flex flex-col w-full bg-white pb-0 overflow-auto px-5 pt-7 hide-scroll-bar relative rounded-t-2xl`}
           style={{
-            top: mainContainerHeight + 73 + "px",
+            // top: mainContainerHeight + 73 + "px",
             paddingBottom: mainContainerHeight - 10 + "px",
-            minHeight: `calc(100vh - ${mainContainerHeight + 73 + "px"})`,
+            minHeight: `calc(100vh - ${mainContainerHeight + 72 + "px"})`,
           }}
         >
           {moreSettingOptions.map((items, index) => {

@@ -8,7 +8,7 @@ import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
 //   saveCostingFailure,
 // } from "@/redux/actions/myCosting.actions";
 
-const hideBottomBarAtRoutes = ["costing", "edit"];
+const atRoutes = ["costing", "edit", "my-costing", "more"];
 
 export function Header(props) {
   const router = useRouter();
@@ -49,23 +49,28 @@ export function Header(props) {
     if (isInStandaloneMode()) {
       setEnvironmentBasedClasses("h-[130px]");
     } else {
-      setEnvironmentBasedClasses("h-[92px]");
+      const route = ["costing", "edit", "my-costing", "more"];
+      if (route.includes(activeRoute)) {
+        setEnvironmentBasedClasses("h-[72px]");
+      } else {
+        setEnvironmentBasedClasses("h-[92px]");
+      }
     }
-  }, []);
+  }, [activeRoute]);
 
   return (
     <header
       className={`inline-flex items-center w-full ${environmentBasedClasses} px-5 py-4 ${
-        hideBottomBarAtRoutes.includes(activeRoute) ? "" : "pb-[28px]"
+        atRoutes.includes(activeRoute) ? "" : "pb-[28px]"
       }  space-x-4 bg-pwip-primary fixed top-0 z-10`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
-          {!hideLogo && !hideBottomBarAtRoutes.includes(activeRoute) && (
+          {!hideLogo && !atRoutes.includes(activeRoute) && (
             <img src="/assets/images/logo-white.png" className="h-full" />
           )}
 
-          {hideBottomBarAtRoutes.includes(activeRoute) && (
+          {atRoutes.includes(activeRoute) && (
             <div
               className="inline-flex items-center space-x-2 text-white"
               onClick={() => handleBack()}

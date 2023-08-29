@@ -94,11 +94,11 @@ function MyCosting() {
         <Header />
 
         <div
-          className={`relative top-[92px] h-full w-full bg-pwip-white-100 z-0 py-6 px-5`}
+          className={`relative top-[72px] h-full w-full bg-pwip-white-100 z-0 py-6 px-5`}
         >
           <div
             id="fixedMenuSection"
-            className={`fixed left-0 top-[92px] h-[auto] w-full bg-white z-0 py-3 px-5`}
+            className={`fixed left-0 top-[72px] h-[auto] w-full bg-white z-0 py-3 px-5`}
           >
             <input
               placeholder="Search previous costing"

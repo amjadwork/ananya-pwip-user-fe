@@ -244,7 +244,7 @@ function EditCosting() {
 
         <div
           id="fixedMenuSection"
-          className="fixed top-[92px] h-[auto] w-full bg-pwip-gray-45 z-10 py-5 px-5"
+          className="fixed top-[72px] h-[auto] w-full bg-pwip-gray-45 z-10 py-5 px-5"
         >
           <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
             <div
