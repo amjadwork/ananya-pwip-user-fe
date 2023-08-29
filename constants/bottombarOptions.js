@@ -24,7 +24,7 @@ export const options = [
   },
   {
     icon: myCostingBottomBarIcon,
-    label: "My Costing",
+    label: "Saved",
     path: "my-costing",
   },
   {

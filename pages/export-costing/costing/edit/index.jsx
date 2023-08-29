@@ -108,7 +108,7 @@ function EditCosting() {
       dispatch(saveCostingFailure());
       dispatch(saveCostingRequest(payloadBody));
       setIsGenerated(false);
-      router.push("/export-costing/costing");
+      router.replace("/export-costing/costing");
     }
   }, [selectedAndGeneratedCosting, isGenerated]);
 
