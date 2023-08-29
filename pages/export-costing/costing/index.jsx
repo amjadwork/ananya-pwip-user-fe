@@ -331,7 +331,12 @@ function CostingOverview() {
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const myCosting = useSelector((state) => state.myCosting);
 
-  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
 
   const [showBreakup, setShowBreakup] = useState(false);
   const [breakupChargesData, setBreakupChargesData] = useState([]);
@@ -610,6 +615,12 @@ function CostingOverview() {
   };
 
   const handleDownload = () => {
+    openToastMessage({
+      type: "loading",
+      message: "Downloading ...",
+      // autoHide: false,
+    });
+    closeBottomSheet();
     axios
       .post(
         "https://api-stage.pwip.co/api/generateCostingSheet/download",
@@ -636,8 +647,19 @@ function CostingOverview() {
         document.body.appendChild(link);
         link.click();
         link.remove();
+
+        closeToastMessage();
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        closeToastMessage();
+        openToastMessage({
+          type: "error",
+          message:
+            error?.response?.message ||
+            error?.response?.data?.message ||
+            "Something went wrong",
+        });
+      });
   };
 
   if (!breakupChargesData.length) {

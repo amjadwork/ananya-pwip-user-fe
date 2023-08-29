@@ -72,6 +72,15 @@ module.exports = {
     "h-3",
     "currentColor",
     "px-6",
+    "animate-spin",
+    "mr-2",
+    "text-gray-200",
+    "dark:text-gray-600",
+    "fill-blue-600",
+    "bg-pwip-primary-100",
+    "text-gray-200",
+    "text-blue-200",
+    "bg-blue-800",
   ],
   theme: {
     extend: {
