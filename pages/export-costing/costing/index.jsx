@@ -327,14 +327,14 @@ function CostingOverview() {
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
-  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  const selectedCosting = useSelector((state) => state.costing);
   const myCosting = useSelector((state) => state.myCosting);
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );
-  // const isShipmentTermDropdownOpen = useSelector(
-  //   (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
-  // );
+  const isShipmentTermDropdownOpen = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
+  );
 
   const {
     openBottomSheet,
@@ -351,7 +351,24 @@ function CostingOverview() {
     value: "mt",
   });
   const [generatedCostingData, setGeneratedCostingData] = useState(null);
-  // const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
+  const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
+
+  React.useEffect(() => {
+    setComponentShipmentTerm(shipmentTerm);
+  }, [isShipmentTermDropdownOpen]);
+
+  React.useEffect(() => {
+    if (shipmentTerm && componentShipmentTerm) {
+      dispatch(updateCostingFailure());
+      const payloadBody = {
+        shipmentTermType: shipmentTerm || "FOB",
+        termOfAgreement: shipmentTerm || "FOB",
+      };
+      dispatch(updateCostingRequest(payloadBody));
+      dispatch(fetchGeneratedCostingFailure());
+      dispatch(fetchMyCostingFailure());
+    }
+  }, [shipmentTerm]);
 
   React.useEffect(() => {
     if (generatedCosting && selectedUnit && isChangingUnit && shipmentTerm) {
@@ -399,10 +416,10 @@ function CostingOverview() {
   // }, [shipmentTerm]);
 
   React.useEffect(() => {
-    if (selectedCosting) {
-      breakupArr[0].rowItems[1].label = `${selectedCosting?.generatedCosting?.details?.packageDetails?.bag}-${selectedCosting?.generatedCosting?.details?.packageDetails?.weight}${selectedCosting?.generatedCosting?.details?.packageDetails?.unit}`;
+    if (generatedCosting) {
+      breakupArr[0].rowItems[1].label = `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
     }
-  }, [breakupArr, selectedCosting]);
+  }, [breakupArr, generatedCosting]);
 
   useEffect(() => {
     if (

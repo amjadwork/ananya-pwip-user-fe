@@ -35,13 +35,15 @@ function ExportCosting() {
     if (token) {
       getProductList();
     }
+  }, [token]);
 
+  React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, [token]);
+  }, []);
 
   return (
     <React.Fragment>

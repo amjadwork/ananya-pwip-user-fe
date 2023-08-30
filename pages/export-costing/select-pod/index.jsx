@@ -20,20 +20,22 @@ import SelectLocationContainer from "@/containers/ec/SelectLocation";
 function SelectPortOfDestination() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedCosting = useSelector((state) => state.costing);
+  const selectedProductForCosting = useSelector(
+    (state) => state.costing.product
+  );
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   React.useEffect(() => {
-    if (!selectedCosting.product) {
+    if (!selectedProductForCosting) {
       router.replace("/export-costing");
     }
 
-    if (selectedCosting.product && !selectedCosting.portOfDestination) {
+    if (selectedProductForCosting) {
       dispatch(fetchDestinationRequest());
       dispatch(fetchOriginRequest());
     }
-  }, [selectedCosting]);
+  }, [selectedProductForCosting]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
