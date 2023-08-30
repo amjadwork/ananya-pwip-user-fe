@@ -144,14 +144,14 @@ function updateCharges(response, chargesToUpdate) {
           case "CFS Handling":
             updatedInr = response.costing.cfsHandling;
             rowItem.breakUp = extractBreakUpItems(
-              response?.breakup?.chaObject?.chaDetailObject
+              response?.breakUp?.chaObject?.chaDetailObject
             );
 
             break;
           case "Shipping line locals":
             updatedInr = response.costing.shlCost;
             rowItem.breakUp = extractBreakUpItems(
-              response?.breakup?.shlObject?.shlDetailObject
+              response?.breakUp?.shlObject?.shlDetailObject
             );
 
             break;
@@ -488,15 +488,15 @@ function CostingOverview() {
               </div>
 
               <div className="inline-flex items-center h-auto px-7 relative border-b-[1px] border-b-pwip-gray-40">
-                <div className="inline-flex items-center justify-center flex-col h-full">
+                <div className="inline-flex items-center flex-col h-full">
                   <div
-                    className={`h-3 w-3 rounded-full absolute top-[14px] ${lineBackgroundColor[selectedIndex]}`}
+                    className={`h-3 w-3 rounded-full absolute top-[12px] ${lineBackgroundColor[selectedIndex]}`}
                   />
                   <div
-                    className={`h-[85%] w-1 absolute top-5 ${lineBackgroundColor[selectedIndex]}`}
+                    className={`h-full max-h-[calc(100%-24px)] top-[12px] w-1 absolute ${lineBackgroundColor[selectedIndex]}`}
                   />
                   <div
-                    className={`h-3 w-3 rounded-full absolute bottom-[16px] ${lineBackgroundColor[selectedIndex]}`}
+                    className={`h-3 w-3 rounded-full absolute bottom-[12px] ${lineBackgroundColor[selectedIndex]}`}
                   />
                 </div>
                 <div className="w-full">

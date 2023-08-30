@@ -1,9 +1,11 @@
 import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
+import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
 
 export function* makeApiCall(url, method, data, overrideHeaders) {
   try {
+    yield put(showLoaderSuccess());
     const authState = yield select((state) => state.auth);
 
     let headers = {
@@ -36,14 +38,20 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
       }
     }
 
+    yield put(hideLoaderFailure());
+
     return response;
   } catch (error) {
     yield put(
       showToastNotificationSuccess({
         type: "error",
-        message: error?.response?.data?.message || "Something went wrong",
+        message:
+          error?.response?.data?.message ||
+          error?.response?.message ||
+          "Something went wrong",
       })
     );
+    yield put(hideLoaderFailure());
     throw error;
   }
 }

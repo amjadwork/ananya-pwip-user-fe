@@ -16,10 +16,19 @@ const AppLayout = ({ children }) => {
 
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const toastOverlay = useSelector((state) => state.toastOverlay);
+  const showLoader = useSelector((state) => state.utils.showLoader);
 
-  const { openToastMessage } = useOverlayContext();
+  const { openToastMessage, startLoading, stopLoading } = useOverlayContext();
 
   const [activeRoute, setActiveRoute] = React.useState("");
+
+  React.useEffect(() => {
+    if (showLoader) {
+      startLoading();
+    } else {
+      stopLoading();
+    }
+  }, [showLoader]);
 
   React.useEffect(() => {
     if (router) {
@@ -45,7 +54,7 @@ const AppLayout = ({ children }) => {
   return (
     <React.Fragment>
       <Head>{/* Common head content */}</Head>
-      <div className="h-full flex flex-col bg-white hide-scroll-bar">
+      <div className="h-full flex flex-col hide-scroll-bar">
         <main
           className={`flex-grow ${
             hideBottomBarAtRoutes.includes(activeRoute)

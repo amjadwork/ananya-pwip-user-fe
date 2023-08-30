@@ -9,6 +9,7 @@ import myCostingReducer from "./myCosting.reducers";
 import toastOverlayReducer from "./toastOverlay.reducers";
 import exportCostingReducer from "./exportCosting.reducers";
 import shipmentTermReducer from "./shipmentTerms.reducers";
+import utilsReducer from "./utils.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   toastOverlay: toastOverlayReducer,
   exportCosting: exportCostingReducer,
   shipmentTerm: shipmentTermReducer,
+  utils: utilsReducer,
 });
 
 export default rootReducer;
