@@ -753,7 +753,7 @@ function CostingOverview() {
         <div
           className={`min-h-screen h-full w-full bg-white overflow-auto px-5 pb-8 pt-[78px] inline-flex flex-col justify-between hide-scroll-bar`}
         >
-          <div className="inline-flex flex-col w-full h-full py-[20px]">
+          <div className="inline-flex flex-col w-full h-full pt-[20px] pb-[72px]">
             <div className="inline-flex flex-col w-full space-y-2">
               <div className="inline-flex items-center justify-between">
                 <span className="text-pwip-gray-900 text-base font-normal font-sans line-clamp-1">
@@ -982,7 +982,7 @@ function CostingOverview() {
               </React.Fragment>
             )}
           </div>
-          <div className="inline-flex items-center w-full space-x-6">
+          <div className="inline-flex items-center w-full space-x-6 px-5 pb-5 fixed bottom-0 left-0 bg-white">
             <Button
               type="outline"
               label="Create new"
