@@ -569,6 +569,7 @@ function CostingOverview() {
                       let payload = extractCustomCostingPayload({
                         ...givenData,
                       });
+                      payload.currentUnit = selectedUnit?.value || "mt";
                       payload.unitToConvert = items?.value || "mt";
                       payload.shipmentTermType = shipmentTerm || "FOB";
                       await dispatch(generateCustomCostingRequest(payload));
