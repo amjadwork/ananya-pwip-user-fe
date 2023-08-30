@@ -152,7 +152,7 @@ function More() {
           >
             <div className="inline-flex items-center space-x-4">
               <span className="text-base font-sans font-normal text-pwip-gray-1000">
-                Logut
+                Logout
               </span>
             </div>
           </div>

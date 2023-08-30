@@ -21,6 +21,7 @@ const CostingForm = ({ values, handleChange, handleBlur }) => {
           placeholder="Ex: Sona Masuri"
           type="text"
           name="costingName"
+          defaultValue={values?.costingName}
           onChange={handleChange}
           onBlur={handleBlur}
           className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"

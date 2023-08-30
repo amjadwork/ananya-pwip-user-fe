@@ -29,8 +29,11 @@ api.interceptors.response.use(
 );
 
 export function getCostingToSaveHistoryPayload(inputJson) {
+  console.log(inputJson);
   return {
-    costingName: `${inputJson?.details?.variantObject?.variantName} - ${inputJson?.details?.destinationObject?.portName}`,
+    costingName:
+      inputJson?.costingName ||
+      `${inputJson?.details?.variantObject?.variantName} - ${inputJson?.details?.destinationObject?.portName}`,
     brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
     unit: "mt",
     _variantId: inputJson.details.variantObject._variantId,

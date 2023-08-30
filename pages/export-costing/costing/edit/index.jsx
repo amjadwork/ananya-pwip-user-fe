@@ -97,9 +97,10 @@ function EditCosting() {
       selectedAndGeneratedCosting?.generatedCosting &&
       isGenerated
     ) {
-      const saveHistoryPayload = getCostingToSaveHistoryPayload(
-        selectedAndGeneratedCosting?.generatedCosting
-      );
+      const saveHistoryPayload = getCostingToSaveHistoryPayload({
+        ...selectedAndGeneratedCosting?.generatedCosting,
+        costingName: formik.current.values.costingName,
+      });
 
       const payloadBody = {
         ...saveHistoryPayload,
