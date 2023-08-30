@@ -1,6 +1,7 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
+import { useOverlayContext } from "@/context/OverlayContext";
 
 import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
 import {
@@ -13,8 +14,10 @@ const atRoutes = ["costing", "edit", "my-costing", "more"];
 export function Header(props) {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { openModal } = useOverlayContext();
 
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
+  const forexRate = useSelector((state) => state.utils.forexRate);
   // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
   // const component = props.component;
   const hideLogo = props.hideLogo || false;
@@ -24,13 +27,6 @@ export function Header(props) {
     React.useState("");
 
   const handleBack = () => {
-    // if (activeRoute === "edit") {
-    //   dispatch(fetchMyCostingFailure());
-    // }
-
-    // if (activeRoute === "costing") {
-    //   dispatch(saveCostingFailure());
-    // }
     router.back();
   };
 
@@ -89,9 +85,12 @@ export function Header(props) {
           <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
             <button
               type="button"
+              onClick={() => {
+                openModal(forexRate?.USD || 0);
+              }}
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none"
             >
-              <span>1 USD = 81 INR</span>
+              <span>1 USD = {forexRate?.USD} INR</span>
             </button>
             <span>|</span>
             <button

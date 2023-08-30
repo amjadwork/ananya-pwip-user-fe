@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { BottomNavBar } from "@/components/BottomNavBar";
 
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
+import { forexRateRequest } from "@/redux/actions/utils.actions";
 
 const hideBottomBarAtRoutes = ["costing", "edit"];
 
@@ -50,6 +51,14 @@ const AppLayout = ({ children }) => {
       }
     }
   }, [toastOverlay]);
+
+  React.useEffect(() => {
+    dispatch(
+      forexRateRequest({
+        usd: 82,
+      })
+    );
+  }, []);
 
   return (
     <React.Fragment>

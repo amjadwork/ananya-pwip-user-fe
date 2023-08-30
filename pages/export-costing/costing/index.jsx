@@ -97,7 +97,7 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function extractBreakUpItems(breakUpObject) {
+function extractBreakUpItems(breakUpObject, forex) {
   const breakUpItems = [];
 
   for (const key in breakUpObject) {
@@ -115,7 +115,7 @@ function extractBreakUpItems(breakUpObject) {
       ); // Convert to spaced words
       const breakUpItem = {
         inr: breakUpObject[key],
-        usd: inrToUsd(breakUpObject[key] || 0, 83.16),
+        usd: inrToUsd(breakUpObject[key] || 0, forex.USD),
         label: formattedLabel,
       };
       breakUpItems.push(breakUpItem);
@@ -125,7 +125,7 @@ function extractBreakUpItems(breakUpObject) {
   return breakUpItems;
 }
 
-function updateCharges(response, chargesToUpdate) {
+function updateCharges(response, chargesToUpdate, forex) {
   if (response) {
     const updatedCharges = chargesToUpdate.map((chargeGroup) => {
       const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
@@ -144,14 +144,16 @@ function updateCharges(response, chargesToUpdate) {
           case "CFS Handling":
             updatedInr = response.costing.cfsHandling;
             rowItem.breakUp = extractBreakUpItems(
-              response?.breakUp?.chaObject?.chaDetailObject
+              response?.breakUp?.chaObject?.chaDetailObject,
+              forex
             );
 
             break;
           case "Shipping line locals":
             updatedInr = response.costing.shlCost;
             rowItem.breakUp = extractBreakUpItems(
-              response?.breakUp?.shlObject?.shlDetailObject
+              response?.breakUp?.shlObject?.shlDetailObject,
+              forex
             );
 
             break;
@@ -189,7 +191,7 @@ function updateCharges(response, chargesToUpdate) {
         return {
           ...rowItem,
           inr: updatedInr,
-          usd: inrToUsd(updatedInr || 0, 83.16) || 0,
+          usd: inrToUsd(updatedInr || 0, forex.USD) || 0,
         };
       });
 
@@ -335,6 +337,7 @@ function CostingOverview() {
   const isShipmentTermDropdownOpen = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
   );
+  const forexRate = useSelector((state) => state.utils.forexRate);
 
   const {
     openBottomSheet,
@@ -425,7 +428,8 @@ function CostingOverview() {
     if (
       myCosting?.currentCostingFromHistory &&
       myCosting?.currentCostingFromHistory?.length &&
-      !generatedCosting
+      !generatedCosting &&
+      forexRate
     ) {
       setGeneratedCostingData(myCosting?.currentCostingFromHistory[0]);
       const sheet = myCosting?.currentCostingFromHistory[0];
@@ -434,7 +438,8 @@ function CostingOverview() {
 
       const updatedCharges = updateCharges(
         myCosting?.currentCostingFromHistory[0],
-        breakupArr
+        breakupArr,
+        forexRate
       );
 
       const selected = unitOptions.find((u) => u.value === sheet.unit);
@@ -445,7 +450,7 @@ function CostingOverview() {
         setBreakupChargesData(updatedCharges);
       }
     }
-  }, [myCosting, generatedCosting]);
+  }, [myCosting, generatedCosting, forexRate]);
 
   useEffect(() => {
     if (
@@ -824,7 +829,11 @@ function CostingOverview() {
                     </span>
 
                     <span className="text-base font-medium font-sans line-clamp-1">
-                      ${inrToUsd(generatedCostingData?.grandTotal || 0, 83.16)}
+                      $
+                      {inrToUsd(
+                        generatedCostingData?.grandTotal || 0,
+                        forexRate.USD
+                      )}
                     </span>
                   </div>
                 </div>
@@ -974,7 +983,10 @@ function CostingOverview() {
                     >
                       <span className="text-pwip-gray-1000 text-base font-bold">
                         $
-                        {inrToUsd(generatedCostingData?.grandTotal || 0, 83.16)}
+                        {inrToUsd(
+                          generatedCostingData?.grandTotal || 0,
+                          forexRate.USD
+                        )}
                       </span>
                     </div>
                   </div>

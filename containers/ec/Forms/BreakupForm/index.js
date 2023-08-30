@@ -1,8 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import { inrToUsd } from "@/utils/helper";
 import { breakupArr } from "@/constants/breakupStructure";
 
 const BreakupForm = ({ values, handleChange, handleBlur }) => {
+  const forexRate = useSelector((state) => state.utils.forexRate);
+
   return (
     <React.Fragment>
       <div className="inline-flex flex-col w-full">
@@ -72,7 +75,9 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
                         <input
                           className="text-pwip-gray-850 text-sm font-normal text-right border-b-[1px] border-b-pwip-gray-650 w-full"
                           readOnly={true}
-                          value={parseFloat(inrToUsd(values[row.name], 83.16))}
+                          value={parseFloat(
+                            inrToUsd(values[row.name], forexRate.USD)
+                          )}
                         />
                       </div>
                     </div>

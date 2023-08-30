@@ -4,6 +4,7 @@ import "react-spring-bottom-sheet/dist/style.css";
 import { useDispatch } from "react-redux";
 
 import { hideToastNotificationFailure } from "@/redux/actions/toastOverlay.actions";
+import { forexRateRequest } from "@/redux/actions/utils.actions";
 
 const OverlayContext = createContext();
 
@@ -22,8 +23,15 @@ export function OverlayProvider({ children }) {
 
   const [bottomSheetChildren, setBottomSheetChildren] = useState(null);
   const [autoHideToast, setAutoHideToast] = useState(true);
+  const [usdValue, setUSDValue] = useState(0);
+  const [usdInputValue, setUSDInputValue] = useState(0);
 
-  const openModal = () => setIsModalOpen(true);
+  const openModal = (usdValue) => {
+    if (usdValue) {
+      setUSDValue(usdValue);
+    }
+    setIsModalOpen(true);
+  };
   const closeModal = () => setIsModalOpen(false);
 
   const openBottomSheet = (content) => {
@@ -204,9 +212,108 @@ export function OverlayProvider({ children }) {
           </div>
         </div>
       )}
-      {/* <div className="h-screen w-screen bg-black fixed top-0 left-0 overflow-hidden z-50 bg-opacity-60 inline-flex justify-center items-center">
-        
-      </div> */}
+      {isModalOpen && (
+        <div className="h-screen w-screen bg-black fixed top-0 left-0 overflow-hidden z-50 bg-opacity-60 inline-flex justify-center items-center">
+          <div className="w-[90%] px-6 py-5 bg-white rounded-lg relative top-[-12%]">
+            <div className="inline-flex items-center justify-between w-full">
+              <div className="inline-flex items-center text-sm space-x-3 text-pwip-gray-800">
+                <span className="font-sans font-medium">
+                  Change forex conversion
+                </span>
+              </div>
+
+              <button
+                onClick={() => closeModal()}
+                className="outline-none bg-transparent border-none text-pwip-gray-800 cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  class="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="inline-flex items-center w-full py-4">
+              <div className="inline-flex items-center w-full">
+                <div className="border-[1px] rounded-l-md py-2 px-4 h-[36px] w-full max-w-[24%] inline-flex items-center">
+                  <span className="text-pwip-gray-1000 text-sm line-clamp-1">
+                    1 USD
+                  </span>
+                </div>
+                <div className="border-[1px] border-l-[0px] rounded-r-md py-2 px-4 h-[36px] w-full max-w-[76%] relative inline-flex items-center justify-between">
+                  <input
+                    defaultValue={usdValue}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setUSDInputValue(parseFloat(e.target.value || 0));
+                    }}
+                    className="outline-none h-full w-full"
+                  />
+
+                  <div className="w-auto h-auto">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 18 18"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M15.75 13.5001L14.9999 14.3206C14.6021 14.7556 14.0626 15.0001 13.5001 15.0001C12.9376 15.0001 12.3981 14.7556 12.0003 14.3206C11.6019 13.8864 11.0625 13.6426 10.5001 13.6426C9.93778 13.6426 9.39835 13.8864 8.99998 14.3206M2.25 15H3.50591C3.87279 15 4.05624 15 4.22887 14.9586C4.38192 14.9219 4.52824 14.8613 4.66245 14.779C4.81382 14.6862 4.94354 14.5565 5.20296 14.2971L14.625 4.87505C15.2463 4.25373 15.2463 3.24637 14.625 2.62505C14.0037 2.00373 12.9963 2.00373 12.375 2.62505L2.95295 12.0471C2.69352 12.3065 2.5638 12.4362 2.47104 12.5876C2.3888 12.7218 2.32819 12.8681 2.29145 13.0212C2.25 13.1938 2.25 13.3773 2.25 13.7442V15Z"
+                        stroke="#4F5655"
+                        stroke-width="1.58333"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="inline-flex items-center w-full mt-4">
+              <div className="inline-flex items-center justify-center w-full space-x-5">
+                <button
+                  onClick={() => {
+                    dispatch(
+                      forexRateRequest({
+                        usd: parseFloat(usdValue || 0),
+                      })
+                    );
+                    closeModal();
+                  }}
+                  className="bg-pwip-primary border-[1px] border-pwip-primary w-full py-2 rounded-md text-white text-center text-xs"
+                >
+                  Reset
+                </button>
+                <button
+                  onClick={() => {
+                    dispatch(
+                      forexRateRequest({
+                        usd: usdInputValue,
+                      })
+                    );
+                    closeModal();
+                  }}
+                  className="border-[1px] border-pwip-primary w-full py-2 rounded-md text-pwip-primary text-center text-xs"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </OverlayContext.Provider>
   );
 }
