@@ -44,6 +44,7 @@ function MyCosting() {
   const dispatch = useDispatch();
 
   const myCosting = useSelector((state) => state.myCosting);
+  const forexRate = useSelector((state) => state.utils.forexRate);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
@@ -163,7 +164,7 @@ function MyCosting() {
                       </span>
 
                       <span className="text-base font-medium font-sans line-clamp-1">
-                        ${inrToUsd(items?.grandTotal, 83.16)}
+                        ${inrToUsd(items?.grandTotal, forexRate.USD)}
                       </span>
                     </div>
                   </div>
