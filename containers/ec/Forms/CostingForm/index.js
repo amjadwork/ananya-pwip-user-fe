@@ -8,7 +8,7 @@ import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
 import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
-const CostingForm = ({ values, handleChange, handleBlur }) => {
+const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
   const { openBottomSheet } = useOverlayContext();
 
   return (
@@ -84,21 +84,36 @@ const CostingForm = ({ values, handleChange, handleBlur }) => {
           Broken Percentage
         </label>
         <div className="inline-flex items-center relative h-[40px] mt-[4px]  w-full border-[1px] border-pwip-gray-650 rounded-md bg-white">
-          <div className="w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-r-[1px] border-r-pwip-gray-650 rounded-l-md text-pwip-gray-400">
+          <button
+            onClick={() => {
+              let current = values?.brokenPercentage || 0;
+              const decrementValue = current > 0 ? current - 1 : 0;
+              setFieldValue("brokenPercentage", decrementValue);
+            }}
+            className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-r-[1px] border-r-pwip-gray-650 rounded-l-md text-pwip-gray-400"
+          >
             {minusIcon}
-          </div>
+          </button>
           <input
             placeholder="Ex: 10%"
             type="text"
+            readOnly={true}
             defaultValue={values?.brokenPercentage}
             name="brokenPercentage"
             onChange={handleChange}
             onBlur={handleBlur}
-            className="inline-flex items-center w-full px-[18px] text-xs font-sans text-center"
+            className="outline-none inline-flex items-center w-full px-[18px] text-xs font-sans text-center"
           />
-          <div className="w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400">
+          <button
+            onClick={() => {
+              let current = values?.brokenPercentage || 0;
+              const incrementValue = current + 1;
+              setFieldValue("brokenPercentage", incrementValue);
+            }}
+            className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400"
+          >
             {plusIcon}
-          </div>
+          </button>
         </div>
       </div>
 

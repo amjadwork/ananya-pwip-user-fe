@@ -125,7 +125,7 @@ const SelectVariantContainer = (props) => {
 
                   <div className="inline-flex items-center justify-between">
                     <span className="text-pwip-gray-700 text-xs font-bold font-sans line-clamp-1">
-                      {items.brokenPercentage || 5}% Broken
+                      {items.brokenPercentage || 0}% Broken
                     </span>
                     <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
                       {items.sourceRates.sourceName}
@@ -191,7 +191,7 @@ const SelectVariantContainer = (props) => {
                         {items.sourceRates.sourceName}
                       </span>
                       <span className="text-pwip-gray-700 text-xs font-bold font-sans line-clamp-1">
-                        {items.brokenPercentage || 5}% Broken
+                        {items.brokenPercentage || 0}% Broken
                       </span>
                     </div>
                   </div>

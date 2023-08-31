@@ -93,7 +93,7 @@ const SelectLocationContainer = (props) => {
               </div>
 
               <span className="text-pwip-gray-700 font-sans text-xs font-bold">
-                {selectedCostingProduct.brokenPercentage || 5}% Broken
+                {selectedCostingProduct.brokenPercentage || 0}% Broken
               </span>
 
               <div className="inline-flex items-center justify-between w-full">

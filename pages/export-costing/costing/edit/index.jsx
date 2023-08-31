@@ -296,6 +296,7 @@ function EditCosting() {
               values,
               // errors,
               // touched,
+              setFieldValue,
               handleChange,
               handleBlur,
               handleSubmit,
@@ -310,6 +311,7 @@ function EditCosting() {
                     values={values}
                     handleChange={handleChange}
                     handleBlur={handleBlur}
+                    setFieldValue={setFieldValue}
                   />
                 )}
 

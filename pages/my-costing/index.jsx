@@ -171,7 +171,7 @@ function MyCosting() {
 
                   <div className="inline-flex items-center justify-between w-full text-pwip-gray-800">
                     <span className="text-xs font-normal font-sans line-clamp-1">
-                      5% {items?.brokenPercentage || ""}
+                      {items?.brokenPercentage || 0}% Broken
                     </span>
                     <div className="inline-flex items-center justify-end">
                       <span className="text-xs font-medium font-sans line-clamp-1 text-pwip-gray-500">
