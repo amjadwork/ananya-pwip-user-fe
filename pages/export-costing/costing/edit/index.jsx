@@ -25,6 +25,7 @@ import {
 import {
   generateCustomCostingRequest,
   fetchGeneratedCostingFailure,
+  resetCustomCostingSelection,
 } from "@/redux/actions/costing.actions";
 
 // Import Containers
@@ -112,6 +113,7 @@ function EditCosting() {
       dispatch(saveCostingFailure());
       dispatch(saveCostingRequest(payloadBody));
       setIsGenerated(false);
+      dispatch(resetCustomCostingSelection());
       router.replace("/export-costing/costing");
     }
   }, [selectedAndGeneratedCosting, isGenerated]);

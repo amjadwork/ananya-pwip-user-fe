@@ -8,6 +8,7 @@ import {
   setTermsOfShipmentRequest,
   // setTermsOfShipmentFailure,
 } from "@/redux/actions/shipmentTerms.actions";
+import { resetCustomCostingSelection } from "@/redux/actions/costing.actions";
 
 const atRoutes = ["costing", "edit", "my-costing", "more"];
 
@@ -27,6 +28,10 @@ export function Header(props) {
     React.useState("");
 
   const handleBack = () => {
+    if (activeRoute === "edit") {
+      dispatch(resetCustomCostingSelection());
+    }
+
     router.back();
   };
 
