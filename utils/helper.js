@@ -1,7 +1,7 @@
 import axios from "axios";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/router";
-import { setAuthData } from "@/redux/actions/auth.actions";
+// import { useDispatch } from "react-redux";
+// import { useRouter } from "next/router";
+// import { setAuthData } from "@/redux/actions/auth.actions";
 
 export function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);

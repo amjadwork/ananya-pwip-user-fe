@@ -119,12 +119,12 @@ export const breakupArr = [
         inr: 0,
         usd: 0,
       },
-      {
-        label: "20% Export duty",
-        name: "exportDuty",
-        inr: 0,
-        usd: 0,
-      },
+      // {
+      //   label: "20% Export duty",
+      //   name: "exportDuty",
+      //   inr: 0,
+      //   usd: 0,
+      // },
       // {
       //   label: "PWIP Fulfilment ",
       //   name: "pwipFullfillment",

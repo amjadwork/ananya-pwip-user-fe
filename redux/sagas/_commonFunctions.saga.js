@@ -45,9 +45,12 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
     return response;
   } catch (error) {
     const status = [401, 403];
+
     if (error.response && status.includes(error.response.status)) {
       yield put(setAuthData(null, null));
+
       signOut();
+
       localStorage.removeItem("persist:root");
 
       yield put(
@@ -59,7 +62,6 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
             "Unauthorized, please login again",
         })
       );
-
       window.location.href = "/";
     } else {
       yield put(
@@ -74,7 +76,6 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
     }
 
     yield put(hideLoaderFailure());
-
     throw error;
   }
 }

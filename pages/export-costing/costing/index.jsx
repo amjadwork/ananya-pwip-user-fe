@@ -460,13 +460,7 @@ function CostingOverview() {
   }, [currentCostingFromHistory, generatedCosting, forexRate]);
 
   useEffect(() => {
-    console.log(
-      "here is the issue",
-      myRecentSavedCosting,
-      currentCostingFromHistory
-    );
     if (myRecentSavedCosting && !currentCostingFromHistory) {
-      console.log("In here");
       dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     }
   }, [myRecentSavedCosting, currentCostingFromHistory]);
@@ -731,10 +725,6 @@ function CostingOverview() {
         });
       });
   };
-
-  if (!breakupChargesData.length) {
-    return null;
-  }
 
   return (
     <React.Fragment>
