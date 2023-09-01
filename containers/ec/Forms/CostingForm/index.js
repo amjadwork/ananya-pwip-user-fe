@@ -87,7 +87,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           <button
             onClick={() => {
               let current = values?.brokenPercentage || 0;
-              const decrementValue = current > 0 ? current - 1 : 0;
+              const decrementValue = current > 0 ? current - 5 : 0;
               setFieldValue("brokenPercentage", decrementValue);
             }}
             className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-r-[1px] border-r-pwip-gray-650 rounded-l-md text-pwip-gray-400"
@@ -107,7 +107,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           <button
             onClick={() => {
               let current = values?.brokenPercentage || 0;
-              const incrementValue = current + 1;
+              const incrementValue = current + 5;
               setFieldValue("brokenPercentage", incrementValue);
             }}
             className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400"

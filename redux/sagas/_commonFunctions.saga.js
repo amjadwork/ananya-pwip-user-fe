@@ -1,7 +1,9 @@
 import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
+import { setAuthData } from "../actions/auth.actions";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
+import { signOut } from "next-auth/react";
 
 export function* makeApiCall(url, method, data, overrideHeaders) {
   try {
@@ -42,16 +44,37 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
 
     return response;
   } catch (error) {
-    yield put(
-      showToastNotificationSuccess({
-        type: "error",
-        message:
-          error?.response?.data?.message ||
-          error?.response?.message ||
-          "Something went wrong",
-      })
-    );
+    const status = [401, 403];
+    if (error.response && status.includes(error.response.status)) {
+      yield put(setAuthData(null, null));
+      signOut();
+      localStorage.removeItem("persist:root");
+
+      yield put(
+        showToastNotificationSuccess({
+          type: "error",
+          message:
+            error?.response?.data?.message ||
+            error?.response?.message ||
+            "Unauthorized, please login again",
+        })
+      );
+
+      window.location.href = "/";
+    } else {
+      yield put(
+        showToastNotificationSuccess({
+          type: "error",
+          message:
+            error?.response?.data?.message ||
+            error?.response?.message ||
+            "Something went wrong",
+        })
+      );
+    }
+
     yield put(hideLoaderFailure());
+
     throw error;
   }
 }

@@ -15,21 +15,11 @@ export let api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    const status = [401, 403];
-    if (error.response && status.includes(error.response.status)) {
-      // Unauthorized error (e.g., invalid token)
-      const dispatch = useDispatch();
-      dispatch(setAuthData(null, null)); // Assuming you have a logout action to clear user state
-
-      const router = useRouter();
-      router.replace("/"); // Redirect to login page
-    }
     return Promise.reject(error);
   }
 );
 
 export function getCostingToSaveHistoryPayload(inputJson) {
-  console.log(inputJson);
   return {
     costingName:
       inputJson?.costingName ||

@@ -330,7 +330,14 @@ function CostingOverview() {
     (state) => state.costing.generatedCosting
   );
   const selectedCosting = useSelector((state) => state.costing);
-  const myCosting = useSelector((state) => state.myCosting);
+
+  const myRecentSavedCosting = useSelector(
+    (state) => state.myCosting.myRecentSavedCosting
+  );
+  const currentCostingFromHistory = useSelector(
+    (state) => state.myCosting.currentCostingFromHistory
+  );
+
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );
@@ -426,18 +433,18 @@ function CostingOverview() {
 
   useEffect(() => {
     if (
-      myCosting?.currentCostingFromHistory &&
-      myCosting?.currentCostingFromHistory?.length &&
+      currentCostingFromHistory &&
+      currentCostingFromHistory?.length &&
       !generatedCosting &&
       forexRate
     ) {
-      setGeneratedCostingData(myCosting?.currentCostingFromHistory[0]);
-      const sheet = myCosting?.currentCostingFromHistory[0];
+      setGeneratedCostingData(currentCostingFromHistory[0]);
+      const sheet = currentCostingFromHistory[0];
 
       breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
 
       const updatedCharges = updateCharges(
-        myCosting?.currentCostingFromHistory[0],
+        currentCostingFromHistory[0],
         breakupArr,
         forexRate
       );
@@ -450,17 +457,19 @@ function CostingOverview() {
         setBreakupChargesData(updatedCharges);
       }
     }
-  }, [myCosting, generatedCosting, forexRate]);
+  }, [currentCostingFromHistory, generatedCosting, forexRate]);
 
   useEffect(() => {
-    if (
-      myCosting &&
-      myCosting.myRecentSavedCosting &&
-      !myCosting?.currentCostingFromHistory
-    ) {
-      dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
+    console.log(
+      "here is the issue",
+      myRecentSavedCosting,
+      currentCostingFromHistory
+    );
+    if (myRecentSavedCosting && !currentCostingFromHistory) {
+      console.log("In here");
+      dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     }
-  }, [myCosting]);
+  }, [myRecentSavedCosting, currentCostingFromHistory]);
 
   const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
@@ -578,14 +587,14 @@ function CostingOverview() {
                     setGeneratedCostingData(null);
 
                     if (
-                      myCosting?.currentCostingFromHistory &&
-                      myCosting?.currentCostingFromHistory?.length &&
-                      myCosting?.currentCostingFromHistory[0]?.isQuickCosting
+                      currentCostingFromHistory &&
+                      currentCostingFromHistory?.length &&
+                      currentCostingFromHistory[0]?.isQuickCosting
                     ) {
                       await dispatch(generateQuickCostingRequest(body));
                     } else {
                       let givenData = {
-                        ...myCosting?.currentCostingFromHistory[0],
+                        ...currentCostingFromHistory[0],
                       };
 
                       let payload = extractCustomCostingPayload({
@@ -686,7 +695,7 @@ function CostingOverview() {
       .post(
         "https://api-stage.pwip.co/api/generateCostingSheet/download",
         {
-          historyId: myCosting?.currentCostingFromHistory[0]?._id,
+          historyId: currentCostingFromHistory[0]?._id,
         },
         {
           responseType: "arraybuffer",
@@ -703,7 +712,7 @@ function CostingOverview() {
         link.href = url;
         link.setAttribute(
           "download",
-          myCosting?.currentCostingFromHistory[0]?.costingName + ".pdf"
+          currentCostingFromHistory[0]?.costingName + ".pdf"
         ); //or any other extension
         document.body.appendChild(link);
         link.click();
@@ -797,11 +806,9 @@ function CostingOverview() {
                     className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
                     onClick={async () => {
                       setShowBreakup(false);
-                      if (myCosting.myRecentSavedCosting) {
+                      if (myRecentSavedCosting) {
                         await dispatch(
-                          fetchMyCostingRequest(
-                            myCosting.myRecentSavedCosting._id
-                          )
+                          fetchMyCostingRequest(myRecentSavedCosting._id)
                         );
                       }
                       router.push("/export-costing/costing/edit");
