@@ -27,10 +27,7 @@ import {
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
-// import {
-//   downloadCostingRequest,
-//   downloadCostingFailure,
-// } from "@/redux/actions/exportCosting.actions";
+import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
 import {
   chevronDown,
@@ -438,6 +435,14 @@ function CostingOverview() {
       !generatedCosting &&
       forexRate
     ) {
+      // Following commented code causing re-renders, need to fix
+
+      // const action = {
+      //   selected: currentCostingFromHistory[0]?.termOfAgreement,
+      //   showShipmentTermDropdown: false,
+      // };
+
+      // dispatch(setTermsOfShipmentRequest(action));
       setGeneratedCostingData(currentCostingFromHistory[0]);
       const sheet = currentCostingFromHistory[0];
 

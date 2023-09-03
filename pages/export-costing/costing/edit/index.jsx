@@ -172,7 +172,10 @@ function EditCosting() {
         transportation: selectedMyCostingFromHistory?.costing?.transportCharge,
         cfsHandling: selectedMyCostingFromHistory?.costing?.cfsHandling,
         shl: selectedMyCostingFromHistory?.costing?.shlCost,
-        ofc: selectedMyCostingFromHistory?.costing?.ofcCost,
+        ofc:
+          shipmentTerm === "FOB"
+            ? 0
+            : selectedMyCostingFromHistory?.costing?.ofcCost,
         inspectionCost:
           selectedMyCostingFromHistory?.constants?.inspectionCharge,
         financeCost: selectedMyCostingFromHistory?.constants?.financeCost,
