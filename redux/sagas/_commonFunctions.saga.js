@@ -53,20 +53,20 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
       signOut();
 
       localStorage.removeItem("persist:root");
-      localStorage.removeItem("nextauth.message");
-      Cookies.remove("next-auth.callback-url", { path: "" });
-      Cookies.remove("next-auth.csrf-token", { path: "" });
 
       yield put(
         showToastNotificationSuccess({
           type: "error",
           message:
-            error?.response?.data?.message ||
-            error?.response?.message ||
-            "Unauthorized, please login again",
+            error?.response?.data?.message + `, redirecting...` ||
+            error?.response?.message + `, redirecting...` ||
+            "Unauthorized, please login again" + `, redirecting...`,
         })
       );
-      window.location.href = "/";
+
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 5000);
     } else {
       yield put(
         showToastNotificationSuccess({
