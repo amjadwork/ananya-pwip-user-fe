@@ -4,7 +4,16 @@ import { setAuthData } from "../actions/auth.actions";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
 import { signOut } from "next-auth/react";
-import Cookies from "js-cookie";
+
+const handleLogoutOnFailure = async () => {
+  await signOut();
+
+  localStorage.removeItem("persist:root");
+
+  setTimeout(() => {
+    window.location.href = "/";
+  }, 5000);
+};
 
 export function* makeApiCall(url, method, data, overrideHeaders) {
   try {
@@ -50,10 +59,6 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
     if (error.response && status.includes(error.response.status)) {
       yield put(setAuthData(null, null));
 
-      signOut();
-
-      localStorage.removeItem("persist:root");
-
       yield put(
         showToastNotificationSuccess({
           type: "error",
@@ -64,9 +69,7 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
         })
       );
 
-      setTimeout(() => {
-        window.location.href = "/";
-      }, 5000);
+      handleLogoutOnFailure();
     } else {
       yield put(
         showToastNotificationSuccess({
