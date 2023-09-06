@@ -35,7 +35,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (session && session.accessToken) {
+    if (session && session.accessToken && session.user) {
       dispatch(setAuthData(session.user, session.accessToken));
       redirectToApp();
     }

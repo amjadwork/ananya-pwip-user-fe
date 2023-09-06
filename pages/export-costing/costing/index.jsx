@@ -335,6 +335,8 @@ function CostingOverview() {
     (state) => state.myCosting.currentCostingFromHistory
   );
 
+  console.log(currentCostingFromHistory);
+
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );

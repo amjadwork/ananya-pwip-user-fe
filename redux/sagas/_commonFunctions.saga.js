@@ -4,6 +4,7 @@ import { setAuthData } from "../actions/auth.actions";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
 import { signOut } from "next-auth/react";
+import Cookies from "js-cookie";
 
 export function* makeApiCall(url, method, data, overrideHeaders) {
   try {
@@ -52,6 +53,9 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
       signOut();
 
       localStorage.removeItem("persist:root");
+      localStorage.removeItem("nextauth.message");
+      Cookies.remove("next-auth.callback-url", { path: "" });
+      Cookies.remove("next-auth.csrf-token", { path: "" });
 
       yield put(
         showToastNotificationSuccess({
