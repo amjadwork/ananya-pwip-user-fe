@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 
-import { chevronDown, arrowLeftBackIcon } from "../../theme/icon";
+import { chevronDown, arrowLeftBackIcon, pencilIcon } from "../../theme/icon";
 import {
   setTermsOfShipmentRequest,
   // setTermsOfShipmentFailure,
@@ -93,9 +93,11 @@ export function Header(props) {
               onClick={() => {
                 openModal(forexRate?.USD || 0);
               }}
-              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none"
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
             >
               <span>1 USD = {forexRate?.USD} INR</span>
+
+              {pencilIcon}
             </button>
             <span>|</span>
             <button
@@ -108,7 +110,7 @@ export function Header(props) {
                 };
                 dispatch(setTermsOfShipmentRequest(action));
               }}
-              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between"
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
             >
               <span>{shipmentTerms?.shipmentTerm?.selected}</span>
 
