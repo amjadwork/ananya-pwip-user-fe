@@ -1,6 +1,6 @@
 import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
-import { setAuthData } from "../actions/auth.actions";
+import { handleSettingAuthDataRequest} from "../actions/auth.actions";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
 import { signOut } from "next-auth/react";
@@ -15,13 +15,19 @@ const handleLogoutOnFailure = async () => {
   }, 5000);
 };
 
-export function* makeApiCall(url, method, data, overrideHeaders) {
+export function* makeApiCall(
+  url,
+  method,
+  data,
+  overrideHeaders,
+  overrideToken
+) {
   try {
     yield put(showLoaderSuccess());
     const authState = yield select((state) => state.auth);
 
     let headers = {
-      Authorization: `Bearer ${authState.token}`,
+      Authorization: `Bearer ${overrideToken || authState.token}`,
     };
 
     let response = null;
@@ -35,7 +41,6 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
     } else {
       if (overrideHeaders) {
         let headerOfRequest = { ...overrideHeaders };
-
         headerOfRequest.headers.Authorization = `Bearer ${authState.token}`;
 
         response = yield call(api[method], url, data, {
@@ -57,7 +62,7 @@ export function* makeApiCall(url, method, data, overrideHeaders) {
     const status = [401, 403];
 
     if (error.response && status.includes(error.response.status)) {
-      yield put(setAuthData(null, null));
+      yield put(handleSettingAuthDataRequest(null, null));
 
       yield put(
         showToastNotificationSuccess({
