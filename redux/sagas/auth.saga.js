@@ -3,9 +3,7 @@ import {
   handleSettingAuthDataSuccess,
   handleSettingAuthDataFailure,
 } from "../actions/auth.actions";
-import {
-  SET_AUTH_DATA_REQUEST,
-} from "../actions/types/auth.types";
+import { SET_AUTH_DATA_REQUEST } from "../actions/types/auth.types";
 
 import { makeApiCall } from "./_commonFunctions.saga";
 
