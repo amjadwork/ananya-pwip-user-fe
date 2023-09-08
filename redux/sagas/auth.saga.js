@@ -1,14 +1,41 @@
-import { takeLatest, put } from "redux-saga/effects";
-import { setAuthData } from "../actions/auth.actions";
-import { AUTH_SUCCESS } from "../actions/types/auth.types";
+import { takeLatest, put, call } from "redux-saga/effects";
+import {
+  handleSettingAuthDataSuccess,
+  handleSettingAuthDataFailure,
+} from "../actions/auth.actions";
+import {
+  SET_AUTH_DATA_REQUEST,
+} from "../actions/types/auth.types";
 
-function* handleAuthSuccess(action) {
+import { makeApiCall } from "./_commonFunctions.saga";
+
+function* handleAuthSuccessAndFailure(action) {
   const { user, token } = action.payload;
-  yield put(setAuthData(user, token));
+
+  const body = {
+    ...user,
+    auth_id: user.sub,
+  };
+
+  try {
+    const response = yield call(
+      makeApiCall,
+      "/login",
+      "post",
+      body,
+      null,
+      token
+    );
+    console.log(response);
+    yield put(handleSettingAuthDataSuccess(user, token));
+  } catch (error) {
+    console.log("error", error);
+    yield put(handleSettingAuthDataFailure(error));
+  }
 }
 
 function* authSaga() {
-  yield takeLatest(AUTH_SUCCESS, handleAuthSuccess);
+  yield takeLatest(SET_AUTH_DATA_REQUEST, handleAuthSuccessAndFailure);
 }
 
 export default authSaga;

@@ -1,3 +1,5 @@
 // auth action types
-export const SET_AUTH_DATA = "SET_AUTH_DATA";
-export const AUTH_SUCCESS = "AUTH_SUCCESS";
+export const SET_AUTH_DATA_REQUEST = "SET_AUTH_DATA_REQUEST";
+export const SET_AUTH_DATA_SUCCESS = "SET_AUTH_DATA_SUCCESS";
+export const SET_AUTH_DATA_FAILURE = "SET_AUTH_DATA_FAILURE";
+

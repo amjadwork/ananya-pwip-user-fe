@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDispatch } from "react-redux";
-import { setAuthData } from "redux/actions/auth.actions";
+import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 const withAuth = (WrappedComponent) => {
   return function WithAuth(props) {
@@ -12,7 +12,7 @@ const withAuth = (WrappedComponent) => {
 
     useEffect(() => {
       if (status === "authenticated") {
-        dispatch(setAuthData(session.user, session.accessToken));
+        dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
       }
     }, [status]);
 
