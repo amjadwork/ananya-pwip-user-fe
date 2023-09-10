@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Formik } from "formik";
 
+import { useOverlayContext } from "@/context/OverlayContext";
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
@@ -23,6 +24,13 @@ function Profile() {
   const router = useRouter();
   const formik = useRef();
 
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
+
   const formFields = [
     { name: "fullName", label: "Name" },
     { name: "email", label: "Email" },
@@ -30,8 +38,31 @@ function Profile() {
     { name: "companyName", label: "Company Name" },
     { name: "profession", label: "Profession" },
     { name: "gstNumber", label: "GST Number" },
+    { name: "fullName", label: "Name" },
+    { name: "email", label: "Email" },
+    { name: "number", label: "Number" },
+    { name: "gstNumber", label: "GST Number" },
+    { name: "fullName", label: "Name" },
+    { name: "email", label: "Email" },
+    { name: "number", label: "Number" },
 ];
 
+
+const handleProfessionBottomSheet = () => {
+    const content = (
+      <React.Fragment>
+        <div className="px-5 mb-6 pt-5">
+          <span className="text-base font-sans font-medium text-pwip-gray-900 text-left">
+            Select Profession
+          </span>
+        </div>
+        <div className="inline-flex flex-col w-full space-y-6">
+          
+        </div>
+      </React.Fragment>
+    );
+    openBottomSheet(content);
+  };
 
 
   const handleFormUpdate = () => {
@@ -68,40 +99,50 @@ function Profile() {
 
       <AppLayout>
         <Header />
-
+        <div className="relative top-[72px] h-full w-full bg-white">
         <div
-          className={`relative top-[72px] h-full w-full bg-white z-10 py-6 px-5`}
-        >
-          <span className="text-pwip-gray-100 font-sans font-normal text-md text-left">
-            Personal details
-          </span>
+        className=" fixed h-[auto] w-full bg-pwip-primary z-10 px-5">
+    <div className={`relative w-full top-12 flex flex-col items-center justify-center`}>
+    <div onClick={() => { router.push('/more/profile'); }} className="h-[6rem] w-[6rem] rounded-full ring-1 ring-white p-[1.5px]">
+      <img src={"/assets/images/no-profile.png"} className="h-full w-full rounded-full object-cover" />
+    </div>
+      </div>
+    </div> 
+        <div className="relative bg-white top-[54px] py-[110px] overflow-y-scroll px-5 hide-scroll-bar">
+  <span className="text-pwip-gray-100 w-full font-sans font-normal text-md text-left z-10">
+    Personal details
+  </span>
 
-
-          {formFields.map((field) => (
-            <div key={field.name} className="relative mb-4">
-              <input
-                type="text"
-                id={field.name}
-                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-md border border-pwip-gray-500 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
-              />
-              <label
-                htmlFor={field.name}
-                className="absolute text-sm text-pwip-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1"
-              >
-                {field.label}
-              </label>
-            </div>
-          ))}
-        <button
-            type="button"
-            className="w-full bg-pwip-primary text-white py-2.5 px-2.5 rounded-md hover:bg-primary"
-            onClick={handleFormUpdate}
-          >
-        Update Changes
-        </button>
-        </div>
-        {/*  */}
+  {formFields.map((field) => (
+    <div key={field.name} className="relative mb-4">
+      <input
+        type="text"
+        id={field.name}
+        className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-transparent rounded-md border border-pwip-gray-500 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+        placeholder=" "
+        onClick={() => {
+            if (field.name === 'profession') {
+              handleProfessionBottomSheet();
+            }
+          }}
+      />
+      <label
+        htmlFor={field.name}
+        className="absolute text-xs text-pwip-gray-700 -top-2 left-3 bg-white px-2 font font-thin"
+      >
+        {field.label}
+      </label>
+    </div>
+  ))}
+  <button
+    type="button"
+    className="w-full bg-pwip-primary text-white py-2.5 px-2.5 rounded-md hover:bg-primary"
+    onClick={handleFormUpdate}
+  >
+    Update Changes
+  </button>
+</div>
+</div>
       </AppLayout>
     </React.Fragment>
   );
