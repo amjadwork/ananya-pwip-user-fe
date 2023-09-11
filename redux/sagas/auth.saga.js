@@ -10,24 +10,32 @@ import { makeApiCall } from "./_commonFunctions.saga";
 function* handleAuthSuccessAndFailure(action) {
   const { user, token } = action.payload;
 
-  const body = {
-    ...user,
-    auth_id: user.sub,
-  };
-
   try {
-    const response = yield call(
-      makeApiCall,
-      "/login",
-      "post",
-      body,
-      null,
-      token
-    );
-    console.log(response);
-    yield put(handleSettingAuthDataSuccess(user, token));
+    if (user && token) {
+      const body = {
+        ...user,
+        auth_id: user.sub,
+      };
+
+      const response = yield call(
+        makeApiCall,
+        "/login",
+        "post",
+        body,
+        null,
+        token
+      );
+
+      if (response?.data) {
+        yield put(
+          handleSettingAuthDataSuccess(
+            { ...user, ...response.data.data },
+            token
+          )
+        );
+      }
+    }
   } catch (error) {
-    console.log("error", error);
     yield put(handleSettingAuthDataFailure(error));
   }
 }
