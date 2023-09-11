@@ -3,14 +3,14 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 
-import { chevronDown, arrowLeftBackIcon, pencilIcon } from "../../theme/icon";
+import { chevronDown, arrowLeftBackIcon, pencilIcon, editIcon } from "../../theme/icon";
 import {
   setTermsOfShipmentRequest,
   // setTermsOfShipmentFailure,
 } from "@/redux/actions/shipmentTerms.actions";
 import { resetCustomCostingSelection } from "@/redux/actions/costing.actions";
 
-const atRoutes = ["costing", "edit", "my-costing", "more"];
+const atRoutes = ["costing", "edit", "my-costing", "more", "profile-edit"];
 
 export function Header(props) {
   const router = useRouter();
@@ -47,7 +47,7 @@ export function Header(props) {
     const isInStandaloneMode = () =>
       window.matchMedia("(display-mode: standalone)").matches ||
       window.navigator.standalone;
-    const route = ["costing", "edit", "my-costing", "more"];
+    const route = ["costing", "edit", "my-costing", "more", "profile-edit"];
 
     if (isInStandaloneMode()) {
       if (route.includes(activeRoute)) {
@@ -78,45 +78,54 @@ export function Header(props) {
 
           {atRoutes.includes(activeRoute) && (
             <div
-              className="inline-flex items-center space-x-2 text-white"
+              className="inline-flex items-center space-x-2 text-white text-md"
               onClick={() => handleBack()}
             >
               {arrowLeftBackIcon}
-              <span className="text-sm font-bold font-sans">Back</span>
+              <span>Back</span>
             </div>
           )}
         </div>
         <div className="text-white inline-flex items-center justify-center">
-          <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
-            <button
-              type="button"
+        {activeRoute === "profile-edit" ? (
+            <div
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-md"
               onClick={() => {
-                openModal(forexRate?.USD || 0);
               }}
-              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
             >
-              <span>1 USD = {forexRate?.USD} INR</span>
-
-              {pencilIcon}
-            </button>
-            <span>|</span>
-            <button
-              type="button"
-              onClick={() => {
-                const action = {
-                  ...shipmentTerms?.shipmentTerm,
-                  showShipmentTermDropdown:
-                    !shipmentTerms?.shipmentTerm?.showShipmentTermDropdown,
-                };
-                dispatch(setTermsOfShipmentRequest(action));
-              }}
-              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
-            >
-              <span>{shipmentTerms?.shipmentTerm?.selected}</span>
-
-              {chevronDown}
-            </button>
-          </div>
+               <span>Edit</span>
+              {editIcon}
+            </div>
+          ) : (
+            <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => {
+                  openModal(forexRate?.USD || 0);
+                }}
+                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
+              >
+                <span>1 USD = {forexRate?.USD} INR</span>
+                {pencilIcon}
+              </button>
+              <span>|</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const action = {
+                    ...shipmentTerms?.shipmentTerm,
+                    showShipmentTermDropdown:
+                      !shipmentTerms?.shipmentTerm?.showShipmentTermDropdown,
+                  };
+                  dispatch(setTermsOfShipmentRequest(action));
+                }}
+                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
+              >
+                <span>{shipmentTerms?.shipmentTerm?.selected}</span>
+                {chevronDown}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

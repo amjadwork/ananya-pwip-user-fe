@@ -67,7 +67,7 @@ function More() {
           <div className="inline-flex items-center space-x-5">
             <div 
               onClick={() => {
-                router.push('/more/profile');
+                router.push('/more/profile-edit');
               }}
             className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
               <img
