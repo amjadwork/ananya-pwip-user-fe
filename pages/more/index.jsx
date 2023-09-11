@@ -65,11 +65,7 @@ function More() {
           className={`h-[auto] fixed mt-[72px] w-full bg-pwip-primary z-10 pt-6 pb-8 px-5`}
         >
           <div className="inline-flex items-center space-x-5">
-            <div 
-              onClick={() => {
-                router.push('/more/profile-edit');
-              }}
-            className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
+            <div className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
               <img
                 src={userData?.picture || "/assets/images/no-profile.png"}
                 className="h-full w-full rounded-full object-cover"
