@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { Formik } from "formik";
 
-import { cameraIcon, backIcon, editIcon } from "../../../theme/icon";
+import { cameraIcon } from "../../../theme/icon";
 import { useOverlayContext } from "@/context/OverlayContext";
 import withAuth from "@/hoc/withAuth";
 
@@ -28,6 +28,8 @@ function Profile() {
     openToastMessage,
     closeToastMessage,
   } = useOverlayContext();
+
+  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   const formFields = [
     { name: "fullName", label: "Name" },
@@ -70,11 +72,6 @@ function Profile() {
       image: "/assets/images/profession/others.png",
     },
   ];
-
-  // const handleProfessionSelect = (selectedProfession, formik) => {
-  //   formik.setFieldValue("profession", selectedProfession);
-  //   closeBottomSheet();
-  // };
 
   const handleProfessionBottomSheet = () => {
     const content = (
@@ -125,6 +122,14 @@ function Profile() {
     }
   };
 
+  React.useEffect(() => {
+    const element = document.getElementById("fixedMenuSection");
+    if (element) {
+      const height = element.offsetHeight;
+      setMainContainerHeight(height);
+    }
+  }, []);
+
   return (
     <React.Fragment>
       <Head>
@@ -150,8 +155,11 @@ function Profile() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <div className="fixed h-full w-full bg-pwip-primary"></div>
-      <div className="fixed w-full z-20  flex flex-col top-[4rem]  items-center justify-center">
+      <div className="fixed top-0 left-0 h-screen w-screen bg-pwip-primary z-0"></div>
+      <div
+        id="fixedMenuSection"
+        className="fixed w-full z-10  flex flex-col top-[4rem]  items-center justify-center"
+      >
         <div className="h-[134px] w-[134px]  rounded-full ring-1 ring-white p-[2px]">
           <img
             src={"/assets/images/no-profile.png"}
@@ -162,8 +170,18 @@ function Profile() {
           </div>
         </div>
       </div>
-      <div className="fixed w-full h-[100%] rounded-t-2xl bg-pwip-white-100 top-[138px] px-5 ">
-        <div className="mt-24 h-[80%] pb-[11rem] pt-[1rem]  overflow-y-scroll hide-scroll-bar">
+      <div
+        className="fixed w-full h-[100%] rounded-t-2xl bg-pwip-white-100 px-5"
+        style={{
+          top: mainContainerHeight + 4 + "px",
+        }}
+      >
+        <div
+          className="mt-24 pb-[11rem] pt-[1rem] overflow-y-scroll hide-scroll-bar"
+          style={{
+            height: `calc(100vh - ${mainContainerHeight + 32 + "px"})`,
+          }}
+        >
           <span className="text-pwip-gray-100 mt-24 w-full font-sans font-normal text-lg text-left">
             Personal details
           </span>
@@ -189,7 +207,8 @@ function Profile() {
                     />
                     <label
                       htmlFor={field.name}
-                      className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin">
+                      className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
+                    >
                       {field.label}
                     </label>
                   </div>
@@ -197,7 +216,8 @@ function Profile() {
                 <div className="fixed bottom-0 left-0 w-full p-5 bg-pwip-white-100">
                   <button
                     type="submit"
-                    className="w-full text-white bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md">
+                    className="w-full text-white bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md"
+                  >
                     Update Changes
                   </button>
                 </div>

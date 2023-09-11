@@ -3,7 +3,12 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 
-import { chevronDown, arrowLeftBackIcon, pencilIcon, editIcon } from "../../theme/icon";
+import {
+  chevronDown,
+  arrowLeftBackIcon,
+  pencilIcon,
+  editIcon,
+} from "../../theme/icon";
 import {
   setTermsOfShipmentRequest,
   // setTermsOfShipmentFailure,
@@ -87,16 +92,19 @@ export function Header(props) {
           )}
         </div>
         <div className="text-white inline-flex items-center justify-center">
-        {activeRoute === "profile-edit" ? (
+          {["more"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-md"
               onClick={() => {
+                router.push("/more/profile-edit");
               }}
             >
-               <span>Edit</span>
+              <span>Edit</span>
               {editIcon}
             </div>
-          ) : (
+          )}
+
+          {!["profile-edit", "more"].includes(activeRoute) && (
             <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
               <button
                 type="button"

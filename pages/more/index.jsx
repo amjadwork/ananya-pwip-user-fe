@@ -62,14 +62,10 @@ function More() {
 
         <div
           id="fixedMenuSection"
-          className={`h-[auto] mt-[72px] w-full bg-pwip-primary z-10 py-6 px-5`}
+          className={`h-[auto] fixed mt-[72px] w-full bg-pwip-primary z-10 pt-6 pb-8 px-5`}
         >
           <div className="inline-flex items-center space-x-5">
-            <div 
-              onClick={() => {
-                router.push('/more/profile-edit');
-              }}
-            className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
+            <div className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
               <img
                 src={userData?.picture || "/assets/images/no-profile.png"}
                 className="h-full w-full rounded-full object-cover"
@@ -84,14 +80,15 @@ function More() {
               </span>
             </div>
           </div>
+
+          <div className="absolute bottom-[-18px] left-0 bg-white h-8 w-full rounded-t-2xl z-10" />
         </div>
 
         <div
-          className={`inline-flex flex-col w-full bg-white pb-0 overflow-auto px-5 pt-7 hide-scroll-bar relative rounded-t-2xl`}
+          className={`min-h-screen inline-flex flex-col w-full bg-white overflow-auto px-5 hide-scroll-bar relative`}
           style={{
-            // top: mainContainerHeight + 73 + "px",
-            paddingBottom: mainContainerHeight - 10 + "px",
-            minHeight: `calc(100vh - ${mainContainerHeight + 72 + "px"})`,
+            paddingTop: mainContainerHeight * 1.7 + "px",
+            paddingBottom: mainContainerHeight - 52 + "px",
           }}
         >
           {moreSettingOptions.map((items, index) => {
