@@ -47,7 +47,9 @@ function* updateMyCostingSheet(action) {
     const response = yield call(
       makeApiCall,
       `/historyCosting/${
-        myRecentSavedCosting?._id || currentCostingFromHistory[0]?._id
+        myRecentSavedCosting?._id ||
+        currentCostingFromHistory[0]?._id ||
+        currentCostingFromHistory?._id
       }`,
       "patch",
       {

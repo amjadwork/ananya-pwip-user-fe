@@ -21,6 +21,9 @@ import {
   fetchMyCostingFailure,
   saveCostingRequest,
   saveCostingFailure,
+  updateCostingRequest,
+  fetchMyCostingRequest,
+  updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 import {
   generateCustomCostingRequest,
@@ -76,9 +79,14 @@ function EditCosting() {
   const [isGenerated, setIsGenerated] = React.useState(false);
   const [selectedUnitForPayload, setSelectedUnitForPayload] =
     React.useState("mt");
+  const [componentShipmentTerm, setComponentShipmentTerm] =
+    React.useState(null);
 
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
+  );
+  const isShipmentTermDropdownOpen = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
   );
   const selectedAndGeneratedCosting = useSelector((state) => state.costing);
   const selectedMyCostingFromHistory = useSelector((state) => {
@@ -91,6 +99,29 @@ function EditCosting() {
     }
     return null;
   });
+
+  React.useEffect(() => {
+    setComponentShipmentTerm(shipmentTerm);
+  }, [isShipmentTermDropdownOpen]);
+
+  const handleShipmentChangeCalls = async () => {
+    await dispatch(updateCostingFailure());
+
+    const payloadBody = {
+      shipmentTermType: shipmentTerm || "FOB",
+      termOfAgreement: shipmentTerm || "FOB",
+    };
+
+    await dispatch(updateCostingRequest(payloadBody));
+    await dispatch(updateCostingFailure());
+    await dispatch(fetchMyCostingRequest(selectedMyCostingFromHistory?._id));
+  };
+
+  React.useEffect(() => {
+    if (shipmentTerm && componentShipmentTerm) {
+      handleShipmentChangeCalls();
+    }
+  }, [shipmentTerm]);
 
   React.useEffect(() => {
     if (
@@ -127,7 +158,7 @@ function EditCosting() {
     ) {
       const formikRef = formik.current;
 
-      formikRef.setValues({
+      const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
         _variantId:
           selectedAndGeneratedCosting?.customCostingSelection?.product ||
@@ -188,7 +219,9 @@ function EditCosting() {
           .pwipFullfillment
           ? true
           : false,
-      });
+      };
+
+      formikRef.setValues(breakUpFormValues);
     }
   }, [formik, selectedAndGeneratedCosting, selectedMyCostingFromHistory]);
 
