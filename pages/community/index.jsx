@@ -74,13 +74,10 @@ function Community() {
             zIndex: 0,
           }}
           src="https://community.pwip.co?frame=true"
-          onLoadedData={() => {
-            router.back();
-          }}
         ></iframe>
 
         <div
-          className="absolute bottom-[8rem] right-0 bg-pwip-primary text-white text-sm font-sans pl-3 pr-2 py-2 rounded-l-full inline-flex items-center justify-center"
+          className="absolute bottom-[10rem] right-0 bg-pwip-primary text-white text-sm font-sans pl-3 pr-2 py-2 rounded-l-full inline-flex items-center justify-center"
           style={{ boxShadow: "6px 4px 12px 1px #14517b60" }}
           onClick={() => {
             router.back();
