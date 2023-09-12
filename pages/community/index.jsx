@@ -69,7 +69,7 @@ function Community() {
             border: 0,
             boxShadow: "none",
             width: "100%",
-            height: devicePlatform === "ios" ? "calc(100vh - 82px)" : "100vh",
+            height: devicePlatform === "ios" ? "calc(100vh - 98px)" : "100vh",
             position: "relative",
             zIndex: 0,
           }}
