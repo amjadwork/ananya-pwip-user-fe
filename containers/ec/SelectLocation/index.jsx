@@ -138,7 +138,7 @@ const SelectLocationContainer = (props) => {
         </h2>
 
         <div className="grid grid-cols-2 gap-6">
-          {[...destinationList].map((items, index) => {
+          {[...destinationList].slice(0, 4).map((items, index) => {
             return (
               <div
                 key={items._id + index}
@@ -207,70 +207,72 @@ const SelectLocationContainer = (props) => {
           })}
         </div>
         <div className="w-full h-auto inline-flex flex-col mt-5 space-y-[10px]">
-          {[...destinationList].map((items, index) => {
-            return (
-              <div
-                key={items._id + index}
-                className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
-                onClick={() => {
-                  if (isFromEdit) {
-                    if (locationType === "destination") {
+          {[...destinationList]
+            .slice(5, destinationList.length - 1)
+            .map((items, index) => {
+              return (
+                <div
+                  key={items._id + index}
+                  className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
+                  onClick={() => {
+                    if (isFromEdit) {
+                      if (locationType === "destination") {
+                        dispatch(
+                          setCustomCostingSelection({
+                            ...selectedCosting,
+                            customCostingSelection: {
+                              ...selectedCosting.customCostingSelection,
+                              portOfDestination: items,
+                            },
+                          })
+                        );
+                      }
+
+                      if (locationType === "origin") {
+                        dispatch(
+                          setCustomCostingSelection({
+                            ...selectedCosting,
+                            customCostingSelection: {
+                              ...selectedCosting.customCostingSelection,
+                              portOfOrigin: items,
+                            },
+                          })
+                        );
+                      }
+                      closeBottomSheet();
+                    } else {
                       dispatch(
-                        setCustomCostingSelection({
+                        setCostingSelection({
                           ...selectedCosting,
-                          customCostingSelection: {
-                            ...selectedCosting.customCostingSelection,
-                            portOfDestination: items,
-                          },
+                          portOfDestination: items,
                         })
                       );
+                      router.push("/export-costing/overview");
                     }
-
-                    if (locationType === "origin") {
-                      dispatch(
-                        setCustomCostingSelection({
-                          ...selectedCosting,
-                          customCostingSelection: {
-                            ...selectedCosting.customCostingSelection,
-                            portOfOrigin: items,
-                          },
-                        })
-                      );
-                    }
-                    closeBottomSheet();
-                  } else {
-                    dispatch(
-                      setCostingSelection({
-                        ...selectedCosting,
-                        portOfDestination: items,
-                      })
-                    );
-                    router.push("/export-costing/overview");
-                  }
-                }}
-              >
-                <div className="h-[46px] w-[46px] rounded-sm bg-pwip-primary-50">
-                  {/*  */}
-                </div>
-                <div className="w-full inline-flex flex-col space-y-2">
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                      {items.portName}
-                    </span>
-                    <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                      {items.portCode}
-                    </span>
+                  }}
+                >
+                  <div className="h-[46px] w-[46px] rounded-sm bg-pwip-primary-50">
+                    {/*  */}
                   </div>
+                  <div className="w-full inline-flex flex-col space-y-2">
+                    <div className="inline-flex items-center justify-between w-full">
+                      <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
+                        {items.portName}
+                      </span>
+                      <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
+                        {items.portCode}
+                      </span>
+                    </div>
 
-                  <div className="inline-flex items-center justify-between w-full">
-                    <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                      {items.country}
-                    </span>
+                    <div className="inline-flex items-center justify-between w-full">
+                      <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
+                        {items.country}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
       </div>
     </React.Fragment>

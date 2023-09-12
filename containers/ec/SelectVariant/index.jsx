@@ -138,7 +138,7 @@ const SelectVariantContainer = (props) => {
         </div>
         <div className="w-full h-auto inline-flex flex-col mt-5 space-y-[10px]">
           {[...productsData]
-            .slice(4, productsData.length - 1)
+            .slice(5, productsData.length - 1)
             .map((items, index) => {
               return (
                 <div
