@@ -99,7 +99,7 @@ function Community() {
           className="absolute bottom-[8rem] right-0 bg-pwip-primary text-white text-sm font-sans pl-3 pr-2 py-2 rounded-l-full inline-flex items-center justify-center"
           style={{ boxShadow: "6px 4px 12px 1px #14517b60" }}
           onClick={() => {
-            router;
+            router.back();
           }}
         >
           <span>Return to app</span>
