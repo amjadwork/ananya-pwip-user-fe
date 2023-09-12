@@ -69,7 +69,7 @@ function Community() {
             border: 0,
             boxShadow: "none",
             width: "100%",
-            height: devicePlatform === "ios" ? "calc(100vh - 98px)" : "100vh",
+            height: devicePlatform === "ios" ? "calc(100vh - 108px)" : "100vh",
             position: "relative",
             zIndex: 0,
           }}
@@ -77,7 +77,7 @@ function Community() {
         ></iframe>
 
         <div
-          className="absolute bottom-[10rem] right-0 bg-pwip-primary text-white text-sm font-sans pl-3 pr-2 py-2 rounded-l-full inline-flex items-center justify-center"
+          className="absolute bottom-[8rem] right-0 bg-pwip-primary text-white text-sm font-sans pl-3 pr-2 py-2 rounded-l-full inline-flex items-center justify-center"
           style={{ boxShadow: "6px 4px 12px 1px #14517b60" }}
           onClick={() => {
             router.back();
