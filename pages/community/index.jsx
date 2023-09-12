@@ -12,51 +12,35 @@ import { Header } from "@/components/Header";
 import { riceAndBagsIcon } from "../../theme/icon";
 // Import Layouts
 
+function getMobileOperatingSystem() {
+  var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+  // Windows Phone must come first because its UA also contains "Android"
+  if (/windows phone/i.test(userAgent)) {
+    return "windows";
+  }
+
+  if (/android/i.test(userAgent)) {
+    return "android";
+  }
+
+  // iOS detection from: http://stackoverflow.com/a/9039885/177710
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return "ios";
+  }
+
+  return "unknown";
+}
+
 function Community() {
   const router = useRouter();
+  const [devicePlatform, setDevicePlatform] = useState(null);
 
-  //   useEffect(() => {
-  //     const iframes = Array.from(document.getElementsByTagName("iframe"));
+  useEffect(() => {
+    const platform = getMobileOperatingSystem();
 
-  //     iframes.forEach((iframe) => {
-  //       iframe?.contentWindow?.addEventListener(
-  //         "load",
-  //         () => {
-  //           const doc = iframe.contentWindow.document;
-  //           iframe.height = doc.body.scrollHeight;
-  //         },
-  //         true
-  //       );
-  //       iframe?.contentWindow?.addEventListener(
-  //         "resize",
-  //         () => {
-  //           iframe.height = iframe.contentWindow.document.body.scrollHeight + 40;
-  //         },
-  //         true
-  //       );
-  //     });
-
-  //     return () => {
-  //       iframes.forEach((iframe) => {
-  //         iframe?.contentWindow?.removeEventListener(
-  //           "load",
-  //           () => {
-  //             const doc = iframe.contentWindow.document;
-  //             iframe.height = doc.body.scrollHeight;
-  //           },
-  //           true
-  //         );
-  //         iframe?.contentWindow?.removeEventListener(
-  //           "resize",
-  //           () => {
-  //             iframe.height =
-  //               iframe.contentWindow.document.body.scrollHeight + 40;
-  //           },
-  //           true
-  //         );
-  //       });
-  //     };
-  //   }, []);
+    setDevicePlatform(platform);
+  }, []);
 
   return (
     <React.Fragment>
@@ -79,13 +63,13 @@ function Community() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="h-full w-full relative">
+      <div className="h-full w-full relative pb-[72px]">
         <iframe
           style={{
             border: 0,
             boxShadow: "none",
             width: "100%",
-            height: "100vh",
+            height: devicePlatform === "ios" ? "calc(100vh - 64px)" : "100vh",
             position: "relative",
             zIndex: 0,
           }}
