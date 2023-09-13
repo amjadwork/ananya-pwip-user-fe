@@ -162,6 +162,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
             defaultValue={values?.bagSize || ""}
             onChange={handleChange}
             onBlur={handleBlur}
+            readOnly={true}
             className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
           />
         </div>

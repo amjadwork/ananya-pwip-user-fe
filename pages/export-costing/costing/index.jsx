@@ -335,8 +335,6 @@ function CostingOverview() {
     (state) => state.myCosting.currentCostingFromHistory
   );
 
-  console.log(currentCostingFromHistory);
-
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );
@@ -804,6 +802,7 @@ function CostingOverview() {
                     onClick={async () => {
                       setShowBreakup(false);
                       if (myRecentSavedCosting) {
+                        await dispatch(updateCostingFailure());
                         await dispatch(
                           fetchMyCostingRequest(myRecentSavedCosting._id)
                         );

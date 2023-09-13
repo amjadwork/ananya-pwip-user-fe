@@ -135,13 +135,13 @@ function Profile() {
         </div>
       </div>
       <div
-        className="fixed w-full h-[100%] rounded-t-2xl bg-pwip-white-100 px-5"
+        className="fixed w-full h-full rounded-t-2xl bg-pwip-white-100 px-5"
         style={{
           top: mainContainerHeight + 4 + "px",
         }}
       >
         <div
-          className="mt-24 pb-[11rem] pt-[1rem] overflow-y-scroll hide-scroll-bar"
+          className="mt-24 pb-[14rem] pt-[1rem] overflow-y-scroll hide-scroll-bar"
           style={{
             height: `calc(100vh - ${mainContainerHeight + 32 + "px"})`,
           }}

@@ -1,4 +1,5 @@
 import {
+  communityIcon,
   myOrderIcon,
   mySubscriptionsIcon,
   notificationsIcon,
@@ -6,6 +7,13 @@ import {
 } from "theme/icon";
 
 export const moreSettingOptions = [
+  {
+    label: "Community",
+    icon: communityIcon,
+    backgroundColor: "#ffecbc66",
+    path: "/community",
+  },
+
   {
     label: "My orders",
     icon: myOrderIcon,
