@@ -135,7 +135,7 @@ function Profile() {
         </div>
       </div>
       <div
-        className="fixed w-full min-h-[calc(100vh-300px)] rounded-t-2xl bg-pwip-white-100 px-5"
+        className="fixed w-full h-full rounded-t-2xl bg-pwip-white-100 px-5"
         style={{
           top: mainContainerHeight + 4 + "px",
         }}
