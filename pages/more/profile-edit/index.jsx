@@ -1,11 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useSession} from "next-auth/react";
 import { Formik } from "formik";
 
-import { cameraIcon } from "../../../theme/icon";
-import { useOverlayContext } from "@/context/OverlayContext";
 import withAuth from "@/hoc/withAuth";
+import { useOverlayContext } from "@/context/OverlayContext";
+import { cameraIcon } from "../../../theme/icon";
 import { profileFormFields } from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
 
@@ -21,8 +22,9 @@ const initialValues = {
   gstNumber: "",
 };
 
-function Profile() {
+function ProfileEdit() {
   const router = useRouter();
+  // const { data: session } = useSession();
 
   const {
     openBottomSheet,
@@ -31,11 +33,12 @@ function Profile() {
     closeToastMessage,
   } = useOverlayContext();
 
-  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
-
   const formFields = [...profileFormFields];
-
   const professionList = [...professionOptions];
+
+  const handleProfessionSelect = (value) => {
+    closeBottomSheet();
+  };
 
   const handleProfessionBottomSheet = () => {
     const content = (
@@ -56,7 +59,7 @@ function Profile() {
                   boxShadow:
                     "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
                 }}
-                // onClick={() => handleProfessionSelect(item.value)}
+                onClick={() => handleProfessionSelect(item.value)}
               >
                 <div className="w-full pt-3 inline-flex items-center justify-center">
                   <img src={item.image} />
@@ -75,6 +78,7 @@ function Profile() {
     openBottomSheet(content);
   };
 
+    
   const handleFormUpdate = async (values, { resetForm }) => {
     try {
       //update logic here
@@ -86,6 +90,9 @@ function Profile() {
     }
   };
 
+
+  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
@@ -94,14 +101,16 @@ function Profile() {
     }
   }, []);
 
+  // React.useEffect(() => {
+  //   if (session) {
+  //     setUserData(session?.user);
+  //   }
+  // }, [session]);
+
   return (
     <React.Fragment>
       <Head>
         <meta charSet="utf-8" />
-        {/* <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-        /> */}
 
         <title>Export Costing by pwip</title>
 
@@ -118,44 +127,44 @@ function Profile() {
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
-      <div className="fixed top-0 left-0 h-screen w-screen bg-pwip-primary z-0"></div>
-      <div
-        id="fixedMenuSection"
-        className="fixed w-full z-10  flex flex-col top-[4rem]  items-center justify-center"
-      >
-        <div className="h-[134px] w-[134px]  rounded-full ring-1 ring-white p-[2px]">
-          <img
-            src={"/assets/images/no-profile.png"}
-            className="h-full w-full rounded-full object-cover"
-          />
-          <div className="absolute inset-0 flex items-center justify-center font-size">
-            {cameraIcon}
-          </div>
-        </div>
-      </div>
-      <div
-        className="fixed w-full h-full rounded-t-2xl bg-pwip-white-100 px-5"
-        style={{
-          top: mainContainerHeight + 4 + "px",
-        }}
-      >
+        <Header />
         <div
-          className="mt-24 pb-[14rem] pt-[1rem] overflow-y-scroll hide-scroll-bar"
+          id="fixedMenuSection"
+          className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}
+        >
+          <div className="inline-flex items-center space-x-5">
+          <div className="h-[134px] w-[134px] rounded-full ring-1 ring-white ml-[7rem] p-[2px] relative top-2 z-20">
+          <div className="absolute inset-0 flex items-center justify-center">
+          {cameraIcon}
+          </div>
+         <img
+           src="/assets/images/no-profile.png"
+           className="h-full w-full rounded-full object-cover"
+          />
+        </div>
+          </div>
+          <div className="absolute bottom-[-16px] left-0 bg-pwip-white-100 h-[5rem] w-full rounded-t-2xl z-10" />
+        </div>
+        <div
+          className={`min-h-screen inline-flex flex-col w-full bg-pwip-white-100 overflow-auto px-5 hide-scroll-bar relative`}
           style={{
-            height: `calc(100vh - ${mainContainerHeight + 32 + "px"})`,
+            paddingTop: mainContainerHeight * 1.7 + "px",
+            paddingBottom: mainContainerHeight - 52 + "px",
           }}
         >
-          <span className="text-pwip-gray-100 mt-24 w-full font-sans font-normal text-lg text-left">
+            <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
             Personal details
           </span>
-          <Formik initialValues={initialValues} onSubmit={handleFormUpdate}>
+          <Formik 
+          initialValues={initialValues} 
+          onSubmit={handleFormUpdate}
+          >
             {(formik) => (
               <form onSubmit={formik.handleSubmit}>
                 {formFields.map((field) => (
                   <div key={field.name} className="relative mb-4">
                     <input
-                      type="text"
+                      type={field.type}
                       id={field.name}
                       name={field.name}
                       onChange={formik.handleChange}
@@ -177,10 +186,11 @@ function Profile() {
                     </label>
                   </div>
                 ))}
-                <div className="fixed bottom-0 left-0 w-full p-5 bg-pwip-white-100">
+                <div className="fixed bottom-0 left-0 w-full p-3 bg-pwip-white-100">
                   <button
                     type="submit"
-                    className="w-full text-white bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md"
+                    className="w-full text-white font-semibold bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md"
+                    // disabled={!formik.dirty || formik.isSubmitting}
                   >
                     Update Changes
                   </button>
@@ -188,10 +198,9 @@ function Profile() {
               </form>
             )}
           </Formik>
-        </div>
-      </div>
+         </div>
     </React.Fragment>
   );
 }
 
-export default withAuth(Profile);
+export default withAuth(ProfileEdit);
