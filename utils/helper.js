@@ -19,7 +19,6 @@ api.interceptors.response.use(
 );
 
 export function getCostingToSaveHistoryPayload(inputJson) {
-  console.log(inputJson);
   return {
     costingName:
       inputJson?.costingName ||

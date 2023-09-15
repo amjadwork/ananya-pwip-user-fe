@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { inrToUsd } from "@/utils/helper";
 import { breakupArr } from "@/constants/breakupStructure";
@@ -6,10 +6,46 @@ import { breakupArr } from "@/constants/breakupStructure";
 const BreakupForm = ({ values, handleChange, handleBlur }) => {
   const forexRate = useSelector((state) => state.utils.forexRate);
 
+  const [breakupFormData, setBreakupFormData] = useState([]);
+
+  useEffect(() => {
+    let breakupFormArr = [];
+
+    breakupFormArr = [...breakupArr].map((d) => {
+      let obj = { ...d };
+
+      if (!values?.exportDuty) {
+        let rowItems = [...obj?.rowItems];
+
+        const exportDutyField = obj?.rowItems?.find(
+          (d) => d.name === "exportDuty"
+        );
+
+        if (exportDutyField) {
+          const arrayIndex = obj?.rowItems.indexOf(exportDutyField);
+
+          if (arrayIndex > -1) {
+            rowItems.splice(arrayIndex, 1);
+          }
+        }
+
+        obj.rowItems = rowItems;
+
+        return obj;
+      }
+
+      if (values?.exportDuty) {
+        return obj;
+      }
+    });
+
+    setBreakupFormData([...breakupFormArr]);
+  }, []);
+
   return (
     <React.Fragment>
       <div className="inline-flex flex-col w-full">
-        {breakupArr.map((item, index) => {
+        {breakupFormData.map((item, index) => {
           return (
             <React.Fragment key={item.title + index}>
               <div className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40">

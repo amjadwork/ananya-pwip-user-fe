@@ -341,7 +341,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           </label>
         </div>
 
-        <div className="inline-flex items-center space-x-4 w-full">
+        {/* <div className="inline-flex items-center space-x-4 w-full">
           <input
             type="checkbox"
             name="pwipFullfillment"
@@ -353,7 +353,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           <label className="text-sm font-normal text-pwip-gray-600">
             Full fill through PWIP
           </label>
-        </div>
+        </div> */}
       </div>
     </React.Fragment>
   );
