@@ -225,9 +225,9 @@ const SelectLocationContainer = (props) => {
                 opacity="0.7"
                 d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
                 stroke="#686E6D"
-                stroke-width="1.52292"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1.52292"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </svg>
           </button>

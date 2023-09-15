@@ -27,7 +27,7 @@ import {
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
-import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
+// import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
 import {
   chevronDown,
@@ -122,7 +122,7 @@ function extractBreakUpItems(breakUpObject, forex) {
   return breakUpItems;
 }
 
-function updateCharges(response, chargesToUpdate, forex) {
+function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
   if (response) {
     const updatedCharges = chargesToUpdate.map((chargeGroup) => {
       const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
@@ -155,7 +155,7 @@ function updateCharges(response, chargesToUpdate, forex) {
 
             break;
           case "OFC":
-            updatedInr = response?.grandTotalFob ? 0 : response.costing.ofcCost;
+            updatedInr = shipmentTerm === "FOB" ? 0 : response.costing.ofcCost;
             break;
           case "Inspection cost":
             updatedInr = response.constants.inspectionCharge;
@@ -422,7 +422,8 @@ function CostingOverview() {
       const updatedCharges = updateCharges(
         currentCostingFromHistory[0],
         breakupArr,
-        forexRate
+        forexRate,
+        shipmentTerm
       );
 
       const selected = unitOptions.find((u) => u.value === sheet.unit);
@@ -792,7 +793,7 @@ function CostingOverview() {
                 </div>
 
                 <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                  {generatedCostingData?.grandTotalFob ? "FOB" : "CIF"}
+                  {shipmentTerm}
                 </span>
 
                 <div className="inline-flex items-center justify-between w-full mt-2">
