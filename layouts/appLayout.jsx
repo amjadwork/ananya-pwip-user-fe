@@ -18,6 +18,7 @@ const AppLayout = ({ children }) => {
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const toastOverlay = useSelector((state) => state.toastOverlay);
   const showLoader = useSelector((state) => state.utils.showLoader);
+  const forexRate = useSelector((state) => state.utils.forexRate);
 
   const { openToastMessage, startLoading, stopLoading } = useOverlayContext();
 
@@ -55,7 +56,7 @@ const AppLayout = ({ children }) => {
   React.useEffect(() => {
     dispatch(
       forexRateRequest({
-        usd: 82,
+        usd: forexRate && forexRate?.USD ? forexRate?.USD : 82,
       })
     );
   }, []);
