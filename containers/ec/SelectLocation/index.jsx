@@ -276,13 +276,15 @@ const SelectLocationContainer = (props) => {
           paddingTop: mainContainerHeight + 42 + "px",
         }}
       >
-        <h2
-          className={`${
-            noTop ? "mt-0" : "mt-8"
-          } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
-        >
-          Popular ports
-        </h2>
+        {popularDestinationData.length && (
+          <h2
+            className={`${
+              noTop ? "mt-0" : "mt-8"
+            } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
+          >
+            Popular choices
+          </h2>
+        )}
 
         <div className="grid grid-cols-2 gap-6">
           {popularDestinationData.map((items, index) => {
