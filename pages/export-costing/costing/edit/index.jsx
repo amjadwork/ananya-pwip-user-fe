@@ -136,8 +136,6 @@ function EditCosting() {
         costingName: formik.current.values.costingName,
       });
 
-      console.log(formik.current.values._containerId);
-
       let payloadBody = {
         ...saveHistoryPayload,
         isQuickCosting: false,
@@ -176,6 +174,7 @@ function EditCosting() {
           customCostingSelection?.product ||
           selectedMyCostingFromHistory?.details?.variantObject,
         brokenPercentage:
+          formik.current.values.brokenPercentage ||
           customCostingSelection?.product?.brokenPercentage ||
           selectedMyCostingFromHistory?.brokenPercentage ||
           0,
