@@ -136,12 +136,16 @@ function EditCosting() {
         costingName: formik.current.values.costingName,
       });
 
+      console.log(formik.current.values._containerId);
+
       let payloadBody = {
         ...saveHistoryPayload,
         isQuickCosting: false,
         unit: selectedUnitForPayload,
         isExportDuty: formik.current.values.exportDuty,
         brokenPercentage: formik.current.values.brokenPercentage || 5,
+        containersCount: parseFloat(formik.current.values.containersCount),
+        _containerId: formik.current.values._containerId._id,
       };
 
       if (!formik.current.values.exportDuty) {
@@ -173,8 +177,7 @@ function EditCosting() {
           selectedMyCostingFromHistory?.details?.variantObject,
         brokenPercentage:
           customCostingSelection?.product?.brokenPercentage ||
-          selectedMyCostingFromHistory?.details?.variantObject
-            ?.brokenPercentage ||
+          selectedMyCostingFromHistory?.brokenPercentage ||
           0,
         _bagId:
           customCostingSelection?.bags ||
