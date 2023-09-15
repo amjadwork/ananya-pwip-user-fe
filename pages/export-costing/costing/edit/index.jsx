@@ -141,6 +141,7 @@ function EditCosting() {
         isQuickCosting: false,
         unit: selectedUnitForPayload,
         isExportDuty: formik.current.values.exportDuty,
+        brokenPercentage: formik.current.values.brokenPercentage || 5,
       };
 
       if (!formik.current.values.exportDuty) {

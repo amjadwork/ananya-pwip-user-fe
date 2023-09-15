@@ -816,9 +816,7 @@ function CostingOverview() {
                 </div>
                 <div className="inline-flex items-center justify-between w-full text-pwip-gray-500">
                   <span className="text-sm font-normal font-sans line-clamp-1">
-                    {generatedCostingData?.details?.variantObject
-                      ?.brokenPercentage || 0}
-                    % broken
+                    {generatedCostingData?.brokenPercentage || 0}% broken
                   </span>
                   <div className="inline-flex items-center justify-end  space-x-4">
                     <span className="text-sm font-medium font-sans line-clamp-1">
