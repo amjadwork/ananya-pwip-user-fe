@@ -393,35 +393,6 @@ function CostingOverview() {
     }
   }, [generatedCosting, selectedUnit, isChangingUnit, shipmentTerm]);
 
-  // const handleUpdateAndFetchCostingOnTermsChange = async (updatePayload) => {
-  //   await dispatch(updateCostingRequest(updatePayload));
-  //   await dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
-  // };
-
-  // useEffect(() => {
-  //   if (
-  //     shipmentTerm &&
-  //     !isShipmentTermDropdownOpen &&
-  //     componentShipmentTerm !== shipmentTerm &&
-  //     generatedCostingData
-  //   ) {
-  //     const payloadBody = {
-  //       ...getCostingToSaveHistoryPayload(generatedCostingData),
-  //       unit: selectedUnit?.value,
-  //       shipmentTermType: shipmentTerm || "FOB",
-  //       termOfAgreement: shipmentTerm || "FOB",
-  //     };
-  //     dispatch(fetchMyCostingFailure());
-  //     handleUpdateAndFetchCostingOnTermsChange(payloadBody);
-  //   }
-  // }, [shipmentTerm, isShipmentTermDropdownOpen, generatedCostingData]);
-
-  // useEffect(() => {
-  //   if (shipmentTerm) {
-  //     setComponentShipmentTerm(shipmentTerm);
-  //   }
-  // }, [shipmentTerm]);
-
   React.useEffect(() => {
     if (generatedCosting) {
       breakupArr[0].rowItems[1].label = `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
@@ -555,7 +526,7 @@ function CostingOverview() {
         </div>
 
         <div
-          className={`h-full w-full bg-white pb-8 overflow-auto px-5 hide-scroll-bar`}
+          className={`h-full w-full bg-white py-8 overflow-auto px-5 hide-scroll-bar`}
         >
           <div className="grid grid-cols-3 gap-6">
             {[
@@ -599,6 +570,7 @@ function CostingOverview() {
                       let payload = extractCustomCostingPayload({
                         ...givenData,
                       });
+
                       payload.currentUnit = selectedUnit?.value || "mt";
                       payload.unitToConvert = items?.value || "mt";
                       payload.shipmentTermType = shipmentTerm || "FOB";

@@ -312,7 +312,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
 
         <div className="inline-flex flex-col w-full">
           <label className="text-sm font-normal text-pwip-gray-600">
-            Containers weight
+            Per container weight
           </label>
           <input
             placeholder="Ex: 1000 kg"

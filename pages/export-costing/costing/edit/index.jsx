@@ -136,11 +136,16 @@ function EditCosting() {
         costingName: formik.current.values.costingName,
       });
 
-      const payloadBody = {
+      let payloadBody = {
         ...saveHistoryPayload,
         isQuickCosting: false,
         unit: selectedUnitForPayload,
+        isExportDuty: formik.current.values.exportDuty,
       };
+
+      if (!formik.current.values.exportDuty) {
+        payloadBody.exportDuty = 0;
+      }
 
       dispatch(fetchGeneratedCostingFailure());
       dispatch(saveCostingFailure());
