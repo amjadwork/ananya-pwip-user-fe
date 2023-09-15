@@ -19,13 +19,14 @@ api.interceptors.response.use(
 );
 
 export function getCostingToSaveHistoryPayload(inputJson) {
+  console.log(inputJson);
   return {
     costingName:
       inputJson?.costingName ||
       `${inputJson?.details?.variantObject?.variantName} - ${inputJson?.details?.destinationObject?.portName}`,
-    brokenPercentage: inputJson.details.variantObject.brokenPercentage || 0,
+    brokenPercentage: inputJson?.details?.variantObject?.brokenPercentage || 0,
     unit: "mt",
-    _variantId: inputJson.details.variantObject._variantId,
+    _variantId: inputJson?.details?.variantObject?._variantId,
     _bagId:
       inputJson?.details?.packageDetails?._id ||
       inputJson?.details?.packageObject?._id,
@@ -46,25 +47,25 @@ export function getCostingToSaveHistoryPayload(inputJson) {
     containerWeight:
       inputJson?.details?.ofcObject?.containerObject?.weight ||
       inputJson?.details?.ofcObject?.chaContainerObject?.weight,
-    isExportDuty: inputJson.constants.exportDutyCharge ? true : false,
-    isPwipFullfillment: inputJson.constants.pwipFullfillment ? true : false,
+    isExportDuty: inputJson?.constants?.exportDutyCharge ? true : false,
+    isPwipFullfillment: inputJson?.constants?.pwipFullfillment ? true : false,
     termOfAgreement: inputJson?.grandTotalFob ? "FOB" : "CIF",
-    costOfRice: inputJson.costing.exmillPrice,
-    bagPrice: inputJson.costing.package,
-    transportation: inputJson.costing.transportCharge,
-    cfsHandling: inputJson.costing.cfsHandling,
-    shippingLineLocals: inputJson.costing.shlCost,
-    OFC: inputJson.costing.ofcCost || 0,
-    inspectionCost: inputJson.constants.inspectionCharge,
-    insurance: inputJson.constants.insurance,
-    financeCost: inputJson.constants.financeCost,
-    overhead: inputJson.constants.overHeadCharge,
-    margin: inputJson.constants.margin,
-    exportDuty: inputJson.constants.exportDutyCharge || 0,
-    pwipFullfillment: inputJson.constants.pwipFullfillment || 0,
-    FOB: inputJson.grandTotalFob || 0,
-    CIF: inputJson.grandTotalCif || 0,
-    grandTotal: inputJson.grandTotal || 0,
+    costOfRice: inputJson?.costing?.exmillPrice,
+    bagPrice: inputJson?.costing?.package,
+    transportation: inputJson?.costing?.transportCharge,
+    cfsHandling: inputJson?.costing?.cfsHandling,
+    shippingLineLocals: inputJson?.costing?.shlCost,
+    OFC: inputJson?.costing?.ofcCost || 0,
+    inspectionCost: inputJson?.constants?.inspectionCharge,
+    insurance: inputJson?.constants?.insurance,
+    financeCost: inputJson?.constants?.financeCost,
+    overhead: inputJson?.constants?.overHeadCharge,
+    margin: inputJson?.constants?.margin,
+    exportDuty: inputJson?.constants?.exportDutyCharge || 0,
+    pwipFullfillment: inputJson?.constants?.pwipFullfillment || 0,
+    FOB: inputJson?.grandTotalFob || 0,
+    CIF: inputJson?.grandTotalCif || 0,
+    grandTotal: inputJson?.grandTotal || 0,
   };
 }
 
