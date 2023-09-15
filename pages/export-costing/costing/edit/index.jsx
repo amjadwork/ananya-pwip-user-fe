@@ -210,8 +210,6 @@ function EditCosting() {
       //   );
       // }
 
-      console.log(customCostingSelection);
-
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
         _variantId:
