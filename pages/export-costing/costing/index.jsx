@@ -615,7 +615,9 @@ function CostingOverview() {
                   }}
                 >
                   <div className="w-[42px] pt-3 inline-flex items-center justify-center">
-                    <img src="/assets/images/units/weight.png" />
+                    <img
+                      src={`/assets/images/units/${items.value.toUpperCase()}.svg`}
+                    />
                   </div>
                   <div className="p-3 flex w-fill flex-col space-y-[4px]">
                     <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
