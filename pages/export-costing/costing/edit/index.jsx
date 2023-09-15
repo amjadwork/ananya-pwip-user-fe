@@ -382,6 +382,8 @@ function EditCosting() {
                         selectedMyCostingFromHistory?.unit || "mt"
                       );
 
+                      console.log("givenData", givenData);
+
                       const payload =
                         generatePayloadForCustomCosting(givenData);
                       dispatch(generateCustomCostingRequest(payload));
