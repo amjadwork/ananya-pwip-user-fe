@@ -547,7 +547,7 @@ function SelectionOverview() {
 
           <Button
             type="primary"
-            label="Generate consting"
+            label="Generate costing"
             onClick={async () => {
               await dispatch(fetchGeneratedCostingFailure());
               await dispatch(fetchMyCostingFailure());

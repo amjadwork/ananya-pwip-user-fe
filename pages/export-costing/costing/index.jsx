@@ -647,7 +647,7 @@ function CostingOverview() {
     if (navigator && navigator.share) {
       navigator
         .share({
-          title: "Export consting",
+          title: "Export costing",
           text: "1121 steam 5% Broken, Chennai - Singapore, ₹42000 ($345)",
           url:
             window.location.origin +
