@@ -37,6 +37,38 @@ import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
 import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
+function convertUnits(currentUnit, unitToConvert, value) {
+  // Define conversion factors
+  const conversionFactors = {
+    kg: {
+      mt: 0.001,
+      qt: 0.01,
+    },
+    mt: {
+      kg: 1000,
+      qt: 10,
+    },
+    qt: {
+      kg: 100,
+      mt: 0.1,
+    },
+  };
+
+  // Check if the units are valid
+  if (
+    !(currentUnit in conversionFactors) ||
+    !(unitToConvert in conversionFactors[currentUnit])
+  ) {
+    return "Invalid units";
+  }
+
+  // Perform the conversion
+  const conversionFactor = conversionFactors[currentUnit][unitToConvert];
+  const convertedValue = value * conversionFactor;
+
+  return convertedValue;
+}
+
 const initialValues = {
   costingName: "",
   _variantId: {},
@@ -167,6 +199,18 @@ function EditCosting() {
       selectedMyCostingFromHistory
     ) {
       const formikRef = formik.current;
+
+      // let customProduct = customCostingSelection?.product;
+
+      // if (customProduct) {
+      //   customProduct.sourceRates.price = convertUnits(
+      //     "kg",
+      //     selectedMyCostingFromHistory.unit,
+      //     customProduct?.sourceRates?.price
+      //   );
+      // }
+
+      console.log(customCostingSelection);
 
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
