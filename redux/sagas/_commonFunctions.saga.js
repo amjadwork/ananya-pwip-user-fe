@@ -1,6 +1,6 @@
 import { call, select, put } from "redux-saga/effects";
 import { api } from "@/utils/helper";
-import { handleSettingAuthDataRequest} from "../actions/auth.actions";
+import { handleSettingAuthDataFailure } from "../actions/auth.actions";
 import { showToastNotificationSuccess } from "../actions/toastOverlay.actions";
 import { showLoaderSuccess, hideLoaderFailure } from "../actions/utils.actions";
 import { signOut } from "next-auth/react";
@@ -62,7 +62,7 @@ export function* makeApiCall(
     const status = [401, 403];
 
     if (error.response && status.includes(error.response.status)) {
-      yield put(handleSettingAuthDataRequest(null, null));
+      yield put(handleSettingAuthDataFailure());
 
       yield put(
         showToastNotificationSuccess({
