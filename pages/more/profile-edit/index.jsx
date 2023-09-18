@@ -23,11 +23,23 @@ import { Header } from "@/components/Header";
 
 const initialValues = {
   name: "",
+  headline: "",
   email: "",
   mobile: "",
+  headline:"",
   companyName: "",
   profession: "",
   gstNumber: "",
+  bio:"",
+  city:"",
+  state:"",
+  country:"",
+  pincode:"",
+  website:"",
+  facebook:"",
+  linkedin:"",
+  instagram:"",
+  whatsapp:"",
 }
 
 const onSubmit= values => {
@@ -217,7 +229,7 @@ function ProfileEdit() {
                       ? 'border-red-300' // Apply red border when there's an error
                       : 'border-pwip-gray-300'
                   } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
-                  placeholder=""
+                  placeholder={field.placeholder}
                   onClick={() => {
                     if (field.name === "profession") {
                       handleProfessionBottomSheet();
@@ -255,4 +267,5 @@ function ProfileEdit() {
   );
 }
 
-export default withAuth(ProfileEdit)
+// export default withAuth(ProfileEdit)
+export default ProfileEdit
