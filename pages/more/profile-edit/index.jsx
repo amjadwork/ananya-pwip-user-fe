@@ -1,7 +1,7 @@
-import React from "react";
+import React, {useState, useRef} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSession} from "next-auth/react";
+import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
 
 import withAuth from "@/hoc/withAuth";
@@ -9,9 +9,18 @@ import { useOverlayContext } from "@/context/OverlayContext";
 import { cameraIcon } from "../../../theme/icon";
 import { profileFormFields } from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
+import {
+  fetchProfileFailure,
+  saveCostingRequest,
+  saveCostingFailure,
+  updateCostingRequest,
+  fetchProfileRequest,
+  updateCostingFailure,
+} from "../../../redux/actions/profileEdit.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
+import { Button } from "components/Button";
 
 const initialValues = {
   fullName: "",
@@ -24,14 +33,17 @@ const initialValues = {
 
 function ProfileEdit() {
   const router = useRouter();
-  // const { data: session } = useSession();
+  const dispatch = useDispatch();
 
+  const formik = useRef();
   const {
     openBottomSheet,
     closeBottomSheet,
     openToastMessage,
     closeToastMessage,
   } = useOverlayContext();
+
+  const [mainContainerHeight, setMainContainerHeight] = useState(0);
 
   const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
@@ -82,6 +94,7 @@ function ProfileEdit() {
   const handleFormUpdate = async (values, { resetForm }) => {
     try {
       //update logic here
+      console.log("clicked submit")
       resetForm();
       openToastMessage("Update successful!", "success");
     } catch (error) {
@@ -91,7 +104,7 @@ function ProfileEdit() {
   };
 
 
-  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -101,11 +114,6 @@ function ProfileEdit() {
     }
   }, []);
 
-  // React.useEffect(() => {
-  //   if (session) {
-  //     setUserData(session?.user);
-  //   }
-  // }, [session]);
 
   return (
     <React.Fragment>
@@ -156,20 +164,32 @@ function ProfileEdit() {
             Personal details
           </span>
           <Formik 
-          initialValues={initialValues} 
-          onSubmit={handleFormUpdate}
+          initialValues={{
+            ...initialValues,
+          }}
+          innerRef={formik}
+          onSubmit={()=>{
+            console.log("CLicket")
+          }}
           >
-            {(formik) => (
-              <form onSubmit={formik.handleSubmit}>
+            {( values,
+              // errors,
+              // touched,
+              setFieldValue,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,) => (
+              <form onSubmit={handleSubmit}>
                 {formFields.map((field) => (
                   <div key={field.name} className="relative mb-4">
                     <input
                       type={field.type}
                       id={field.name}
                       name={field.name}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      value={formik.values[field.name]}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values[field.name]}
                       className="block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border border-pwip-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer"
                       placeholder=" "
                       onClick={() => {
@@ -190,7 +210,7 @@ function ProfileEdit() {
                   <button
                     type="submit"
                     className="w-full text-white font-semibold bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md"
-                    // disabled={!formik.dirty || formik.isSubmitting}
+                    disabled={isSubmitting}
                   >
                     Update Changes
                   </button>
@@ -198,9 +218,11 @@ function ProfileEdit() {
               </form>
             )}
           </Formik>
+        
+             
          </div>
     </React.Fragment>
   );
 }
 
-export default withAuth(ProfileEdit);
+export default withAuth(ProfileEdit)
