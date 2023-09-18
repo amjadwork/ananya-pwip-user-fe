@@ -1,4 +1,6 @@
 import {
+    SAVE_PROFILE_SUCCESS,
+    SAVE_PROFILE_FAILURE,
     UPDATE_PROFILE_SUCCESS,
     UPDATE_PROFILE_FAILURE,
     FETCH_PROFILE_SUCCESS,
@@ -8,7 +10,7 @@ import {
 const initialState = {
     fullName: null,
     email: null,
-    number: null,
+    mobile: null,
     companyName: null,
     profession: null,
     gstNumber: null,
@@ -16,31 +18,42 @@ const initialState = {
   
   const profileEditReducer = (state = initialState, action) => {
     switch (action.type) {
+    case SAVE_PROFILE_SUCCESS:
+      return {
+        ...state,
+        initialState: action.payload,
+      };
+
+    case SAVE_PROFILE_FAILURE:
+      return {
+        ...state,
+        initialState: null,
+      };
 
     case UPDATE_PROFILE_SUCCESS:
         return {
           ...state,
-          profileInfo: action.payload,
+          userInfo: action.payload,
         };
   
     case UPDATE_PROFILE_FAILURE:
         return {
           ...state,
-          profileInfo: null,
+          userInfo: null,
         };
 
     case FETCH_PROFILE_SUCCESS:
         return {
            ...state,
-           currentCostingFromHistory: action.payload,
+           currentUserInfo: action.payload,
         };
 
     case FETCH_PROFILE_FAILURE:
         return {
             ...state,
-            currentCostingFromHistory: null,
+            currentUserInfo: null,
         };
-
+        
     default:
         return state;
   }

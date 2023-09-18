@@ -1,4 +1,4 @@
-import { call, put, takeLatest, select } from "redux-saga/effects";
+import { call, put, takeLatest } from "redux-saga/effects";
 import {
     SAVE_PROFILE_REQUEST,
     UPDATE_PROFILE_REQUEST,
@@ -16,11 +16,11 @@ import { makeApiCall } from "./_commonFunctions.saga";
 
 
 
-function* profileInfo(action) {
+function* saveProfileInfo(action) {
     const body = action.payload;
   
     try {
-      const response = yield call(makeApiCall, "/saveCosting", "post", {
+      const response = yield call(makeApiCall, "/profile", "post", {
         ...body,
       });
   
@@ -31,10 +31,13 @@ function* profileInfo(action) {
   }
 
 function* updateProfileInfo(action) {
+  const body = action.payload;
+
     try {
-        const response = yield call(makeApiCall, "/login", "patch", {
+        const response = yield call(makeApiCall, "/profile", "patch", {
             ...body,
           });
+          
       yield put(updateProfileSuccess(response.data));
     } catch (error) {
       yield put(updateProfileFailure(error));    }
@@ -42,9 +45,10 @@ function* updateProfileInfo(action) {
 
 
 function* getProfileInfo(action) {
-  const id = action.payload;
+  const userId = action.id;
   try {
-    const response = yield call(makeApiCall, "/login", "get");
+    const response = yield call(makeApiCall, `/profile/${id}`, "get");
+
     yield put(fetchProfileSuccess(response.data));
   } catch (error) {
     yield put(fetchProfileFailure(error));
@@ -52,7 +56,7 @@ function* getProfileInfo(action) {
 };
 
 export default function* profileEditSaga() {
-    yield takeLatest(SAVE_PROFILE_REQUEST, profileInfo);
+    yield takeLatest(SAVE_PROFILE_REQUEST, saveProfileInfo);
     yield takeLatest(UPDATE_PROFILE_REQUEST, updateProfileInfo);
     yield takeLatest(FETCH_MY_PROFILE_REQUEST, getProfileInfo);
   }

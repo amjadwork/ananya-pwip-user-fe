@@ -1,4 +1,7 @@
 import {
+    SAVE_PROFILE_REQUEST,
+    SAVE_PROFILE_SUCCESS,
+    SAVE_PROFILE_FAILURE,
     UPDATE_PROFILE_REQUEST,
     UPDATE_PROFILE_SUCCESS,
     UPDATE_PROFILE_FAILURE,
@@ -7,17 +10,35 @@ import {
     FETCH_PROFILE_FAILURE,
   } from "./types/profileEdit.types";
 
+
+//SAVE PROFILE DETAILS
+export const saveProfileRequest = (userData) => {
+  return {
+    type: SAVE_PROFILE_REQUEST,
+    payload: userData,
+  };
+};
+
+export const saveProfileSuccess = (userData) => ({
+  type: SAVE_PROFILE_SUCCESS,
+  payload: userData,
+});
+
+export const saveProfileFailure = () => ({
+  type: SAVE_PROFILE_FAILURE,
+});
+
 //UPDATE PROFILE DETAILS
-export const updateProfileRequest = (requestData) => {
+export const updateProfileRequest = (userData) => {
     return {
       type: UPDATE_PROFILE_REQUEST,
-      payload: requestData,
+      payload: userData,
     };
   };
 
-export const updateProfileSuccess = (profileData) => ({
+export const updateProfileSuccess = (userData) => ({
     type: UPDATE_PROFILE_SUCCESS,
-    payload: profileData,
+    payload: userData,
   });
 
 
@@ -26,16 +47,16 @@ export const updateProfileFailure = () => ({
   });
 
 // GET PROFILE DETAILS
-export const fetchProfileRequest = (id) => {
+export const fetchProfileRequest = (userId) => {
     return {
       type: FETCH_PROFILE_REQUEST,
-      payload: id,
+      payload: userId,
     };
   };
   
-export const fetchProfileSuccess = (costing) => ({
+export const fetchProfileSuccess = (userId) => ({
     type: FETCH_PROFILE_SUCCESS,
-    payload: costing,
+    payload: userId,
   });
   
 export const fetchProfileFailure = () => ({
