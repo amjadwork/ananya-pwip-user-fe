@@ -8,7 +8,7 @@ import {
   } from "../actions/types/profileEdit.types";
 
 const initialState = {
-    fullName: null,
+    name: null,
     email: null,
     mobile: null,
     companyName: null,

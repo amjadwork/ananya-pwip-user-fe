@@ -1,8 +1,8 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSelector, useDispatch } from "react-redux";
-import { Formik } from "formik";
+import { useSession } from "next-auth/react";
+import { useFormik } from "formik";
 
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -11,31 +11,74 @@ import { profileFormFields } from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
 import {
   fetchProfileFailure,
-  saveCostingRequest,
-  saveCostingFailure,
-  updateCostingRequest,
+  saveProfileRequest,
+  saveProfileFailure,
+  updateProfileRequest,
   fetchProfileRequest,
-  updateCostingFailure,
+  updateProfileFailure,
 } from "../../../redux/actions/profileEdit.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
-import { Button } from "components/Button";
 
 const initialValues = {
-  fullName: "",
+  name: "",
   email: "",
-  number: "",
+  mobile: "",
   companyName: "",
   profession: "",
   gstNumber: "",
-};
+}
+
+const onSubmit= values => {
+  console.log('Form Payload', values)
+}
+
+const validate= values => {
+  let errors ={}
+    if (!values.name){
+      errors.name='required'
+    }
+    if (!values.email){
+      errors.email='required'
+    } else if(!/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}\b/i.test(values.email)){
+      errors.email='Invalid Email'
+    }
+    if (!values.mobile){
+      errors.mobile='required'
+    } else if (!/^\d{10}$/i.test(values.mobile)) {
+      errors.mobile = 'Mobile number must be 10 digits';
+    }
+  return errors
+}
 
 function ProfileEdit() {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const { data: session } = useSession();
 
-  const formik = useRef();
+  const [mainContainerHeight, setMainContainerHeight] = useState(0);
+  const [userData, setUserData] = React.useState(null);
+
+  const formFields = [...profileFormFields];
+  const professionList = [...professionOptions];
+
+  const formik = useFormik({
+    initialValues,
+    onSubmit,
+    validate,
+  });
+
+  useEffect(() => {
+    if (session) {
+      setUserData(session?.user);
+      formik.setValues({
+        ...formik.values,
+        name: session.user.name,
+        email: session.user.email,
+      });
+    }  
+  }, [session]);
+
   const {
     openBottomSheet,
     closeBottomSheet,
@@ -43,12 +86,8 @@ function ProfileEdit() {
     closeToastMessage,
   } = useOverlayContext();
 
-  const [mainContainerHeight, setMainContainerHeight] = useState(0);
-
-  const formFields = [...profileFormFields];
-  const professionList = [...professionOptions];
-
   const handleProfessionSelect = (value) => {
+    formik.setFieldValue("profession", value);
     closeBottomSheet();
   };
 
@@ -89,22 +128,17 @@ function ProfileEdit() {
     );
     openBottomSheet(content);
   };
-
     
-  const handleFormUpdate = async (values, { resetForm }) => {
+  const handleFormSubmit = async (values) => {
     try {
-      //update logic here
       console.log("clicked submit")
-      resetForm();
+      console.log('custom submit fn', values)
       openToastMessage("Update successful!", "success");
     } catch (error) {
       console.error("Update failed:", error);
       openToastMessage("Update failed. Please try again.", "error");
     }
   };
-
-
-
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -113,7 +147,6 @@ function ProfileEdit() {
       setMainContainerHeight(height);
     }
   }, []);
-
 
   return (
     <React.Fragment>
@@ -146,7 +179,7 @@ function ProfileEdit() {
           {cameraIcon}
           </div>
          <img
-           src="/assets/images/no-profile.png"
+            src={userData?.picture || "/assets/images/no-profile.png"}
            className="h-full w-full rounded-full object-cover"
           />
         </div>
@@ -163,63 +196,60 @@ function ProfileEdit() {
             <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
             Personal details
           </span>
-          <Formik 
-          initialValues={{
-            ...initialValues,
-          }}
-          innerRef={formik}
-          onSubmit={()=>{
-            console.log("CLicket")
-          }}
-          >
-            {( values,
-              // errors,
-              // touched,
-              setFieldValue,
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              isSubmitting,) => (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={(e) => {
+                    e.preventDefault(); 
+                    formik.handleSubmit();
+                    handleFormSubmit(formik.values);
+        }}>
                 {formFields.map((field) => (
-                  <div key={field.name} className="relative mb-4">
-                    <input
-                      type={field.type}
-                      id={field.name}
-                      name={field.name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values[field.name]}
-                      className="block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border border-pwip-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer"
-                      placeholder=" "
-                      onClick={() => {
-                        if (field.name === "profession") {
-                          handleProfessionBottomSheet();
-                        }
-                      }}
-                    />
-                    <label
-                      htmlFor={field.name}
-                      className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
-                    >
-                      {field.label}
-                    </label>
-                  </div>
+                <div key={field.name} className="relative mb-4">
+                <input
+                  type={field.type}
+                  id={field.name}
+                  name={field.name}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  maxLength={field.name === "mobile" ? 10 : undefined}
+                  value={formik.values[field.name]}
+                  style={{ textAlign: 'left' }}
+                  className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
+                    formik.errors[field.name]  && formik.touched[field.name]
+                      ? 'border-red-300' // Apply red border when there's an error
+                      : 'border-pwip-gray-300'
+                  } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
+                  placeholder=""
+                  onClick={() => {
+                    if (field.name === "profession") {
+                      handleProfessionBottomSheet();
+                    }
+                  }}
+                />
+                {formik.errors[field.name] && formik.touched[field.name] ? (
+                  <p 
+                  className="absolute text-red-400 text-xs"
+                  style={{ top: '100%'}} 
+                  >{formik.errors[field.name]}</p>
+                ) : null}
+                <label
+                  htmlFor={field.name}
+                  className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
+                >
+                  {field.label}
+                </label>
+              </div>
                 ))}
                 <div className="fixed bottom-0 left-0 w-full p-3 bg-pwip-white-100">
                   <button
                     type="submit"
-                    className="w-full text-white font-semibold bg-pwip-primary py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md"
-                    disabled={isSubmitting}
+                    className={`w-full text-white font-semibold py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md ${
+                      (!formik.dirty || !formik.isValid || formik.isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
+                    }`}
+                    disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
                   >
                     Update Changes
                   </button>
                 </div>
               </form>
-            )}
-          </Formik>
-        
-             
          </div>
     </React.Fragment>
   );
