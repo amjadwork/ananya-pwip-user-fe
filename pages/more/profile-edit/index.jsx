@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import { useFormik } from "formik";
+import { Formik } from "formik";
 
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -42,30 +42,9 @@ const initialValues = {
   whatsapp:"",
 }
 
-const onSubmit= values => {
-  console.log('Form Payload', values)
-}
-
-const validate= values => {
-  let errors ={}
-    if (!values.name){
-      errors.name='required'
-    }
-    if (!values.email){
-      errors.email='required'
-    } else if(!/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}\b/i.test(values.email)){
-      errors.email='Invalid Email'
-    }
-    if (!values.mobile){
-      errors.mobile='required'
-    } else if (!/^\d{10}$/i.test(values.mobile)) {
-      errors.mobile = 'Mobile number must be 10 digits';
-    }
-  return errors
-}
-
 function ProfileEdit() {
   const router = useRouter();
+  const formik = useRef();
   const { data: session } = useSession();
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
@@ -74,17 +53,11 @@ function ProfileEdit() {
   const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
 
-  const formik = useFormik({
-    initialValues,
-    onSubmit,
-    validate,
-  });
-
   useEffect(() => {
     if (session) {
       setUserData(session?.user);
-      formik.setValues({
-        ...formik.values,
+      formik.current.setValues({
+        ...initialValues,
         name: session.user.name,
         email: session.user.email,
       });
@@ -99,7 +72,10 @@ function ProfileEdit() {
   } = useOverlayContext();
 
   const handleProfessionSelect = (value) => {
-    formik.setFieldValue("profession", value);
+    formik.current.setValues({
+      ...formik.current.values,
+      profession: value,
+    });
     closeBottomSheet();
   };
 
@@ -144,7 +120,7 @@ function ProfileEdit() {
   const handleFormSubmit = async (values) => {
     try {
       console.log("clicked submit")
-      console.log('custom submit fn', values)
+      console.log('custom submit fn', formik)
       openToastMessage("Update successful!", "success");
     } catch (error) {
       console.error("Update failed:", error);
@@ -208,9 +184,32 @@ function ProfileEdit() {
             <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
             Personal details
           </span>
+          <Formik
+            innerRef={formik}
+            initialValues={{
+              ...initialValues,
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              setTimeout(() => {
+                setSubmitting(false);
+              }, 400);
+            }}
+          >
+            {({
+              values,
+              errors,
+              touched,
+              dirty,
+              isValid,
+              setFieldValue,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+            }) => (
               <form onSubmit={(e) => {
                     e.preventDefault(); 
-                    formik.handleSubmit();
+                    handleSubmit();
                     handleFormSubmit(formik.values);
         }}>
                 {formFields.map((field) => (
@@ -219,28 +218,29 @@ function ProfileEdit() {
                   type={field.type}
                   id={field.name}
                   name={field.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
                   maxLength={field.name === "mobile" ? 10 : undefined}
-                  value={formik.values[field.name]}
+                  value={values[field.name]}
                   style={{ textAlign: 'left' }}
                   className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
-                    formik.errors[field.name]  && formik.touched[field.name]
-                      ? 'border-red-300' // Apply red border when there's an error
+                    errors[field.name]  && touched[field.name]
+                      ? 'border-red-300'
                       : 'border-pwip-gray-300'
                   } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
                   placeholder={field.placeholder}
+                  setFieldValue={setFieldValue}
                   onClick={() => {
                     if (field.name === "profession") {
                       handleProfessionBottomSheet();
                     }
                   }}
                 />
-                {formik.errors[field.name] && formik.touched[field.name] ? (
+                {errors[field.name] && touched[field.name] ? (
                   <p 
                   className="absolute text-red-400 text-xs"
                   style={{ top: '100%'}} 
-                  >{formik.errors[field.name]}</p>
+                  >{errors[field.name]}</p>
                 ) : null}
                 <label
                   htmlFor={field.name}
@@ -254,18 +254,19 @@ function ProfileEdit() {
                   <button
                     type="submit"
                     className={`w-full text-white font-semibold py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md ${
-                      (!formik.dirty || !formik.isValid || formik.isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
+                      (!dirty || !isValid || isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
                     }`}
-                    disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
+                    disabled={!dirty || !isValid || isSubmitting}
                   >
                     Update Changes
                   </button>
                 </div>
               </form>
+                )}
+        </Formik>
          </div>
     </React.Fragment>
   );
 }
 
-// export default withAuth(ProfileEdit)
-export default ProfileEdit
+export default withAuth(ProfileEdit)
