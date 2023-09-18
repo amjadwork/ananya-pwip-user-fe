@@ -287,7 +287,7 @@ export function OverlayProvider({ children }) {
                   onClick={() => {
                     dispatch(
                       forexRateRequest({
-                        usd: parseFloat(usdValue || 0),
+                        usd: 82, //parseFloat(usdValue || 0),
                       })
                     );
                     closeModal();

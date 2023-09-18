@@ -91,7 +91,8 @@ const SelectBagsContainer = (props) => {
                 </div>
                 <div className="p-3 flex w-fill flex-col space-y-[4px]">
                   <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    {items?.bag || ""}
+                    {items?.bag || ""} - {items?.weight}
+                    {items?.unit}
                   </span>
                 </div>
               </div>

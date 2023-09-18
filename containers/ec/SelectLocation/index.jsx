@@ -32,15 +32,57 @@ const SelectLocationContainer = (props) => {
     React.useState(null);
   const [destinationList, setDestinationList] = React.useState([]);
 
+  const [popularDestinationData, setPopularDestinationData] = React.useState(
+    []
+  );
+  const [listDestinationData, setListDestinationData] = React.useState([]);
+  const [searchStringValue, setSearchStringValue] = React.useState("");
+
   React.useEffect(() => {
     if (
       locationsData?.locations?.destinations?.length &&
       locationType === "destination"
     ) {
       setDestinationList(locationsData.locations.destinations);
+
+      if ([...locationsData.locations.destinations].slice(0, 4)) {
+        setPopularDestinationData(
+          [...locationsData.locations.destinations].slice(0, 4)
+        );
+      }
+
+      if (locationsData.locations.destinations) {
+        setPopularDestinationData(
+          [...locationsData.locations.destinations].slice(0, 4)
+        );
+        setListDestinationData(
+          [...locationsData.locations.destinations].slice(
+            5,
+            locationsData.locations.destinations.length - 1
+          )
+        );
+      }
     }
     if (locationsData?.locations?.origin?.length && locationType === "origin") {
       setDestinationList(locationsData.locations.origin);
+
+      if ([...locationsData.locations.origin].slice(0, 4)) {
+        setPopularDestinationData(
+          [...locationsData.locations.origin].slice(0, 4)
+        );
+      }
+
+      if (locationsData.locations.origin) {
+        setPopularDestinationData(
+          [...locationsData.locations.origin].slice(0, 4)
+        );
+        setListDestinationData(
+          [...locationsData.locations.origin].slice(
+            5,
+            locationsData.locations.origin.length - 1
+          )
+        );
+      }
     }
   }, [locationsData, locationType]);
 
@@ -57,6 +99,57 @@ const SelectLocationContainer = (props) => {
       setMainContainerHeight(height);
     }
   }, [selectedCostingProduct]);
+
+  function handleSearch(searchString) {
+    const dataToFilter = [...destinationList];
+
+    // Create an empty array to store the matching variants
+    const matchingVariants = [];
+
+    // Convert the search string to lowercase for a case-insensitive search
+    const searchLower = searchString.toLowerCase();
+
+    // Iterate through the array of variants
+    for (const variant of dataToFilter) {
+      // Convert the variant name to lowercase for comparison
+      const variantNameLower = variant.portName.toLowerCase();
+
+      // Check if the variant name contains the search string
+      if (variantNameLower.includes(searchLower)) {
+        // If it does, add the variant to the matchingVariants array
+        matchingVariants.push(variant);
+      }
+    }
+
+    if (searchString) {
+      setPopularDestinationData([]);
+      setListDestinationData(matchingVariants);
+    }
+
+    if (!searchString && locationType === "destination") {
+      setPopularDestinationData(
+        [...locationsData.locations.destinations].slice(0, 4)
+      );
+      setListDestinationData(
+        [...locationsData.locations.destinations].slice(
+          5,
+          locationsData.locations.destinations.length - 1
+        )
+      );
+    }
+
+    if (!searchString && locationType === "origin") {
+      setPopularDestinationData(
+        [...locationsData.locations.origin].slice(0, 4)
+      );
+      setListDestinationData(
+        [...locationsData.locations.origin].slice(
+          5,
+          locationsData.locations.origin.length - 1
+        )
+      );
+    }
+  }
 
   return (
     <React.Fragment>
@@ -115,10 +208,64 @@ const SelectLocationContainer = (props) => {
         <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
           {title}
         </h2>
-        <input
+        {/* <input
           placeholder="Ex: Ho chi min city port"
           className="h-[48px] mt-[10px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
-        />
+        /> */}
+        <div className="h-[48px] mt-[10px] w-full rounded-md bg-pwip-primary-100 text-base font-sans inline-flex items-center px-[18px]">
+          <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
+            <svg
+              width="17"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity="0.7"
+                d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
+                stroke="#686E6D"
+                strokeWidth="1.52292"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <input
+            placeholder="Ex: Sona Masuri"
+            className="h-full w-full bg-pwip-primary-100 pl-[18px] text-base font-sans outline-none border-none"
+            value={searchStringValue}
+            onChange={(event) => {
+              setSearchStringValue(event.target.value);
+              handleSearch(event.target.value);
+            }}
+          />
+          {!popularDestinationData.length && (
+            <button
+              onClick={() => {
+                setSearchStringValue("");
+                handleSearch("");
+              }}
+              className="outline-none border-none bg-transparent inline-flex items-center justify-center"
+            >
+              <svg
+                width="19"
+                height="19"
+                viewBox="0 0 19 19"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
+                  stroke="#686E6D"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       <div
@@ -129,16 +276,18 @@ const SelectLocationContainer = (props) => {
           paddingTop: mainContainerHeight + 42 + "px",
         }}
       >
-        <h2
-          className={`${
-            noTop ? "mt-0" : "mt-8"
-          } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
-        >
-          Popular ports
-        </h2>
+        {popularDestinationData.length && (
+          <h2
+            className={`${
+              noTop ? "mt-0" : "mt-8"
+            } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
+          >
+            Popular choices
+          </h2>
+        )}
 
         <div className="grid grid-cols-2 gap-6">
-          {[...destinationList].slice(0, 4).map((items, index) => {
+          {popularDestinationData.map((items, index) => {
             return (
               <div
                 key={items._id + index}
@@ -207,72 +356,70 @@ const SelectLocationContainer = (props) => {
           })}
         </div>
         <div className="w-full h-auto inline-flex flex-col mt-5 space-y-[10px]">
-          {[...destinationList]
-            .slice(5, destinationList.length - 1)
-            .map((items, index) => {
-              return (
-                <div
-                  key={items._id + index}
-                  className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
-                  onClick={() => {
-                    if (isFromEdit) {
-                      if (locationType === "destination") {
-                        dispatch(
-                          setCustomCostingSelection({
-                            ...selectedCosting,
-                            customCostingSelection: {
-                              ...selectedCosting.customCostingSelection,
-                              portOfDestination: items,
-                            },
-                          })
-                        );
-                      }
-
-                      if (locationType === "origin") {
-                        dispatch(
-                          setCustomCostingSelection({
-                            ...selectedCosting,
-                            customCostingSelection: {
-                              ...selectedCosting.customCostingSelection,
-                              portOfOrigin: items,
-                            },
-                          })
-                        );
-                      }
-                      closeBottomSheet();
-                    } else {
+          {listDestinationData.map((items, index) => {
+            return (
+              <div
+                key={items._id + index}
+                className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
+                onClick={() => {
+                  if (isFromEdit) {
+                    if (locationType === "destination") {
                       dispatch(
-                        setCostingSelection({
+                        setCustomCostingSelection({
                           ...selectedCosting,
-                          portOfDestination: items,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfDestination: items,
+                          },
                         })
                       );
-                      router.push("/export-costing/overview");
                     }
-                  }}
-                >
-                  <div className="h-[46px] w-[46px] rounded-sm bg-pwip-primary-50">
-                    {/*  */}
-                  </div>
-                  <div className="w-full inline-flex flex-col space-y-2">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                        {items.portName}
-                      </span>
-                      <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                        {items.portCode}
-                      </span>
-                    </div>
 
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                        {items.country}
-                      </span>
-                    </div>
+                    if (locationType === "origin") {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfOrigin: items,
+                          },
+                        })
+                      );
+                    }
+                    closeBottomSheet();
+                  } else {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        portOfDestination: items,
+                      })
+                    );
+                    router.push("/export-costing/overview");
+                  }
+                }}
+              >
+                <div className="h-[46px] w-[46px] rounded-sm bg-pwip-primary-50">
+                  {/*  */}
+                </div>
+                <div className="w-full inline-flex flex-col space-y-2">
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
+                      {items.portName}
+                    </span>
+                    <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
+                      {items.portCode}
+                    </span>
+                  </div>
+
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
+                      {items.country}
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
       </div>
     </React.Fragment>

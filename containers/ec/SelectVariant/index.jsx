@@ -25,6 +25,9 @@ const SelectVariantContainer = (props) => {
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [productsData, setProductsData] = React.useState([]);
+  const [popularProductsData, setPopularProductsData] = React.useState([]);
+  const [listProductsData, setListProductsData] = React.useState([]);
+  const [searchStringValue, setSearchStringValue] = React.useState("");
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -37,8 +40,53 @@ const SelectVariantContainer = (props) => {
   React.useEffect(() => {
     if (!products.error) {
       setProductsData(products.products);
+
+      if ([...products.products].slice(0, 4)) {
+        setPopularProductsData([...products.products].slice(0, 4));
+      }
+
+      if (products.products) {
+        setPopularProductsData([...products.products].slice(0, 4));
+        setListProductsData(
+          [...products.products].slice(5, products.products.length - 1)
+        );
+      }
     }
   }, [products]);
+
+  function handleSearch(searchString) {
+    const dataToFilter = [...productsData];
+
+    // Create an empty array to store the matching variants
+    const matchingVariants = [];
+
+    // Convert the search string to lowercase for a case-insensitive search
+    const searchLower = searchString.toLowerCase();
+
+    // Iterate through the array of variants
+    for (const variant of dataToFilter) {
+      // Convert the variant name to lowercase for comparison
+      const variantNameLower = variant.variantName.toLowerCase();
+
+      // Check if the variant name contains the search string
+      if (variantNameLower.includes(searchLower)) {
+        // If it does, add the variant to the matchingVariants array
+        matchingVariants.push(variant);
+      }
+    }
+
+    if (searchString) {
+      setPopularProductsData([]);
+      setListProductsData(matchingVariants);
+    }
+
+    if (!searchString) {
+      setPopularProductsData([...products.products].slice(0, 4));
+      setListProductsData(
+        [...products.products].slice(5, products.products.length - 1)
+      );
+    }
+  }
 
   return (
     <React.Fragment>
@@ -51,10 +99,60 @@ const SelectVariantContainer = (props) => {
         <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
           Select Your Choice of Rice
         </h2>
-        <input
-          placeholder="Ex: Sona Masuri"
-          className="h-[48px] mt-[10px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
-        />
+        <div className="h-[48px] mt-[10px] w-full rounded-md bg-pwip-primary-100 text-base font-sans inline-flex items-center px-[18px]">
+          <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
+            <svg
+              width="17"
+              height="16"
+              viewBox="0 0 17 16"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity="0.7"
+                d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
+                stroke="#686E6D"
+                strokeWidth="1.52292"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <input
+            placeholder="Ex: Sona Masuri"
+            className="h-full w-full bg-pwip-primary-100 pl-[18px] text-base font-sans outline-none border-none"
+            value={searchStringValue}
+            onChange={(event) => {
+              setSearchStringValue(event.target.value);
+              handleSearch(event.target.value);
+            }}
+          />
+          {!popularProductsData.length && (
+            <button
+              onClick={() => {
+                setSearchStringValue("");
+                handleSearch("");
+              }}
+              className="outline-none border-none bg-transparent inline-flex items-center justify-center"
+            >
+              <svg
+                width="19"
+                height="19"
+                viewBox="0 0 19 19"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
+                  stroke="#686E6D"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
 
       <div
@@ -65,16 +163,18 @@ const SelectVariantContainer = (props) => {
           paddingTop: mainContainerHeight + 42 + "px",
         }}
       >
-        <h2
-          className={`${
-            noTop ? "mt-0" : "mt-8"
-          } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
-        >
-          Popular choices
-        </h2>
+        {popularProductsData.length && (
+          <h2
+            className={`${
+              noTop ? "mt-0" : "mt-8"
+            } mb-5 text-pwip-gray-800 font-sans text-sm font-bold`}
+          >
+            Popular choices
+          </h2>
+        )}
 
         <div className="grid grid-cols-2 gap-6">
-          {[...productsData].slice(0, 4).map((items, index) => {
+          {popularProductsData.map((items, index) => {
             return (
               <div
                 key={items._id + index}
@@ -137,67 +237,65 @@ const SelectVariantContainer = (props) => {
           })}
         </div>
         <div className="w-full h-auto inline-flex flex-col mt-5 space-y-[10px]">
-          {[...productsData]
-            .slice(5, productsData.length - 1)
-            .map((items, index) => {
-              return (
-                <div
-                  key={items._id + index}
-                  onClick={() => {
-                    if (isFromEdit) {
-                      dispatch(
-                        setCustomCostingSelection({
-                          ...selectedCosting,
-                          customCostingSelection: {
-                            ...selectedCosting.customCostingSelection,
-                            product: items,
-                          },
-                        })
-                      );
-                      dispatch(fetchDestinationRequest());
-                      dispatch(fetchOriginRequest());
-                      closeBottomSheet();
-                    } else {
-                      dispatch(
-                        setCostingSelection({
-                          ...selectedCosting,
+          {listProductsData.map((items, index) => {
+            return (
+              <div
+                key={items._id + index}
+                onClick={() => {
+                  if (isFromEdit) {
+                    dispatch(
+                      setCustomCostingSelection({
+                        ...selectedCosting,
+                        customCostingSelection: {
+                          ...selectedCosting.customCostingSelection,
                           product: items,
-                        })
-                      );
-                      router.push("/export-costing/select-pod");
-                    }
-                  }}
-                  className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
-                >
-                  <img
-                    src={
-                      items.images[0] ||
-                      "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
-                    }
-                    className="bg-cover h-[46px] w-[46px] rounded-sm"
-                  />
-                  <div className="w-full inline-flex flex-col space-y-2">
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
-                        {items.variantName}
-                      </span>
-                      <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
-                        ₹{items.sourceRates.price}/{items.sourceRates.unit}
-                      </span>
-                    </div>
+                        },
+                      })
+                    );
+                    dispatch(fetchDestinationRequest());
+                    dispatch(fetchOriginRequest());
+                    closeBottomSheet();
+                  } else {
+                    dispatch(
+                      setCostingSelection({
+                        ...selectedCosting,
+                        product: items,
+                      })
+                    );
+                    router.push("/export-costing/select-pod");
+                  }
+                }}
+                className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
+              >
+                <img
+                  src={
+                    items.images[0] ||
+                    "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+                  }
+                  className="bg-cover h-[46px] w-[46px] rounded-sm"
+                />
+                <div className="w-full inline-flex flex-col space-y-2">
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-pwip-gray-600 text-sm font-bold font-sans line-clamp-1">
+                      {items.variantName}
+                    </span>
+                    <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1">
+                      ₹{items.sourceRates.price}/{items.sourceRates.unit}
+                    </span>
+                  </div>
 
-                    <div className="inline-flex items-center justify-between w-full">
-                      <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
-                        {items.sourceRates.sourceName}
-                      </span>
-                      <span className="text-pwip-gray-700 text-xs font-bold font-sans line-clamp-1">
-                        {items.brokenPercentage || 0}% Broken
-                      </span>
-                    </div>
+                  <div className="inline-flex items-center justify-between w-full">
+                    <span className="text-pwip-gray-500 text-xs font-medium font-sans line-clamp-1">
+                      {items.sourceRates.sourceName}
+                    </span>
+                    <span className="text-pwip-gray-700 text-xs font-bold font-sans line-clamp-1">
+                      {items.brokenPercentage || 0}% Broken
+                    </span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            );
+          })}
         </div>
       </div>
     </React.Fragment>

@@ -205,7 +205,7 @@ function SelectionOverview() {
           }}
         >
           <svg
-            width="350"
+            width="100%"
             height="344"
             viewBox="0 0 350 344"
             fill="none"
@@ -547,7 +547,7 @@ function SelectionOverview() {
 
           <Button
             type="primary"
-            label="Generate consting"
+            label="Generate costing"
             onClick={async () => {
               await dispatch(fetchGeneratedCostingFailure());
               await dispatch(fetchMyCostingFailure());

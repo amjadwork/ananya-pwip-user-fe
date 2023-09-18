@@ -27,7 +27,7 @@ import {
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
-import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
+// import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
 import {
   chevronDown,
@@ -122,7 +122,7 @@ function extractBreakUpItems(breakUpObject, forex) {
   return breakUpItems;
 }
 
-function updateCharges(response, chargesToUpdate, forex) {
+function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
   if (response) {
     const updatedCharges = chargesToUpdate.map((chargeGroup) => {
       const updatedRowItems = chargeGroup.rowItems.map((rowItem) => {
@@ -155,7 +155,7 @@ function updateCharges(response, chargesToUpdate, forex) {
 
             break;
           case "OFC":
-            updatedInr = response?.grandTotalFob ? 0 : response.costing.ofcCost;
+            updatedInr = shipmentTerm === "FOB" ? 0 : response.costing.ofcCost;
             break;
           case "Inspection cost":
             updatedInr = response.constants.inspectionCharge;
@@ -393,35 +393,6 @@ function CostingOverview() {
     }
   }, [generatedCosting, selectedUnit, isChangingUnit, shipmentTerm]);
 
-  // const handleUpdateAndFetchCostingOnTermsChange = async (updatePayload) => {
-  //   await dispatch(updateCostingRequest(updatePayload));
-  //   await dispatch(fetchMyCostingRequest(myCosting.myRecentSavedCosting._id));
-  // };
-
-  // useEffect(() => {
-  //   if (
-  //     shipmentTerm &&
-  //     !isShipmentTermDropdownOpen &&
-  //     componentShipmentTerm !== shipmentTerm &&
-  //     generatedCostingData
-  //   ) {
-  //     const payloadBody = {
-  //       ...getCostingToSaveHistoryPayload(generatedCostingData),
-  //       unit: selectedUnit?.value,
-  //       shipmentTermType: shipmentTerm || "FOB",
-  //       termOfAgreement: shipmentTerm || "FOB",
-  //     };
-  //     dispatch(fetchMyCostingFailure());
-  //     handleUpdateAndFetchCostingOnTermsChange(payloadBody);
-  //   }
-  // }, [shipmentTerm, isShipmentTermDropdownOpen, generatedCostingData]);
-
-  // useEffect(() => {
-  //   if (shipmentTerm) {
-  //     setComponentShipmentTerm(shipmentTerm);
-  //   }
-  // }, [shipmentTerm]);
-
   React.useEffect(() => {
     if (generatedCosting) {
       breakupArr[0].rowItems[1].label = `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
@@ -451,7 +422,8 @@ function CostingOverview() {
       const updatedCharges = updateCharges(
         currentCostingFromHistory[0],
         breakupArr,
-        forexRate
+        forexRate,
+        shipmentTerm
       );
 
       const selected = unitOptions.find((u) => u.value === sheet.unit);
@@ -555,7 +527,7 @@ function CostingOverview() {
         </div>
 
         <div
-          className={`h-full w-full bg-white pb-8 overflow-auto px-5 hide-scroll-bar`}
+          className={`h-full w-full bg-white py-8 overflow-auto px-5 hide-scroll-bar`}
         >
           <div className="grid grid-cols-3 gap-6">
             {[
@@ -599,6 +571,7 @@ function CostingOverview() {
                       let payload = extractCustomCostingPayload({
                         ...givenData,
                       });
+
                       payload.currentUnit = selectedUnit?.value || "mt";
                       payload.unitToConvert = items?.value || "mt";
                       payload.shipmentTermType = shipmentTerm || "FOB";
@@ -615,7 +588,9 @@ function CostingOverview() {
                   }}
                 >
                   <div className="w-[42px] pt-3 inline-flex items-center justify-center">
-                    <img src="/assets/images/units/weight.png" />
+                    <img
+                      src={`/assets/images/units/${items.value.toUpperCase()}.svg`}
+                    />
                   </div>
                   <div className="p-3 flex w-fill flex-col space-y-[4px]">
                     <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
@@ -672,7 +647,7 @@ function CostingOverview() {
     if (navigator && navigator.share) {
       navigator
         .share({
-          title: "Export consting",
+          title: "Export costing",
           text: "1121 steam 5% Broken, Chennai - Singapore, ₹42000 ($345)",
           url:
             window.location.origin +
@@ -818,7 +793,7 @@ function CostingOverview() {
                 </div>
 
                 <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                  {generatedCostingData?.grandTotalFob ? "FOB" : "CIF"}
+                  {shipmentTerm}
                 </span>
 
                 <div className="inline-flex items-center justify-between w-full mt-2">
@@ -842,9 +817,7 @@ function CostingOverview() {
                 </div>
                 <div className="inline-flex items-center justify-between w-full text-pwip-gray-500">
                   <span className="text-sm font-normal font-sans line-clamp-1">
-                    {generatedCostingData?.details?.variantObject
-                      ?.brokenPercentage || 0}
-                    % broken
+                    {generatedCostingData?.brokenPercentage || 0}% broken
                   </span>
                   <div className="inline-flex items-center justify-end  space-x-4">
                     <span className="text-sm font-medium font-sans line-clamp-1">

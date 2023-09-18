@@ -37,6 +37,38 @@ import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
 import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
+function convertUnits(currentUnit, unitToConvert, value) {
+  // Define conversion factors
+  const conversionFactors = {
+    kg: {
+      mt: 0.001,
+      qt: 0.01,
+    },
+    mt: {
+      kg: 1000,
+      qt: 10,
+    },
+    qt: {
+      kg: 100,
+      mt: 0.1,
+    },
+  };
+
+  // Check if the units are valid
+  if (
+    !(currentUnit in conversionFactors) ||
+    !(unitToConvert in conversionFactors[currentUnit])
+  ) {
+    return "Invalid units";
+  }
+
+  // Perform the conversion
+  const conversionFactor = conversionFactors[currentUnit][unitToConvert];
+  const convertedValue = value * conversionFactor;
+
+  return convertedValue;
+}
+
 const initialValues = {
   costingName: "",
   _variantId: {},
@@ -51,7 +83,7 @@ const initialValues = {
   containersCount: "",
   containerWeight: "",
   exportDuty: false,
-  pwipFullfillment: false,
+  // pwipFullfillment: false,
 
   // breakup
   costOfRice: "",
@@ -88,7 +120,13 @@ function EditCosting() {
   const isShipmentTermDropdownOpen = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
   );
-  const selectedAndGeneratedCosting = useSelector((state) => state.costing);
+  const generatedCosting = useSelector(
+    (state) => state.costing.generatedCosting
+  );
+  const customCostingSelection = useSelector(
+    (state) => state.costing.customCostingSelection
+  );
+
   const selectedMyCostingFromHistory = useSelector((state) => {
     if (
       state.myCosting &&
@@ -124,21 +162,25 @@ function EditCosting() {
   }, [shipmentTerm]);
 
   React.useEffect(() => {
-    if (
-      selectedAndGeneratedCosting &&
-      selectedAndGeneratedCosting?.generatedCosting &&
-      isGenerated
-    ) {
+    if (generatedCosting && isGenerated) {
       const saveHistoryPayload = getCostingToSaveHistoryPayload({
-        ...selectedAndGeneratedCosting?.generatedCosting,
+        ...generatedCosting,
         costingName: formik.current.values.costingName,
       });
 
-      const payloadBody = {
+      let payloadBody = {
         ...saveHistoryPayload,
         isQuickCosting: false,
         unit: selectedUnitForPayload,
+        isExportDuty: formik.current.values.exportDuty,
+        brokenPercentage: formik.current.values.brokenPercentage || 5,
+        containersCount: parseFloat(formik.current.values.containersCount),
+        _containerId: formik.current.values._containerId._id,
       };
+
+      if (!formik.current.values.exportDuty) {
+        payloadBody.exportDuty = 0;
+      }
 
       dispatch(fetchGeneratedCostingFailure());
       dispatch(saveCostingFailure());
@@ -147,58 +189,64 @@ function EditCosting() {
       dispatch(resetCustomCostingSelection());
       router.replace("/export-costing/costing");
     }
-  }, [selectedAndGeneratedCosting, isGenerated]);
+  }, [generatedCosting, isGenerated]);
 
   useEffect(() => {
     if (
       formik &&
       formik.current &&
-      selectedAndGeneratedCosting &&
+      customCostingSelection &&
       selectedMyCostingFromHistory
     ) {
       const formikRef = formik.current;
 
+      // let customProduct = customCostingSelection?.product;
+
+      // if (customProduct) {
+      //   customProduct.sourceRates.price = convertUnits(
+      //     "kg",
+      //     selectedMyCostingFromHistory.unit,
+      //     customProduct?.sourceRates?.price
+      //   );
+      // }
+
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
         _variantId:
-          selectedAndGeneratedCosting?.customCostingSelection?.product ||
+          customCostingSelection?.product ||
           selectedMyCostingFromHistory?.details?.variantObject,
         brokenPercentage:
-          selectedAndGeneratedCosting?.customCostingSelection?.product
-            ?.brokenPercentage ||
-          selectedMyCostingFromHistory?.details?.variantObject
-            ?.brokenPercentage ||
+          formik.current.values.brokenPercentage ||
+          customCostingSelection?.product?.brokenPercentage ||
+          selectedMyCostingFromHistory?.brokenPercentage ||
           0,
         _bagId:
-          selectedAndGeneratedCosting?.customCostingSelection?.bags ||
+          customCostingSelection?.bags ||
           selectedMyCostingFromHistory?.details.packageDetails,
         bagSize:
-          selectedAndGeneratedCosting?.customCostingSelection?.bags?.weight ||
+          customCostingSelection?.bags?.weight ||
           selectedMyCostingFromHistory?.details.packageDetails.weight,
         _originId:
-          selectedAndGeneratedCosting?.customCostingSelection?.portOfOrigin ||
+          customCostingSelection?.portOfOrigin ||
           selectedMyCostingFromHistory?.details?.originPortObject,
         _destinationId:
-          selectedAndGeneratedCosting?.customCostingSelection
-            ?.portOfDestination ||
+          customCostingSelection?.portOfDestination ||
           selectedMyCostingFromHistory?.details.destinationObject,
         _containerId:
-          selectedAndGeneratedCosting?.customCostingSelection?.containers ||
+          customCostingSelection?.containers ||
           selectedMyCostingFromHistory?.details?.containerObject,
         containersCount: 1,
         containerWeight:
-          selectedAndGeneratedCosting?.customCostingSelection?.containers
-            ?.weight ||
+          customCostingSelection?.containers?.weight ||
           selectedMyCostingFromHistory?.details?.containerObject.weight,
 
         // Breakup values
         costOfRice:
-          selectedAndGeneratedCosting?.customCostingSelection?.product
-            ?.sourceRates?.price ||
+          customCostingSelection?.product?.sourceRates?.price ||
           selectedMyCostingFromHistory?.costing?.exmillPrice ||
           0,
         bagPrice:
-          selectedAndGeneratedCosting?.customCostingSelection?.bags?.cost ||
+          customCostingSelection?.bags?.cost ||
           selectedMyCostingFromHistory?.costing?.package,
         transportation: selectedMyCostingFromHistory?.costing?.transportCharge,
         cfsHandling: selectedMyCostingFromHistory?.costing?.cfsHandling,
@@ -223,27 +271,23 @@ function EditCosting() {
 
       formikRef.setValues(breakUpFormValues);
     }
-  }, [formik, selectedAndGeneratedCosting, selectedMyCostingFromHistory]);
+  }, [formik, customCostingSelection, selectedMyCostingFromHistory]);
 
   React.useEffect(() => {
-    if (selectedAndGeneratedCosting) {
-      breakupArr[0].rowItems[1].label = selectedAndGeneratedCosting
-        .customCostingSelection?.bags
-        ? `${selectedAndGeneratedCosting.customCostingSelection?.bags?.bag}-${selectedAndGeneratedCosting.customCostingSelection?.bags?.weight}${selectedAndGeneratedCosting.customCostingSelection?.bags?.unit}`
-        : `${selectedAndGeneratedCosting?.generatedCosting?.details?.packageDetails?.bag}-${selectedAndGeneratedCosting?.generatedCosting?.details?.packageDetails?.weight}${selectedAndGeneratedCosting?.generatedCosting?.details?.packageDetails?.unit}`;
+    if (customCostingSelection || generatedCosting) {
+      breakupArr[0].rowItems[1].label = customCostingSelection?.bags
+        ? `${customCostingSelection?.bags?.bag}-${customCostingSelection?.bags?.weight}${customCostingSelection?.bags?.unit}`
+        : `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
     }
-  }, [breakupArr, selectedAndGeneratedCosting]);
+  }, [breakupArr, customCostingSelection, generatedCosting]);
 
   useEffect(() => {
-    if (
-      selectedMyCostingFromHistory &&
-      !selectedAndGeneratedCosting.generatedCosting
-    ) {
+    if (selectedMyCostingFromHistory && !generatedCosting) {
       const sheet = selectedMyCostingFromHistory;
 
       breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
     }
-  }, [selectedMyCostingFromHistory, selectedAndGeneratedCosting]);
+  }, [selectedMyCostingFromHistory, generatedCosting]);
 
   React.useEffect(() => {
     dispatch(fetchPackagingBagsRequest());

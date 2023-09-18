@@ -13,6 +13,7 @@ import {
   saveCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 import { fetchGeneratedCostingFailure } from "@/redux/actions/costing.actions";
+import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -126,6 +127,11 @@ function MyCosting() {
                     await dispatch(saveCostingFailure());
                     await dispatch(fetchGeneratedCostingFailure());
                     await dispatch(fetchMyCostingRequest(items._id));
+                    const action = {
+                      selected: items?.termOfAgreement,
+                      showShipmentTermDropdown: false,
+                    };
+                    await dispatch(setTermsOfShipmentRequest(action));
                     router.push("/export-costing/costing");
                   }}
                 >
