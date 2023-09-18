@@ -29,17 +29,18 @@ const initialValues = {
   headline:"",
   companyName: "",
   profession: "",
-  gstNumber: "",
+  gstin: "",
   bio:"",
   city:"",
   state:"",
   country:"",
-  pincode:"",
+  zip_code:"",
   website:"",
-  facebook:"",
-  linkedin:"",
-  instagram:"",
-  whatsapp:"",
+  youtube_url:"",
+  facebook_url:"",
+  linkedin_url:"",
+  instagram_url:"",
+  whatsapp_link:"",
 }
 
 function ProfileEdit() {
@@ -117,11 +118,13 @@ function ProfileEdit() {
     openBottomSheet(content);
   };
     
-  const handleFormSubmit = async (values) => {
-    try {
-      console.log("clicked submit")
-      console.log('custom submit fn', formik)
-      openToastMessage("Update successful!", "success");
+  const handleFormSubmit = async () => {
+  try {
+    const payload= {
+      data:{
+      ...formik.current.values,
+    }}
+    console.log("payload", payload)
     } catch (error) {
       console.error("Update failed:", error);
       openToastMessage("Update failed. Please try again.", "error");
@@ -198,8 +201,8 @@ function ProfileEdit() {
             {({
               values,
               errors,
-              touched,
               dirty,
+              touched,
               isValid,
               setFieldValue,
               handleChange,
@@ -210,8 +213,7 @@ function ProfileEdit() {
               <form onSubmit={(e) => {
                     e.preventDefault(); 
                     handleSubmit();
-                    handleFormSubmit(formik.values);
-        }}>
+              }}>
                 {formFields.map((field) => (
                 <div key={field.name} className="relative mb-4">
                 <input
@@ -257,6 +259,7 @@ function ProfileEdit() {
                       (!dirty || !isValid || isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
                     }`}
                     disabled={!dirty || !isValid || isSubmitting}
+                    onClick={handleFormSubmit}
                   >
                     Update Changes
                   </button>

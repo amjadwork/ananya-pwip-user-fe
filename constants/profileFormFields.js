@@ -32,7 +32,7 @@ export const profileFormFields = [
     placeholder: "Select your profession"
   },
   { 
-    name: "gstNumber", 
+    name: "gstin", 
     label: "GST Number", 
     type: "number",
     placeholder: ""
@@ -62,8 +62,8 @@ export const profileFormFields = [
     placeholder:"eg. India"
   },
   { 
-    name: "pincode", 
-    label: "Pin Code", 
+    name: "zip_code", 
+    label: "Zip Code", 
     type: "number" 
   },
   { 
@@ -73,25 +73,25 @@ export const profileFormFields = [
     placeholder: "Add your website",
   },
   { 
-    name: "facebook", 
-    label: "Facebook URL", 
+    name: "youtube_url", 
+    label: "YouTube URL", 
     type: "url", 
-    placeholder: "Add your Facebook URL",
+    placeholder: "Add your YouTube URL",
   },
   { 
-    name: "linkedin", 
+    name: "linkedin_url", 
     label: "Linkedin URL", 
     type: "url", 
     placeholder: "Add your Linkedin URL",
   },
   { 
-    name: "instagram", 
+    name: "instagram_url", 
     label: "Instagram URL", 
     type: "url", 
     placeholder: "Add your Instagram URL",
   },
   { 
-    name: "whatsapp", 
+    name: "whatsapp_link", 
     label: "WhatsApp Link", 
     type: "url", 
     placeholder: "http://wa.me/918000000000",
