@@ -8,12 +8,24 @@ import {
   } from "../actions/types/profileEdit.types";
 
 const initialState = {
-    name: null,
-    email: null,
-    mobile: null,
-    companyName: null,
-    profession: null,
-    gstNumber: null,
+  name: null,
+  headline: null,
+  email: null,
+  mobile: null,
+  headline:null,
+  companyName: null,
+  profession: null,
+  gstNumber: null,
+  bio:null,
+  city:null,
+  state:null,
+  country:null,
+  pincode:null,
+  website:null,
+  facebook:null,
+  linkedin:null,
+  instagram:null,
+  whatsapp:null,
   };
   
   const profileEditReducer = (state = initialState, action) => {
