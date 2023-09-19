@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { Formik } from "formik";
+import * as Yup from 'yup';
 
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -43,8 +44,54 @@ const initialValues = {
   whatsapp_link:"",
 }
 
+const profileValidationSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(2, 'Too Short!')
+    .max(30, 'Too Long!')
+    .required('Required'),
+  mobile: Yup.string()
+    .matches(/^[0-9]{10}$/, 'Invalid mobile number')
+    .required('Required'),
+  email: Yup.string()
+    .email('Invalid email')
+    .test('has-extension', 'Invalid email', (value) => {
+      if (value) {
+        return /\.\w{2,}$/.test(value);
+      }
+      return true;
+    })
+    .required('Required'),
+  bio: Yup.string()
+  .max(100, 'Maximum 100 characters'),
+  profession: Yup.string().required('Required'),
+  city: Yup.string().required('Required'),
+  state: Yup.string().required('Required'),
+  country: Yup.string().required('Required'),
+  website: Yup.string()
+  .matches(
+    /^(https?:\/\/)?(www\.)?([A-Za-z0-9.-]+)\.([A-Za-z]{2,})(:[0-9]+)?(\/.*)?$/,
+    'Invalid Website URL'
+  ).nullable(),
+  facebook_url: Yup.string()
+  .matches(
+    /^(https?:\/\/)?(www\.)?facebook\.com\/[A-Za-z0-9.-]+\/?$/,
+    'Invalid Facebook URL'
+  ).nullable(),
+  youtube_url: Yup.string().url().nullable(),
+  linkedin_url: Yup.string()
+  .matches(
+    /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[A-Za-z0-9.-]+\/?$/,
+    'Invalid LinkedIn URL'
+  ).nullable(),
+  instagram_url: Yup.string()
+  .matches(
+    /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9._-]+\/?$/,
+    'Invalid Instagram URL'
+  ).nullable(),
+});
+  
+
 function ProfileEdit() {
-  const router = useRouter();
   const formik = useRef();
   const { data: session } = useSession();
 
@@ -117,7 +164,8 @@ function ProfileEdit() {
     );
     openBottomSheet(content);
   };
-    
+
+
   const handleFormSubmit = async () => {
   try {
     const payload= {
@@ -192,6 +240,7 @@ function ProfileEdit() {
             initialValues={{
               ...initialValues,
             }}
+            validationSchema={profileValidationSchema}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
                 setSubmitting(false);
