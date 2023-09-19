@@ -104,11 +104,6 @@ function ProfileEdit() {
   useEffect(() => {
     if (session) {
       setUserData(session?.user);
-      formik.current.setValues({
-        ...initialValues,
-        name: session.user.name,
-        email: session.user.email,
-      });
     }  
   }, [session]);
 
@@ -179,6 +174,7 @@ function ProfileEdit() {
     }
   };
 
+  console.log("form", formik)
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
@@ -239,6 +235,8 @@ function ProfileEdit() {
             innerRef={formik}
             initialValues={{
               ...initialValues,
+              name: session.user.name,
+              email: session.user.email,
             }}
             validationSchema={profileValidationSchema}
             onSubmit={(values, { setSubmitting }) => {
@@ -305,9 +303,9 @@ function ProfileEdit() {
                   <button
                     type="submit"
                     className={`w-full text-white font-semibold py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md ${
-                      (!dirty || !isValid || isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
+                      ( !dirty || isSubmitting) ? 'bg-gray-400 cursor-not-allowed' : 'bg-pwip-primary'
                     }`}
-                    disabled={!dirty || !isValid || isSubmitting}
+                    disabled={!dirty || isSubmitting}
                     onClick={handleFormSubmit}
                   >
                     Update Changes
