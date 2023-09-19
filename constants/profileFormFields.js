@@ -82,18 +82,24 @@ export const profileFormFields = [
     name: "linkedin_url", 
     label: "Linkedin URL", 
     type: "url", 
-    placeholder: "Add your Linkedin URL",
+    placeholder: "Add your Linkedin Profile",
   },
   { 
-    name: "instagram_url", 
-    label: "Instagram URL", 
+    name: "facebook_url", 
+    label: "Facebook URL", 
     type: "url", 
-    placeholder: "Add your Instagram URL",
+    placeholder: "Add your Facebook Profile",
   },
   { 
     name: "whatsapp_link", 
     label: "WhatsApp Link", 
     type: "url", 
     placeholder: "http://wa.me/918000000000",
+  },
+  { 
+    name: "instagram_url", 
+    label: "Instagram URL", 
+    type: "url", 
+    placeholder: "Add your Instagram Profile",
   },
 ];
