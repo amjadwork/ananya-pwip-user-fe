@@ -18,7 +18,7 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
         let rowItems = [...obj?.rowItems];
 
         const exportDutyField = obj?.rowItems?.find(
-          (d) => d.name === "exportDuty"
+          (d) => d.name === "exportDutyValue"
         );
 
         if (exportDutyField) {
@@ -38,8 +38,6 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
         return obj;
       }
     });
-
-    console.log(breakupFormArr);
 
     setBreakupFormData([...breakupFormArr]);
   }, []);
