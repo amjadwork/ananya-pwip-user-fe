@@ -39,6 +39,8 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
       }
     });
 
+    console.log(breakupFormArr);
+
     setBreakupFormData([...breakupFormArr]);
   }, []);
 

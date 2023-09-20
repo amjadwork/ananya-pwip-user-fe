@@ -83,6 +83,7 @@ const initialValues = {
   containersCount: "",
   containerWeight: "",
   exportDuty: false,
+  exportDutyValue: 0,
   // pwipFullfillment: false,
 
   // breakup
@@ -263,6 +264,8 @@ function EditCosting() {
         exportDuty: selectedMyCostingFromHistory?.constants?.exportDutyCharge
           ? true
           : false,
+        exportDutyValue:
+          selectedMyCostingFromHistory?.constants?.exportDutyCharge,
         pwipFullfillment: selectedMyCostingFromHistory?.constants
           .pwipFullfillment
           ? true
@@ -421,10 +424,14 @@ function EditCosting() {
                           ? shipmentTerm
                           : selectedMyCostingFromHistory?.termOfAgreement;
                       givenData.variantCost = parseFloat(values?.costOfRice);
+                      givenData.exportDutyValue =
+                        parseFloat(values.exportDutyValue) || 0;
 
                       setSelectedUnitForPayload(
                         selectedMyCostingFromHistory?.unit || "mt"
                       );
+
+                      console.log("givenData", givenData);
 
                       const payload =
                         generatePayloadForCustomCosting(givenData);
