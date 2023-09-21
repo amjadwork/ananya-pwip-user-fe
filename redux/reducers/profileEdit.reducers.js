@@ -1,6 +1,4 @@
 import {
-  SAVE_PROFILE_SUCCESS,
-  SAVE_PROFILE_FAILURE,
   UPDATE_PROFILE_SUCCESS,
   UPDATE_PROFILE_FAILURE,
   FETCH_PROFILE_SUCCESS,
@@ -13,18 +11,6 @@ const initialState = {
 
 const profileEditReducer = (state = initialState, action) => {
   switch (action.type) {
-    case SAVE_PROFILE_SUCCESS:
-      return {
-        ...state,
-        profileData: action.payload,
-      };
-
-    case SAVE_PROFILE_FAILURE:
-      return {
-        ...state,
-        profileData: null,
-      };
-
     case UPDATE_PROFILE_SUCCESS:
       return {
         ...state,

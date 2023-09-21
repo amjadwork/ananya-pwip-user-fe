@@ -1,7 +1,4 @@
 import {
-  SAVE_PROFILE_REQUEST,
-  SAVE_PROFILE_SUCCESS,
-  SAVE_PROFILE_FAILURE,
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_SUCCESS,
   UPDATE_PROFILE_FAILURE,
@@ -9,23 +6,6 @@ import {
   FETCH_PROFILE_SUCCESS,
   FETCH_PROFILE_FAILURE,
 } from "./types/profileEdit.types";
-
-//SAVE PROFILE DETAILS
-export const saveProfileRequest = (userData) => {
-  return {
-    type: SAVE_PROFILE_REQUEST,
-    payload: userData,
-  };
-};
-
-export const saveProfileSuccess = (userData) => ({
-  type: SAVE_PROFILE_SUCCESS,
-  payload: userData,
-});
-
-export const saveProfileFailure = () => ({
-  type: SAVE_PROFILE_FAILURE,
-});
 
 //UPDATE PROFILE DETAILS
 export const updateProfileRequest = (userData) => {

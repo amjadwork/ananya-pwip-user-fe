@@ -11,8 +11,6 @@ import { profileFormFields } from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
 import {
   fetchProfileFailure,
-  saveProfileRequest,
-  saveProfileFailure,
   updateProfileRequest,
   fetchProfileRequest,
   updateProfileFailure,
