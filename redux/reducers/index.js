@@ -24,7 +24,7 @@ const rootReducer = combineReducers({
   exportCosting: exportCostingReducer,
   shipmentTerm: shipmentTermReducer,
   utils: utilsReducer,
-  profileEdit: profileEditReducer,
+  profile: profileEditReducer,
 });
 
 export default rootReducer;
