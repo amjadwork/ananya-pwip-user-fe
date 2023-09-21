@@ -34,7 +34,7 @@ export const profileFormFields = [
   {
     name: "gstin",
     label: "GST Number",
-    type: "number",
+    type: "text",
     placeholder: "",
   },
   {

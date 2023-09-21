@@ -41,11 +41,8 @@ const profileValidationSchema = Yup.object().shape({
       return true;
     })
     .required("Required"),
-  bio: Yup.string().max(100, "Maximum 100 characters"),
+  bio: Yup.string().max(255, "Maximum 255 characters"),
   profession: Yup.string().required("Required"),
-  city: Yup.string().required("Required"),
-  state: Yup.string().required("Required"),
-  country: Yup.string().required("Required"),
   website: Yup.string().url().nullable(),
   facebook_url: Yup.string().url().nullable(),
   youtube_url: Yup.string().url().nullable(),
