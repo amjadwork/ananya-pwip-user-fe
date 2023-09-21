@@ -17,38 +17,21 @@ import {
   fetchProfileRequest,
   updateProfileFailure,
 } from "../../../redux/actions/profileEdit.actions";
-
+import {
+  fetchUserFailure,
+  updateUserRequest,
+  fetchUserRequest,
+  updateUserFailure,
+} from "../../../redux/actions/userEdit.actions";
 // Import Components
 import { Header } from "@/components/Header";
 
-const initialValues = {
-  name: "",
-  headline: "",
-  email: "",
-  mobile: "",
-  headline: "",
-  companyName: "",
-  profession: "",
-  gstin: "",
-  bio: "",
-  city: "",
-  state: "",
-  country: "",
-  zip_code: "",
-  website: "",
-  youtube_url: "",
-  facebook_url: "",
-  linkedin_url: "",
-  instagram_url: "",
-  whatsapp_link: "",
-};
-
 const profileValidationSchema = Yup.object().shape({
-  name: Yup.string()
+  full_name: Yup.string()
     .min(2, "Too Short!")
     .max(30, "Too Long!")
     .required("Required"),
-  mobile: Yup.string()
+  phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Invalid mobile number")
     .required("Required"),
   email: Yup.string()
@@ -65,18 +48,8 @@ const profileValidationSchema = Yup.object().shape({
   city: Yup.string().required("Required"),
   state: Yup.string().required("Required"),
   country: Yup.string().required("Required"),
-  website: Yup.string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?([A-Za-z0-9.-]+)\.([A-Za-z]{2,})(:[0-9]+)?(\/.*)?$/,
-      "Invalid Website URL"
-    )
-    .nullable(),
-  facebook_url: Yup.string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?facebook\.com\/[A-Za-z0-9.-]+\/?$/,
-      "Invalid Facebook URL"
-    )
-    .nullable(),
+  website: Yup.string().url().nullable(),
+  facebook_url: Yup.string().url().nullable(),
   youtube_url: Yup.string().url().nullable(),
   linkedin_url: Yup.string()
     .matches(
@@ -84,19 +57,14 @@ const profileValidationSchema = Yup.object().shape({
       "Invalid LinkedIn URL"
     )
     .nullable(),
-  instagram_url: Yup.string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?instagram\.com\/[A-Za-z0-9._-]+\/?$/,
-      "Invalid Instagram URL"
-    )
-    .nullable(),
+  instagram_url: Yup.string().url().nullable(),
 });
 
 function ProfileEdit() {
   const formik = useRef();
   const dispatch = useDispatch();
   const profileData = useSelector((state) => state.profile);
-  const authData = useSelector((state) => state.auth);
+  const userData = useSelector((state) => state.user);
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
 
@@ -104,12 +72,14 @@ function ProfileEdit() {
   const professionList = [...professionOptions];
 
   useEffect(() => {
-    if(authData){
-    dispatch(fetchProfileRequest())
-    }
+    dispatch(fetchProfileRequest());
+    dispatch(fetchUserRequest());
   }, []);
 
-  console.log("profileData", profileData)
+  const ProfileFormData = {
+    ...userData.userData,
+    ...profileData.profileData,
+  };
 
   const {
     openBottomSheet,
@@ -117,15 +87,6 @@ function ProfileEdit() {
     openToastMessage,
     closeToastMessage,
   } = useOverlayContext();
-
-  const handleProfessionSelect = (value) => {
-    formik.current.setValues({
-      ...formik.current.values,
-      profession: value,
-    });
-    closeBottomSheet();
-  };
-
 
   const handleProfessionBottomSheet = () => {
     const content = (
@@ -164,6 +125,14 @@ function ProfileEdit() {
     openBottomSheet(content);
   };
 
+  const handleProfessionSelect = (value) => {
+    formik.current.setValues({
+      ...formik.current.values,
+      profession: value,
+    });
+    closeBottomSheet();
+  };
+
   const handleFormSubmit = async () => {
     try {
       const payload = {
@@ -172,15 +141,16 @@ function ProfileEdit() {
         },
       };
       dispatch(updateProfileRequest(payload));
+      dispatch(updateUserRequest(payload));
       dispatch(fetchProfileRequest());
-
+      dispatch(fetchUserRequest());
     } catch (error) {
       console.error("Update failed:", error);
       openToastMessage("Update failed. Please try again.", "error");
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
@@ -218,7 +188,10 @@ function ProfileEdit() {
               {cameraIcon}
             </div>
             <img
-              src={authData?.user?.picture || "/assets/images/no-profile.png"}
+              src={
+                profileData?.profileData?.profile_pic ||
+                "/assets/images/no-profile.png"
+              }
               className="h-full w-full rounded-full object-cover"
             />
           </div>
@@ -236,12 +209,8 @@ function ProfileEdit() {
         </span>
         <Formik
           innerRef={formik}
-          initialValues={{
-            name: authData?.user?.name,
-            email: authData?.user?.email,
-            ...profileData.profileData
-          }}
-          // validationSchema={profileValidationSchema}
+          initialValues={ProfileFormData}
+          validationSchema={profileValidationSchema}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
               setSubmitting(false);
@@ -272,7 +241,7 @@ function ProfileEdit() {
                     name={field.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    maxLength={field.name === "mobile" ? 10 : undefined}
+                    maxLength={field.name === "phone" ? 10 : undefined}
                     value={values[field.name]}
                     style={{ textAlign: "left" }}
                     className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
@@ -306,11 +275,11 @@ function ProfileEdit() {
                 <button
                   type="submit"
                   className={`w-full text-white font-semibold py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md ${
-                    !dirty || !isValid || isSubmitting
+                    !dirty || isSubmitting
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-pwip-primary"
                   }`}
-                  disabled={!dirty || !isValid ||isSubmitting}
+                  disabled={!dirty || isSubmitting}
                   onClick={handleFormSubmit}>
                   Update Changes
                 </button>

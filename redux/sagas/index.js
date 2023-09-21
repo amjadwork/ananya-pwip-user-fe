@@ -11,6 +11,7 @@ import exportCostingSaga from "./exportCosting.saga";
 import shipmentTermsSaga from "./shipmentTerms.saga";
 import utilsSaga from "./utils.saga";
 import profileEditSaga from "./profileEdit.saga";
+import userEditSaga from "./userEdit.saga";
 
 function* rootSaga() {
   yield all([
@@ -26,6 +27,7 @@ function* rootSaga() {
     shipmentTermsSaga(),
     utilsSaga(),
     profileEditSaga(),
+    userEditSaga(),
   ]);
 }
 
