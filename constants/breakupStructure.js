@@ -121,7 +121,7 @@ export const breakupArr = [
       },
       {
         label: "20% Export duty",
-        name: "exportDuty",
+        name: "exportDutyValue",
         inr: 0,
         usd: 0,
       },

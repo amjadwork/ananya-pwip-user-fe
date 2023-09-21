@@ -99,6 +99,7 @@ export function generatePayloadForCustomCosting(givenData) {
     cfsHandling: givenData.cfsHandling,
     shl: givenData.shl,
     exportDuty: givenData.exportDuty,
+    exportDutyValue: givenData.exportDutyValue || 0,
     fulfilledByPwip: givenData.pwipFullfillment,
   };
   return payload;
