@@ -84,19 +84,21 @@ function ProfileEdit() {
   const token = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
-  const [profileFormData, setProfileFormData] = useState({ ...initialValues });
 
   const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
 
   useEffect(() => {
-    if (profileObject && userObject) {
-      setProfileFormData({
+    if (profileObject && userObject && formik && formik.current) {
+      const formikRef = formik.current;
+
+      const updatedFormValues = {
         ...userObject.userData,
         ...profileObject.profileData,
-      });
+      };
+      formikRef.setValues(updatedFormValues);
     }
-  }, [profileObject, userObject]);
+  }, [profileObject, userObject, formik]);
 
   useEffect(() => {
     if (token) {
@@ -236,8 +238,9 @@ function ProfileEdit() {
         </span>
         <Formik
           innerRef={formik}
-          // enableReinitialize={true}
-          initialValues={profileFormData}
+          initialValues={{
+            ...initialValues,
+          }}
           validationSchema={profileValidationSchema}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
@@ -250,8 +253,8 @@ function ProfileEdit() {
             errors,
             dirty,
             touched,
-            isValid,
-            setFieldValue,
+            // isValid,
+            // setFieldValue,
             handleChange,
             handleBlur,
             handleSubmit,
@@ -280,7 +283,7 @@ function ProfileEdit() {
                         : "border-pwip-gray-300"
                     } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
                     placeholder={field.placeholder}
-                    setFieldValue={setFieldValue}
+                    // setfieldvalue={setFieldValue}
                     onClick={() => {
                       if (field.name === "profession") {
                         handleProfessionBottomSheet();
