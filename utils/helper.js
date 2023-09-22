@@ -87,7 +87,7 @@ export function generatePayloadForCustomCosting(givenData) {
     variantCost: givenData.costOfRice,
     brokenPercent: givenData.brokenPercentage,
     containersWeight: givenData.containerWeight * givenData.containersCount,
-    totalContainers: givenData.containersCount,
+    totalContainers: parseFloat(givenData.containersCount) || 1,
     transportationCost: givenData.transportation,
     bagCost: givenData.bagPrice,
     ofc: givenData.ofc,
