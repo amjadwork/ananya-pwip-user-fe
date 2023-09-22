@@ -24,6 +24,27 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 
+const initialValues = {
+  full_name: "",
+  headline: "",
+  email: "",
+  phone: "",
+  companyName: "",
+  profession: "",
+  gstin: "",
+  bio: "",
+  city: "",
+  state: "",
+  country: "",
+  zip_code: "",
+  website: "",
+  youtube_url: "",
+  linkedin_url: "",
+  facebook_url: "",
+  whatsapp_link: "",
+  instagram_url: "",
+};
+
 const profileValidationSchema = Yup.object().shape({
   full_name: Yup.string()
     .min(2, "Too Short!")
@@ -58,23 +79,31 @@ const profileValidationSchema = Yup.object().shape({
 function ProfileEdit() {
   const formik = useRef();
   const dispatch = useDispatch();
-  const profileData = useSelector((state) => state.profile);
-  const userData = useSelector((state) => state.user);
+  const profileObject = useSelector((state) => state.profile);
+  const userObject = useSelector((state) => state.user);
+  const token = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
+  const [profileFormData, setProfileFormData] = useState({});
 
   const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
 
   useEffect(() => {
-    dispatch(fetchProfileRequest());
-    dispatch(fetchUserRequest());
-  }, []);
+    if (profileObject && userObject) {
+      setProfileFormData({
+        ...userObject.userData,
+        ...profileObject.profileData,
+      });
+    }
+  }, [profileObject, userObject]);
 
-  const ProfileFormData = {
-    ...userData.userData,
-    ...profileData.profileData,
-  };
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchProfileRequest());
+      dispatch(fetchUserRequest());
+    }
+  }, [token]);
 
   const {
     openBottomSheet,
@@ -184,7 +213,7 @@ function ProfileEdit() {
             </div>
             <img
               src={
-                profileData?.profileData?.profile_pic ||
+                profileObject?.profileData?.profile_pic ||
                 "/assets/images/no-profile.png"
               }
               className="h-full w-full rounded-full object-cover"
@@ -204,7 +233,8 @@ function ProfileEdit() {
         </span>
         <Formik
           innerRef={formik}
-          initialValues={ProfileFormData}
+          enableReinitialize={true}
+          initialValues={profileFormData}
           validationSchema={profileValidationSchema}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {

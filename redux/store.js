@@ -19,8 +19,6 @@ const persistConfig = {
     "costing",
     "bags",
     "myCosting",
-    "profile",
-    "user",
   ], // List of reducers to persist
 };
 
