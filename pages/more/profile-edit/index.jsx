@@ -10,16 +10,16 @@ import { cameraIcon } from "../../../theme/icon";
 import { profileFormFields } from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
 import {
-  fetchProfileFailure,
+  // fetchProfileFailure,
   updateProfileRequest,
   fetchProfileRequest,
-  updateProfileFailure,
+  // updateProfileFailure,
 } from "../../../redux/actions/profileEdit.actions";
 import {
-  fetchUserFailure,
+  // fetchUserFailure,
   updateUserRequest,
   fetchUserRequest,
-  updateUserFailure,
+  // updateUserFailure,
 } from "../../../redux/actions/userEdit.actions";
 // Import Components
 import { Header } from "@/components/Header";
@@ -84,7 +84,7 @@ function ProfileEdit() {
   const token = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
-  const [profileFormData, setProfileFormData] = useState({});
+  const [profileFormData, setProfileFormData] = useState({ ...initialValues });
 
   const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
@@ -131,7 +131,8 @@ function ProfileEdit() {
                   boxShadow:
                     "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
                 }}
-                onClick={() => handleProfessionSelect(item.value)}>
+                onClick={() => handleProfessionSelect(item.value)}
+              >
                 <div className="w-full pt-3 inline-flex items-center justify-center">
                   <img src={item.image} />
                 </div>
@@ -205,7 +206,8 @@ function ProfileEdit() {
       <Header />
       <div
         id="fixedMenuSection"
-        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}>
+        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}
+      >
         <div className="inline-flex items-center space-x-5">
           <div className="h-[134px] w-[134px] rounded-full ring-1 ring-white ml-[7rem] p-[2px] relative top-2 z-20">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -227,20 +229,22 @@ function ProfileEdit() {
         style={{
           paddingTop: mainContainerHeight * 1.7 + "px",
           paddingBottom: mainContainerHeight - 52 + "px",
-        }}>
+        }}
+      >
         <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
           Personal details
         </span>
         <Formik
           innerRef={formik}
-          enableReinitialize={true}
+          // enableReinitialize={true}
           initialValues={profileFormData}
           validationSchema={profileValidationSchema}
           onSubmit={(values, { setSubmitting }) => {
             setTimeout(() => {
               setSubmitting(false);
             }, 400);
-          }}>
+          }}
+        >
           {({
             values,
             errors,
@@ -257,7 +261,8 @@ function ProfileEdit() {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
-              }}>
+              }}
+            >
               {formFields.map((field) => (
                 <div key={field.name} className="relative mb-4">
                   <input
@@ -285,13 +290,15 @@ function ProfileEdit() {
                   {errors[field.name] && touched[field.name] ? (
                     <p
                       className="absolute text-red-400 text-xs"
-                      style={{ top: "100%" }}>
+                      style={{ top: "100%" }}
+                    >
                       {errors[field.name]}
                     </p>
                   ) : null}
                   <label
                     htmlFor={field.name}
-                    className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin">
+                    className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
+                  >
                     {field.label}
                   </label>
                 </div>
@@ -305,7 +312,8 @@ function ProfileEdit() {
                       : "bg-pwip-primary"
                   }`}
                   disabled={!dirty || isSubmitting}
-                  onClick={handleFormSubmit}>
+                  onClick={handleFormSubmit}
+                >
                   Update Changes
                 </button>
               </div>
