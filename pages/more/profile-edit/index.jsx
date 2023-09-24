@@ -78,7 +78,7 @@ const initialValues = {
 };
 
 const profileValidationSchema = Yup.object().shape({
-  full_name: Yup.string().required("Required"),
+  full_name: Yup.string().required("Please enter your full name"),
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Invalid mobile number")
     .required("Required"),
@@ -91,18 +91,37 @@ const profileValidationSchema = Yup.object().shape({
       return true;
     })
     .required("Required"),
-  bio: Yup.string().max(255, "Maximum 255 characters"),
-  profession: Yup.string().required("Required"),
+  bio: Yup.string().max(255, "Maximum 255 characters").nullable(),
+  profession: Yup.string().nullable(),
   website: Yup.string().url().nullable(),
-  facebook_url: Yup.string().url().nullable(),
-  youtube_url: Yup.string().url().nullable(),
-  linkedin_url: Yup.string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[A-Za-z0-9.-]+\/?$/,
-      "Invalid LinkedIn URL"
-    )
+  facebook_url: Yup.string()
+    .url()
+    // .matches(
+    //   /^(https?:\/\/)?(www\.)?facebook\.com\/in\/[A-Za-z0-9.-]+\/?$/,
+    //   "Invalid Facebook URL"
+    // )
     .nullable(),
-  instagram_url: Yup.string().url().nullable(),
+  youtube_url: Yup.string()
+    .url()
+    // .matches(
+    //   /^(https?:\/\/)?(www\.)?youtube\.com\/in\/[A-Za-z0-9.-]+\/?$/,
+    //   "Invalid Youtube URL"
+    // )
+    .nullable(),
+  linkedin_url: Yup.string()
+    .url()
+    // .matches(
+    //   /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[A-Za-z0-9.-]+\/?$/,
+    //   "Invalid LinkedIn URL"
+    // )
+    .nullable(),
+  instagram_url: Yup.string()
+    .url()
+    // .matches(
+    //   /^(https?:\/\/)?(www\.)?instagram\.com\/in\/[A-Za-z0-9.-]+\/?$/,
+    //   "Invalid Instagram URL"
+    // )
+    .nullable(),
 });
 
 function ProfileEdit() {
@@ -215,12 +234,32 @@ function ProfileEdit() {
         profileFormValues
       );
 
+      const requestAction = null;
+
       if (Object.keys(userPayload)?.length) {
-        await dispatch(updateUserRequest(userPayload));
+        const payload = {
+          data: {
+            ...userPayload,
+          },
+        };
+        requestAction = await dispatch(updateUserRequest(payload));
       }
 
       if (Object.keys(profilePayload)?.length) {
-        await dispatch(updateProfileRequest(profilePayload));
+        const payload = {
+          data: {
+            ...profilePayload,
+          },
+        };
+        requestAction = await dispatch(updateProfileRequest(payload));
+      }
+
+      if (Object.keys(requestAction.payload.data).length) {
+        openToastMessage({
+          type: "success",
+          message: "Profile has been updated successfully.",
+        });
+        requestAction = null;
       }
     } catch (error) {
       openToastMessage({
@@ -323,14 +362,14 @@ function ProfileEdit() {
                 <div key={field.name} className="relative mb-4">
                   <input
                     type={field.type}
-                    pattern={field.type === "number" ? "[0-9]*" : ""}
-                    inputMode={field.type === "numeric" ? "[0-9]*" : ""}
+                    pattern={field.type === "number" ? "[0-9]*" : undefined}
+                    inputMode={field.type === "numeric" ? "numeric" : undefined}
                     id={field.name}
                     name={field.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     maxLength={field.name === "phone" ? 10 : undefined}
-                    defaultValue={values[field.name]}
+                    defaultValue={values[field.name] || ""}
                     style={{ textAlign: "left" }}
                     className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
                       errors[field.name] && touched[field.name]
@@ -338,20 +377,19 @@ function ProfileEdit() {
                         : "border-pwip-gray-300"
                     } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
                     placeholder={field.placeholder}
-                    // setfieldvalue={setFieldValue}
                     onClick={() => {
                       if (field.name === "profession") {
                         handleProfessionBottomSheet();
                       }
                     }}
                   />
-                  {errors[field.name] && touched[field.name] ? (
-                    <p
+                  {errors[field.name] ? (
+                    <span
                       className="absolute text-red-400 text-xs"
                       style={{ top: "100%" }}
                     >
                       {errors[field.name]}
-                    </p>
+                    </span>
                   ) : null}
                   <label
                     htmlFor={field.name}
@@ -366,8 +404,24 @@ function ProfileEdit() {
                   type="primary"
                   buttonType="submit"
                   label="Update changes"
-                  disabled={!dirty || isSubmitting}
-                  onClick={handleFormSubmit}
+                  disabled={
+                    Object.keys(errors).length || isSubmitting ? true : false
+                  }
+                  onClick={() => {
+                    const changes = getChangedPropertiesFromObject(
+                      {
+                        ...userObject.userData,
+                        ...profileObject.profileData,
+                      },
+                      values
+                    );
+                    if (
+                      !Object.keys(errors).length &&
+                      Object.keys(changes).length
+                    ) {
+                      handleFormSubmit();
+                    }
+                  }}
                 />
               </div>
             </form>
