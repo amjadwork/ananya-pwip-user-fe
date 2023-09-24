@@ -4,23 +4,25 @@ import {
   FETCH_USER_REQUEST,
 } from "../actions/types/userEdit.types";
 import {
-  updateUserSuccess,
-  updateUserFailure,
+  fetchUserRequest,
   fetchUserSuccess,
   fetchUserFailure,
 } from "../actions/userEdit.actions";
 import { makeApiCall } from "./_commonFunctions.saga";
 
 function* updateUserData(action) {
-  const body = action.payload;
   try {
+    const body = action.payload;
+
     const response = yield call(makeApiCall, "/user", "patch", {
       ...body,
     });
 
-    yield put(updateUserSuccess(response.data));
+    if (response) {
+      yield put(fetchUserRequest());
+    }
   } catch (error) {
-    yield put(updateUserFailure(error));
+    yield put(fetchUserFailure(error));
   }
 }
 

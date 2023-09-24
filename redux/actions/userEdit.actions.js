@@ -15,9 +15,8 @@ export const updateUserRequest = (userData) => {
   };
 };
 
-export const updateUserSuccess = (userData) => ({
+export const updateUserSuccess = () => ({
   type: UPDATE_USER_SUCCESS,
-  payload: userData,
 });
 
 export const updateUserFailure = () => ({

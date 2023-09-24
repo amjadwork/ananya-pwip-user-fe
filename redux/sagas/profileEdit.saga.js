@@ -4,8 +4,7 @@ import {
   FETCH_PROFILE_REQUEST,
 } from "../actions/types/profileEdit.types";
 import {
-  updateProfileSuccess,
-  updateProfileFailure,
+  fetchProfileRequest,
   fetchProfileSuccess,
   fetchProfileFailure,
 } from "../actions/profileEdit.actions";
@@ -18,9 +17,11 @@ function* updateProfileData(action) {
       ...body,
     });
 
-    yield put(updateProfileSuccess(response.data));
+    if (response) {
+      yield put(fetchProfileRequest());
+    }
   } catch (error) {
-    yield put(updateProfileFailure(error));
+    yield put(fetchProfileFailure(error));
   }
 }
 

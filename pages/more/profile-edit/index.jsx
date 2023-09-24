@@ -216,17 +216,11 @@ function ProfileEdit() {
       );
 
       if (Object.keys(userPayload)?.length) {
-        const res = await dispatch(updateUserRequest(userPayload));
-        if (res) {
-          dispatch(fetchUserRequest());
-        }
+        await dispatch(updateUserRequest(userPayload));
       }
 
       if (Object.keys(profilePayload)?.length) {
-        const res = await dispatch(updateProfileRequest(profilePayload));
-        if (res) {
-          dispatch(fetchProfileRequest());
-        }
+        await dispatch(updateProfileRequest(profilePayload));
       }
     } catch (error) {
       openToastMessage({

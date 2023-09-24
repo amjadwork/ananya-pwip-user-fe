@@ -19,7 +19,6 @@ const userEditReducer = (state = initialState, action) => {
     case UPDATE_USER_FAILURE:
       return {
         ...state,
-        userData: null,
       };
 
     case FETCH_USER_SUCCESS:

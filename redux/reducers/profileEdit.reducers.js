@@ -19,7 +19,6 @@ const profileEditReducer = (state = initialState, action) => {
     case UPDATE_PROFILE_FAILURE:
       return {
         ...state,
-        profileData: null,
       };
 
     case FETCH_PROFILE_SUCCESS:

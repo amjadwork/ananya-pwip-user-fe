@@ -15,9 +15,8 @@ export const updateProfileRequest = (userData) => {
   };
 };
 
-export const updateProfileSuccess = (userData) => ({
+export const updateProfileSuccess = () => ({
   type: UPDATE_PROFILE_SUCCESS,
-  payload: userData,
 });
 
 export const updateProfileFailure = () => ({
