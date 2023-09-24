@@ -135,6 +135,8 @@ module.exports = {
     "line-clamp-1",
     "border-l-[0px]",
     "text-center",
+    "bg-green-800",
+    "text-green-200",
   ],
   theme: {
     extend: {

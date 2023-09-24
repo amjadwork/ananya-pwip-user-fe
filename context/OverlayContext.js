@@ -146,10 +146,27 @@ export function OverlayProvider({ children }) {
               ${
                 toastContent?.type === "loading"
                   ? "text-blue-200 bg-blue-800"
+                  : toastContent?.type === "success"
+                  ? "text-green-200 bg-green-800"
                   : "text-red-500 bg-red-100"
               }
               rounded-lg`}
             >
+              {toastContent?.type === "success" && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+
               {toastContent?.type === "error" && (
                 <svg
                   className="w-5 h-5"
@@ -232,7 +249,7 @@ export function OverlayProvider({ children }) {
                   viewBox="0 0 20 20"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  class="w-5 h-5"
+                  className="w-5 h-5"
                 >
                   <path
                     strokeLinecap="round"
