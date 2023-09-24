@@ -104,3 +104,27 @@ export function generatePayloadForCustomCosting(givenData) {
   };
   return payload;
 }
+
+export function intersectObjects(refPayload, formValues) {
+  const result = {};
+
+  for (const key in refPayload) {
+    if (formValues.hasOwnProperty(key)) {
+      result[key] = formValues[key];
+    }
+  }
+
+  return result;
+}
+
+export function getChangedPropertiesFromObject(original, updated) {
+  const changedProperties = {};
+
+  for (const key in updated) {
+    if (original[key] !== updated[key]) {
+      changedProperties[key] = updated[key];
+    }
+  }
+
+  return changedProperties;
+}

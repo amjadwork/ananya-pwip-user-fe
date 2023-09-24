@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -14,15 +15,46 @@ import {
   updateProfileRequest,
   fetchProfileRequest,
   // updateProfileFailure,
-} from "../../../redux/actions/profileEdit.actions";
+} from "@/redux/actions/profileEdit.actions";
 import {
   // fetchUserFailure,
   updateUserRequest,
   fetchUserRequest,
   // updateUserFailure,
-} from "../../../redux/actions/userEdit.actions";
+} from "@/redux/actions/userEdit.actions";
 // Import Components
 import { Header } from "@/components/Header";
+
+import {
+  intersectObjects,
+  getChangedPropertiesFromObject,
+} from "@/utils/helper";
+
+const requiredProfilePayload = {
+  profile_pic: "",
+  city: "",
+  state: "",
+  country: "",
+  zip_code: "",
+  gstin: "",
+  headline: "",
+  bio: "",
+  website: "",
+  youtube_url: "",
+  facebook_url: "",
+  instagram_url: "",
+  whatsapp_link: "",
+  linkedin_url: "",
+};
+
+const requiredUserPayload = {
+  first_name: "",
+  last_name: "",
+  middle_name: "",
+  full_name: "",
+  email: "",
+  phone: "",
+};
 
 const initialValues = {
   full_name: "",
@@ -46,10 +78,7 @@ const initialValues = {
 };
 
 const profileValidationSchema = Yup.object().shape({
-  full_name: Yup.string()
-    .min(2, "Too Short!")
-    .max(30, "Too Long!")
-    .required("Required"),
+  full_name: Yup.string().required("Required"),
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Invalid mobile number")
     .required("Required"),
@@ -162,18 +191,48 @@ function ProfileEdit() {
 
   const handleFormSubmit = async () => {
     try {
-      const payload = {
+      const formValues = {
         data: {
           ...formik.current.values,
         },
       };
-      dispatch(updateProfileRequest(payload));
-      dispatch(updateUserRequest(payload));
-      dispatch(fetchProfileRequest());
-      dispatch(fetchUserRequest());
+
+      const userFormValues = intersectObjects(
+        requiredUserPayload,
+        formValues.data
+      );
+      const profileFormValues = intersectObjects(
+        requiredProfilePayload,
+        formValues.data
+      );
+
+      const userPayload = getChangedPropertiesFromObject(
+        userObject.userData,
+        userFormValues
+      );
+      const profilePayload = getChangedPropertiesFromObject(
+        profileObject.profileData,
+        profileFormValues
+      );
+
+      if (Object.keys(userPayload)?.length) {
+        const res = await dispatch(updateUserRequest(userPayload));
+        if (res) {
+          dispatch(fetchUserRequest());
+        }
+      }
+
+      if (Object.keys(profilePayload)?.length) {
+        const res = await dispatch(updateProfileRequest(profilePayload));
+        if (res) {
+          dispatch(fetchProfileRequest());
+        }
+      }
     } catch (error) {
-      console.error("Update failed:", error);
-      openToastMessage("Update failed. Please try again.", "error");
+      openToastMessage({
+        type: "error",
+        message: error?.message || "Update failed. Please try again.",
+      });
     }
   };
 
@@ -270,12 +329,14 @@ function ProfileEdit() {
                 <div key={field.name} className="relative mb-4">
                   <input
                     type={field.type}
+                    pattern={field.type === "number" ? "[0-9]*" : ""}
+                    inputMode={field.type === "numeric" ? "[0-9]*" : ""}
                     id={field.name}
                     name={field.name}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     maxLength={field.name === "phone" ? 10 : undefined}
-                    value={values[field.name]}
+                    defaultValue={values[field.name]}
                     style={{ textAlign: "left" }}
                     className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
                       errors[field.name] && touched[field.name]
@@ -307,18 +368,13 @@ function ProfileEdit() {
                 </div>
               ))}
               <div className="fixed bottom-0 left-0 w-full p-3 bg-pwip-white-100">
-                <button
-                  type="submit"
-                  className={`w-full text-white font-semibold py-4 px-4 rounded-md hover:bg-primary transition duration-300 ease-in-out shadow-md ${
-                    !dirty || isSubmitting
-                      ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-pwip-primary"
-                  }`}
+                <Button
+                  type="primary"
+                  buttonType="submit"
+                  label="Update changes"
                   disabled={!dirty || isSubmitting}
                   onClick={handleFormSubmit}
-                >
-                  Update Changes
-                </button>
+                />
               </div>
             </form>
           )}
