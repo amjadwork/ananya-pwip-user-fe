@@ -39,6 +39,8 @@ const requiredProfilePayload = {
   gstin: "",
   headline: "",
   bio: "",
+  companyName: "",
+  profession: "",
   website: "",
   youtube_url: "",
   facebook_url: "",
@@ -159,7 +161,7 @@ function ProfileEdit() {
     openBottomSheet,
     closeBottomSheet,
     openToastMessage,
-    closeToastMessage,
+    // closeToastMessage,
   } = useOverlayContext();
 
   const handleProfessionBottomSheet = () => {
@@ -250,7 +252,7 @@ function ProfileEdit() {
         requestAction = await dispatch(updateProfileRequest(payload));
       }
 
-      if (Object.keys(requestAction.payload.data).length) {
+      if (Object.keys(requestAction?.payload)?.length) {
         openToastMessage({
           type: "success",
           message: "Profile has been updated successfully.",
