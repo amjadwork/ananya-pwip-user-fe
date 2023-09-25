@@ -12,14 +12,27 @@ import {
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
 
+import { fetchMyCostingSuccess } from "@/redux/actions/myCosting.actions.js";
+
 const SelectVariantContainer = (props) => {
   const isFromEdit = props.isFromEdit || false;
+  const setFieldValue = props.setFieldValue;
 
   const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products); // Use api reducer slice
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  const selectedMyCostingFromHistory = useSelector((state) => {
+    if (
+      state.myCosting &&
+      state.myCosting.currentCostingFromHistory &&
+      state.myCosting.currentCostingFromHistory.length
+    ) {
+      return state.myCosting.currentCostingFromHistory[0];
+    }
+    return null;
+  });
 
   const { roundedTop = false, noTop = false, noPaddingBottom = false } = props;
 
@@ -180,17 +193,46 @@ const SelectVariantContainer = (props) => {
                 key={items._id + index}
                 onClick={() => {
                   if (isFromEdit) {
-                    dispatch(
-                      setCustomCostingSelection({
-                        ...selectedCosting,
-                        customCostingSelection: {
-                          ...selectedCosting.customCostingSelection,
-                          product: items,
+                    if (setFieldValue) {
+                      setFieldValue("_originId", {});
+                      setFieldValue("_destinationId", {});
+
+                      let object = {
+                        ...selectedMyCostingFromHistory,
+                        details: {
+                          ...selectedMyCostingFromHistory?.details,
+                          originPortObject: {},
+                          destinationObject: {},
                         },
-                      })
-                    );
+                      };
+
+                      dispatch(fetchMyCostingSuccess([{ ...object }]));
+
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfOrigin: null,
+                            portOfDestination: null,
+                            product: items,
+                          },
+                        })
+                      );
+                    } else {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            product: items,
+                          },
+                        })
+                      );
+                    }
                     dispatch(fetchDestinationRequest());
                     dispatch(fetchOriginRequest());
+
                     closeBottomSheet();
                   } else {
                     dispatch(
@@ -243,15 +285,43 @@ const SelectVariantContainer = (props) => {
                 key={items._id + index}
                 onClick={() => {
                   if (isFromEdit) {
-                    dispatch(
-                      setCustomCostingSelection({
-                        ...selectedCosting,
-                        customCostingSelection: {
-                          ...selectedCosting.customCostingSelection,
-                          product: items,
+                    if (setFieldValue) {
+                      setFieldValue("_originId", {});
+                      setFieldValue("_destinationId", {});
+
+                      let object = {
+                        ...selectedMyCostingFromHistory,
+                        details: {
+                          ...selectedMyCostingFromHistory?.details,
+                          originPortObject: {},
+                          destinationObject: {},
                         },
-                      })
-                    );
+                      };
+
+                      dispatch(fetchMyCostingSuccess([{ ...object }]));
+
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            portOfOrigin: null,
+                            portOfDestination: null,
+                            product: items,
+                          },
+                        })
+                      );
+                    } else {
+                      dispatch(
+                        setCustomCostingSelection({
+                          ...selectedCosting,
+                          customCostingSelection: {
+                            ...selectedCosting.customCostingSelection,
+                            product: items,
+                          },
+                        })
+                      );
+                    }
                     dispatch(fetchDestinationRequest());
                     dispatch(fetchOriginRequest());
                     closeBottomSheet();

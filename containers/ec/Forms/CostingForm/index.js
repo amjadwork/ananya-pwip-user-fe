@@ -49,6 +49,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
                     noTop={true}
                     noPaddingBottom={true}
                     isFromEdit={true}
+                    setFieldValue={setFieldValue}
                   />
                 </div>
               );

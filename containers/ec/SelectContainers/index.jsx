@@ -79,6 +79,7 @@ const SelectCargoContainersContainer = (props) => {
                       },
                     })
                   );
+
                   closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
