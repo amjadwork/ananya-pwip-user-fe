@@ -238,18 +238,14 @@ function ProfileEdit() {
 
       if (Object.keys(userPayload)?.length) {
         const payload = {
-          data: {
-            ...userPayload,
-          },
+          ...userPayload,
         };
         requestAction = await dispatch(updateUserRequest(payload));
       }
 
       if (Object.keys(profilePayload)?.length) {
         const payload = {
-          data: {
-            ...profilePayload,
-          },
+          ...profilePayload,
         };
         requestAction = await dispatch(updateProfileRequest(payload));
       }
