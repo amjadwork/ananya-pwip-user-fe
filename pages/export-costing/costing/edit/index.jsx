@@ -37,36 +37,25 @@ import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
 import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
-function convertUnits(currentUnit, unitToConvert, value) {
-  // Define conversion factors
+function convertUnits(currentUnit, neededUnit, value) {
+  // Define conversion factors for each unit
   const conversionFactors = {
-    kg: {
-      mt: 0.001,
-      qt: 0.01,
-    },
-    mt: {
-      kg: 1000,
-      qt: 10,
-    },
-    qt: {
-      kg: 100,
-      mt: 0.1,
-    },
+    kg: 1,
+    qt: 0.01, // 1 quintal = 10 kg
+    mt: 0.001, // 1 metric ton = 1000 kg
   };
 
   // Check if the units are valid
-  if (
-    !(currentUnit in conversionFactors) ||
-    !(unitToConvert in conversionFactors[currentUnit])
-  ) {
-    return "Invalid units";
+  if (!conversionFactors[currentUnit] || !conversionFactors[neededUnit]) {
+    return "Invalid units provided";
   }
 
-  // Perform the conversion
-  const conversionFactor = conversionFactors[currentUnit][unitToConvert];
-  const convertedValue = value * conversionFactor;
-
-  return convertedValue;
+  // Convert the price to the needed unit
+  const priceInNeededUnit = (
+    (value * conversionFactors[currentUnit]) /
+    conversionFactors[neededUnit]
+  ).toFixed(0);
+  return priceInNeededUnit;
 }
 
 const initialValues = {
@@ -201,15 +190,20 @@ function EditCosting() {
     ) {
       const formikRef = formik.current;
 
-      // let customProduct = customCostingSelection?.product;
+      let customProductPrice =
+        customCostingSelection?.product?.sourceRates?.price;
 
-      // if (customProduct) {
-      //   customProduct.sourceRates.price = convertUnits(
-      //     "kg",
-      //     selectedMyCostingFromHistory.unit,
-      //     customProduct?.sourceRates?.price
-      //   );
-      // }
+      if (
+        customCostingSelection &&
+        customCostingSelection?.product &&
+        customProductPrice
+      ) {
+        customProductPrice = convertUnits(
+          "kg",
+          selectedMyCostingFromHistory.unit,
+          customCostingSelection?.product?.sourceRates?.price
+        );
+      }
 
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
@@ -244,7 +238,7 @@ function EditCosting() {
 
         // Breakup values
         costOfRice:
-          customCostingSelection?.product?.sourceRates?.price ||
+          customProductPrice ||
           selectedMyCostingFromHistory?.costing?.exmillPrice ||
           0,
         bagPrice:
