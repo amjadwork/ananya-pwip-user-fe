@@ -3,47 +3,53 @@ import { useSelector } from "react-redux";
 import { inrToUsd } from "@/utils/helper";
 import { breakupArr } from "@/constants/breakupStructure";
 
-const BreakupForm = ({ values, handleChange, handleBlur }) => {
+const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
   const forexRate = useSelector((state) => state.utils.forexRate);
-
   const [breakupFormData, setBreakupFormData] = useState([]);
 
   useEffect(() => {
-    let breakupFormArr = [];
+    if (activeTab === 1) {
+      let breakupFormArr = [];
 
-    breakupFormArr = [...breakupArr].map((d) => {
-      let obj = { ...d };
+      breakupFormArr = [...breakupArr].map((d) => {
+        let obj = { ...d };
 
-      if (!values?.exportDuty) {
-        let rowItems = [...obj?.rowItems];
+        if (!values?.exportDuty) {
+          let rowItems = [...obj?.rowItems];
 
-        const exportDutyField = obj?.rowItems?.find(
-          (d) => d.name === "exportDutyValue"
-        );
+          const exportDutyField = obj?.rowItems?.find(
+            (d) => d.name === "exportDutyValue"
+          );
 
-        if (exportDutyField) {
-          const arrayIndex = obj?.rowItems.indexOf(exportDutyField);
+          if (exportDutyField) {
+            const arrayIndex = obj?.rowItems.indexOf(exportDutyField);
 
-          if (arrayIndex > -1) {
-            rowItems.splice(arrayIndex, 1);
+            if (arrayIndex > -1) {
+              rowItems.splice(arrayIndex, 1);
+            }
           }
+
+          obj.rowItems = rowItems;
+
+          return obj;
         }
 
-        obj.rowItems = rowItems;
+        if (values?.exportDuty) {
+          return obj;
+        }
+      });
 
-        return obj;
-      }
-
-      if (values?.exportDuty) {
-        return obj;
-      }
-    });
-
-    setBreakupFormData([...breakupFormArr]);
-  }, []);
+      setBreakupFormData([...breakupFormArr]);
+    }
+  }, [activeTab]);
 
   return (
-    <React.Fragment>
+    <div
+      style={{
+        display: activeTab === 1 ? "block" : "none",
+      }}
+      key="breakup"
+    >
       <div className="inline-flex flex-col w-full">
         {breakupFormData.map((item, index) => {
           return (
@@ -100,7 +106,7 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
                         <input
                           className="text-pwip-gray-850 text-sm font-normal text-right border-b-[1px] border-b-pwip-gray-650 w-full"
                           name={row.name}
-                          defaultValue={values[row.name]}
+                          value={values[row.name]}
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
@@ -156,7 +162,7 @@ const BreakupForm = ({ values, handleChange, handleBlur }) => {
                 </div>
               </div>
             </div> */}
-    </React.Fragment>
+    </div>
   );
 };
 

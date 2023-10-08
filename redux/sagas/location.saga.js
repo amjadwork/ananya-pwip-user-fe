@@ -14,12 +14,12 @@ import { makeApiCall } from "./_commonFunctions.saga";
 function* fetchDestinationLocation() {
   try {
     const selectedSourceId = yield select(
-      (state) => state.costing.product.sourceRates._sourceId
+      (state) => state?.costing?.product?.sourceRates?._sourceId
     );
 
     const selectedSourceIdFromCustomCosting = yield select(
       (state) =>
-        state.costing.customCostingSelection.product?.sourceRates?._sourceId
+        state?.costing?.customCostingSelection?.product?.sourceRates?._sourceId
     );
 
     const response = yield call(
@@ -40,12 +40,12 @@ function* fetchDestinationLocation() {
 function* fetchOriginLocation() {
   try {
     const selectedSourceId = yield select(
-      (state) => state.costing.product.sourceRates._sourceId
+      (state) => state?.costing?.product?.sourceRates?._sourceId
     );
 
     const selectedSourceIdFromCustomCosting = yield select(
       (state) =>
-        state.costing.customCostingSelection.product?.sourceRates?._sourceId
+        state?.costing?.customCostingSelection?.product?.sourceRates?._sourceId
     );
 
     const response = yield call(

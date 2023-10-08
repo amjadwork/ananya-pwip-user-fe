@@ -244,12 +244,20 @@ function EditCosting() {
         bagPrice:
           customCostingSelection?.bags?.cost ||
           selectedMyCostingFromHistory?.costing?.package,
-        transportation: selectedMyCostingFromHistory?.costing?.transportCharge,
-        cfsHandling: selectedMyCostingFromHistory?.costing?.cfsHandling,
-        shl: selectedMyCostingFromHistory?.costing?.shlCost,
+        transportation:
+          customCostingSelection?.transportation ||
+          selectedMyCostingFromHistory?.costing?.transportCharge,
+        cfsHandling:
+          customCostingSelection?.cha ||
+          selectedMyCostingFromHistory?.costing?.cfsHandling,
+        shl:
+          customCostingSelection?.shl ||
+          selectedMyCostingFromHistory?.costing?.shlCost,
         ofc:
           shipmentTerm === "FOB"
             ? 0
+            : customCostingSelection?.ofc
+            ? customCostingSelection?.ofc
             : selectedMyCostingFromHistory?.costing?.ofcCost,
         inspectionCost:
           selectedMyCostingFromHistory?.constants?.inspectionCharge,
@@ -271,6 +279,7 @@ function EditCosting() {
     }
   }, [formik, customCostingSelection, selectedMyCostingFromHistory]);
 
+  // possible issue for bag in edit screen
   React.useEffect(() => {
     if (customCostingSelection || generatedCosting) {
       breakupArr[0].rowItems[1].label = customCostingSelection?.bags
@@ -286,6 +295,7 @@ function EditCosting() {
       breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
     }
   }, [selectedMyCostingFromHistory, generatedCosting]);
+  // possible issue for bag in edit screen ends
 
   React.useEffect(() => {
     dispatch(fetchPackagingBagsRequest());
@@ -366,6 +376,7 @@ function EditCosting() {
             initialValues={{
               ...initialValues,
             }}
+            enableReinitialize={true}
             onSubmit={(values, { setSubmitting }) => {
               setTimeout(() => {
                 setSubmitting(false);
@@ -374,8 +385,6 @@ function EditCosting() {
           >
             {({
               values,
-              // errors,
-              // touched,
               setFieldValue,
               handleChange,
               handleBlur,
@@ -383,25 +392,23 @@ function EditCosting() {
               isSubmitting,
             }) => (
               <form
-                className="inline-flex flex-col w-full space-y-4"
+                className="inline-flex flex-col w-full"
                 onSubmit={handleSubmit}
               >
-                {activeTab === 0 && (
-                  <CostingForm
-                    values={values}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                    setFieldValue={setFieldValue}
-                  />
-                )}
+                <CostingForm
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  setFieldValue={setFieldValue}
+                  activeTab={activeTab}
+                />
 
-                {activeTab === 1 && (
-                  <BreakupForm
-                    values={values}
-                    handleChange={handleChange}
-                    handleBlur={handleBlur}
-                  />
-                )}
+                <BreakupForm
+                  values={values}
+                  handleChange={handleChange}
+                  handleBlur={handleBlur}
+                  activeTab={activeTab}
+                />
 
                 <div className="w-full !mt-[32px]">
                   <Button

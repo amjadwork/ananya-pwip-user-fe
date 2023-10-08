@@ -230,8 +230,8 @@ const SelectVariantContainer = (props) => {
                         })
                       );
                     }
-                    dispatch(fetchDestinationRequest());
                     dispatch(fetchOriginRequest());
+                    dispatch(fetchDestinationRequest());
 
                     closeBottomSheet();
                   } else {
@@ -322,8 +322,8 @@ const SelectVariantContainer = (props) => {
                         })
                       );
                     }
-                    dispatch(fetchDestinationRequest());
                     dispatch(fetchOriginRequest());
+                    dispatch(fetchDestinationRequest());
                     closeBottomSheet();
                   } else {
                     dispatch(

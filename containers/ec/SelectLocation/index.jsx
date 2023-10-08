@@ -1,8 +1,10 @@
 import React from "react";
+import { call, select, put } from "redux-saga/effects";
 import { useRouter } from "next/router";
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
+import { api } from "@/utils/helper";
 
 import {
   setCostingSelection,
@@ -12,12 +14,14 @@ import {
 const SelectLocationContainer = (props) => {
   const isFromEdit = props.isFromEdit || false;
   const locationType = props.locationType || "destination";
+  const setFieldValue = props.setFieldValue;
 
   const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const locationsData = useSelector((state) => state.locations);
+  const authToken = useSelector((state) => state.auth.token);
 
   const {
     roundedTop = false,
@@ -38,6 +42,74 @@ const SelectLocationContainer = (props) => {
   const [listDestinationData, setListDestinationData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
 
+  async function fetchTransportationCost(originId, sourceId) {
+    try {
+      const response = await api.get(
+        `/transportation?origin=${originId}&sourcePort=${sourceId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      // Dispatch a failure action in case of an error
+      return error;
+    }
+  }
+
+  async function fetchCHAandSHLandOFCCost(originId, destinationId) {
+    try {
+      const responseCHA = await api.get(
+        `/cha?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const responseSHL = await api.get(
+        `/shl?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const responseOFC = await api.get(
+        `/ofc?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const response = {
+        shl: responseSHL?.data || [],
+        ofc: responseOFC?.data || [],
+        cha: responseCHA?.data || [],
+      };
+
+      return response;
+    } catch (error) {
+      // Dispatch a failure action in case of an error
+      return error;
+    }
+  }
+
   React.useEffect(() => {
     if (
       locationsData?.locations?.destinations?.length &&
@@ -57,7 +129,7 @@ const SelectLocationContainer = (props) => {
         );
         setListDestinationData(
           [...locationsData.locations.destinations].slice(
-            5,
+            4,
             locationsData.locations.destinations.length - 1
           )
         );
@@ -78,7 +150,7 @@ const SelectLocationContainer = (props) => {
         );
         setListDestinationData(
           [...locationsData.locations.origin].slice(
-            5,
+            4,
             locationsData.locations.origin.length - 1
           )
         );
@@ -132,7 +204,7 @@ const SelectLocationContainer = (props) => {
       );
       setListDestinationData(
         [...locationsData.locations.destinations].slice(
-          5,
+          4,
           locationsData.locations.destinations.length - 1
         )
       );
@@ -144,7 +216,7 @@ const SelectLocationContainer = (props) => {
       );
       setListDestinationData(
         [...locationsData.locations.origin].slice(
-          5,
+          4,
           locationsData.locations.origin.length - 1
         )
       );
@@ -291,30 +363,90 @@ const SelectLocationContainer = (props) => {
             return (
               <div
                 key={items._id + index}
-                onClick={() => {
+                onClick={async () => {
                   if (isFromEdit) {
                     if (locationType === "destination") {
+                      const response = await fetchCHAandSHLandOFCCost(
+                        selectedCosting.customCostingSelection.portOfOrigin._id,
+                        items?._id
+                      );
+
+                      console.log(response);
+
+                      if (response.cha.length) {
+                        setFieldValue(
+                          "cfsHandling",
+                          response?.cha[0]?.destinations[0]?.chaCharge
+                        );
+                      }
+
+                      if (response.ofc.length) {
+                        setFieldValue(
+                          "ofc",
+                          response?.ofc[0]?.destinations[0]?.ofcCharge
+                        );
+                      }
+
+                      if (response.shl.length) {
+                        setFieldValue(
+                          "shl",
+                          response?.shl[0]?.destinations[0]?.shlCharge
+                        );
+                      }
+
                       dispatch(
                         setCustomCostingSelection({
                           ...selectedCosting,
                           customCostingSelection: {
                             ...selectedCosting.customCostingSelection,
                             portOfDestination: items,
+                            shl:
+                              response?.shl[0]?.destinations[0]?.shlCharge ||
+                              [],
+                            ofc:
+                              response?.ofc[0]?.destinations[0]?.ofcCharge ||
+                              [],
+                            cha:
+                              response?.cha[0]?.destinations[0]?.chaCharge ||
+                              [],
                           },
                         })
                       );
                     }
 
                     if (locationType === "origin") {
-                      dispatch(
-                        setCustomCostingSelection({
-                          ...selectedCosting,
-                          customCostingSelection: {
-                            ...selectedCosting.customCostingSelection,
-                            portOfOrigin: items,
-                          },
-                        })
-                      );
+                      if (selectedCosting?.customCostingSelection?.product) {
+                        const response = await fetchTransportationCost(
+                          items?._id,
+                          selectedCosting?.customCostingSelection?.product
+                            ?.sourceRates?._sourceId
+                        );
+
+                        if (
+                          response?.data &&
+                          response?.data?.length &&
+                          response?.data[0]?.sourceLocations?.length
+                        ) {
+                          setFieldValue(
+                            "transportation",
+                            response?.data[0]?.sourceLocations[0]
+                              ?.transportationCharge
+                          );
+
+                          dispatch(
+                            setCustomCostingSelection({
+                              ...selectedCosting,
+                              customCostingSelection: {
+                                ...selectedCosting.customCostingSelection,
+                                portOfOrigin: items,
+                                transportation:
+                                  response?.data[0]?.sourceLocations[0]
+                                    ?.transportationCharge,
+                              },
+                            })
+                          );
+                        }
+                      }
                     }
 
                     closeBottomSheet();
@@ -361,7 +493,7 @@ const SelectLocationContainer = (props) => {
               <div
                 key={items._id + index}
                 className="inline-flex items-center w-full p-[5px] space-x-[10px] bg-white rounded-sm border-b-[1px] border-b-pwip-gray-50"
-                onClick={() => {
+                onClick={async () => {
                   if (isFromEdit) {
                     if (locationType === "destination") {
                       dispatch(
@@ -376,15 +508,38 @@ const SelectLocationContainer = (props) => {
                     }
 
                     if (locationType === "origin") {
-                      dispatch(
-                        setCustomCostingSelection({
-                          ...selectedCosting,
-                          customCostingSelection: {
-                            ...selectedCosting.customCostingSelection,
-                            portOfOrigin: items,
-                          },
-                        })
-                      );
+                      if (selectedCosting?.customCostingSelection?.product) {
+                        const response = await fetchTransportationCost(
+                          items?._id,
+                          selectedCosting?.customCostingSelection?.product
+                            ?.sourceRates?._sourceId
+                        );
+
+                        if (
+                          response?.data &&
+                          response?.data?.length &&
+                          response?.data[0]?.sourceLocations?.length
+                        ) {
+                          setFieldValue(
+                            "transportation",
+                            response?.data[0]?.sourceLocations[0]
+                              ?.transportationCharge
+                          );
+
+                          dispatch(
+                            setCustomCostingSelection({
+                              ...selectedCosting,
+                              customCostingSelection: {
+                                ...selectedCosting.customCostingSelection,
+                                portOfOrigin: items,
+                                transportation:
+                                  response?.data[0]?.sourceLocations[0]
+                                    ?.transportationCharge,
+                              },
+                            })
+                          );
+                        }
+                      }
                     }
                     closeBottomSheet();
                   } else {

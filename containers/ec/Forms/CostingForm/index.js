@@ -8,11 +8,23 @@ import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
 import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
 
-const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
+const CostingForm = ({
+  values,
+  handleChange,
+  handleBlur,
+  setFieldValue,
+  activeTab,
+}) => {
   const { openBottomSheet } = useOverlayContext();
 
   return (
-    <React.Fragment>
+    <div
+      style={{
+        display: activeTab === 0 ? "block" : "none",
+      }}
+      key="costing"
+      className="space-y-4"
+    >
       <div className="inline-flex flex-col w-full">
         <label className="text-sm font-normal text-pwip-gray-600">
           Costing Name
@@ -87,8 +99,17 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
         <div className="inline-flex items-center relative h-[40px] mt-[4px]  w-full border-[1px] border-pwip-gray-650 rounded-md bg-white">
           <button
             onClick={() => {
+              let currentCostOfRice = parseFloat(values.costOfRice) || 0;
+
               let current = values?.brokenPercentage || 0;
               const decrementValue = current > 0 ? current - 5 : 0;
+
+              currentCostOfRice = currentCostOfRice - 0.3;
+
+              setFieldValue(
+                "costOfRice",
+                parseFloat(currentCostOfRice.toFixed(2))
+              );
               setFieldValue("brokenPercentage", decrementValue);
             }}
             className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-r-[1px] border-r-pwip-gray-650 rounded-l-md text-pwip-gray-400"
@@ -107,8 +128,17 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           />
           <button
             onClick={() => {
+              let currentCostOfRice = parseFloat(values.costOfRice) || 0;
+
               let current = values?.brokenPercentage || 0;
               const incrementValue = current + 5;
+
+              currentCostOfRice = currentCostOfRice + 0.3;
+
+              setFieldValue(
+                "costOfRice",
+                parseFloat(currentCostOfRice.toFixed(2))
+              );
               setFieldValue("brokenPercentage", incrementValue);
             }}
             className="outline-none w-[44px] h-full inline-flex items-center justify-center right-[18px] bg-white border-l-[1px] border-l-pwip-gray-650 rounded-r-md text-pwip-gray-400"
@@ -211,6 +241,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
                     noPaddingBottom={true}
                     isFromEdit={true}
                     locationType="origin"
+                    setFieldValue={setFieldValue}
                   />
                 </div>
               );
@@ -247,6 +278,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
                     noPaddingBottom={true}
                     isFromEdit={true}
                     locationType="destination"
+                    setFieldValue={setFieldValue}
                   />
                 </div>
               );
@@ -332,7 +364,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           <input
             type="checkbox"
             name="exportDuty"
-            checked={values.exportDuty}
+            checked={values?.exportDuty}
             onChange={handleChange}
             onBlur={handleBlur}
             className="inline-flex items-center h-[20px] w-[20px] rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
@@ -346,7 +378,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           <input
             type="checkbox"
             name="pwipFullfillment"
-            checked={values.pwipFullfillment}
+            checked={values?.pwipFullfillment}
             onChange={handleChange}
             onBlur={handleBlur}
             className="inline-flex items-center h-[20px] w-[20px] rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
@@ -356,7 +388,7 @@ const CostingForm = ({ values, handleChange, handleBlur, setFieldValue }) => {
           </label>
         </div> */}
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 
