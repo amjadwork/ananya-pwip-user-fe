@@ -233,6 +233,7 @@ function EditCosting() {
         containersCount:
           selectedMyCostingFromHistory?.details?.containerCount || 1,
         containerWeight:
+          customCostingSelection?.containersWeight ||
           customCostingSelection?.containers?.weight ||
           selectedMyCostingFromHistory?.details?.containerObject.weight,
 

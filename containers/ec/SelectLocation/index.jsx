@@ -15,6 +15,7 @@ const SelectLocationContainer = (props) => {
   const isFromEdit = props.isFromEdit || false;
   const locationType = props.locationType || "destination";
   const setFieldValue = props.setFieldValue;
+  const containerWeight = props.containerWeight || 26;
 
   const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
@@ -371,13 +372,12 @@ const SelectLocationContainer = (props) => {
                         items?._id
                       );
 
-                      console.log(response);
-
                       if (response.cha.length) {
                         setFieldValue(
                           "cfsHandling",
                           Math.floor(
-                            response?.cha[0]?.destinations[0]?.chaCharge / 26
+                            response?.cha[0]?.destinations[0]?.chaCharge /
+                              containerWeight
                           )
                         );
                       }
@@ -386,7 +386,8 @@ const SelectLocationContainer = (props) => {
                         setFieldValue(
                           "ofc",
                           Math.floor(
-                            response?.ofc[0]?.destinations[0]?.ofcCharge / 26
+                            response?.ofc[0]?.destinations[0]?.ofcCharge /
+                              containerWeight
                           )
                         );
                       }
@@ -395,7 +396,8 @@ const SelectLocationContainer = (props) => {
                         setFieldValue(
                           "shl",
                           Math.floor(
-                            response?.shl[0]?.destinations[0]?.shlCharge / 26
+                            response?.shl[0]?.destinations[0]?.shlCharge /
+                              containerWeight
                           )
                         );
                       }
@@ -408,16 +410,20 @@ const SelectLocationContainer = (props) => {
                             portOfDestination: items,
                             shl: Math.floor(
                               response?.shl[0]?.destinations[0]?.shlCharge /
-                                26 || 0
+                                containerWeight
                             ),
                             ofc: Math.floor(
                               response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                26 || 0
+                                containerWeight
                             ),
                             cha: Math.floor(
                               response?.cha[0]?.destinations[0]?.chaCharge /
-                                26 || 0
+                                containerWeight
                             ),
+
+                            shlData: response?.shl[0]?.destinations[0],
+                            ofcData: response?.ofc[0]?.destinations[0],
+                            chaData: response?.cha[0]?.destinations[0],
                           },
                         })
                       );
@@ -505,12 +511,80 @@ const SelectLocationContainer = (props) => {
                 onClick={async () => {
                   if (isFromEdit) {
                     if (locationType === "destination") {
+                      const response = await fetchCHAandSHLandOFCCost(
+                        selectedCosting.customCostingSelection.portOfOrigin._id,
+                        items?._id
+                      );
+
+                      console.log(
+                        response,
+                        containerWeight,
+                        response?.cha[0]?.destinations[0]?.chaCharge /
+                          containerWeight,
+                        response?.ofc[0]?.destinations[0]?.ofcCharge /
+                          containerWeight,
+                        response?.shl[0]?.destinations[0]?.shlCharge /
+                          containerWeight
+                      );
+
+                      if (response.cha.length) {
+                        setFieldValue(
+                          "cfsHandling",
+                          Math.floor(
+                            response?.cha[0]?.destinations[0]?.chaCharge /
+                              containerWeight
+                          )
+                        );
+                      }
+
+                      if (response.ofc.length) {
+                        setFieldValue(
+                          "ofc",
+                          Math.floor(
+                            response?.ofc[0]?.destinations[0]?.ofcCharge /
+                              containerWeight
+                          )
+                        );
+                      }
+
+                      if (response.shl.length) {
+                        setFieldValue(
+                          "shl",
+                          Math.floor(
+                            response?.shl[0]?.destinations[0]?.shlCharge /
+                              containerWeight
+                          )
+                        );
+                      }
+
+                      console.log(
+                        response?.shl[0]?.destinations[0],
+                        response?.ofc[0]?.destinations[0],
+                        response?.cha[0]?.destinations[0]
+                      );
+
                       dispatch(
                         setCustomCostingSelection({
                           ...selectedCosting,
                           customCostingSelection: {
                             ...selectedCosting.customCostingSelection,
                             portOfDestination: items,
+                            shl: Math.floor(
+                              response?.shl[0]?.destinations[0]?.shlCharge /
+                                containerWeight
+                            ),
+                            ofc: Math.floor(
+                              response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                containerWeight
+                            ),
+                            cha: Math.floor(
+                              response?.cha[0]?.destinations[0]?.chaCharge /
+                                containerWeight
+                            ),
+
+                            shlData: response?.shl[0]?.destinations[0],
+                            ofcData: response?.ofc[0]?.destinations[0],
+                            chaData: response?.cha[0]?.destinations[0],
                           },
                         })
                       );

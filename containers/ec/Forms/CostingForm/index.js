@@ -1,12 +1,29 @@
 import React, { useEffect, useRef } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 import { useOverlayContext } from "@/context/OverlayContext";
 import SelectVariantContainer from "@/containers/ec/SelectVariant";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 import SelectBagsContainer from "@/containers/ec/SelectBags";
 import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
+import {
+  setCostingSelection,
+  setCustomCostingSelection,
+} from "@/redux/actions/costing.actions.js";
 
 import { chevronDown, plusIcon, minusIcon } from "../../../../theme/icon";
+
+function sumNumericalValues(obj) {
+  let total = 0;
+
+  for (const key in obj) {
+    if (!isNaN(obj[key]) && !["pqc", "surrender", "blFee"].includes(key)) {
+      total += parseFloat(obj[key]);
+    }
+  }
+
+  return total;
+}
 
 const CostingForm = ({
   values,
@@ -15,6 +32,10 @@ const CostingForm = ({
   setFieldValue,
   activeTab,
 }) => {
+  const dispatch = useDispatch();
+
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+
   const { openBottomSheet } = useOverlayContext();
 
   return (
@@ -242,6 +263,7 @@ const CostingForm = ({
                     isFromEdit={true}
                     locationType="origin"
                     setFieldValue={setFieldValue}
+                    containerWeight={parseFloat(values?.containerWeight)}
                   />
                 </div>
               );
@@ -279,6 +301,7 @@ const CostingForm = ({
                     isFromEdit={true}
                     locationType="destination"
                     setFieldValue={setFieldValue}
+                    containerWeight={parseFloat(values?.containerWeight)}
                   />
                 </div>
               );
@@ -338,7 +361,64 @@ const CostingForm = ({
             name="containersCount"
             value={values?.containersCount}
             onChange={handleChange}
-            onBlur={handleBlur}
+            onBlur={(e) => {
+              console.log(selectedCosting.customCostingSelection);
+              if (
+                selectedCosting.customCostingSelection.shlData &&
+                selectedCosting.customCostingSelection.chaData &&
+                e.target.value
+              ) {
+                const blFee =
+                  selectedCosting.customCostingSelection.shlData.blFee;
+                const blSurrender =
+                  selectedCosting.customCostingSelection.shlData.surrender;
+
+                const pqc = selectedCosting.customCostingSelection.chaData.pqc;
+
+                const updatedBlFee =
+                  blFee /
+                  (parseFloat(values.containerWeight) *
+                    parseInt(e.target.value));
+                const updatedBlSurrender =
+                  blSurrender /
+                  (parseFloat(values.containerWeight) *
+                    parseInt(e.target.value));
+                const updatedpqc =
+                  pqc /
+                  (parseFloat(values.containerWeight) *
+                    parseInt(e.target.value));
+
+                const totalSHL =
+                  (sumNumericalValues(
+                    selectedCosting.customCostingSelection.shlData
+                  ) +
+                    updatedBlFee +
+                    updatedBlSurrender) /
+                  parseFloat(values.containerWeight);
+                const totalCHA =
+                  (sumNumericalValues(
+                    selectedCosting.customCostingSelection.chaData
+                  ) +
+                    updatedpqc) /
+                  parseFloat(values.containerWeight);
+
+                setFieldValue("cfsHandling", totalCHA);
+
+                setFieldValue("shl", totalSHL);
+
+                dispatch(
+                  setCustomCostingSelection({
+                    ...selectedCosting,
+                    customCostingSelection: {
+                      ...selectedCosting.customCostingSelection,
+                      shl: totalSHL,
+                      cha: totalCHA,
+                    },
+                  })
+                );
+              }
+              handleBlur(e);
+            }}
             className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
           />
         </div>
@@ -353,7 +433,21 @@ const CostingForm = ({
             name="containerWeight"
             value={values?.containerWeight}
             onChange={handleChange}
-            onBlur={handleBlur}
+            onBlur={(e) => {
+              if (e.target.value) {
+                dispatch(
+                  setCustomCostingSelection({
+                    ...selectedCosting,
+                    customCostingSelection: {
+                      ...selectedCosting.customCostingSelection,
+                      containersWeight: parseFloat(e.target.value),
+                    },
+                  })
+                );
+              }
+
+              handleBlur(e);
+            }}
             className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
           />
         </div>
