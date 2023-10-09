@@ -362,7 +362,6 @@ const CostingForm = ({
             value={values?.containersCount}
             onChange={handleChange}
             onBlur={(e) => {
-              console.log(selectedCosting.customCostingSelection);
               if (
                 selectedCosting.customCostingSelection.shlData &&
                 selectedCosting.customCostingSelection.chaData &&

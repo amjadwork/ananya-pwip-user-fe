@@ -282,7 +282,7 @@ function EditCosting() {
 
   // possible issue for bag in edit screen
   React.useEffect(() => {
-    if (customCostingSelection || generatedCosting) {
+    if (customCostingSelection?.bags || generatedCosting) {
       breakupArr[0].rowItems[1].label = customCostingSelection?.bags
         ? `${customCostingSelection?.bags?.bag}-${customCostingSelection?.bags?.weight}${customCostingSelection?.bags?.unit}`
         : `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
