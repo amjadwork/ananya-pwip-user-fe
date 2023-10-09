@@ -403,17 +403,17 @@ const CostingForm = ({
                     updatedpqc) /
                   parseFloat(values.containerWeight);
 
-                setFieldValue("cfsHandling", totalCHA);
+                setFieldValue("cfsHandling", Math.floor(totalCHA));
 
-                setFieldValue("shl", totalSHL);
+                setFieldValue("shl", Math.floor(totalSHL));
 
                 dispatch(
                   setCustomCostingSelection({
                     ...selectedCosting,
                     customCostingSelection: {
                       ...selectedCosting.customCostingSelection,
-                      shl: totalSHL,
-                      cha: totalCHA,
+                      shl: Math.floor(totalSHL),
+                      cha: Math.floor(totalCHA),
                     },
                   })
                 );

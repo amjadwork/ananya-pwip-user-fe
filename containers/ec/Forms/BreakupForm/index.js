@@ -65,12 +65,12 @@ const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
                 </div>
 
                 <div className="inline-flex items-center w-full">
-                  <div className="w-[60%] pt-4 pb-2 px-4 inline-flex items-center">
+                  <div className="w-[50%] pt-4 pb-2 px-4 inline-flex items-center">
                     <span className="text-pwip-gray-750 text-sm font-normal">
                       Details
                     </span>
                   </div>
-                  <div className="w-[20%] pt-4 pb-2 px-4 inline-flex items-center justify-end">
+                  <div className="w-[30%] pt-4 pb-2 px-4 inline-flex items-center justify-end">
                     <span className="text-pwip-gray-750 text-sm font-normal">
                       ₹INR
                     </span>
@@ -94,17 +94,17 @@ const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
                       className="inline-flex items-center w-full"
                     >
                       <div
-                        className={`w-[60%] pt-4 ${paddingBottom} px-4 inline-flex items-center`}
+                        className={`w-[50%] pt-4 ${paddingBottom} px-4 inline-flex items-center`}
                       >
                         <span className="text-pwip-gray-850 text-sm font-normal">
                           {row.label}
                         </span>
                       </div>
                       <div
-                        className={`w-[20%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
+                        className={`w-[30%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
                       >
                         <input
-                          className="text-pwip-gray-850 text-sm font-normal text-right border-b-[1px] border-b-pwip-gray-650 w-full"
+                          className="text-pwip-gray-850 text-sm font-normal text-right bg-transparent border-b-[1px] border-b-pwip-gray-650 w-full"
                           name={row.name}
                           value={values[row.name]}
                           onChange={handleChange}
@@ -117,11 +117,11 @@ const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
                         className={`w-[20%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
                       >
                         <input
-                          className="text-pwip-gray-850 text-sm font-normal text-right border-b-[1px] border-b-pwip-gray-650 w-full"
+                          className="text-pwip-gray-850 bg-transparent text-sm font-normal text-right w-full"
                           readOnly={true}
                           value={parseFloat(
                             inrToUsd(values[row.name], forexRate.USD)
-                          )}
+                          ).toFixed(1)}
                         />
                       </div>
                     </div>
