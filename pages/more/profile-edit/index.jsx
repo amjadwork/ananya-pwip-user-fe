@@ -8,7 +8,11 @@ import { Button } from "@/components/Button";
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { cameraIcon } from "../../../theme/icon";
-import { profileFormFields } from "@/constants/profileFormFields";
+import {
+  personalFields,
+  socialFields,
+  companyFields,
+} from "@/constants/profileFormFields";
 import { professionOptions } from "@/constants/professionOptions";
 import {
   // fetchProfileFailure,
@@ -96,34 +100,10 @@ const profileValidationSchema = Yup.object().shape({
   bio: Yup.string().max(255, "Maximum 255 characters").nullable(),
   profession: Yup.string().nullable(),
   website: Yup.string().url().nullable(),
-  facebook_url: Yup.string()
-    .url()
-    // .matches(
-    //   /^(https?:\/\/)?(www\.)?facebook\.com\/in\/[A-Za-z0-9.-]+\/?$/,
-    //   "Invalid Facebook URL"
-    // )
-    .nullable(),
-  youtube_url: Yup.string()
-    .url()
-    // .matches(
-    //   /^(https?:\/\/)?(www\.)?youtube\.com\/in\/[A-Za-z0-9.-]+\/?$/,
-    //   "Invalid Youtube URL"
-    // )
-    .nullable(),
-  linkedin_url: Yup.string()
-    .url()
-    // .matches(
-    //   /^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[A-Za-z0-9.-]+\/?$/,
-    //   "Invalid LinkedIn URL"
-    // )
-    .nullable(),
-  instagram_url: Yup.string()
-    .url()
-    // .matches(
-    //   /^(https?:\/\/)?(www\.)?instagram\.com\/in\/[A-Za-z0-9.-]+\/?$/,
-    //   "Invalid Instagram URL"
-    // )
-    .nullable(),
+  facebook_url: Yup.string().nullable(),
+  youtube_url: Yup.string().nullable(),
+  linkedin_url: Yup.string().nullable(),
+  instagram_url: Yup.string().nullable(),
 });
 
 function ProfileEdit() {
@@ -135,7 +115,6 @@ function ProfileEdit() {
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
 
-  const formFields = [...profileFormFields];
   const professionList = [...professionOptions];
 
   useEffect(() => {
@@ -183,8 +162,7 @@ function ProfileEdit() {
                   boxShadow:
                     "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
                 }}
-                onClick={() => handleProfessionSelect(item.value)}
-              >
+                onClick={() => handleProfessionSelect(item.value)}>
                 <div className="w-full pt-3 inline-flex items-center justify-center">
                   <img src={item.image} />
                 </div>
@@ -298,8 +276,7 @@ function ProfileEdit() {
       <Header />
       <div
         id="fixedMenuSection"
-        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}
-      >
+        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}>
         <div className="inline-flex items-center space-x-5">
           <div className="h-[134px] w-[134px] rounded-full ring-1 ring-white ml-[7rem] p-[2px] relative top-2 z-20">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -321,11 +298,7 @@ function ProfileEdit() {
         style={{
           paddingTop: mainContainerHeight * 1.7 + "px",
           paddingBottom: mainContainerHeight - 52 + "px",
-        }}
-      >
-        <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
-          Personal details
-        </span>
+        }}>
         <Formik
           innerRef={formik}
           initialValues={{
@@ -336,8 +309,7 @@ function ProfileEdit() {
             setTimeout(() => {
               setSubmitting(false);
             }, 400);
-          }}
-        >
+          }}>
           {({
             values,
             errors,
@@ -354,49 +326,79 @@ function ProfileEdit() {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
-              }}
-            >
-              {formFields.map((field) => (
-                <div key={field.name} className="relative mb-4">
-                  <input
-                    type={field.type}
-                    pattern={field.type === "number" ? "[0-9]*" : undefined}
-                    inputMode={field.type === "numeric" ? "numeric" : undefined}
-                    id={field.name}
-                    name={field.name}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    maxLength={field.name === "phone" ? 10 : undefined}
-                    defaultValue={values[field.name] || ""}
-                    style={{ textAlign: "left" }}
-                    className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 bg-transparent rounded-sm border ${
-                      errors[field.name] && touched[field.name]
-                        ? "border-red-300"
-                        : "border-pwip-gray-300"
-                    } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
-                    placeholder={field.placeholder}
-                    onClick={() => {
-                      if (field.name === "profession") {
-                        handleProfessionBottomSheet();
-                      }
-                    }}
-                  />
-                  {errors[field.name] ? (
-                    <span
-                      className="absolute text-red-400 text-xs"
-                      style={{ top: "100%" }}
-                    >
-                      {errors[field.name]}
-                    </span>
-                  ) : null}
-                  <label
-                    htmlFor={field.name}
-                    className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
-                  >
-                    {field.label}
-                  </label>
-                </div>
-              ))}
+              }}>
+              {/* <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
+                Personal details
+              </span> */}
+              {[...personalFields, ...companyFields, ...socialFields].map(
+                (field) => (
+                  <div key={field.name} className="relative mb-4">
+                    {field.heading && (
+                      <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left pb-10">
+                        {field.heading}
+                      </span>
+                    )}
+                    {!field.heading && (
+                      <>
+                        <div className="absolute top-3 left-2">
+                          <img src={field.image} />
+                          {field.icon}
+                        </div>
+                        <input
+                          type={field.type}
+                          pattern={
+                            field.type === "number" ? "[0-9]*" : undefined
+                          }
+                          inputMode={
+                            field.type === "numeric" ? "numeric" : undefined
+                          }
+                          id={field.name}
+                          name={field.name}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          maxLength={
+                            field.name === "phone" ||
+                            field.name === "whatsapp_link"
+                              ? 10
+                              : undefined
+                          }
+                          disabled={field.name === "email" ? true : false}
+                          defaultValue={values[field.name] || ""}
+                          style={{
+                            textAlign: "left",
+                            paddingLeft: `calc(${
+                              field.icon || field.image ? "36px" : "0"
+                            })`,
+                          }}
+                          className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 rounded-sm border ${
+                            errors[field.name] && touched[field.name]
+                              ? "border-red-300"
+                              : "border-pwip-gray-300"
+                          } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
+                          placeholder={field.placeholder}
+                          onClick={() => {
+                            if (field.name === "profession") {
+                              handleProfessionBottomSheet();
+                            }
+                          }}
+                        />
+                        {errors[field.name] ? (
+                          <span
+                            className="absolute text-red-400 text-xs"
+                            style={{ top: "100%" }}>
+                            {errors[field.name]}
+                          </span>
+                        ) : null}
+                        <label
+                          htmlFor={field.name}
+                          className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin">
+                          {field.label}
+                        </label>
+                      </>
+                    )}
+                  </div>
+                )
+              )}
               <div className="fixed bottom-0 left-0 w-full p-3 bg-pwip-white-100">
                 <Button
                   type="primary"

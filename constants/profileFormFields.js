@@ -1,4 +1,15 @@
-export const profileFormFields = [
+import {
+  instagram,
+  linkedin,
+  facebook,
+  whatsapp,
+  youtube,
+} from "../theme/icon";
+
+export const personalFields = [
+  {
+    heading: "Personal details",
+  },
   {
     name: "full_name",
     label: "Name",
@@ -19,24 +30,7 @@ export const profileFormFields = [
     label: "Mobile",
     type: "number",
   },
-  {
-    name: "companyName",
-    label: "Company Name",
-    type: "text",
-    placeholder: "Add your company name",
-  },
-  {
-    name: "profession",
-    label: "Profession",
-    type: "button",
-    placeholder: "Select your profession",
-  },
-  {
-    name: "gstin",
-    label: "GST Number",
-    type: "text",
-    placeholder: "",
-  },
+
   {
     name: "bio",
     label: "Bio",
@@ -66,40 +60,70 @@ export const profileFormFields = [
     label: "Zip Code",
     type: "number",
   },
+];
+export const companyFields = [
   {
-    name: "website",
-    label: "Website",
-    type: "url",
-    placeholder: "Add your website",
+    heading: "Company details",
   },
   {
-    name: "youtube_url",
-    label: "YouTube URL",
-    type: "url",
-    placeholder: "Add your YouTube URL",
+    name: "profession",
+    label: "Profession",
+    type: "button",
+    placeholder: "Select your profession",
   },
   {
-    name: "linkedin_url",
-    label: "Linkedin URL",
-    type: "url",
-    placeholder: "Add your Linkedin Profile",
+    name: "companyName",
+    label: "Company Name",
+    type: "text",
+    placeholder: "Add your company name",
   },
+
   {
-    name: "facebook_url",
-    label: "Facebook URL",
-    type: "url",
-    placeholder: "Add your Facebook Profile",
+    name: "gstin",
+    label: "GST Number",
+    type: "text",
+    placeholder: "",
+  },
+];
+
+export const socialFields = [
+  {
+    heading: "Social details",
   },
   {
     name: "whatsapp_link",
-    label: "WhatsApp Link",
-    type: "url",
-    placeholder: "http://wa.me/918000000000",
+    icon: whatsapp,
+    type: "numeric",
+    placeholder: "Type WhatsApp number",
+  },
+  {
+    name: "linkedin_url",
+    icon: linkedin,
+    type: "text",
+    placeholder: "Type Linkedin Id",
+  },
+  {
+    name: "facebook_url",
+    icon: facebook,
+    type: "text",
+    placeholder: "Type Facebook Id",
+  },
+  {
+    name: "website",
+    image: "/assets/images/profession/website.png",
+    type: "text",
+    placeholder: "Type Website Link",
+  },
+  {
+    name: "youtube_url",
+    icon: youtube,
+    type: "text",
+    placeholder: "Type Youtube Id",
   },
   {
     name: "instagram_url",
-    label: "Instagram URL",
-    type: "url",
-    placeholder: "Add your Instagram Profile",
+    icon: instagram,
+    type: "text",
+    placeholder: "Type Instagram Id",
   },
 ];
