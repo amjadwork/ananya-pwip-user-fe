@@ -313,7 +313,7 @@ const SelectLocationContainer = (props) => {
               handleSearch(event.target.value);
             }}
           />
-          {!popularDestinationData.length && (
+          {!popularDestinationData.length ? (
             <button
               onClick={() => {
                 setSearchStringValue("");
@@ -337,7 +337,7 @@ const SelectLocationContainer = (props) => {
                 />
               </svg>
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -349,7 +349,7 @@ const SelectLocationContainer = (props) => {
           paddingTop: mainContainerHeight + 42 + "px",
         }}
       >
-        {popularDestinationData.length && (
+        {popularDestinationData.length ? (
           <h2
             className={`${
               noTop ? "mt-0" : "mt-8"
@@ -357,7 +357,7 @@ const SelectLocationContainer = (props) => {
           >
             Popular choices
           </h2>
-        )}
+        ) : null}
 
         <div className="grid grid-cols-2 gap-6">
           {popularDestinationData.map((items, index) => {
@@ -516,17 +516,6 @@ const SelectLocationContainer = (props) => {
                         items?._id
                       );
 
-                      console.log(
-                        response,
-                        containerWeight,
-                        response?.cha[0]?.destinations[0]?.chaCharge /
-                          containerWeight,
-                        response?.ofc[0]?.destinations[0]?.ofcCharge /
-                          containerWeight,
-                        response?.shl[0]?.destinations[0]?.shlCharge /
-                          containerWeight
-                      );
-
                       if (response.cha.length) {
                         setFieldValue(
                           "cfsHandling",
@@ -556,12 +545,6 @@ const SelectLocationContainer = (props) => {
                           )
                         );
                       }
-
-                      console.log(
-                        response?.shl[0]?.destinations[0],
-                        response?.ofc[0]?.destinations[0],
-                        response?.cha[0]?.destinations[0]
-                      );
 
                       dispatch(
                         setCustomCostingSelection({

@@ -3,6 +3,10 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
+import {
+  fetchDestinationRequest,
+  fetchOriginRequest,
+} from "@/redux/actions/location.actions";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -308,6 +312,21 @@ function EditCosting() {
       setMainContainerHeight(height);
     }
   }, []);
+
+  React.useEffect(() => {
+    if (selectedMyCostingFromHistory) {
+      dispatch(
+        fetchOriginRequest(
+          selectedMyCostingFromHistory?.details?.sourceObject?._id
+        )
+      );
+      dispatch(
+        fetchDestinationRequest(
+          selectedMyCostingFromHistory?.details?.sourceObject?._id
+        )
+      );
+    }
+  }, [selectedMyCostingFromHistory]);
 
   return (
     <React.Fragment>

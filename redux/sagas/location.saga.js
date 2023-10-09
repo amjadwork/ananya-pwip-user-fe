@@ -11,7 +11,8 @@ import {
 } from "../actions/location.actions";
 import { makeApiCall } from "./_commonFunctions.saga";
 
-function* fetchDestinationLocation() {
+function* fetchDestinationLocation(payload) {
+  console.log("here is id", payload);
   try {
     const selectedSourceId = yield select(
       (state) => state?.costing?.product?.sourceRates?._sourceId
@@ -26,7 +27,9 @@ function* fetchDestinationLocation() {
       makeApiCall,
       "/location/destination" +
         `?filterBy=source&sourceId=${
-          selectedSourceIdFromCustomCosting || selectedSourceId
+          payload.sourceId ||
+          selectedSourceIdFromCustomCosting ||
+          selectedSourceId
         }`,
       "get"
     );
@@ -37,7 +40,7 @@ function* fetchDestinationLocation() {
   }
 }
 
-function* fetchOriginLocation() {
+function* fetchOriginLocation(payload) {
   try {
     const selectedSourceId = yield select(
       (state) => state?.costing?.product?.sourceRates?._sourceId
@@ -52,7 +55,9 @@ function* fetchOriginLocation() {
       makeApiCall,
       "/location/origin" +
         `?filterBySource=${
-          selectedSourceIdFromCustomCosting || selectedSourceId
+          payload.sourceId ||
+          selectedSourceIdFromCustomCosting ||
+          selectedSourceId
         }`,
       "get"
     );

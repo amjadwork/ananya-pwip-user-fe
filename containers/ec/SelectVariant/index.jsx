@@ -140,7 +140,7 @@ const SelectVariantContainer = (props) => {
               handleSearch(event.target.value);
             }}
           />
-          {!popularProductsData.length && (
+          {!popularProductsData.length ? (
             <button
               onClick={() => {
                 setSearchStringValue("");
@@ -164,7 +164,7 @@ const SelectVariantContainer = (props) => {
                 />
               </svg>
             </button>
-          )}
+          ) : null}
         </div>
       </div>
 
@@ -176,7 +176,7 @@ const SelectVariantContainer = (props) => {
           paddingTop: mainContainerHeight + 42 + "px",
         }}
       >
-        {popularProductsData.length && (
+        {popularProductsData.length ? (
           <h2
             className={`${
               noTop ? "mt-0" : "mt-8"
@@ -184,7 +184,7 @@ const SelectVariantContainer = (props) => {
           >
             Popular choices
           </h2>
-        )}
+        ) : null}
 
         <div className="grid grid-cols-2 gap-6">
           {popularProductsData.map((items, index) => {
