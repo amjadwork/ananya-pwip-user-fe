@@ -416,7 +416,12 @@ function EditCosting() {
                     type="primary"
                     buttonType="submit"
                     label="Update costing"
-                    disabled={isSubmitting}
+                    disabled={
+                      isSubmitting ||
+                      !Object.keys(values?._variantId).length ||
+                      !Object.keys(values?._originId).length ||
+                      !Object.keys(values?._destinationId).length
+                    }
                     onClick={() => {
                       let givenData = { ...values };
                       givenData.unit =

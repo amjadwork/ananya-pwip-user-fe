@@ -109,6 +109,8 @@ const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
                           value={values[row.name]}
                           onChange={handleChange}
                           onBlur={handleBlur}
+                          pattern="[0-9]*"
+                          inputMode="numeric"
                         />
                       </div>
                       <div

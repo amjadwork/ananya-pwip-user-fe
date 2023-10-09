@@ -361,6 +361,8 @@ const CostingForm = ({
             name="containersCount"
             value={values?.containersCount}
             onChange={handleChange}
+            pattern="[0-9]*"
+            inputMode="numeric"
             onBlur={(e) => {
               if (
                 selectedCosting.customCostingSelection.shlData &&
@@ -432,6 +434,8 @@ const CostingForm = ({
             name="containerWeight"
             value={values?.containerWeight}
             onChange={handleChange}
+            pattern="[0-9]*"
+            inputMode="numeric"
             onBlur={(e) => {
               if (e.target.value) {
                 dispatch(
