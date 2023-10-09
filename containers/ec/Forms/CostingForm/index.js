@@ -104,7 +104,7 @@ const CostingForm = ({
               let current = values?.brokenPercentage || 0;
               const decrementValue = current > 0 ? current - 5 : 0;
 
-              currentCostOfRice = currentCostOfRice - 0.3;
+              currentCostOfRice = currentCostOfRice + 0.3;
 
               setFieldValue(
                 "costOfRice",
@@ -133,7 +133,7 @@ const CostingForm = ({
               let current = values?.brokenPercentage || 0;
               const incrementValue = current + 5;
 
-              currentCostOfRice = currentCostOfRice + 0.3;
+              currentCostOfRice = currentCostOfRice - 0.3;
 
               setFieldValue(
                 "costOfRice",

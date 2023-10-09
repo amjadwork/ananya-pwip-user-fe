@@ -376,21 +376,27 @@ const SelectLocationContainer = (props) => {
                       if (response.cha.length) {
                         setFieldValue(
                           "cfsHandling",
-                          response?.cha[0]?.destinations[0]?.chaCharge
+                          Math.floor(
+                            response?.cha[0]?.destinations[0]?.chaCharge / 26
+                          )
                         );
                       }
 
                       if (response.ofc.length) {
                         setFieldValue(
                           "ofc",
-                          response?.ofc[0]?.destinations[0]?.ofcCharge
+                          Math.floor(
+                            response?.ofc[0]?.destinations[0]?.ofcCharge / 26
+                          )
                         );
                       }
 
                       if (response.shl.length) {
                         setFieldValue(
                           "shl",
-                          response?.shl[0]?.destinations[0]?.shlCharge
+                          Math.floor(
+                            response?.shl[0]?.destinations[0]?.shlCharge / 26
+                          )
                         );
                       }
 
@@ -400,15 +406,18 @@ const SelectLocationContainer = (props) => {
                           customCostingSelection: {
                             ...selectedCosting.customCostingSelection,
                             portOfDestination: items,
-                            shl:
-                              response?.shl[0]?.destinations[0]?.shlCharge ||
-                              [],
-                            ofc:
-                              response?.ofc[0]?.destinations[0]?.ofcCharge ||
-                              [],
-                            cha:
-                              response?.cha[0]?.destinations[0]?.chaCharge ||
-                              [],
+                            shl: Math.floor(
+                              response?.shl[0]?.destinations[0]?.shlCharge /
+                                26 || 0
+                            ),
+                            ofc: Math.floor(
+                              response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                26 || 0
+                            ),
+                            cha: Math.floor(
+                              response?.cha[0]?.destinations[0]?.chaCharge /
+                                26 || 0
+                            ),
                           },
                         })
                       );
