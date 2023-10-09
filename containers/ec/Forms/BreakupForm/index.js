@@ -117,7 +117,7 @@ const BreakupForm = ({ values, handleChange, handleBlur, activeTab }) => {
                         className={`w-[20%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
                       >
                         <input
-                          className="text-pwip-gray-850 bg-transparent text-sm font-normal text-right w-full"
+                          className="text-pwip-gray-850 bg-pwip-gray-50 rounded-t-md text-sm font-normal text-right w-full"
                           readOnly={true}
                           value={parseFloat(
                             inrToUsd(values[row.name], forexRate.USD)
