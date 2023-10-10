@@ -239,6 +239,44 @@ const CostingForm = ({
 
       <div className="inline-flex flex-col w-full">
         <label className="text-sm font-normal text-pwip-gray-600">
+          Select port of destination
+        </label>
+        <div className="inline-flex items-center relative">
+          <input
+            placeholder="Ex: Mumbai india"
+            type="text"
+            name="_destinationId"
+            defaultValue={values?._destinationId?.portName}
+            readOnly={true}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            onClick={() => {
+              const content = (
+                <div>
+                  <SelectLocationContainer
+                    title="Select Port of Destination"
+                    roundedTop={false}
+                    noTop={true}
+                    noPaddingBottom={true}
+                    isFromEdit={true}
+                    locationType="destination"
+                    setFieldValue={setFieldValue}
+                    containerWeight={parseFloat(values?.containerWeight)}
+                  />
+                </div>
+              );
+              openBottomSheet(content);
+            }}
+            className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+          />
+          <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+            {chevronDown}
+          </div>
+        </div>
+      </div>
+
+      <div className="inline-flex flex-col w-full">
+        <label className="text-sm font-normal text-pwip-gray-600">
           Select port of orgin
         </label>
         <div className="inline-flex items-center relative">
@@ -262,44 +300,6 @@ const CostingForm = ({
                     noPaddingBottom={true}
                     isFromEdit={true}
                     locationType="origin"
-                    setFieldValue={setFieldValue}
-                    containerWeight={parseFloat(values?.containerWeight)}
-                  />
-                </div>
-              );
-              openBottomSheet(content);
-            }}
-            className="inline-flex items-center h-[40px] mt-[4px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
-          />
-          <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
-            {chevronDown}
-          </div>
-        </div>
-      </div>
-
-      <div className="inline-flex flex-col w-full">
-        <label className="text-sm font-normal text-pwip-gray-600">
-          Select port of destination
-        </label>
-        <div className="inline-flex items-center relative">
-          <input
-            placeholder="Ex: Mumbai india"
-            type="text"
-            name="_destinationId"
-            defaultValue={values?._destinationId?.portName}
-            readOnly={true}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onClick={() => {
-              const content = (
-                <div>
-                  <SelectLocationContainer
-                    title="Select Port of Destination"
-                    roundedTop={false}
-                    noTop={true}
-                    noPaddingBottom={true}
-                    isFromEdit={true}
-                    locationType="destination"
                     setFieldValue={setFieldValue}
                     containerWeight={parseFloat(values?.containerWeight)}
                   />

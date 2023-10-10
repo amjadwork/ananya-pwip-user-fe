@@ -463,11 +463,11 @@ function EditCosting() {
                       let givenData = { ...values };
                       givenData.unit =
                         selectedMyCostingFromHistory?.unit || "mt";
-                      givenData.shipmentTermType =
-                        shipmentTerm ===
-                        selectedMyCostingFromHistory?.termOfAgreement
-                          ? shipmentTerm
-                          : selectedMyCostingFromHistory?.termOfAgreement;
+                      givenData.shipmentTermType = shipmentTerm;
+                      // ===
+                      //   selectedMyCostingFromHistory?.termOfAgreement
+                      //     ? shipmentTerm
+                      //     : selectedMyCostingFromHistory?.termOfAgreement;
                       givenData.variantCost = parseFloat(values?.costOfRice);
                       givenData.exportDutyValue =
                         parseFloat(values.exportDutyValue) || 0;

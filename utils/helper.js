@@ -77,9 +77,7 @@ export function generatePayloadForCustomCosting(givenData) {
     sourceRateId: Array.isArray(givenData?._variantId?.sourceRates)
       ? givenData._variantId.sourceRates[0]._id
       : givenData._variantId.sourceRates._id,
-    sourceId: Array.isArray(givenData?._variantId?.sourceRates)
-      ? givenData?._variantId?.sourceRates[0]?._sourceId
-      : givenData._variantId.sourceRates._sourceId, //givenData._variantId.sourceRates[0]._sourceId,
+    sourceId: givenData?._variantId?.sourceObject?._id, //givenData._variantId.sourceRates[0]._sourceId,
     _originId: givenData._originId._id,
     _destinationId: givenData._destinationId._id,
     _containerId: givenData._containerId._id,
