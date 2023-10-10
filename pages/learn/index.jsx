@@ -9,7 +9,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import { Header } from "@/components/Header";
 
 // Import Containers
-import { riceAndBagsIcon } from "../../theme/icon";
+import { riceAndBagsIcon, underConstruction } from "../../theme/icon";
 // Import Layouts
 
 function Learn() {
@@ -53,7 +53,50 @@ function Learn() {
       <AppLayout>
         <Header />
 
-        <div
+        <div className="inline-flex flex-col items-center justify-center h-full w-full relative top-[182px]">
+          <div className="inline-flex items-center justify-center h-auto w-auto">
+            <img
+              src="/assets/images/wip.svg"
+              className="w-full h-[170px]"
+              alt="work in progress"
+            />
+          </div>
+
+          <img
+            src="/assets/images/sk.png"
+            className="wobble w-[38px] h-[38px] absolute top-[8px] left-[90px]"
+            alt="work in progress"
+            id="wobble"
+          />
+
+          <img
+            src="/assets/images/a.png"
+            className="wobble w-[38px] h-[38px] absolute top-[34px] left-[40px]"
+            alt="work in progress"
+            id="wobble"
+          />
+
+          <img
+            src="/assets/images/ak.png"
+            className="wobble w-[38px] h-[38px] absolute top-[34px] right-[40px]"
+            alt="work in progress"
+            id="wobble"
+          />
+        </div>
+
+        <div className="w-full h-auto inline-flex items-center justify-center mt-[240px]">
+          <span className="text-pwip-gray-1000 font-sans font-bold text-xl text-center">
+            Work in progress
+          </span>
+          <img
+            src="https://lordicon.com/icons/wired/outline/1733-hammer.gif"
+            alt="Hammer GIF"
+            width="50"
+            height="50"
+          />
+        </div>
+
+        {/* <div
           className={`relative top-[72px] h-full w-full bg-white z-10 py-6 px-5`}
         >
           <span className="text-pwip-gray-1000 font-sans font-bold text-lg text-left">
@@ -66,7 +109,6 @@ function Learn() {
           />
 
           <div className="w-full min-h-[136px] bg-pwip-gray-40 rounded-lg my-[20px]">
-            {/*  */}
           </div>
 
           <div className="h-full w-full relative inline-flex flex-col space-y-5">
@@ -94,12 +136,10 @@ function Learn() {
 
             <div className="inline-flex flex-col w-full">
               <div className="border-[1px] border-pwip-gray-650 rounded-lg p-2">
-                {/*  */}
               </div>
             </div>
           </div>
-        </div>
-        {/*  */}
+        </div> */}
       </AppLayout>
     </React.Fragment>
   );

@@ -19,7 +19,7 @@ export function BottomNavBar() {
         boxShadow: "12px -3px 29px 17px rgba(0, 0, 0, 0.08)",
       }}
     >
-      <div className="grid h-full max-w-lg grid-cols-5 mx-auto font-medium">
+      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
         {options.map((opt, index) => {
           return (
             <button

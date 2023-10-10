@@ -17,11 +17,11 @@ export const options = [
     label: "Learn",
     path: "learn",
   },
-  {
-    icon: dashboardBottomBarIcon,
-    label: "Dashboard",
-    path: "dashboard",
-  },
+  // {
+  //   icon: dashboardBottomBarIcon,
+  //   label: "Dashboard",
+  //   path: "dashboard",
+  // },
   {
     icon: myCostingBottomBarIcon,
     label: "Saved",
