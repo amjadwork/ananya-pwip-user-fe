@@ -12,7 +12,6 @@ import {
 import { makeApiCall } from "./_commonFunctions.saga";
 
 function* fetchDestinationLocation(payload) {
-  console.log("here is id", payload);
   try {
     const selectedSourceId = yield select(
       (state) => state?.costing?.product?.sourceRates?._sourceId

@@ -433,9 +433,6 @@ const SelectLocationContainer = (props) => {
                     }
 
                     if (locationType === "origin") {
-                      console.log(
-                        selectedCosting?.customCostingSelection?.product
-                      );
                       if (selectedCosting?.customCostingSelection?.product) {
                         const sourceId =
                           selectedCosting?.customCostingSelection?.product

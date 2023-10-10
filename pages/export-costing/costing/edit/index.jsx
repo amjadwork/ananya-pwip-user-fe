@@ -211,6 +211,8 @@ function EditCosting() {
         );
       }
 
+      console.log("after update", customCostingSelection);
+
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
         _variantId:
@@ -237,7 +239,9 @@ function EditCosting() {
           customCostingSelection?.containers ||
           selectedMyCostingFromHistory?.details?.containerObject,
         containersCount:
-          selectedMyCostingFromHistory?.details?.containerCount || 1,
+          customCostingSelection?.containerCount ||
+          selectedMyCostingFromHistory?.details?.containerCount ||
+          1,
         containerWeight:
           customCostingSelection?.containersWeight ||
           customCostingSelection?.containers?.weight ||
@@ -316,8 +320,10 @@ function EditCosting() {
   }, []);
 
   React.useEffect(() => {
-    if (selectedMyCostingFromHistory) {
-      console.log(selectedMyCostingFromHistory);
+    if (
+      selectedMyCostingFromHistory &&
+      !selectedCosting?.customCostingSelection?.product
+    ) {
       dispatch(
         setCustomCostingSelection({
           ...selectedCosting,
@@ -344,7 +350,7 @@ function EditCosting() {
         )
       );
     }
-  }, [selectedMyCostingFromHistory]);
+  }, [selectedMyCostingFromHistory, selectedCosting]);
 
   return (
     <React.Fragment>
