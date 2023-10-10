@@ -367,8 +367,11 @@ const SelectLocationContainer = (props) => {
                 onClick={async () => {
                   if (isFromEdit) {
                     if (locationType === "destination") {
+                      const sourceId =
+                        selectedCosting.customCostingSelection.portOfOrigin._id;
+
                       const response = await fetchCHAandSHLandOFCCost(
-                        selectedCosting.customCostingSelection.portOfOrigin._id,
+                        sourceId,
                         items?._id
                       );
 
@@ -430,11 +433,19 @@ const SelectLocationContainer = (props) => {
                     }
 
                     if (locationType === "origin") {
+                      console.log(
+                        selectedCosting?.customCostingSelection?.product
+                      );
                       if (selectedCosting?.customCostingSelection?.product) {
+                        const sourceId =
+                          selectedCosting?.customCostingSelection?.product
+                            ?.sourceRates?._sourceId ||
+                          selectedCosting?.customCostingSelection?.product
+                            ?.sourceObject?._id;
+
                         const response = await fetchTransportationCost(
                           items?._id,
-                          selectedCosting?.customCostingSelection?.product
-                            ?.sourceRates?._sourceId
+                          sourceId
                         );
 
                         if (

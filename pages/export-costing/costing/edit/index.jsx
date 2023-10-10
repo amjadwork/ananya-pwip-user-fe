@@ -33,6 +33,7 @@ import {
   generateCustomCostingRequest,
   fetchGeneratedCostingFailure,
   resetCustomCostingSelection,
+  setCustomCostingSelection,
 } from "@/redux/actions/costing.actions";
 
 // Import Containers
@@ -108,6 +109,7 @@ function EditCosting() {
   const [componentShipmentTerm, setComponentShipmentTerm] =
     React.useState(null);
 
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );
@@ -315,6 +317,22 @@ function EditCosting() {
 
   React.useEffect(() => {
     if (selectedMyCostingFromHistory) {
+      console.log(selectedMyCostingFromHistory);
+      dispatch(
+        setCustomCostingSelection({
+          ...selectedCosting,
+          customCostingSelection: {
+            ...selectedCosting.customCostingSelection,
+            product: {
+              ...selectedMyCostingFromHistory?.details?.variantObject,
+              sourceObject: selectedMyCostingFromHistory?.details?.sourceObject,
+            },
+            portOfOrigin:
+              selectedMyCostingFromHistory?.details?.originPortObject,
+          },
+        })
+      );
+
       dispatch(
         fetchOriginRequest(
           selectedMyCostingFromHistory?.details?.sourceObject?._id
