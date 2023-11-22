@@ -54,10 +54,11 @@ import axios from "axios";
 const lineBetweenLocation = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    width="62"
     height="2"
-    viewBox="0 0 62 2"
+    width="32"
+    viewBox="0 0 32 2"
     fill="none"
+    className="w-auto"
   >
     <path
       d="M0.682129 1L60.8784 1"
@@ -830,7 +831,7 @@ function CostingOverview() {
                       </span>
                     </div>
 
-                    <div className="w-full mt-[12px] inline-flex items-center space-x-[10px] justify-between">
+                    <div className="w-full mt-[12px] inline-flex items-center justify-between">
                       <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                         {generatedCostingData?.details?.originPortObject
                           ?.originPortName ||
