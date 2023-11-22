@@ -34,6 +34,7 @@ export function Header(props) {
   // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
   // const component = props.component;
   const hideLogo = props.hideLogo || false;
+  const handleClickEdit = props.handleClickEdit || null;
 
   const [activeRoute, setActiveRoute] = React.useState("");
   const [environmentBasedClasses, setEnvironmentBasedClasses] =
@@ -102,19 +103,25 @@ export function Header(props) {
           )}
         </div>
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
-          {["more"].includes(activeRoute) && (
+          {["more", "costing"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={() => {
-                router.push("/more/profile-edit");
+                if (activeRoute === "costing") {
+                  router.push("/export-costing/costing/edit");
+                }
+
+                if (activeRoute === "more") {
+                  router.push("/more/profile-edit");
+                }
               }}
             >
               <span>Edit</span>
-              {editIcon}
+              {pencilIcon}
             </div>
           )}
 
-          {!["profile-edit", "more"].includes(activeRoute) && (
+          {!["profile-edit", "more", "costing"].includes(activeRoute) && (
             <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
               <button
                 type="button"
