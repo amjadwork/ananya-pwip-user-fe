@@ -897,7 +897,7 @@ function CostingOverview() {
                                       }`}
                                     >
                                       <div
-                                        className={`w-full pt-4 ${paddingBottom} inline-flex items-center space-x-5 overflow-hidden`}
+                                        className={`w-full pt-4 ${paddingBottom} inline-flex items-start space-x-5 overflow-hidden`}
                                       >
                                         {row?.icon}
                                         <span className="text-pwip-black-600 text-sm font-[600] line-clamp-1">
