@@ -62,9 +62,9 @@ export function Header(props) {
       }
     } else {
       if (route.includes(activeRoute)) {
-        setEnvironmentBasedClasses("h-[72px]");
+        setEnvironmentBasedClasses("h-[56px]");
       } else {
-        setEnvironmentBasedClasses("h-[92px]");
+        setEnvironmentBasedClasses("h-[56px]");
       }
     }
   }, [activeRoute]);
@@ -72,18 +72,21 @@ export function Header(props) {
   return (
     <header
       className={`inline-flex items-center w-full ${environmentBasedClasses} px-5 py-4 ${
-        atRoutes.includes(activeRoute) ? "" : "pb-[28px]"
-      }  space-x-4 bg-pwip-primary fixed top-0 z-10`}
+        atRoutes.includes(activeRoute) ? "" : "pb-4"
+      }  space-x-4 bg-white fixed top-0 z-10`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
           {!hideLogo && !atRoutes.includes(activeRoute) && (
-            <img src="/assets/images/logo-white.png" className="h-full" />
+            <img
+              src="/assets/images/logo-blue.png"
+              className="h-full w-[40px]"
+            />
           )}
 
           {atRoutes.includes(activeRoute) && (
             <div
-              className="inline-flex items-center space-x-2 text-white text-md"
+              className="inline-flex items-center space-x-2 text-pwip-black-600 text-md"
               onClick={() => handleBack()}
             >
               {arrowLeftBackIcon}
@@ -91,7 +94,7 @@ export function Header(props) {
             </div>
           )}
         </div>
-        <div className="text-white inline-flex items-center justify-center">
+        <div className="text-pwip-black-600 inline-flex items-center justify-center">
           {["more"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-md"
@@ -105,7 +108,7 @@ export function Header(props) {
           )}
 
           {!["profile-edit", "more"].includes(activeRoute) && (
-            <div className="h-full w-auto font-sans text-white text-sm inline-flex items-center space-x-2">
+            <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
               <button
                 type="button"
                 onClick={() => {
@@ -116,8 +119,8 @@ export function Header(props) {
                 <span>1 USD = {forexRate?.USD} INR</span>
                 {pencilIcon}
               </button>
-              <span>|</span>
-              <button
+              {/* <span>|</span> */}
+              {/* <button
                 type="button"
                 onClick={() => {
                   const action = {
@@ -131,7 +134,7 @@ export function Header(props) {
               >
                 <span>{shipmentTerms?.shipmentTerm?.selected}</span>
                 {chevronDown}
-              </button>
+              </button> */}
             </div>
           )}
         </div>

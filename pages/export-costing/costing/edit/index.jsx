@@ -7,6 +7,7 @@ import {
   fetchDestinationRequest,
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
+import { api } from "@/utils/helper";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -109,6 +110,7 @@ function EditCosting() {
   const [componentShipmentTerm, setComponentShipmentTerm] =
     React.useState(null);
 
+  const authToken = useSelector((state) => state.auth.token);
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
@@ -210,8 +212,6 @@ function EditCosting() {
           customCostingSelection?.product?.sourceRates?.price
         );
       }
-
-      console.log("after update", customCostingSelection);
 
       const breakUpFormValues = {
         costingName: selectedMyCostingFromHistory?.costingName || "",
@@ -319,11 +319,58 @@ function EditCosting() {
     }
   }, []);
 
-  React.useEffect(() => {
-    if (
-      selectedMyCostingFromHistory &&
-      !selectedCosting?.customCostingSelection?.product
-    ) {
+  async function fetchCHAandSHLandOFCCost(originId, destinationId) {
+    try {
+      const responseCHA = await api.get(
+        `/cha?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const responseSHL = await api.get(
+        `/shl?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const responseOFC = await api.get(
+        `/ofc?origin=${originId}&destination=${destinationId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const response = {
+        shl: responseSHL?.data || [],
+        ofc: responseOFC?.data || [],
+        cha: responseCHA?.data || [],
+      };
+
+      return response;
+    } catch (error) {
+      // Dispatch a failure action in case of an error
+      return error;
+    }
+  }
+
+  async function callFetchCHAandSHLandOFCCost(originId, destinationId) {
+    const response = await fetchCHAandSHLandOFCCost(originId, destinationId);
+
+    if (response) {
       dispatch(
         setCustomCostingSelection({
           ...selectedCosting,
@@ -335,6 +382,9 @@ function EditCosting() {
             },
             portOfOrigin:
               selectedMyCostingFromHistory?.details?.originPortObject,
+            shlData: response?.shl[0]?.destinations[0],
+            ofcData: response?.ofc[0]?.destinations[0],
+            chaData: response?.cha[0]?.destinations[0],
           },
         })
       );
@@ -349,6 +399,21 @@ function EditCosting() {
           selectedMyCostingFromHistory?.details?.sourceObject?._id
         )
       );
+    }
+  }
+
+  React.useEffect(() => {
+    if (
+      selectedMyCostingFromHistory &&
+      !selectedCosting?.customCostingSelection?.product &&
+      !selectedCosting?.customCostingSelection?.shlData
+    ) {
+      const originId =
+        selectedMyCostingFromHistory.details.originPortObject._id;
+      const destinationId =
+        selectedMyCostingFromHistory.details.destinationObject._id;
+
+      callFetchCHAandSHLandOFCCost(originId, destinationId);
     }
   }, [selectedMyCostingFromHistory, selectedCosting]);
 
