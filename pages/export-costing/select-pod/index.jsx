@@ -2,13 +2,28 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 import {
   fetchDestinationRequest,
   fetchOriginRequest,
+  fetchDestinationFailure,
 } from "@/redux/actions/location.actions";
+
+import {
+  generateQuickCostingRequest,
+  fetchGeneratedCostingFailure,
+  resetCostingSelection,
+} from "@/redux/actions/costing.actions";
+import {
+  saveCostingRequest,
+  fetchMyCostingFailure,
+  updateCostingFailure,
+} from "@/redux/actions/myCosting.actions";
+
+import { pencilIcon } from "../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -17,6 +32,8 @@ import { Header } from "@/components/Header";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 // Import Layouts
 
+import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+
 function SelectPortOfDestination() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -24,7 +41,36 @@ function SelectPortOfDestination() {
     (state) => state.costing.product
   );
 
+  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
+  const shipmentTerm = useSelector(
+    (state) => state.shipmentTerm.shipmentTerm.selected
+  );
+  const generatedCosting = useSelector(
+    (state) => state.costing.generatedCosting
+  );
+
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  const [isGenerated, setIsGenerated] = React.useState(false);
+
+  async function handleSaveCosting() {
+    const saveHistoryPayload = getCostingToSaveHistoryPayload(generatedCosting);
+
+    const payloadBody = {
+      ...saveHistoryPayload,
+      isQuickCosting: true,
+    };
+    await dispatch(updateCostingFailure());
+    await dispatch(saveCostingRequest(payloadBody));
+    await dispatch(fetchGeneratedCostingFailure());
+    setIsGenerated(false);
+    router.push("/export-costing/costing");
+  }
+
+  React.useEffect(() => {
+    if (generatedCosting && isGenerated) {
+      handleSaveCosting();
+    }
+  }, [generatedCosting, isGenerated]);
 
   React.useEffect(() => {
     if (!selectedProductForCosting) {
@@ -78,6 +124,97 @@ function SelectPortOfDestination() {
           title="Select Port of Destination"
           showSelectedVariant={true}
         />
+        <div
+          className="w-full rounded-t-lg fixed bottom-0 h-auto px-[24px] py-4 bg-white z-[1000]"
+          style={{
+            boxShadow: "0px -8px 16px 0px rgba(0, 0, 0, 0.08)",
+          }}
+        >
+          <div className="w-full inline-flex flex-col space-y-[6px] mb-[18px]">
+            <div className="w-full inline-flex justify-between items-center">
+              <span className="text-sm font-[700] text-pwip-v2-gray-800 text-left">
+                {selectedCosting?.product?.variantName}
+              </span>
+              <div
+                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm text-pwip-v2-primary-500"
+                onClick={() => {
+                  dispatch(resetCostingSelection());
+                  router.replace("/export-costing");
+                }}
+              >
+                <span className="font-[500]">Edit</span>
+                {pencilIcon}
+              </div>
+            </div>
+            <div className="flex items-center space-x-[10px]">
+              <span className="text-sm font-[400] text-pwip-v2-primary-500 text-left">
+                {selectedCosting?.product?.sourceRates?.sourceName}
+              </span>
+              {selectedCosting?.portOfDestination &&
+              Object.keys(selectedCosting?.portOfDestination).length > 0 ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30"
+                  height="2"
+                  viewBox="0 0 30 2"
+                  fill="none"
+                >
+                  <path
+                    d="M1 1H29.5"
+                    stroke="#2072AB"
+                    strokeLinecap="round"
+                    strokeDasharray="2 2"
+                  />
+                </svg>
+              ) : null}
+
+              <span className="text-sm font-[400] text-pwip-v2-primary-500 text-left">
+                {selectedCosting?.portOfDestination?.portName}
+              </span>
+            </div>
+          </div>
+
+          <Button
+            type={
+              selectedCosting?.product &&
+              Object.keys(selectedCosting?.product)?.length > 0 &&
+              selectedCosting?.portOfDestination &&
+              Object.keys(selectedCosting?.portOfDestination).length > 0
+                ? "primary"
+                : "disabled"
+            }
+            label="Generate costing"
+            disabled={
+              selectedCosting?.product &&
+              Object.keys(selectedCosting?.product)?.length > 0 &&
+              selectedCosting?.portOfDestination &&
+              Object.keys(selectedCosting?.portOfDestination).length > 0
+                ? false
+                : true
+            }
+            onClick={async () => {
+              if (
+                selectedCosting?.product &&
+                Object.keys(selectedCosting?.product)?.length > 0 &&
+                selectedCosting?.portOfDestination &&
+                Object.keys(selectedCosting?.portOfDestination).length > 0
+              ) {
+                await dispatch(fetchGeneratedCostingFailure());
+                await dispatch(fetchMyCostingFailure());
+                const body = {
+                  destinationPortId: selectedCosting?.portOfDestination?._id,
+                  sourceId: selectedCosting?.product?.sourceRates?._sourceId,
+                  sourceRateId: selectedCosting?.product?.sourceRates?._id,
+                  shipmentTermType: shipmentTerm || "FOB",
+                  unit: "mt",
+                };
+                await dispatch(generateQuickCostingRequest(body));
+                // await dispatch(resetCostingSelection());
+                setIsGenerated(true);
+              }
+            }}
+          />
+        </div>
       </AppLayout>
     </React.Fragment>
   );

@@ -31,8 +31,17 @@ import {
 
 import {
   chevronDown,
-  pencilIcon,
-  riceAndBagsIcon,
+  transportationCostIcon,
+  shlCostIcon,
+  ofcCostIcon,
+  inspectionCostIcon,
+  financeCostIcon,
+  overheadsCostIcon,
+  dutyCostIcon,
+  marginCostIcon,
+  cfsCostIcon,
+  costOfRiceIcon,
+  bagTypeIcon,
   handlingAndInspectionIcon,
   otherChargesIcon,
   eyePreviewIcon,
@@ -41,6 +50,23 @@ import {
 } from "../../../theme/icon";
 import { useSession } from "next-auth/react";
 import axios from "axios";
+
+const lineBetweenLocation = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="62"
+    height="2"
+    viewBox="0 0 62 2"
+    fill="none"
+  >
+    <path
+      d="M0.682129 1L60.8784 1"
+      stroke="#003559"
+      strokeLinecap="round"
+      strokeDasharray="2 2"
+    />
+  </svg>
+);
 
 function extractCustomCostingPayload(data) {
   return {
@@ -202,16 +228,17 @@ function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
 let breakupArr = [
   {
     title: "Rice and bags",
-    icon: riceAndBagsIcon,
     afterIcon: "/assets/images/costing/road.png",
     rowItems: [
       {
         label: "Cost of rice",
+        icon: costOfRiceIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "PPWoven-50 Kg",
+        icon: bagTypeIcon,
         category: "bags",
         inr: 0,
         usd: 0,
@@ -220,16 +247,17 @@ let breakupArr = [
   },
   {
     title: "Handling and Inspection",
-    icon: handlingAndInspectionIcon,
     afterIcon: "/assets/images/costing/container.png",
     rowItems: [
       {
         label: "Transportation",
+        icon: transportationCostIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "CFS Handling",
+        icon: cfsCostIcon,
         inr: 0,
         usd: 0,
         breakUp: [
@@ -252,6 +280,7 @@ let breakupArr = [
       },
       {
         label: "Shipping line locals",
+        icon: shlCostIcon,
         inr: 0,
         usd: 0,
         breakUp: [
@@ -274,11 +303,13 @@ let breakupArr = [
       },
       {
         label: "OFC",
+        icon: ofcCostIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "Inspection cost",
+        icon: inspectionCostIcon,
         inr: 0,
         usd: 0,
       },
@@ -286,26 +317,29 @@ let breakupArr = [
   },
   {
     title: "Other chargers",
-    icon: otherChargesIcon,
     afterIcon: "/assets/images/costing/ocean.png",
     rowItems: [
       {
         label: "Finance cost",
+        icon: financeCostIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "Overheads",
+        icon: overheadsCostIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "Margin",
+        icon: marginCostIcon,
         inr: 0,
         usd: 0,
       },
       {
         label: "20% Export duty",
+        icon: dutyCostIcon,
         inr: 0,
         usd: 0,
       },
@@ -350,7 +384,7 @@ function CostingOverview() {
     closeToastMessage,
   } = useOverlayContext();
 
-  const [showBreakup, setShowBreakup] = useState(false);
+  const [showBreakup, setShowBreakup] = useState(true);
   const [breakupChargesData, setBreakupChargesData] = useState([]);
   const [isChangingUnit, setIsChangingUnit] = useState(false);
   const [selectedUnit, setSelectedUnit] = React.useState({
@@ -735,211 +769,198 @@ function CostingOverview() {
         <Header />
 
         <div
-          className={`min-h-screen h-full w-full bg-white overflow-auto px-5 pb-8 pt-[78px] inline-flex flex-col justify-between hide-scroll-bar`}
+          className={`min-h-screen h-full w-full bg-white overflow-auto pb-8 pt-[56px] inline-flex flex-col justify-between hide-scroll-bar`}
         >
-          <div className="inline-flex flex-col w-full h-full pt-[20px] pb-[82px]">
-            <div className="inline-flex flex-col w-full space-y-2">
-              <div className="inline-flex items-center justify-between">
-                <span className="text-pwip-gray-900 text-base font-normal font-sans line-clamp-1">
-                  Your Costing Bill
-                </span>
+          <div className="inline-flex flex-col w-full h-full pb-[82px] bg-pwip-v2-gray-50">
+            <div className="px-5 py-5 w-full h-auto bg-pwip-v2-yellow-100">
+              <div className="inline-flex flex-col w-full space-y-2">
                 <div
-                  onClick={() => handleOpenUnitSelectBottomSheet()}
-                  className="inline-flex items-center space-x-3 text-pwip-gray-1000 text-sm cursor-pointer"
+                  className="py-4 px-5 rounded-lg bg-white overflow-hidden"
+                  style={{
+                    boxShadow: "0px 4px 10px 0px rgba(0, 0, 0, 0.08)",
+                  }}
                 >
-                  <span className="text-sm font-normal font-sans line-clamp-1">
-                    {selectedUnit?.label}
-                  </span>
-                  {chevronDown}
-                </div>
-              </div>
-              <div
-                className="border-[1px] border-pwip-gray-650 py-2 px-3 rounded-lg"
-                onClick={() => setShowBreakup(!showBreakup)}
-                style={{
-                  boxShadow:
-                    "0px 4px 0px 0px rgba(0, 0, 0, 0.08), 0px 3px 6px -4px rgba(0, 0, 0, 0.12)",
-                }}
-              >
-                <div className="inline-flex items-center justify-between w-full">
-                  <span className="text-pwip-gray-1000 text-lg font-normal font-sans line-clamp-1">
-                    {generatedCostingData?.details?.originPortObject
-                      ?.originPortName ||
-                      generatedCostingData?.details?.originPortObject
-                        ?.portName ||
-                      "-/-"}{" "}
-                    -{" "}
-                    {generatedCostingData?.details?.destinationObject
-                      ?.portName || "-/-"}
-                  </span>
-                  <div
-                    className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
-                    onClick={async () => {
-                      setShowBreakup(false);
-                      if (myRecentSavedCosting) {
-                        await dispatch(updateCostingFailure());
-                        await dispatch(
-                          fetchMyCostingRequest(myRecentSavedCosting._id)
-                        );
-                      }
-                      router.push("/export-costing/costing/edit");
-                    }}
-                  >
-                    <span className="text-xs font-medium font-sans line-clamp-1">
-                      Edit
-                    </span>
-                    {pencilIcon}
+                  <div className="inline-flex items-center justify-between w-full">
+                    <div className="w-full inline-flex flex-col">
+                      <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1 mb-[4px]">
+                        {shipmentTerm}
+                      </span>
+                      <div className="inline-flex items-end space-x-1 text-pwip-v2-green-800">
+                        <span className="text-xl font-[700] font-sans line-clamp-1">
+                          $
+                          {inrToUsd(
+                            generatedCostingData?.grandTotal || 0,
+                            forexRate.USD
+                          )}
+                        </span>
+                        <span className="text-sm mb-[2.5px] font-[400] font-sans line-clamp-1">
+                          /{selectedUnit?.value}
+                        </span>
+                      </div>
+                      <span className="mt-[6px] text-pwip-v2-primary text-sm font-[700] font-sans line-clamp-1">
+                        ₹{generatedCostingData?.grandTotal || 0}
+                      </span>
+                    </div>
+
+                    <div
+                      className="inline-flex items-center justify-end text-pwip-gray-800 space-x-2"
+                      // onClick={async () => {
+                      //   if (myRecentSavedCosting) {
+                      //     await dispatch(updateCostingFailure());
+                      //     await dispatch(
+                      //       fetchMyCostingRequest(myRecentSavedCosting._id)
+                      //     );
+                      //   }
+                      //   router.push("/export-costing/costing/edit");
+                      // }}
+                    >
+                      <img
+                        src="/assets/images/costing/ship.svg"
+                        className="h-auto w-[220px]"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                  {shipmentTerm}
-                </span>
+                  <div className="inline-flex flex-col w-full mt-5">
+                    <div className="inline-flex items-center space-x-2">
+                      <span className="text-pwip-v2-primary text-sm font-normal font-sans line-clamp-1">
+                        {generatedCostingData?.details?.variantObject
+                          ?.variantName || "-/-"}
+                      </span>
+                      <span className="text-sm text-pwip-v2-primary-700 font-normal font-sans line-clamp-1">
+                        {generatedCostingData?.brokenPercentage || 0}% broken
+                      </span>
+                    </div>
 
-                <div className="inline-flex items-center justify-between w-full mt-2">
-                  <span className="text-pwip-gray-1000 text-sm font-normal font-sans line-clamp-1">
-                    {generatedCostingData?.details?.variantObject
-                      ?.variantName || "-/-"}
-                  </span>
-                  <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
-                    <span className="text-base font-medium font-sans line-clamp-1">
-                      ₹{generatedCostingData?.grandTotal || 0}
-                    </span>
+                    <div className="w-full mt-[12px] inline-flex items-center space-x-[10px] justify-between">
+                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                        {generatedCostingData?.details?.originPortObject
+                          ?.originPortName ||
+                          generatedCostingData?.details?.originPortObject
+                            ?.portName ||
+                          "-/-"}
+                      </span>
 
-                    <span className="text-base font-medium font-sans line-clamp-1">
-                      $
-                      {inrToUsd(
-                        generatedCostingData?.grandTotal || 0,
-                        forexRate.USD
-                      )}
-                    </span>
+                      {lineBetweenLocation}
+
+                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                        {generatedCostingData?.details?.sourceObject?.region ||
+                          "-/-"}
+                      </span>
+
+                      {lineBetweenLocation}
+
+                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                        {generatedCostingData?.details?.destinationObject
+                          ?.portName || "-/-"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="inline-flex items-center justify-between w-full text-pwip-gray-500">
-                  <span className="text-sm font-normal font-sans line-clamp-1">
-                    {generatedCostingData?.brokenPercentage || 0}% broken
-                  </span>
-                  <div className="inline-flex items-center justify-end  space-x-4">
-                    <span className="text-sm font-medium font-sans line-clamp-1">
-                      Per {selectedUnit?.label}
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  className={`w-full inline-flex items-center justify-center text-pwip-gray-550 cursor-pointer transition-transform ${
-                    showBreakup ? "rotate-180" : "rotate-0"
-                  }`}
-                >
-                  {chevronDown}
                 </div>
               </div>
             </div>
 
             {showBreakup && (
               <React.Fragment>
-                <div className="inline-flex items-center justify-center my-[10px]">
-                  <span className="text-pwip-gray-500 text-sm font-normal font-sans line-clamp-1 text-center">
-                    Costing Breakup
-                  </span>
-                </div>
-
-                <div className="inline-flex flex-col w-full">
+                <div className="inline-flex flex-col w-full px-5 py-5 space-y-5">
                   {breakupChargesData.map((item, index) => {
                     const hasBreakup = breakupChargesData[index].rowItems.some(
                       (d) => d?.breakUp?.length
                     );
                     return (
                       <React.Fragment key={item.title + index}>
-                        <div
-                          onClick={() => {
-                            if (hasBreakup) {
-                              handleOpenBreakUpBottomSheet(index);
-                            }
-                          }}
-                          className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40"
-                        >
-                          <div className="inline-flex items-center justify-between w-full p-3 border-[1px] border-pwip-gray-40">
-                            <div className="inline-flex items-center space-x-2 w-full">
-                              {item.icon}
-                              <span className="text-pwip-gray-1000 text-base font-medium">
+                        <div className="bg-white border-[1px] border-pwip-v2-gray-250 rounded-lg">
+                          <div className="inline-flex items-center justify-between w-full px-5 py-6 rounded-t-lg">
+                            <div className="inline-flex flex-col items-start space-y-[4px] w-full">
+                              <span className="text-pwip-v2-primary text-base font-[700]">
                                 {item.title}
                               </span>
-                            </div>
-
-                            {hasBreakup && (
-                              <div className="text-pwip-gray-550">
-                                {eyePreviewIcon}
-                              </div>
-                            )}
-                          </div>
-
-                          <div className="inline-flex items-center w-full">
-                            <div className="w-[60%] pt-4 pb-2 px-4 inline-flex items-center">
-                              <span className="text-pwip-gray-750 text-sm font-normal">
-                                Details
-                              </span>
-                            </div>
-                            <div className="w-[20%] pt-4 pb-2 px-4 inline-flex items-center justify-end">
-                              <span className="text-pwip-gray-750 text-sm font-normal">
-                                ₹INR
-                              </span>
-                            </div>
-                            <div className="w-[20%] pt-4 pb-2 px-4 inline-flex items-center justify-end">
-                              <span className="text-pwip-gray-750 text-sm font-normal">
-                                $USD
+                              <span className="text-pwip-black-600 text-xs font-[400]">
+                                Some note or information for user
                               </span>
                             </div>
                           </div>
 
-                          {item.rowItems.map((row, rowIndex) => {
-                            let paddingBottom = "pb-2";
-                            if (rowIndex === item.rowItems.length - 1) {
-                              paddingBottom = "pb-4";
-                            }
-                            return (
-                              <div
-                                key={row.label + rowIndex}
-                                className="inline-flex items-center w-full"
-                              >
-                                <div
-                                  className={`w-[60%] pt-4 ${paddingBottom} px-4 inline-flex items-center`}
-                                >
-                                  <span className="text-pwip-gray-850 text-sm font-normal">
-                                    {row.label}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`w-[20%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
-                                >
-                                  <span className="text-pwip-gray-850 text-sm font-normal">
-                                    {row.inr}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`w-[20%] text-right pt-4 ${paddingBottom} px-4 inline-flex items-center justify-end`}
-                                >
-                                  <span className="text-pwip-gray-850 text-sm font-normal">
-                                    {row.usd}
-                                  </span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <div className="w-full inline-flex items-center justify-center">
-                          <img
-                            src={item.afterIcon}
-                            className="h-[40px] w-[22px] bg-cover"
-                          />
+                          <div className="w-full">
+                            {item.rowItems.map((row, rowIndex) => {
+                              let paddingBottom = "pb-2";
+                              if (rowIndex === item.rowItems.length - 1) {
+                                paddingBottom = "pb-4";
+                              }
+                              return (
+                                <React.Fragment>
+                                  <div className="w-full px-5">
+                                    <div
+                                      key={row.label + rowIndex}
+                                      className={`inline-flex items-start w-full ${
+                                        rowIndex === item.rowItems.length - 1
+                                          ? ""
+                                          : "border-b-[1px] border-b-pwip-v2-gray-250"
+                                      }`}
+                                    >
+                                      <div
+                                        className={`w-full pt-4 ${paddingBottom} inline-flex items-center space-x-5 overflow-hidden`}
+                                      >
+                                        {row?.icon}
+                                        <span className="text-pwip-black-600 text-sm font-[600] line-clamp-1">
+                                          {row.label}
+                                        </span>
+                                      </div>
+                                      <div
+                                        className={`w-full max-w-[36%] text-right pt-4 ${paddingBottom} inline-flex flex-col space-y-[6px]`}
+                                      >
+                                        <span className="text-pwip-black-600 text-sm font-[600]">
+                                          ${row.usd}
+                                        </span>
+                                        <span className="text-pwip-v2-primary-700 text-xs font-normal">
+                                          ₹{row.inr}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {rowIndex === item.rowItems.length - 1 &&
+                                  hasBreakup ? (
+                                    <div
+                                      onClick={() => {
+                                        if (hasBreakup) {
+                                          handleOpenBreakUpBottomSheet(index);
+                                        }
+                                      }}
+                                      className="border-t-[1px] border-t-pwip-v2-gray-250 w-full py-4 text-pwip-v2-primary-700 text-sm inline-flex items-center justify-center space-x-2"
+                                    >
+                                      <span className="text-center ">
+                                        Show breakup for CFS & SHL
+                                      </span>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="17"
+                                        height="17"
+                                        viewBox="0 0 17 17"
+                                        fill="none"
+                                      >
+                                        <path
+                                          d="M9.5625 3.1875L14.875 8.5M14.875 8.5L9.5625 13.8125M14.875 8.5H2.125"
+                                          stroke="currentColor"
+                                          strokeWidth="1.5"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>
+                                    </div>
+                                  ) : null}
+                                </React.Fragment>
+                              );
+                            })}
+                          </div>
                         </div>
                       </React.Fragment>
                     );
                   })}
                 </div>
 
-                <div className="rounded-md bg-pwip-gray-45 border-[1px] border-pwip-gray-40">
-                  <div className="inline-flex items-center w-full">
+                {/* <div className="rounded-md px-5">
+                  <div className="inline-flex items-center w-full bg-pwip-gray-45 border-[1px] border-pwip-gray-40">
                     <div
                       className={`w-[60%] py-4 px-4 inline-flex items-center`}
                     >
@@ -966,26 +987,73 @@ function CostingOverview() {
                       </span>
                     </div>
                   </div>
-                </div>
+                </div> */}
               </React.Fragment>
             )}
           </div>
-          <div className="inline-flex items-center w-full space-x-6 px-5 py-5 fixed bottom-0 left-0 backdrop-blur">
-            <Button
-              type="outline"
-              label="Create new"
-              onClick={() => {
-                dispatch(saveCostingFailure());
-                setGeneratedCostingData(null);
-                router.replace("/export-costing");
-              }}
-            />
-            <Button
-              type="subtle"
-              label="Share"
-              onClick={handleShareBottomSheet}
-            />
-            {/* <Button type="subtle" label="Download" onClick={handleDownload} /> */}
+          <div className="inline-flex items-center w-full space-x-6 px-5 py-5 fixed bottom-0 left-0 bg-white">
+            <div className="w-full">
+              <Button
+                type="outline"
+                label="Back to home"
+                onClick={() => {
+                  dispatch(saveCostingFailure());
+                  setGeneratedCostingData(null);
+                  router.replace("/export-costing");
+                }}
+              />
+            </div>
+            <div className="inline-flex items-center justify-end space-x-4 w-full">
+              <Button
+                type="outline"
+                labelAsIcon={true}
+                label={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="17"
+                    viewBox="0 0 14 17"
+                    fill="none"
+                  >
+                    <path
+                      d="M3.73432 7.72245C3.57551 7.41384 3.32631 7.17092 3.02584 7.03181C2.72536 6.89271 2.39063 6.86531 2.07417 6.9539C1.75771 7.04249 1.47745 7.24206 1.27738 7.52129C1.07731 7.80052 0.96875 8.14359 0.96875 8.49666C0.96875 8.84973 1.07731 9.1928 1.27738 9.47203C1.47745 9.75126 1.75771 9.95083 2.07417 10.0394C2.39063 10.128 2.72536 10.1006 3.02584 9.96151C3.32631 9.8224 3.57551 9.57948 3.73432 9.27087M3.73432 7.72245C3.85238 7.95195 3.91993 8.21545 3.91993 8.49666C3.91993 8.77787 3.85238 9.04208 3.73432 9.27087M3.73432 7.72245L10.0083 3.95837M3.73432 9.27087L10.0083 13.035M10.0083 3.95837C10.1003 4.14547 10.2259 4.31088 10.3778 4.44494C10.5297 4.579 10.7047 4.67902 10.8928 4.73915C11.0809 4.79927 11.2782 4.8183 11.4732 4.79512C11.6681 4.77194 11.8569 4.70701 12.0283 4.60413C12.1998 4.50125 12.3505 4.36249 12.4718 4.19595C12.593 4.02942 12.6823 3.83845 12.7344 3.63422C12.7865 3.42999 12.8003 3.2166 12.7752 3.00651C12.75 2.79642 12.6863 2.59386 12.5878 2.41066C12.3937 2.04965 12.0762 1.7853 11.7036 1.67443C11.3309 1.56356 10.9329 1.61502 10.595 1.81775C10.2571 2.02049 10.0064 2.3583 9.89666 2.75859C9.78696 3.15887 9.82705 3.58967 10.0083 3.95837ZM10.0083 13.035C9.91418 13.218 9.85434 13.4192 9.83222 13.6272C9.81009 13.8352 9.82612 14.0459 9.87938 14.2472C9.93263 14.4485 10.0221 14.6365 10.1426 14.8004C10.2632 14.9644 10.4124 15.1011 10.5819 15.2028C10.7513 15.3045 10.9377 15.3691 11.1303 15.393C11.3228 15.4169 11.5179 15.3996 11.7043 15.3421C11.8907 15.2845 12.0648 15.1879 12.2166 15.0578C12.3684 14.9276 12.495 14.7664 12.5891 14.5834C12.7793 14.2138 12.8256 13.7777 12.7181 13.3712C12.6105 12.9646 12.3578 12.6208 12.0156 12.4155C11.6734 12.2102 11.2696 12.1601 10.8932 12.2763C10.5167 12.3924 10.1984 12.6653 10.0083 13.035Z"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                }
+                onClick={() => {
+                  handleShare();
+                }}
+              />
+
+              <Button
+                type="primary"
+                labelAsIcon={true}
+                label={
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="17"
+                    height="17"
+                    viewBox="0 0 17 17"
+                    fill="none"
+                  >
+                    <path
+                      d="M2.125 11.6875V13.2812C2.125 13.7039 2.29291 14.1093 2.5918 14.4082C2.89068 14.7071 3.29606 14.875 3.71875 14.875H13.2812C13.7039 14.875 14.1093 14.7071 14.4082 14.4082C14.7071 14.1093 14.875 13.7039 14.875 13.2812V11.6875M11.6875 8.5L8.5 11.6875M8.5 11.6875L5.3125 8.5M8.5 11.6875V2.125"
+                      stroke="white"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                }
+                onClick={() => {
+                  handleDownload();
+                }}
+              />
+            </div>
           </div>
         </div>
       </AppLayout>

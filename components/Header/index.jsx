@@ -15,7 +15,14 @@ import {
 } from "@/redux/actions/shipmentTerms.actions";
 import { resetCustomCostingSelection } from "@/redux/actions/costing.actions";
 
-const atRoutes = ["costing", "edit", "my-costing", "more", "profile-edit"];
+const atRoutes = [
+  "select-pod",
+  "costing",
+  "edit",
+  "my-costing",
+  "more",
+  "profile-edit",
+];
 
 export function Header(props) {
   const router = useRouter();
@@ -86,7 +93,7 @@ export function Header(props) {
 
           {atRoutes.includes(activeRoute) && (
             <div
-              className="inline-flex items-center space-x-2 text-pwip-black-600 text-md"
+              className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
               onClick={() => handleBack()}
             >
               {arrowLeftBackIcon}
@@ -97,7 +104,7 @@ export function Header(props) {
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
           {["more"].includes(activeRoute) && (
             <div
-              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-md"
+              className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={() => {
                 router.push("/more/profile-edit");
               }}
@@ -116,7 +123,7 @@ export function Header(props) {
                 }}
                 className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
               >
-                <span>1 USD = {forexRate?.USD} INR</span>
+                <span>USD = ₹{forexRate?.USD}</span>
                 {pencilIcon}
               </button>
               {/* <span>|</span> */}

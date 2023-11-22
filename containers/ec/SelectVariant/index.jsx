@@ -128,12 +128,6 @@ const SelectVariantContainer = (props) => {
         setListProductsData(
           [...products.products].slice(5, products.products.length - 1)
         );
-        localStorage.setItem(
-          "dummy",
-          JSON.stringify(
-            [...products.products].slice(5, products.products.length - 1)
-          )
-        );
       }
     }
   }, [products]);
@@ -299,18 +293,18 @@ const SelectVariantContainer = (props) => {
           </h2>
 
           <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-[1px]">
-            <div class="flex flex-nowrap">
+            <div className="flex flex-nowrap">
               {[...popularSourceLocations].map((items, index) => {
                 return (
                   <div
                     key={items?.name + (index + 1 * 2)}
-                    class="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
+                    className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
                     style={{
                       boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                       backdropFilter: "blur(8px)",
                     }}
                   >
-                    <div class="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                    <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
                       <img
                         src={"/assets/images/" + items?.icon}
                         className="w-[24px] h-[24px]"
@@ -342,9 +336,9 @@ const SelectVariantContainer = (props) => {
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
-              <div class="flex flex-nowrap">
-                <div class="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div class="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+              <div className="flex flex-nowrap">
+                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
                     <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
                       Filter
                     </span>
@@ -358,16 +352,16 @@ const SelectVariantContainer = (props) => {
                       <path
                         d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
                         stroke="#434B53"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </div>
                 </div>
 
-                <div class="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div class="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
                     <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
                       Sort
                     </span>
@@ -381,9 +375,9 @@ const SelectVariantContainer = (props) => {
                       <path
                         d="M12 1L6.5 6.5L1 1"
                         stroke="#434B53"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
                   </div>
@@ -393,9 +387,9 @@ const SelectVariantContainer = (props) => {
                   return (
                     <div
                       key={items?.name + (index + 1 * 2)}
-                      class="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                      className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
                     >
-                      <div class="overflow-hidden w-auto h-auto inline-flex items-center">
+                      <div className="overflow-hidden w-auto h-auto inline-flex items-center">
                         <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
                           {items?.name}
                         </span>
