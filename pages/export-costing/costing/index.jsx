@@ -927,7 +927,7 @@ function CostingOverview() {
                     </div>
 
                     <div className="w-full mt-[12px] flex items-center justify-between">
-                      <div className="inline-flex items-center space-x-3">
+                      <div className="inline-flex items-center justify-center space-x-3 w-auto">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.originPortObject
                             ?.portName === "Visakhapatnam Port"
@@ -937,22 +937,22 @@ function CostingOverview() {
                         </span>
                       </div>
 
-                      <div className="inline-flex items-center space-x-3 text-pwip-v2-primary">
+                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary w-auto">
                         {lineBetweenLocation}
                       </div>
 
-                      <div className="inline-flex items-center space-x-3">
+                      <div className="inline-flex items-center justify-center space-x-3 w-auto">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.sourceObject
                             ?.region || "-/-"}
                         </span>
                       </div>
 
-                      <div className="inline-flex items-center space-x-3 text-pwip-v2-primary">
+                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary w-auto">
                         {lineBetweenLocation}
                       </div>
 
-                      <div className="inline-flex items-center space-x-3">
+                      <div className="inline-flex items-center justify-center space-x-3 w-auto">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.destinationObject
                             ?.portName || "-/-"}
