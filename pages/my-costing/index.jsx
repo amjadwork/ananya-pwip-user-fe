@@ -329,9 +329,9 @@ function MyCosting() {
                       <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
                         <div className="inline-flex items-center space-x-3">
                           <span className="text-pwip-black-600 text-xs font-[600] font-sans line-clamp-1">
-                            {items?.originPortName === "Visakhapatnam Port"
-                              ? "Vizag Port"
-                              : items?.originPortName}
+                            {items?.sourceName === "Visakhapatnam"
+                              ? "Vizag"
+                              : items?.sourceName}
                           </span>
                         </div>
 

@@ -98,7 +98,7 @@ function More() {
               >
                 <div className="inline-flex items-center space-x-4">
                   <div
-                    className="inline-flex items-center justify-center p-2 rounded-md bg-opacity-[0.4]"
+                    className="h-[36px] w-[36px] inline-flex items-center justify-center p-2 rounded-md bg-opacity-[0.4]"
                     style={{
                       backgroundColor: items?.backgroundColor,
                     }}
