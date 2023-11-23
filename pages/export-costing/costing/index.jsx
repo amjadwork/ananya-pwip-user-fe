@@ -806,12 +806,10 @@ function CostingOverview() {
                 <div className="inline-flex items-center space-x-3 max-w-[28%]">
                   <span className="text-white text-xs font-[700] font-sans line-clamp-1">
                     {generatedCostingData?.details?.originPortObject
-                      ?.originPortName === "Visakhapatnam Port"
+                      ?.portName === "Visakhapatnam Port"
                       ? "Vizag Port"
                       : generatedCostingData?.details?.originPortObject
-                          ?.portName === "Visakhapatnam Port"
-                      ? "Vizag Port"
-                      : "-/-"}
+                          ?.portName}
                   </span>
                 </div>
 
@@ -824,7 +822,7 @@ function CostingOverview() {
                     {generatedCostingData?.details?.sourceObject?.region ===
                     "Visakhapatnam"
                       ? "Vizag"
-                      : "-/-"}
+                      : generatedCostingData?.details?.sourceObject?.region}
                   </span>
                 </div>
 
@@ -932,12 +930,10 @@ function CostingOverview() {
                       <div className="inline-flex items-center space-x-3 max-w-[28%]">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.originPortObject
-                            ?.originPortName === "Visakhapatnam Port"
+                            ?.portName === "Visakhapatnam Port"
                             ? "Vizag Port"
                             : generatedCostingData?.details?.originPortObject
-                                ?.portName === "Visakhapatnam Port"
-                            ? "Vizag Port"
-                            : "-/-"}
+                                ?.portName}
                         </span>
                       </div>
 
