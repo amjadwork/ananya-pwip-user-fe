@@ -57,7 +57,7 @@ const lineBetweenLocation = (
     height="2"
     viewBox="0 0 32 2"
     fill="none"
-    className="w-full"
+    className="w-auto"
   >
     <path
       d="M0.682129 1L60.8784 1"
