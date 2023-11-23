@@ -25,6 +25,23 @@ import { riceGrainIcon } from "../../theme/icon";
 
 // Import Layouts
 
+const lineBetweenLocation = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    height="2"
+    viewBox="0 0 32 2"
+    fill="none"
+    className="w-auto"
+  >
+    <path
+      d="M0.682129 1L60.8784 1"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeDasharray="2 2"
+    />
+  </svg>
+);
+
 const popularFilters = [
   {
     name: "Basmati",
@@ -262,7 +279,7 @@ function MyCosting() {
               </div>
             </div>
 
-            <div className="w-full space-y-4">
+            <div className="w-full space-y-5">
               {allMyCostingsData?.map((items, index) => {
                 return (
                   <div
@@ -283,54 +300,94 @@ function MyCosting() {
                       router.push("/export-costing/costing");
                     }}
                   >
-                    <div className="inline-flex items-center justify-between w-full">
-                      <div className="inline-flex items-center space-x-2 max-w-[70%] overflow-hidden">
-                        {riceGrainIcon}
-                        <span className="line-clamp-1 text-sm text-pwip-gray-900 uppercase">
+                    <div className="inline-flex items-start justify-between w-full">
+                      <div className="inline-flex flex-col items-start max-w-[70%] overflow-hidden">
+                        <span className="line-clamp-1 text-sm text-pwip-black-600 font-[700] uppercase">
                           {items?.costingName ||
                             `${items?.variantName} - ${items?.destinationPortName}`}
                         </span>
+                        <div className="inline-flex items-end space-x-2 mt-[8px]">
+                          <span className="text-pwip-black-600 text-sm font-normal font-sans line-clamp-1">
+                            {items?.variantName}
+                          </span>
+                        </div>
                       </div>
 
-                      <span className="line-clamp-1 text-sm text-pwip-gray-500">
-                        {moment(items?.createdAt).format("DD/MM/YYYY")}
-                      </span>
-                    </div>
-                    <div className="inline-flex items-center justify-between w-full mt-2">
-                      <div className="inline-flex items-center space-x-2">
-                        <span className="line-clamp-1 text-base text-pwip-gray-1000">
-                          {items?.originPortName} - {items?.destinationPortName}
+                      <div className="inline-flex text-right flex-col items-end justify-end text-pwip-v2-green-800">
+                        <span className="text-sm font-[700] font-sans line-clamp-1">
+                          ${inrToUsd(items?.grandTotal, forexRate.USD)}/
+                          {items?.unit}
                         </span>
-                      </div>
 
-                      <span className="line-clamp-1 text-sm text-pwip-gray-900">
-                        {items?.termOfAgreement}
-                      </span>
-                    </div>
-
-                    <div className="inline-flex items-center justify-between w-full mt-2">
-                      <span className="text-pwip-gray-800 text-xs font-normal font-sans line-clamp-1">
-                        {items?.variantName}
-                      </span>
-                      <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
-                        <span className="text-base font-medium font-sans line-clamp-1">
+                        <span className="text-xs font-[700] font-sans line-clamp-1 text-pwip-v2-primary mt-[8px]">
                           ₹{items?.grandTotal}
                         </span>
-
-                        <span className="text-base font-medium font-sans line-clamp-1">
-                          ${inrToUsd(items?.grandTotal, forexRate.USD)}
-                        </span>
                       </div>
                     </div>
 
-                    <div className="inline-flex items-center justify-between w-full text-pwip-gray-800">
-                      <span className="text-xs font-normal font-sans line-clamp-1">
-                        {items?.brokenPercentage || 0}% Broken
-                      </span>
-                      <div className="inline-flex items-center justify-end">
-                        <span className="text-xs font-medium font-sans line-clamp-1 text-pwip-gray-500">
-                          Per{" "}
-                          {units?.find((u) => u.value === items.unit)?.label}
+                    <div className="inline-flex items-center justify-between w-full mt-6 mb-[8px]">
+                      <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
+                        <div className="inline-flex items-center space-x-3">
+                          <span className="text-pwip-black-600 text-xs font-[600] font-sans line-clamp-1">
+                            {items?.originPortName === "Visakhapatnam Port"
+                              ? "Vizag Port"
+                              : items?.originPortName}
+                          </span>
+                        </div>
+
+                        <div className="inline-flex items-center space-x-3 text-pwip-black-600">
+                          {lineBetweenLocation}
+                        </div>
+
+                        <div className="inline-flex items-center space-x-3">
+                          <span className="text-pwip-black-600 text-xs font-[600] font-sans line-clamp-1">
+                            {items?.originPortName === "Visakhapatnam Port"
+                              ? "Vizag Port"
+                              : items?.originPortName}
+                          </span>
+                        </div>
+
+                        <div className="inline-flex items-center space-x-3 text-pwip-black-600">
+                          {lineBetweenLocation}
+                        </div>
+
+                        <div className="inline-flex items-center space-x-3">
+                          <span className="text-pwip-black-600 text-xs font-[600] font-sans line-clamp-1">
+                            {items?.destinationPortName || "-/-"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="w-full inline-flex items-center justify-between text-pwip-gray-550">
+                      <div className="inline-flex items-center space-x-4">
+                        <span className="text-sm font-normal font-sans line-clamp-1">
+                          {items?.brokenPercentage || 0}% Broken
+                        </span>
+                        <div className="h-[18px] w-[1px] bg-pwip-gray-550" />
+                        <span className="line-clamp-1 text-sm">
+                          {items?.termOfAgreement || ""}
+                        </span>
+                      </div>
+                      <div className="inline-flex items-start space-x-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M4.44768 2V3.5M11.3663 2V3.5M1.97675 12.5V5C1.97675 4.60218 2.13294 4.22064 2.41098 3.93934C2.68901 3.65804 3.0661 3.5 3.4593 3.5H12.3547C12.7479 3.5 13.1249 3.65804 13.403 3.93934C13.681 4.22064 13.8372 4.60218 13.8372 5V12.5M1.97675 12.5C1.97675 12.8978 2.13294 13.2794 2.41098 13.5607C2.68901 13.842 3.0661 14 3.4593 14H12.3547C12.7479 14 13.1249 13.842 13.403 13.5607C13.681 13.2794 13.8372 12.8978 13.8372 12.5M1.97675 12.5V7.5C1.97675 7.10218 2.13294 6.72064 2.41098 6.43934C2.68901 6.15804 3.0661 6 3.4593 6H12.3547C12.7479 6 13.1249 6.15804 13.403 6.43934C13.681 6.72064 13.8372 7.10218 13.8372 7.5V12.5"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+                        <span className="line-clamp-1 text-sm">
+                          {items?.createdAt
+                            ? moment(items?.createdAt).format("DD/MM/YYYY")
+                            : "N/A"}
                         </span>
                       </div>
                     </div>
