@@ -25,6 +25,29 @@ import { riceGrainIcon } from "../../theme/icon";
 
 // Import Layouts
 
+const popularFilters = [
+  {
+    name: "Basmati",
+    icon: "one.png",
+  },
+  {
+    name: "Paraboiled",
+    icon: "two.png",
+  },
+  {
+    name: "Raw",
+    icon: "three.png",
+  },
+  {
+    name: "Steam",
+    icon: "four.png",
+  },
+  {
+    name: "Steam",
+    icon: "five.png",
+  },
+];
+
 const units = [
   {
     label: "Metric ton",
@@ -49,6 +72,11 @@ function MyCosting() {
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
+  const [searchStringValue, setSearchStringValue] = React.useState("");
+
+  function handleSearch(searchString) {
+    //
+  }
 
   React.useEffect(() => {
     if (
@@ -96,98 +124,220 @@ function MyCosting() {
         <Header />
 
         <div
-          className={`relative top-[72px] h-full w-full bg-pwip-white-100 z-0 py-6 px-5`}
+          className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0 py-6`}
         >
           <div
             id="fixedMenuSection"
-            className={`fixed left-0 top-[72px] h-[auto] w-full bg-white z-0 py-3 px-5`}
+            className={`fixed left-0 top-[56px] h-[auto] w-full bg-white z-0 pt-3 pb-6 px-5`}
           >
-            <input
-              placeholder="Search previous costing"
-              className="h-[48px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
-            />
+            <div
+              style={{
+                filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
+              }}
+              className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
+            >
+              <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
+                <svg
+                  width="17"
+                  height="16"
+                  viewBox="0 0 17 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    opacity="0.7"
+                    d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
+                    stroke="#878D96"
+                    strokeWidth="1.52292"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+              <input
+                placeholder="Search for a variety of rice"
+                className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
+                value={searchStringValue}
+                onChange={(event) => {
+                  setSearchStringValue(event.target.value);
+                  handleSearch(event.target.value);
+                }}
+              />
+              {!allMyCostingsData.length ? (
+                <button
+                  onClick={() => {
+                    setSearchStringValue("");
+                    handleSearch("");
+                  }}
+                  className="outline-none border-none bg-transparent inline-flex items-center justify-center"
+                >
+                  <svg
+                    width="19"
+                    height="19"
+                    viewBox="0 0 19 19"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
+                      stroke="#686E6D"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              ) : null}
+            </div>
           </div>
           <div
-            className={`min-h-[calc(100vh-196px)] inline-flex flex-col space-y-3 h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
+            className={`min-h-[calc(100vh-140px)] inline-flex flex-col h-full w-full px-5 bg-pwip-v2-gray-100 pb-0 overflow-auto hide-scroll-bar`}
             style={{
-              paddingTop: mainContainerHeight - 20 + "px",
+              paddingTop: mainContainerHeight + "px",
               paddingBottom: mainContainerHeight + 20 + "px",
             }}
           >
-            {allMyCostingsData?.map((items, index) => {
-              return (
-                <div
-                  key={items._id + index}
-                  className="border-[1px] border-pwip-gray-650 rounded-md px-4 py-3 cursor-pointer"
-                  style={{
-                    boxShadow:
-                      "0px 1.06333327293396px 0px 0px rgba(0, 0, 0, 0.15)",
-                  }}
-                  onClick={async () => {
-                    await dispatch(saveCostingFailure());
-                    await dispatch(fetchGeneratedCostingFailure());
-                    await dispatch(fetchMyCostingRequest(items._id));
-                    const action = {
-                      selected: items?.termOfAgreement,
-                      showShipmentTermDropdown: false,
-                    };
-                    await dispatch(setTermsOfShipmentRequest(action));
-                    router.push("/export-costing/costing");
-                  }}
-                >
-                  <div className="inline-flex items-center justify-between w-full">
-                    <div className="inline-flex items-center space-x-2 max-w-[70%] overflow-hidden">
-                      {riceGrainIcon}
-                      <span className="line-clamp-1 text-sm text-pwip-gray-900 uppercase">
-                        {items?.costingName ||
-                          `${items?.variantName} - ${items?.destinationPortName}`}
-                      </span>
-                    </div>
-
-                    <span className="line-clamp-1 text-sm text-pwip-gray-500">
-                      {moment(items?.createdAt).format("DD/MM/YYYY")}
+            <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
+              <div className="flex flex-nowrap">
+                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                      Filter
                     </span>
-                  </div>
-                  <div className="inline-flex items-center justify-between w-full mt-2">
-                    <div className="inline-flex items-center space-x-2">
-                      <span className="line-clamp-1 text-base text-pwip-gray-1000">
-                        {items?.originPortName} - {items?.destinationPortName}
-                      </span>
-                    </div>
-
-                    <span className="line-clamp-1 text-sm text-pwip-gray-900">
-                      {items?.termOfAgreement}
-                    </span>
-                  </div>
-
-                  <div className="inline-flex items-center justify-between w-full mt-2">
-                    <span className="text-pwip-gray-800 text-xs font-normal font-sans line-clamp-1">
-                      {items?.variantName}
-                    </span>
-                    <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
-                      <span className="text-base font-medium font-sans line-clamp-1">
-                        ₹{items?.grandTotal}
-                      </span>
-
-                      <span className="text-base font-medium font-sans line-clamp-1">
-                        ${inrToUsd(items?.grandTotal, forexRate.USD)}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="inline-flex items-center justify-between w-full text-pwip-gray-800">
-                    <span className="text-xs font-normal font-sans line-clamp-1">
-                      {items?.brokenPercentage || 0}% Broken
-                    </span>
-                    <div className="inline-flex items-center justify-end">
-                      <span className="text-xs font-medium font-sans line-clamp-1 text-pwip-gray-500">
-                        Per {units?.find((u) => u.value === items.unit)?.label}
-                      </span>
-                    </div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="19"
+                      height="11"
+                      viewBox="0 0 19 11"
+                      fill="none"
+                    >
+                      <path
+                        d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
+                        stroke="#434B53"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
                   </div>
                 </div>
-              );
-            })}
+
+                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                      Sort
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="13"
+                      height="8"
+                      viewBox="0 0 13 8"
+                      fill="none"
+                    >
+                      <path
+                        d="M12 1L6.5 6.5L1 1"
+                        stroke="#434B53"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                {[...popularFilters].map((items, index) => {
+                  return (
+                    <div
+                      key={items?.name + (index + 1 * 2)}
+                      className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                    >
+                      <div className="overflow-hidden w-auto h-auto inline-flex items-center">
+                        <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                          {items?.name}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="w-full space-y-4">
+              {allMyCostingsData?.map((items, index) => {
+                return (
+                  <div
+                    key={items._id + index}
+                    className="bg-white rounded-md px-4 py-3 cursor-pointer"
+                    style={{
+                      boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.10)",
+                    }}
+                    onClick={async () => {
+                      await dispatch(saveCostingFailure());
+                      await dispatch(fetchGeneratedCostingFailure());
+                      await dispatch(fetchMyCostingRequest(items._id));
+                      const action = {
+                        selected: items?.termOfAgreement,
+                        showShipmentTermDropdown: false,
+                      };
+                      await dispatch(setTermsOfShipmentRequest(action));
+                      router.push("/export-costing/costing");
+                    }}
+                  >
+                    <div className="inline-flex items-center justify-between w-full">
+                      <div className="inline-flex items-center space-x-2 max-w-[70%] overflow-hidden">
+                        {riceGrainIcon}
+                        <span className="line-clamp-1 text-sm text-pwip-gray-900 uppercase">
+                          {items?.costingName ||
+                            `${items?.variantName} - ${items?.destinationPortName}`}
+                        </span>
+                      </div>
+
+                      <span className="line-clamp-1 text-sm text-pwip-gray-500">
+                        {moment(items?.createdAt).format("DD/MM/YYYY")}
+                      </span>
+                    </div>
+                    <div className="inline-flex items-center justify-between w-full mt-2">
+                      <div className="inline-flex items-center space-x-2">
+                        <span className="line-clamp-1 text-base text-pwip-gray-1000">
+                          {items?.originPortName} - {items?.destinationPortName}
+                        </span>
+                      </div>
+
+                      <span className="line-clamp-1 text-sm text-pwip-gray-900">
+                        {items?.termOfAgreement}
+                      </span>
+                    </div>
+
+                    <div className="inline-flex items-center justify-between w-full mt-2">
+                      <span className="text-pwip-gray-800 text-xs font-normal font-sans line-clamp-1">
+                        {items?.variantName}
+                      </span>
+                      <div className="inline-flex items-center justify-end text-pwip-green-800 space-x-4">
+                        <span className="text-base font-medium font-sans line-clamp-1">
+                          ₹{items?.grandTotal}
+                        </span>
+
+                        <span className="text-base font-medium font-sans line-clamp-1">
+                          ${inrToUsd(items?.grandTotal, forexRate.USD)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center justify-between w-full text-pwip-gray-800">
+                      <span className="text-xs font-normal font-sans line-clamp-1">
+                        {items?.brokenPercentage || 0}% Broken
+                      </span>
+                      <div className="inline-flex items-center justify-end">
+                        <span className="text-xs font-medium font-sans line-clamp-1 text-pwip-gray-500">
+                          Per{" "}
+                          {units?.find((u) => u.value === items.unit)?.label}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
         {/*  */}
