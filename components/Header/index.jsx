@@ -20,7 +20,7 @@ const atRoutes = [
   "costing",
   "edit",
   "my-costing",
-  "more",
+  // "more",
   "profile-edit",
 ];
 
