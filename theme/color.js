@@ -53,4 +53,5 @@ export const color = {
   "pwip-v2-yellow-100": "#FFF8E9",
 
   "pwip-v2-green-800": "#45D9D0",
+  "pwip-v2-green-700": "#65FDF4",
 };

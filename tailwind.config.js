@@ -137,6 +137,7 @@ module.exports = {
     "text-center",
     "bg-green-800",
     "text-green-200",
+    "z-[2000]",
   ],
   theme: {
     extend: {

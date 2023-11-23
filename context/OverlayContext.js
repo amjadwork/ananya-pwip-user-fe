@@ -101,7 +101,7 @@ export function OverlayProvider({ children }) {
       {children}
       {isLoading && (
         <div
-          className={`h-screen w-screen bg-black fixed top-0 left-0 overflow-hidden z-50 bg-opacity-60 inline-flex justify-center items-center`}
+          className={`h-screen w-screen bg-black fixed top-0 left-0 overflow-hidden z-[2000] bg-opacity-60 inline-flex justify-center items-center`}
         >
           <div className="inline-flex flex-col justify-center items-center space-y-3 text-pwip-primary-50">
             <svg

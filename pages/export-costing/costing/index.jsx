@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Head from "next/head";
 
 import { useRouter } from "next/router";
@@ -55,14 +55,13 @@ const lineBetweenLocation = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     height="2"
-    width="32"
     viewBox="0 0 32 2"
     fill="none"
-    className="w-auto"
+    className="w-full"
   >
     <path
       d="M0.682129 1L60.8784 1"
-      stroke="#003559"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeDasharray="2 2"
     />
@@ -354,6 +353,8 @@ let breakupArr = [
 ];
 
 function CostingOverview() {
+  const costingCardRef = useRef(null);
+
   const router = useRouter();
   const dispatch = useDispatch();
   const { data: session } = useSession();
@@ -395,6 +396,25 @@ function CostingOverview() {
   });
   const [generatedCostingData, setGeneratedCostingData] = useState(null);
   const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
+  const [isFixed, setIsFixed] = useState(false);
+
+  const checkY = () => {
+    const costingCardDiv = costingCardRef.current.getBoundingClientRect();
+    const startY = costingCardDiv.bottom;
+
+    if (window.scrollY > startY) {
+      setIsFixed(true);
+    } else {
+      setIsFixed(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", checkY);
+    return () => {
+      window.removeEventListener("scroll", checkY);
+    };
+  }, []);
 
   React.useEffect(() => {
     setComponentShipmentTerm(shipmentTerm);
@@ -643,41 +663,41 @@ function CostingOverview() {
     openBottomSheet(content);
   };
 
-  const handleShareBottomSheet = () => {
-    const content = (
-      <React.Fragment>
-        <div className="px-5 mb-6 pt-5">
-          <span className="text-base font-sans font-medium text-pwip-gray-900 text-left">
-            Download or share your costing
-          </span>
-        </div>
-        <div className="inline-flex flex-col w-full space-y-6">
-          <button
-            type="button"
-            onClick={() => {
-              handleDownload();
-            }}
-            className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
-          >
-            {downloadIcon}
-            <span className="text-base font-medium font-sans">Download</span>
-          </button>
+  // const handleShareBottomSheet = () => {
+  //   const content = (
+  //     <React.Fragment>
+  //       <div className="px-5 mb-6 pt-5">
+  //         <span className="text-base font-sans font-medium text-pwip-gray-900 text-left">
+  //           Download or share your costing
+  //         </span>
+  //       </div>
+  //       <div className="inline-flex flex-col w-full space-y-6">
+  //         <button
+  //           type="button"
+  //           onClick={() => {
+  //             handleDownload();
+  //           }}
+  //           className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
+  //         >
+  //           {downloadIcon}
+  //           <span className="text-base font-medium font-sans">Download</span>
+  //         </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              handleShare();
-            }}
-            className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
-          >
-            {shareIcon}
-            <span className="text-base font-medium font-sans">Share</span>
-          </button>
-        </div>
-      </React.Fragment>
-    );
-    openBottomSheet(content);
-  };
+  //         <button
+  //           type="button"
+  //           onClick={() => {
+  //             handleShare();
+  //           }}
+  //           className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
+  //         >
+  //           {shareIcon}
+  //           <span className="text-base font-medium font-sans">Share</span>
+  //         </button>
+  //       </div>
+  //     </React.Fragment>
+  //   );
+  //   openBottomSheet(content);
+  // };
 
   const handleShare = () => {
     if (navigator && navigator.share) {
@@ -768,6 +788,80 @@ function CostingOverview() {
       </Head>
 
       <AppLayout>
+        <div
+          className={`${
+            isFixed
+              ? "fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700"
+              : "hidden opacity-0 h-0 top-[-10px]"
+          } px-5 py-4 transition-all duration-500`}
+        >
+          <div className="w-full flex items-center justify-between">
+            <div className="flex flex-col items-start flex-grow">
+              {/* Use flex-grow for 70% width */}
+              <span className="text-white text-xs font-normal font-sans line-clamp-1">
+                {generatedCostingData?.details?.variantObject?.variantName ||
+                  "-/-"}
+              </span>
+              <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
+                <div className="inline-flex items-center space-x-3 max-w-[28%]">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {generatedCostingData?.details?.originPortObject
+                      ?.originPortName === "Visakhapatnam Port"
+                      ? "Vizag Port"
+                      : generatedCostingData?.details?.originPortObject
+                          ?.portName === "Visakhapatnam Port"
+                      ? "Vizag Port"
+                      : "-/-"}
+                  </span>
+                </div>
+
+                <div className="inline-flex items-center space-x-3 text-white">
+                  {lineBetweenLocation}
+                </div>
+
+                <div className="inline-flex items-center space-x-3">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {generatedCostingData?.details?.sourceObject?.region ===
+                    "Visakhapatnam"
+                      ? "Vizag"
+                      : "-/-"}
+                  </span>
+                </div>
+
+                <div className="inline-flex items-center space-x-3 text-white">
+                  {lineBetweenLocation}
+                </div>
+
+                <div className="inline-flex items-center space-x-3">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {generatedCostingData?.details?.destinationObject
+                      ?.portName || "-/-"}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end w-[35%]">
+              <div className="inline-flex flex-col space-x-1 text-pwip-v2-green-700">
+                <span className="text-white text-xs font-[700] font-sans line-clamp-1 text-right">
+                  Total ({shipmentTerm})
+                </span>
+                <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-800 ">
+                  <span className="font-[700] font-sans line-clamp-1">
+                    $
+                    {inrToUsd(
+                      generatedCostingData?.grandTotal || 0,
+                      forexRate.USD
+                    )}
+                  </span>
+                  <span className="font-[400] font-sans line-clamp-1 mt-[6px]">
+                    /{selectedUnit?.value}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <Header
           handleClickEdit={async () => {
             if (myRecentSavedCosting) {
@@ -782,7 +876,10 @@ function CostingOverview() {
           className={`min-h-screen h-full w-full bg-white overflow-auto pb-8 pt-[56px] inline-flex flex-col justify-between hide-scroll-bar`}
         >
           <div className="inline-flex flex-col w-full h-full pb-[116px] bg-pwip-v2-gray-50">
-            <div className="px-5 py-5 w-full h-auto bg-pwip-v2-yellow-100">
+            <div
+              className="px-5 py-5 w-full h-auto bg-pwip-v2-yellow-100"
+              ref={costingCardRef}
+            >
               <div className="inline-flex flex-col w-full space-y-2">
                 <div
                   className="py-4 px-5 rounded-lg bg-white overflow-hidden"
@@ -831,28 +928,40 @@ function CostingOverview() {
                       </span>
                     </div>
 
-                    <div className="w-full mt-[12px] inline-flex items-center justify-between">
-                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
-                        {generatedCostingData?.details?.originPortObject
-                          ?.originPortName ||
-                          generatedCostingData?.details?.originPortObject
-                            ?.portName ||
-                          "-/-"}
-                      </span>
+                    <div className="w-full mt-[12px] flex items-center justify-between">
+                      <div className="inline-flex items-center space-x-3 max-w-[28%]">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                          {generatedCostingData?.details?.originPortObject
+                            ?.originPortName === "Visakhapatnam Port"
+                            ? "Vizag Port"
+                            : generatedCostingData?.details?.originPortObject
+                                ?.portName === "Visakhapatnam Port"
+                            ? "Vizag Port"
+                            : "-/-"}
+                        </span>
+                      </div>
 
-                      {lineBetweenLocation}
+                      <div className="inline-flex items-center space-x-3 text-pwip-v2-primary">
+                        {lineBetweenLocation}
+                      </div>
 
-                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
-                        {generatedCostingData?.details?.sourceObject?.region ||
-                          "-/-"}
-                      </span>
+                      <div className="inline-flex items-center space-x-3">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                          {generatedCostingData?.details?.sourceObject
+                            ?.region || "-/-"}
+                        </span>
+                      </div>
 
-                      {lineBetweenLocation}
+                      <div className="inline-flex items-center space-x-3 text-pwip-v2-primary">
+                        {lineBetweenLocation}
+                      </div>
 
-                      <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
-                        {generatedCostingData?.details?.destinationObject
-                          ?.portName || "-/-"}
-                      </span>
+                      <div className="inline-flex items-center space-x-3">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
+                          {generatedCostingData?.details?.destinationObject
+                            ?.portName || "-/-"}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
