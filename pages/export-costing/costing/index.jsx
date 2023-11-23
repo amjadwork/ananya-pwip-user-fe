@@ -937,22 +937,22 @@ function CostingOverview() {
                         </span>
                       </div>
 
-                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary w-auto">
+                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary">
                         {lineBetweenLocation}
                       </div>
 
-                      <div className="inline-flex items-center justify-center space-x-3 w-auto">
+                      <div className="inline-flex items-center justify-center space-x-3">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.sourceObject
                             ?.region || "-/-"}
                         </span>
                       </div>
 
-                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary w-auto">
+                      <div className="inline-flex items-center justify-center space-x-3 text-pwip-v2-primary">
                         {lineBetweenLocation}
                       </div>
 
-                      <div className="inline-flex items-center justify-center space-x-3 w-auto">
+                      <div className="inline-flex items-center justify-center space-x-3">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.destinationObject
                             ?.portName || "-/-"}
