@@ -796,7 +796,7 @@ function CostingOverview() {
           } px-5 py-4 transition-all duration-500`}
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex flex-col items-start flex-grow">
+            <div className="flex flex-col items-start flex-grow pr-3">
               {/* Use flex-grow for 70% width */}
               <span className="text-white text-xs font-normal font-sans line-clamp-1">
                 {generatedCostingData?.details?.variantObject?.variantName ||
