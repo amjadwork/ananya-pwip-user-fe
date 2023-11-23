@@ -30,8 +30,8 @@ export function BottomNavBar() {
               }}
               className={`${
                 activeRoute === opt.path
-                  ? "text-pwip-primary"
-                  : "text-pwip-gray-550"
+                  ? "text-pwip-v2-primary-500"
+                  : "text-pwip-v2-gray-500"
               } inline-flex flex-col items-center justify-center px-5 hover:bg-white-100 dark:hover:bg-white-100 group space-y-[6px]`}
             >
               {opt.icon}

@@ -844,7 +844,7 @@ function CostingOverview() {
                 <span className="text-white text-xs font-[700] font-sans line-clamp-1 text-right">
                   Total ({shipmentTerm})
                 </span>
-                <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-800 ">
+                <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-700">
                   <span className="font-[700] font-sans line-clamp-1">
                     $
                     {inrToUsd(

@@ -61,8 +61,7 @@ function More() {
         <Header />
 
         <div
-          id="fixedMenuSection"
-          className={`h-[auto] fixed mt-[72px] w-full bg-pwip-primary z-10 pt-6 pb-8 px-5`}
+          className={`h-[auto] mt-[56px] w-full bg-pwip-v2-primary-100 z-10 pt-6 pb-8 px-5`}
         >
           <div className="inline-flex items-center space-x-5">
             <div className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
@@ -71,23 +70,20 @@ function More() {
                 className="h-full w-full rounded-full object-cover"
               />
             </div>
-            <div className="inline-flex flex-col space-y-1">
-              <span className="text-white text-base font-medium">
+            <div className="inline-flex flex-col space-y-1 text-pwip-v2-primary">
+              <span className="text-base font-medium">
                 {userData?.name || ""}
               </span>
-              <span className="text-white text-sm font-normal">
+              <span className="text-sm font-normal">
                 {userData?.email || ""}
               </span>
             </div>
           </div>
-
-          <div className="absolute bottom-[-18px] left-0 bg-white h-8 w-full rounded-t-2xl z-10" />
         </div>
 
         <div
-          className={`min-h-screen inline-flex flex-col w-full bg-white overflow-auto px-5 hide-scroll-bar relative`}
+          className={`min-h-screen inline-flex flex-col w-full bg-white overflow-auto px-5 pt-[30px] hide-scroll-bar relative`}
           style={{
-            paddingTop: mainContainerHeight * 1.7 + "px",
             paddingBottom: mainContainerHeight - 52 + "px",
           }}
         >
