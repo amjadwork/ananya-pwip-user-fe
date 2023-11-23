@@ -928,7 +928,7 @@ function CostingOverview() {
 
                     <div className="w-full mt-[12px] flex items-center justify-between">
                       <div className="inline-flex items-center justify-center space-x-3">
-                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.originPortObject
                             ?.portName === "Visakhapatnam Port"
                             ? "Vizag Port"
@@ -942,7 +942,7 @@ function CostingOverview() {
                       </div>
 
                       <div className="inline-flex items-center justify-center space-x-3">
-                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.sourceObject
                             ?.region || "-/-"}
                         </span>
@@ -953,7 +953,7 @@ function CostingOverview() {
                       </div>
 
                       <div className="inline-flex items-center justify-center space-x-3">
-                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans">
+                        <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
                           {generatedCostingData?.details?.destinationObject
                             ?.portName || "-/-"}
                         </span>
