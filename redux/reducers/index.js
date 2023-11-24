@@ -12,6 +12,7 @@ import shipmentTermReducer from "./shipmentTerms.reducers";
 import utilsReducer from "./utils.reducers";
 import profileEditReducer from "./profileEdit.reducers";
 import userEditReducer from "./userEdit.reducers";
+import subscriptionReducer from "./subscription.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   utils: utilsReducer,
   profile: profileEditReducer,
   user: userEditReducer,
+  subscription: subscriptionReducer,
 });
 
 export default rootReducer;

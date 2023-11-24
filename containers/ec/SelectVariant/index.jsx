@@ -408,7 +408,6 @@ const SelectVariantContainer = (props) => {
                     onClick={() => {
                       if (isFromEdit) {
                         if (setFieldValue) {
-                          console.log(items);
                           setFieldValue("_originId", {});
                           setFieldValue("_destinationId", {});
                           setFieldValue("_variantId", items);

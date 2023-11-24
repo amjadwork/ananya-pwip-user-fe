@@ -66,8 +66,8 @@
 <g id="Group_14">
 <path id="Vector_40" d="M32.45 44.9529H30.064V52.8671H32.45V44.9529Z" fill="#E1DCD7"/>
 <path id="Vector_41" d="M32.4499 44.9847L32.4191 57.9296H48.8874V44.9573L32.4499 44.9847Z" fill="white"/>
-<path id="Vector_42" d="M30.0937 46.875H48.9019" stroke="#B5B5B5" stroke-width="0.5" stroke-miterlimit="10"/>
-<path id="Vector_43" d="M30.0333 48.5485H48.8404" stroke="#B5B5B5" stroke-width="0.5" stroke-miterlimit="10"/>
+<path id="Vector_42" d="M30.0937 46.875H48.9019" stroke="#B5B5B5" strokeWidth="0.5" stroke-miterlimit="10"/>
+<path id="Vector_43" d="M30.0333 48.5485H48.8404" stroke="#B5B5B5" strokeWidth="0.5" stroke-miterlimit="10"/>
 <g id="Group_15">
 <path id="Vector_44" d="M33.6893 45.5183H33.4103V46.5106H33.6893V45.5183Z" fill="#282B4D"/>
 <path id="Vector_45" d="M34.8154 45.5188H34.5363V46.5111H34.8154V45.5188Z" fill="#282B4D"/>

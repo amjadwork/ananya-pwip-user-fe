@@ -617,28 +617,28 @@ export const bagTypeIcon = (
       <path
         d="M0.9678 35.5612C0.867197 35.5612 0.790738 35.4694 0.806834 35.3696C1.50704 31.4898 1.55533 27.7897 1.14889 23.858C0.778665 20.3016 1.77263 16.6214 3.88531 13.7275C5.99798 10.8336 9.21327 8.74608 12.6257 8.01562C15.5473 8.6862 18.6338 9.25699 21.5392 8.33894C28.8511 11.157 33.672 18.685 32.6056 26.3926C32.2233 29.1508 32.4165 31.9888 33.161 34.6711C33.3099 35.2019 32.9034 35.7248 32.3481 35.7248L0.963776 35.5612H0.9678Z"
         stroke="#4574A3"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M14.0639 5.41406H20.5628C20.9894 5.41406 21.3315 5.75733 21.3315 6.17644V6.34808C21.3315 6.77118 20.9854 7.11046 20.5628 7.11046H14.1363C13.7741 7.11046 13.4844 6.81908 13.4844 6.46384V5.98884C13.4844 5.66952 13.7459 5.41406 14.0639 5.41406Z"
         stroke="#4574A3"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M13.6914 4.43051C15.8885 4.43849 18.0817 4.44248 20.0696 4.46643C21.3131 3.20112 23.1481 2.53453 24.9227 2.70218C25.2769 2.7381 25.635 2.49462 25.7316 2.15534C25.8282 1.81605 25.6511 1.42089 25.3332 1.26922C22.637 -0.0400073 19.2608 0.151586 16.79 1.76816C14.3996 0.602629 11.5626 0.363137 9.00323 1.10955C8.59277 1.2293 8.31108 1.68433 8.38754 2.10345C8.464 2.52256 8.89055 2.84986 9.32114 2.81793C10.8906 2.69818 12.4962 3.26099 13.6914 4.4345V4.43051Z"
         stroke="#4574A3"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M8.99852 13C8.33185 13.3333 6.99852 14.6 6.99852 17M5.49852 21.5C4.99852 23 4.29852 27.1 5.49852 31.5"
         stroke="#4574A3"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M10.6328 26.4922C10.6524 26.5122 10.7155 26.5314 10.735 26.5514L10.6328 26.4922Z"
@@ -741,87 +741,87 @@ export const transportationCostIcon = (
     <path
       d="M21.8814 5H2.38407C1.61967 5 1 5.61212 1 6.3672V19.3853C1 20.1404 1.61967 20.7525 2.38407 20.7525H21.8814C22.6458 20.7525 23.2655 20.1404 23.2655 19.3853V6.3672C23.2655 5.61212 22.6458 5 21.8814 5Z"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
     />
     <path
       d="M4.61039 20.6604L4.55322 24.3192L34.9998 24.3964L34.9787 20.4553L4.61039 20.6604Z"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M9.42476 26.6969C10.9203 26.6969 12.1327 25.5658 12.1327 24.1705C12.1327 22.7753 10.9203 21.6442 9.42476 21.6442C7.92919 21.6442 6.7168 22.7753 6.7168 24.1705C6.7168 25.5658 7.92919 26.6969 9.42476 26.6969Z"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M9.42476 26.6969C10.9203 26.6969 12.1327 25.5658 12.1327 24.1705C12.1327 22.7753 10.9203 21.6442 9.42476 21.6442C7.92919 21.6442 6.7168 22.7753 6.7168 24.1705C6.7168 25.5658 7.92919 26.6969 9.42476 26.6969Z"
       fill="#D6E2FC"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M4.91148 7.67493L4.82422 17.4831"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M9.72544 7.67493L9.63818 17.4831"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M14.5399 7.67493L14.4526 17.4831"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M19.6546 7.67493L19.5674 17.4831"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M28.6816 26.6969C30.1772 26.6969 31.3896 25.5658 31.3896 24.1705C31.3896 22.7753 30.1772 21.6442 28.6816 21.6442C27.186 21.6442 25.9736 22.7753 25.9736 24.1705C25.9736 25.5658 27.186 26.6969 28.6816 26.6969Z"
       fill="#D6E2FC"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M32.2769 18.036L33.8715 18.0033"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M23.5664 7.67493H29.8158L33.7754 14.3029L33.9289 19.4804L23.6657 19.736"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M26.0459 8.10889L26.2144 15.1054L33.4958 15.0668"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -910,23 +910,23 @@ export const cfsCostIcon = (
     <path
       d="M1 17.4095H34.9999"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M3.78613 17.0359L18.2314 9.66882"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M19.8545 10.9553L32.217 16.62"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M19.4768 10.1659C19.0687 10.63 18.4598 10.9253 17.8386 10.9162C17.2174 10.9072 16.5993 10.5787 16.2857 10.0484C15.972 9.51812 15.9994 8.79798 16.3831 8.31287C16.7668 7.82775 17.4976 7.63793 18.0121 7.7464C18.2618 7.77653 18.5024 7.90609 18.6607 8.09894"
@@ -935,9 +935,9 @@ export const cfsCostIcon = (
     <path
       d="M19.4768 10.1659C19.0687 10.63 18.4598 10.9253 17.8386 10.9162C17.2174 10.9072 16.5993 10.5787 16.2857 10.0484C15.972 9.51812 15.9994 8.79798 16.3831 8.31287C16.7668 7.82775 17.4976 7.63793 18.0121 7.7464C18.2618 7.77653 18.5024 7.90609 18.6607 8.09894"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M16.0937 6.18262C16.0907 6.40258 16.0846 6.62253 16.0815 6.85756C16.182 7.09258 16.4378 7.25831 16.7453 7.23119C16.992 7.27337 17.2508 7.23119 17.5188 7.06547C17.4792 6.79428 17.7289 6.52009 18.0059 6.52913C18.283 6.53817 18.5114 6.83345 18.4505 7.10162"
@@ -946,9 +946,9 @@ export const cfsCostIcon = (
     <path
       d="M16.0937 6.18262C16.0907 6.40258 16.0846 6.62253 16.0815 6.85756C16.182 7.09258 16.4378 7.25831 16.7453 7.23119C16.992 7.27337 17.2508 7.23119 17.5188 7.06547C17.4792 6.79428 17.7289 6.52009 18.0059 6.52913C18.283 6.53817 18.5114 6.83345 18.4505 7.10162"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M19.8691 6.1947C19.8752 6.3996 19.8844 6.60148 19.8387 6.86061C19.7808 6.99921 19.6347 7.09864 19.4824 7.10166"
@@ -957,9 +957,9 @@ export const cfsCostIcon = (
     <path
       d="M19.8691 6.1947C19.8752 6.3996 19.8844 6.60148 19.8387 6.86061C19.7808 6.99921 19.6347 7.09864 19.4824 7.10166"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M18.4141 7.14085C18.7673 7.21618 19.1357 7.20412 19.4828 7.11072L18.4141 7.14085Z"
@@ -968,102 +968,102 @@ export const cfsCostIcon = (
     <path
       d="M18.4141 7.14085C18.7673 7.21618 19.1357 7.20412 19.4828 7.11072"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M16.0938 6.18262L19.8695 6.19467"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M14.1149 3.85344V1H21.8034V3.92274C21.8034 4.88694 21.0147 5.67036 20.0373 5.67036H15.9479C14.934 5.67036 14.1118 4.85681 14.1118 3.85344H14.1149Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M33.6416 19.4863H1.83105V30.0564H33.6416V19.4863Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1 32.3303H34.9999"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M4.57178 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M7.89648 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M11.0088 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M14.5103 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M17.7349 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M20.9927 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M24.4521 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M28.1025 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M30.6089 21.8036V27.3387"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -1081,135 +1081,135 @@ export const shlCostIcon = (
       <path
         d="M18.7881 4.67407H10.3882C9.98989 4.67407 9.66699 4.99037 9.66699 5.38054V6.31709C9.66699 6.70726 9.98989 7.02355 10.3882 7.02355H18.7881C19.1865 7.02355 19.5094 6.70726 19.5094 6.31709V5.38054C19.5094 4.99037 19.1865 4.67407 18.7881 4.67407Z"
         stroke="#5180C1"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
       />
       <path
         d="M7.28187 9.30505H4.92188V11.6643H7.28187V9.30505Z"
         stroke="#5180C1"
-        stroke-width="0.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M7.28187 14.9133H4.92188V17.2725H7.28187V14.9133Z"
         stroke="#5180C1"
-        stroke-width="0.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M7.28187 23.4827H4.92188V25.8419H7.28187V23.4827Z"
         stroke="#5180C1"
-        stroke-width="0.75"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="0.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.38965 9.5675L14.4117 9.60963"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M17.2583 9.57007L21.3937 9.6122"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.38574 11.3694L11.953 11.4115"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M14.356 11.3701L18.948 11.4122"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.37598 15.1855L11.2783 15.2277"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M13.7139 15.1901L16.258 15.229"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.3999 16.9031L10.9085 16.942"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.8477 16.9031L14.9882 16.942"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.38574 23.7385L11.5263 23.7774"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M9.38965 25.4368L11.5302 25.4789"
         stroke="#5180C1"
-        stroke-width="1.2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M26.3841 4.64819H2.39851C1.43925 4.64819 0.661621 5.40991 0.661621 6.34954V26.4967C0.661621 27.4364 1.43925 28.1981 2.39851 28.1981H26.3841C27.3434 28.1981 28.121 27.4364 28.121 26.4967V6.34954C28.121 5.40991 27.3434 4.64819 26.3841 4.64819Z"
         stroke="#5180C1"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
       />
       <path
         d="M21.8448 19.5293C21.8217 19.5293 21.7952 19.5293 21.7721 19.5196C21.6761 19.4936 21.6 19.4191 21.5769 19.3219L21.0409 17.2284C21.0177 17.1344 21.0442 17.0372 21.1137 16.9692L30.7377 7.54208C30.7906 7.49023 30.8601 7.46106 30.9362 7.46106C31.009 7.46106 31.0818 7.49023 31.1347 7.54208L32.4713 8.8513C32.5805 8.95825 32.5805 9.13 32.4713 9.23694L22.0466 19.4483C21.9937 19.5001 21.9209 19.5293 21.8481 19.5293H21.8448ZM21.6199 17.2446L21.997 18.7224L31.8791 9.0425L30.9362 8.11891L21.6199 17.2446Z"
         fill="#3973A8"
         stroke="#5180C1"
-        stroke-width="0.4"
+        strokeWidth="0.4"
       />
       <path
         d="M21.365 16.1947L22.1093 16.3762L28.9996 9.50004L28.7195 7.70007L20.4995 15.5C20.397 15.6005 21.2227 16.1558 21.3683 16.1914L21.365 16.1947Z"
         fill="#E6EFF4"
         stroke="#E6EFF4"
-        stroke-width="0.4"
+        strokeWidth="0.4"
       />
       <path
         d="M21.3091 17.4358C21.286 17.4358 21.2628 17.4358 21.243 17.426L19.1025 16.9011C19.0032 16.8784 18.9271 16.8038 18.9007 16.7099C18.8742 16.6159 18.9007 16.5122 18.9734 16.4441L29.3981 6.23279C29.5073 6.12585 29.6826 6.12585 29.7918 6.23279L31.1283 7.54202C31.1813 7.59387 31.2111 7.66193 31.2111 7.73646C31.2111 7.811 31.1813 7.87905 31.1283 7.9309L21.5043 17.358C21.4514 17.4098 21.3786 17.439 21.3058 17.439L21.3091 17.4358ZM19.7145 16.4895L21.2231 16.8589L30.5395 7.73322L29.5966 6.80963L19.7145 16.4895Z"
         fill="#3973A8"
         stroke="#5180C1"
-        stroke-width="0.4"
+        strokeWidth="0.4"
       />
       <path
         d="M18.0998 20.5793C18.027 20.5793 17.9542 20.5501 17.9013 20.4983C17.8285 20.427 17.8021 20.3265 17.8318 20.2293L18.9004 16.5641C18.9401 16.4247 19.089 16.3405 19.2346 16.3729L21.3751 16.8979C21.4743 16.9238 21.5537 16.9983 21.5769 17.0956L22.1129 19.189C22.1492 19.3316 22.0632 19.4774 21.9177 19.5163L18.1759 20.5631C18.1494 20.5696 18.1263 20.5728 18.0998 20.5728V20.5793ZM19.3636 16.9692L18.5067 19.9085L21.5074 19.0691L21.0773 17.3905L19.3636 16.9692Z"
         fill="#3973A8"
         stroke="#5180C1"
-        stroke-width="0.4"
+        strokeWidth="0.4"
       />
       <path
         d="M32.2693 9.31795C32.1965 9.31795 32.1237 9.28878 32.0708 9.23693L29.3977 6.61848C29.3447 6.56663 29.3149 6.49857 29.3149 6.42404C29.3149 6.3495 29.3447 6.28145 29.3977 6.2296L30.7375 4.91713C30.9923 4.6676 31.4058 4.6676 31.6573 4.91713L33.8044 7.02032C34.0591 7.26985 34.0591 7.67493 33.8044 7.92122L32.4645 9.23369C32.4116 9.28554 32.3421 9.31471 32.266 9.31471L32.2693 9.31795ZM29.9898 6.42728L32.2693 8.66009L33.414 7.53882C33.4504 7.50318 33.4504 7.44484 33.414 7.4092L31.2669 5.30601C31.2305 5.27036 31.1709 5.27036 31.1345 5.30601L29.9898 6.42728Z"
         fill="#3973A8"
         stroke="#5180C1"
-        stroke-width="0.4"
+        strokeWidth="0.4"
       />
       <path d="M27.5 11.75L29 10.28V11.59L27.5 13.05V11.75Z" fill="#E6EFF4" />
     </g>
@@ -1239,78 +1239,78 @@ export const ofcCostIcon = (
       d="M30.0501 4.54602H24.2905V17.1548H30.0501V4.54602Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M27.1641 7.42273L27.1983 9.0105C27.1983 9.0105 27.1734 9.0105 27.1641 7.42273Z"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M27.0986 14.521L27.1484 16.143"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1 25.9995C1.58529 25.4485 2.53484 25.5637 3.26023 25.9061C3.98562 26.2486 4.62696 26.781 5.39593 27.002C7.63437 27.6433 9.81366 25.4858 12.1362 25.6415C12.9612 25.6975 13.7333 26.04 14.5085 26.3326C16.2239 26.974 18.1136 27.3631 19.8789 26.8806C21.4884 26.4416 23.07 25.2959 24.664 25.7878C25.2773 25.9777 25.7972 26.3918 26.3856 26.6502C27.3725 27.0798 28.4933 27.0394 29.5673 26.9584C30.0437 26.9242 30.5262 26.8775 30.9683 26.6969C31.3855 26.5257 31.7435 26.2392 32.1389 26.0244C33.0044 25.5574 34.0629 25.4609 35 25.7629"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M27.0986 1V5.04725"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M1.62574 19.4679L19.7045 19.3745L22.1453 16.3983C22.1453 16.3983 23.1197 16.3951 24.5145 16.3951C28.0885 16.3951 34.424 16.4232 34.2248 16.61C34.8256 20.3272 32.1794 24.3028 29.2093 24.1472C21.1428 23.7238 13.0577 23.8888 5.00364 24.636C2.94265 24.829 1.09337 21.9492 1.62574 19.4679Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M33.5662 19.0232H33.1304V19.1322H33.5662V19.0232Z"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M26.1889 18.6522H23.7334V21.1024H26.1889V18.6522Z"
       stroke="#5180C1"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M31.1699 18.6522H28.7144V21.1024H31.1699V18.6522Z"
       stroke="#5180C1"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M11.9276 19.2738C14.7661 19.2738 17.0671 16.9727 17.0671 14.1343C17.0671 11.2958 14.7661 8.99475 11.9276 8.99475C9.08912 8.99475 6.78809 11.2958 6.78809 14.1343C6.78809 16.9727 9.08912 19.2738 11.9276 19.2738Z"
       stroke="#5180C1"
-      stroke-width="0.85"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.85"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M14.2025 11.7902C13.9773 11.528 13.6586 11.3696 13.3256 11.2784C13.3091 11.0819 13.2334 10.8966 13.1257 10.7444C12.9471 10.4922 12.6583 10.2961 12.3153 10.2528C11.975 10.2098 11.6441 10.3238 11.4011 10.5146C11.2531 10.6309 11.1233 10.7881 11.0471 10.9736C10.8036 10.9853 10.5688 11.0603 10.3713 11.1741C10.0839 11.3395 9.86906 11.5735 9.70627 11.8035L9.70626 11.8035L9.70429 11.8063C9.46173 12.1563 9.23815 12.6478 9.36653 13.1627L9.36653 13.1627L9.36685 13.164C9.50401 13.7053 9.98397 14.0698 10.4174 14.2749C10.6386 14.3795 10.8667 14.4575 11.0823 14.5262C11.1448 14.5461 11.2054 14.565 11.2647 14.5835C11.4168 14.631 11.5604 14.6757 11.704 14.7278L11.7049 14.7281C11.8968 14.7971 12.0357 14.8673 12.1228 14.9544L12.3703 14.7069L12.1228 14.9544C12.1552 14.9868 12.1753 15.024 12.1834 15.0541C12.1872 15.0684 12.1876 15.0785 12.1872 15.0843C12.1869 15.0897 12.1859 15.092 12.1854 15.093L12.1852 15.0934C12.1832 15.0976 12.1605 15.136 12.0555 15.1569C11.9543 15.177 11.8311 15.1666 11.7332 15.1303C11.6152 15.0866 11.5025 15.0195 11.3674 14.9314C11.3463 14.9176 11.3242 14.9031 11.3013 14.888C11.1878 14.813 11.0543 14.7249 10.913 14.6529C10.7252 14.5573 10.4975 14.4901 10.2689 14.4833C10.0412 14.4764 9.77818 14.5297 9.57018 14.7178L9.56965 14.7182C9.23314 15.0238 9.25688 15.4744 9.36829 15.7682L9.36862 15.769C9.51612 16.1549 9.83974 16.4639 10.2306 16.6223C10.3322 16.6638 10.4361 16.694 10.5207 16.7187L10.5275 16.7206C10.6197 16.7475 10.691 16.7686 10.7559 16.7951C10.8113 16.8177 10.856 16.8458 10.8852 16.8723C10.908 16.8931 10.9139 16.9057 10.9148 16.9079C10.9149 16.9092 10.9158 16.9194 10.9163 16.9635C10.9163 16.9652 10.9163 16.9669 10.9163 16.9688C10.9167 17.0104 10.9174 17.0926 10.9408 17.1807C11.0112 17.4674 11.2398 17.6263 11.4345 17.7041C11.6347 17.7841 11.8624 17.8078 12.0601 17.7916L12.0607 17.7916C12.3203 17.7699 12.6362 17.6951 12.879 17.4833C13.0322 17.3498 13.1582 17.1424 13.1831 16.9147C13.7883 16.6896 14.3217 16.2269 14.5024 15.6067C14.7177 14.868 14.3366 14.0181 13.5812 13.6935L13.5797 13.6929C13.5275 13.6707 13.4749 13.6515 13.4224 13.6347C13.787 13.6073 14.1375 13.4109 14.3248 13.1137C14.594 12.6866 14.5075 12.1452 14.2025 11.7902ZM11.9061 13.0088C11.9112 13.0027 11.9177 12.9972 11.9305 12.9929C11.996 12.9726 12.1277 12.9992 12.2963 13.1272C12.3366 13.1578 12.377 13.1913 12.424 13.2305L12.4298 13.2353C12.4735 13.2718 12.5233 13.3134 12.5753 13.3533C12.6446 13.4064 12.7251 13.4626 12.8184 13.5108C12.8086 13.5094 12.7989 13.508 12.7893 13.5066L12.7778 13.505C12.6953 13.4932 12.6184 13.4821 12.5433 13.469C12.228 13.4141 12.0115 13.3207 11.9153 13.1936C11.8889 13.1588 11.876 13.103 11.8867 13.053C11.8916 13.0305 11.8998 13.0164 11.9061 13.0088ZM10.915 16.9083C10.915 16.9083 10.9149 16.9083 10.9149 16.9082L10.915 16.9083ZM10.9147 16.9074C10.9147 16.9073 10.9147 16.9073 10.9147 16.9073L10.9147 16.9074Z"
       stroke="#5180C1"
-      stroke-width="0.7"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -1328,101 +1328,101 @@ export const inspectionCostIcon = (
       d="M13.4307 17.1304H2.79406C1.80323 17.1304 1 18.2391 1 19.6066V28.8743C1 30.2418 1.80323 31.3504 2.79406 31.3504H13.4307C14.4215 31.3504 15.2247 30.2418 15.2247 28.8743V19.6066C15.2247 18.2391 14.4215 17.1304 13.4307 17.1304Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
     />
     <path
       d="M8.1123 19.2609V29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M5.16456 19.2609L5.1123 29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M11.1559 19.2609L11.1123 29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M31.4307 17.1304H20.7941C19.8032 17.1304 19 18.2391 19 19.6066V28.8743C19 30.2418 19.8032 31.3504 20.7941 31.3504H31.4307C32.4215 31.3504 33.2247 30.2418 33.2247 28.8743V19.6066C33.2247 18.2391 32.4215 17.1304 31.4307 17.1304Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
     />
     <path
       d="M26.1123 19.2609V29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M23.1646 19.2609L23.1123 29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M29.1559 19.2609L29.1123 29.1455"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M22.3184 1H11.6818C10.6909 1 9.8877 2.10862 9.8877 3.47618V12.7438C9.8877 14.1114 10.6909 15.22 11.6818 15.22H22.3184C23.3092 15.22 24.1124 14.1114 24.1124 12.7438V3.47618C24.1124 2.10862 23.3092 1 22.3184 1Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
     />
     <path
       d="M17 3.13043V13.0151"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M14.0523 3.13043L14 13.0151"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M20.0435 3.13043L20 13.0151"
       stroke="#5180C1"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M18.8693 15.887C21.0883 15.887 22.8871 14.0504 22.8871 11.7848C22.8871 9.51924 21.0883 7.68262 18.8693 7.68262C16.6504 7.68262 14.8516 9.51924 14.8516 11.7848C14.8516 14.0504 16.6504 15.887 18.8693 15.887Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M21.3604 15.2906L22.3822 13.8055L30.528 19.6454L29.5091 21.1304L21.3604 15.2906Z"
       fill="#E6EFF4"
       stroke="#5180C1"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -1440,23 +1440,23 @@ export const financeCostIcon = (
       <path
         d="M31.0865 31.667C32.1757 31.3309 33.2553 32.6323 33.0233 33.756C32.7913 34.8797 31.65 35.6289 30.523 35.7681C29.396 35.9074 28.269 35.5664 27.1846 35.2303C20.9386 37.8907 13.3857 37.9916 6.83668 35.384C5.60075 35.6337 4.36008 35.6865 3.11468 35.7441C1.92136 35.797 0.827491 34.606 0.964817 33.4054C1.10214 32.2049 2.43278 31.2924 3.58348 31.6238C3.04365 27.1385 3.6403 22.6388 5.57234 18.8162C7.50437 14.9936 10.7528 11.8721 14.6358 10.3162C16.2743 10.2105 17.9127 10.1001 19.6317 9.83594C26.9052 13.9227 31.5506 22.3986 31.0913 31.667H31.0865Z"
         stroke="#4175AA"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M19.967 8.11379C21.2835 6.2169 21.9748 3.883 21.9038 1.56831C21.8801 0.723112 20.7863 0.31492 19.986 0.550231C19.1857 0.785542 18.5512 1.40503 17.803 1.77481C17.0548 2.14458 15.9799 2.16859 15.5489 1.44345C15.0659 0.631869 13.9484 0.290909 13.1055 0.694299C12.2626 1.09769 11.8127 2.1926 12.1205 3.08582C12.7361 4.85786 13.3565 6.62989 13.9673 8.33469C15.923 8.23385 17.874 8.1282 19.967 8.12339V8.11379Z"
         stroke="#4175AA"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M16.6862 17.1267C16.3027 16.4063 16.9041 15.369 17.7091 15.3594C18.5141 15.3498 19.1439 16.3679 18.8834 17.4292C19.3522 17.6597 19.8305 17.8902 20.2283 18.2312C20.6261 18.5722 20.9481 19.038 21.0049 19.5614C21.0712 20.1521 20.7444 20.8052 20.1478 20.9397C19.6695 21.0501 19.2055 20.714 19.0681 20.2337C18.8834 19.5854 18.1826 19.1244 17.5197 19.2301C17.3255 19.2589 17.1503 19.3597 16.994 19.4798C15.6492 20.5315 16.672 22.0538 17.7801 22.0202C18.0595 22.0106 18.3389 22.049 18.5993 22.1402C21.7957 23.2976 21.5542 26.5631 19.4422 27.8981C19.0776 28.1287 18.8503 28.5416 18.9119 28.9738C18.9592 29.3004 18.874 29.651 18.6609 29.9055C18.2821 30.3521 17.5386 30.4289 17.084 30.0592C16.8993 29.9103 16.7715 29.7038 16.7052 29.5021C16.5726 29.1131 16.3263 28.7674 15.9522 28.6041C14.8584 28.1238 14.0392 26.9809 13.9776 25.7707C13.9444 25.0984 14.7163 24.6614 15.2325 25.0792C15.6444 25.4154 15.8481 25.9532 16.26 26.2846C17.1503 27.0097 18.855 26.299 18.5662 24.9063C18.4241 24.2436 17.8559 23.749 17.1882 23.6722C15.6965 23.4993 14.4085 22.169 14.2759 20.6515C14.1433 19.134 15.2325 17.5301 16.6815 17.1219L16.6862 17.1267Z"
         stroke="#4175AA"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </g>
     <defs>
@@ -1479,30 +1479,30 @@ export const overheadsCostIcon = (
     <path
       d="M0.641113 18.4897C6.19024 15.3584 11.7394 12.2303 17.1667 9.20268C17.593 8.96605 18.1027 8.93687 18.5547 9.12813C20.4878 9.945 22.3984 10.7684 24.1327 11.6695C24.4565 11.8381 24.8476 11.7959 25.1233 11.556L30.7397 6.69696"
       stroke="#3A72A8"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M28.1177 5.52027C29.5282 5.17667 30.9387 4.83306 32.128 4.65153C32.2563 4.63208 32.3717 4.71636 32.4037 4.83954L33.3623 8.66458"
       stroke="#3A72A8"
-      stroke-width="1.2"
+      strokeWidth="1.2"
       stroke-miterlimit="10"
-      stroke-linecap="round"
+      strokeLinecap="round"
     />
     <path
       d="M17.8174 27.1521C21.7524 27.1521 24.9424 23.9627 24.9424 20.0284C24.9424 16.0941 21.7524 12.9048 17.8174 12.9048C13.8824 12.9048 10.6924 16.0941 10.6924 20.0284C10.6924 23.9627 13.8824 27.1521 17.8174 27.1521Z"
       stroke="#2C70AE"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M19.3366 16.2596C19.5266 15.7268 19.0724 15.0867 18.4514 15.0082C17.8304 14.9297 17.1955 15.4254 17.2094 15.987C16.8618 15.9086 16.4864 15.987 16.1852 16.1605C15.8839 16.334 15.6476 16.5859 15.4576 16.8543C15.1656 17.2756 14.9617 17.7795 15.0822 18.2627C15.2119 18.7748 15.6893 19.1713 16.213 19.4191C16.7367 19.6669 17.316 19.7991 17.8628 19.9973C18.127 20.0923 18.3911 20.2121 18.5812 20.4021C18.7712 20.592 18.8639 20.877 18.7526 21.1083C18.5765 21.4759 17.9972 21.542 17.5848 21.3891C17.1723 21.2363 16.8479 20.939 16.4586 20.7407C16.0693 20.5425 15.5271 20.4723 15.2119 20.7572C14.9663 20.9803 14.9571 21.3396 15.0683 21.6328C15.2119 22.0087 15.5364 22.3267 15.9442 22.4919C16.1666 22.5827 16.4123 22.6282 16.6347 22.719C16.8572 22.8099 17.0657 22.971 17.1167 23.1857C17.1445 23.3014 17.1167 23.4211 17.1491 23.5368C17.2325 23.892 17.7331 24.0283 18.1363 23.9952C18.4329 23.9704 18.7341 23.8878 18.9473 23.702C19.1605 23.5161 19.2624 23.2146 19.1419 22.9751C19.9807 22.781 20.7222 22.2028 20.9401 21.4552C21.1579 20.7077 20.7686 19.828 19.99 19.4935C19.6007 19.3282 19.1558 19.3035 18.7295 19.2291C18.3031 19.1548 17.8582 19.0102 17.6172 18.6922C17.3762 18.3742 17.455 17.8456 17.8628 17.7134C18.1733 17.6143 18.5116 17.7712 18.7619 17.9612C19.0122 18.1512 19.2346 18.3907 19.5405 18.4898C19.9854 18.6385 20.5276 18.432 20.7593 18.0645C20.991 17.6969 20.9262 17.2054 20.6388 16.8709C20.3515 16.5363 19.8742 16.3464 19.3412 16.2638L19.3366 16.2596Z"
       stroke="#2C70AE"
-      stroke-width="0.8"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );
@@ -1520,52 +1520,52 @@ export const marginCostIcon = (
       <path
         d="M0.703125 0.647644V30.4381"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M0.64209 17.7998C6.20065 14.6718 11.7592 11.547 17.1957 8.52264C17.6228 8.28626 18.1334 8.25712 18.5862 8.44816C20.5225 9.26416 22.4364 10.0866 24.1736 10.9868C24.498 11.1552 24.8897 11.1131 25.1659 10.8735L30.7919 6.01959"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M28.1045 4.53655C29.5174 4.19331 30.9303 3.85008 32.1217 3.66874C32.2501 3.64931 32.3657 3.7335 32.3978 3.85655L33.358 7.6775"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M15.5936 14.5164H12.6585C12.2719 14.5164 11.9585 14.8324 11.9585 15.2223V26.0343C11.9585 26.4241 12.2719 26.7402 12.6585 26.7402H15.5936C15.9802 26.7402 16.2936 26.4241 16.2936 26.0343V15.2223C16.2936 14.8324 15.9802 14.5164 15.5936 14.5164Z"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M30.2493 11.3236H27.3143C26.9277 11.3236 26.6143 11.6397 26.6143 12.0295V26.1606C26.6143 26.5504 26.9277 26.8665 27.3143 26.8665H30.2493C30.6359 26.8665 30.9494 26.5504 30.9494 26.1606V12.0295C30.9494 11.6397 30.6359 11.3236 30.2493 11.3236Z"
         fill="#E6EFF4"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M22.6839 12.4926H19.7489C19.3622 12.4926 19.0488 12.8086 19.0488 13.1985V26.0343C19.0488 26.4241 19.3622 26.7402 19.7489 26.7402H22.6839C23.0705 26.7402 23.3839 26.4241 23.3839 26.0343V13.1985C23.3839 12.8086 23.0705 12.4926 22.6839 12.4926Z"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
       <path
         d="M8.93047 17.7998H6.35189C5.96527 17.7998 5.65186 18.1158 5.65186 18.5057V26.1606C5.65186 26.5504 5.96527 26.8665 6.35189 26.8665H8.93047C9.31709 26.8665 9.63051 26.5504 9.63051 26.1606V18.5057C9.63051 18.1158 9.31709 17.7998 8.93047 17.7998Z"
         stroke="#3A72A8"
-        stroke-width="1.2"
+        strokeWidth="1.2"
         stroke-miterlimit="10"
-        stroke-linecap="round"
+        strokeLinecap="round"
       />
     </g>
     <defs>
@@ -1588,9 +1588,9 @@ export const dutyCostIcon = (
     <path
       d="M18 35V19.4167M25.0833 35V19.4167M10.9167 35V19.4167M1 12.3333L18 1L35 12.3333M32.1667 35V14.8493C27.4802 14.1156 22.7436 13.7481 18 13.75C13.1814 13.75 8.44978 14.1278 3.83333 14.8493V35M1 35H35M18 8.08333H18.0151V8.09844H18V8.08333Z"
       stroke="#3A72A8"
-      stroke-width="1.2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
   </svg>
 );

@@ -25,7 +25,7 @@ export const moreSettingOptions = [
     label: "My subscriptions",
     icon: mySubscriptionsIcon,
     backgroundColor: "#CFE4C466",
-    path: "!#",
+    path: "/subscriptions",
   },
 
   {

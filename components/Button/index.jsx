@@ -10,6 +10,8 @@ export function Button(props) {
   const buttonType = props.buttonType || "button";
   const disabled = props.disabled || false;
   const labelAsIcon = props.labelAsIcon || false;
+  const rounded = props.rounded || null;
+  const minHeight = props.minHeight || null;
 
   let additionalClass = "";
 
@@ -31,11 +33,23 @@ export function Button(props) {
       "bg-pwip-gray-650 border-[1px] border-pwip-gray-650 text-pwip-v2-primary-500";
   }
 
+  if (type === "white") {
+    additionalClass = "bg-white text-pwip-black-600";
+  }
+
+  if (rounded) {
+    additionalClass = additionalClass + " " + rounded;
+  }
+
   if (labelAsIcon) {
     additionalClass =
       additionalClass +
       " " +
       "min-w-[50px] max-w-[50px] min-h-[50px] max-h-[50px]";
+  }
+
+  if (minHeight) {
+    additionalClass = additionalClass + " " + minHeight;
   }
 
   return (
