@@ -290,7 +290,7 @@ const SelectVariantContainer = (props) => {
             Popular sourcing locations
           </h2>
 
-          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5 px-[1px]">
+          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
             <div className="flex flex-nowrap">
               {[...popularSourceLocations].map((items, index) => {
                 return (
