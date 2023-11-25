@@ -240,21 +240,19 @@ const SelectVariantContainer = (props) => {
       </div>
 
       <div
-        className={`min-h-screen h-full w-full bg-white ${
-          !noPaddingBottom ? "pb-[98px]" : "pb-0"
-        } overflow-auto px-5 hide-scroll-bar`}
+        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
         style={{
-          paddingTop: mainContainerHeight + 56 + "px",
+          paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
         <React.Fragment>
           <h2
-            className={`mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+            className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
           >
             Search rice by category
           </h2>
 
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-4 gap-4 px-5">
             {[...riceCategory].map((items, index) => {
               return (
                 <div
@@ -287,12 +285,12 @@ const SelectVariantContainer = (props) => {
 
         <React.Fragment>
           <h2
-            className={`mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+            className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
           >
             Popular sourcing locations
           </h2>
 
-          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-[1px]">
+          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5 px-[1px]">
             <div className="flex flex-nowrap">
               {[...popularSourceLocations].map((items, index) => {
                 return (
@@ -329,78 +327,87 @@ const SelectVariantContainer = (props) => {
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            <h2
-              className={`mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              {listProductsData?.length || 0} varieties to explore
-            </h2>
+            <div className="flex w-full flex-col px-5">
+              <h2
+                className={`mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
+              >
+                {listProductsData?.length || 0} varieties to explore
+              </h2>
 
-            <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
-              <div className="flex flex-nowrap">
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Filter
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="19"
-                      height="11"
-                      viewBox="0 0 19 11"
-                      fill="none"
-                    >
-                      <path
-                        d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Sort
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="13"
-                      height="8"
-                      viewBox="0 0 13 8"
-                      fill="none"
-                    >
-                      <path
-                        d="M12 1L6.5 6.5L1 1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {[...popularFilters].map((items, index) => {
-                  return (
-                    <div
-                      key={items?.name + (index + 1 * 2)}
-                      className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
-                    >
-                      <div className="overflow-hidden w-auto h-auto inline-flex items-center">
-                        <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                          {items?.name}
-                        </span>
-                      </div>
+              <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
+                <div className="flex flex-nowrap">
+                  <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                    <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                      <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                        Filter
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="19"
+                        height="11"
+                        viewBox="0 0 19 11"
+                        fill="none"
+                      >
+                        <path
+                          d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
+                          stroke="#434B53"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </div>
-                  );
-                })}
+                  </div>
+
+                  <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                    <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                      <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                        Sort
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="13"
+                        height="8"
+                        viewBox="0 0 13 8"
+                        fill="none"
+                      >
+                        <path
+                          d="M12 1L6.5 6.5L1 1"
+                          stroke="#434B53"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {[...popularFilters].map((items, index) => {
+                    return (
+                      <div
+                        key={items?.name + (index + 1 * 2)}
+                        className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                      >
+                        <div className="overflow-hidden w-auto h-auto inline-flex items-center">
+                          <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                            {items?.name}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
-            <div className="w-full h-full space-y-[24px]">
+            <div
+              className="w-full h-full space-y-[24px] px-5 pb-[88px] overflow-y-auto hide-scroll-bar"
+              style={{
+                maxHeight: `calc(100vh - ${
+                  mainContainerHeight + 56 + 64 + 46
+                }px)`,
+              }}
+            >
               {listProductsData.map((items, index) => {
                 return (
                   <div

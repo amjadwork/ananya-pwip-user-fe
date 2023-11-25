@@ -325,7 +325,7 @@ const SelectLocationContainer = (props) => {
           !noPaddingBottom ? "pb-[172px]" : "pb-0"
         } overflow-auto px-5 hide-scroll-bar`}
         style={{
-          paddingTop: mainContainerHeight + 56 + "px",
+          paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
         <React.Fragment>
