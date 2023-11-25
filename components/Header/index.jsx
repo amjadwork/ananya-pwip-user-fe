@@ -22,6 +22,7 @@ const atRoutes = [
   "my-costing",
   "subscriptions",
   "profile-edit",
+  "category",
 ];
 
 export function Header(props) {
@@ -35,6 +36,7 @@ export function Header(props) {
   // const component = props.component;
   const hideLogo = props.hideLogo || false;
   const handleClickEdit = props.handleClickEdit || null;
+  const backgroundColor = props.backgroundColor || "bg-white";
 
   const [activeRoute, setActiveRoute] = React.useState("");
   const [environmentBasedClasses, setEnvironmentBasedClasses] =
@@ -81,7 +83,7 @@ export function Header(props) {
     <header
       className={`inline-flex items-center w-full ${environmentBasedClasses} px-5 py-4 ${
         atRoutes.includes(activeRoute) ? "" : "pb-4"
-      }  space-x-4 bg-white fixed top-0 z-10`}
+      }  space-x-4 ${backgroundColor} fixed top-0 z-10`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">

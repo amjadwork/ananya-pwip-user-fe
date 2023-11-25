@@ -6,6 +6,7 @@ import {
   fetchDestinationRequest,
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
+import { fetchCategoryRequest } from "@/redux/actions/category.actions";
 
 import {
   setCostingSelection,
@@ -20,7 +21,7 @@ const popularFilters = [
     icon: "one.png",
   },
   {
-    name: "Paraboiled",
+    name: "Parboiled",
     icon: "two.png",
   },
   {
@@ -66,7 +67,7 @@ const riceCategory = [
     color: "#CFECFF",
   },
   {
-    name: "Paraboiled",
+    name: "Parboiled",
     color: "#CFE4C4",
   },
   {
@@ -79,8 +80,124 @@ const riceCategory = [
   },
 ];
 
+const FilterSection = ({ listProductsData, inFixedBar }) => {
+  return (
+    <div
+      className={`flex w-full flex-col ${
+        !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
+      }`}
+    >
+      <h2
+        className={`text-pwip-v2-primary font-sans text-base font-bold ${
+          inFixedBar ? "mb-[24px] mt-[38px]" : ""
+        }`}
+      >
+        {listProductsData?.length || 0} varieties to explore
+      </h2>
+
+      <div
+        className={`flex overflow-x-scroll hide-scroll-bar ${
+          !inFixedBar ? "mt-[24px]" : ""
+        }`}
+      >
+        <div className="flex flex-nowrap">
+          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+            <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+              <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                Filter
+              </span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="19"
+                height="11"
+                viewBox="0 0 19 11"
+                fill="none"
+              >
+                <path
+                  d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
+                  stroke="#434B53"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+            <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+              <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                Sort
+              </span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="13"
+                height="8"
+                viewBox="0 0 13 8"
+                fill="none"
+              >
+                <path
+                  d="M12 1L6.5 6.5L1 1"
+                  stroke="#434B53"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
+
+          {[...popularFilters].map((items, index) => {
+            return (
+              <div
+                key={items?.name + (index + 1 * 2)}
+                className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+              >
+                <div className="overflow-hidden w-auto h-auto inline-flex items-center">
+                  <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                    {items?.name}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+function getUniqueObjectsBySourceId(inputArray) {
+  const uniqueObjects = {};
+
+  inputArray.forEach((item) => {
+    const sourceId = item._sourceId;
+
+    // Check if the sourceId is already in the result object
+    if (!uniqueObjects[sourceId]) {
+      // If not found, add the current object to the result object
+      uniqueObjects[sourceId] = {
+        ...item,
+        totalVariants: 1,
+        variants: [item.variant],
+      };
+    } else {
+      // If found, increment the totalVariants count and add the variant to the array
+      uniqueObjects[sourceId].totalVariants += 1;
+      uniqueObjects[sourceId].variants.push(item.variant);
+    }
+  });
+
+  // Convert the result object to an array
+  const resultArray = Object.values(uniqueObjects);
+
+  return resultArray;
+}
+
 const SelectVariantContainer = (props) => {
   const isFromEdit = props.isFromEdit || false;
+  const isFromCategory = props.isFromCategory || false;
+
   const setFieldValue = props.setFieldValue;
 
   const { closeBottomSheet } = useOverlayContext();
@@ -98,6 +215,7 @@ const SelectVariantContainer = (props) => {
     }
     return null;
   });
+  const filterForCategory = useSelector((state) => state.category.category);
 
   const { roundedTop = false, noTop = false, noPaddingBottom = false } = props;
 
@@ -106,6 +224,8 @@ const SelectVariantContainer = (props) => {
   const [popularProductsData, setPopularProductsData] = React.useState([]);
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
+  const [popularSourceLocationData, setPopularSourceLocationData] =
+    React.useState([]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -116,21 +236,82 @@ const SelectVariantContainer = (props) => {
   }, []);
 
   React.useEffect(() => {
-    if (!products.error) {
-      setProductsData(products.products);
+    if (!products?.error && !popularSourceLocationData?.length) {
+      let productList = [...products.products];
+      let sourceList = [];
 
-      if ([...products.products].slice(0, 4)) {
-        setPopularProductsData([...products.products].slice(0, 4));
+      if (isFromCategory) {
+        if (filterForCategory?.sourceId) {
+          productList = [...products.products].filter((d) => {
+            if (filterForCategory?.sourceId === d?.sourceRates?._sourceId) {
+              return d;
+            }
+          });
+        }
+
+        if (filterForCategory?.productCategory?.name) {
+          productList = [...products.products].filter((d) => {
+            if (
+              d?.variantName
+                ?.toLowerCase()
+                .includes(
+                  filterForCategory?.productCategory?.name?.toLowerCase()
+                )
+            ) {
+              return d;
+            }
+          });
+        }
       }
 
-      if (products.products) {
-        setPopularProductsData([...products.products].slice(0, 4));
-        setListProductsData(
-          [...products.products].slice(5, products.products.length - 1)
+      if (productList.length) {
+        setProductsData([...productList]);
+
+        sourceList = [...productList].map((d) => {
+          let obj = {
+            ...d.sourceRates,
+            variant: d,
+          };
+
+          delete obj.sourceRates;
+
+          return {
+            ...obj,
+          };
+        });
+      }
+
+      if (sourceList.length) {
+        setPopularSourceLocationData(
+          getUniqueObjectsBySourceId(sourceList)
+            .slice(0, 5)
+            .map((d, i) => {
+              const obj = {
+                ...d,
+                icon:
+                  i === 0
+                    ? "one.png"
+                    : i === 1
+                    ? "two.png"
+                    : i === 2
+                    ? "three.png"
+                    : i === 3
+                    ? "four.png"
+                    : i === 4
+                    ? "five.png"
+                    : "five.png",
+              };
+
+              return obj;
+            })
         );
       }
+
+      if (productList) {
+        setListProductsData([...productList]);
+      }
     }
-  }, [products]);
+  }, [products, popularSourceLocationData, isFromCategory]);
 
   function handleSearch(searchString) {
     const dataToFilter = [...productsData];
@@ -154,15 +335,13 @@ const SelectVariantContainer = (props) => {
     }
 
     if (searchString) {
-      setPopularProductsData([]);
       setListProductsData(matchingVariants);
     }
 
     if (!searchString) {
-      setPopularProductsData([...products.products].slice(0, 4));
-      setListProductsData(
-        [...products.products].slice(5, products.products.length - 1)
-      );
+      let productList = [...productsData];
+
+      setListProductsData([...productList]);
     }
   }
 
@@ -172,10 +351,15 @@ const SelectVariantContainer = (props) => {
         id="fixedMenuSection"
         className={`fixed ${
           !noTop ? "top-[56px]" : "top-[18px]"
-        }  h-[auto] w-full z-10 py-3 pb-[30px] px-5`}
+        }  h-[auto] w-full z-10 py-3 ${
+          isFromCategory ? "pb-[12px]" : "pb-[32px]"
+        } px-5`}
         style={{
-          background:
-            "linear-gradient(180deg, #FFF 84.97%, rgba(255, 255, 255, 0.00) 100%)",
+          background: !isFromCategory
+            ? "linear-gradient(180deg, #FFFFFF 94.86%, rgba(255, 255, 255, 0.00) 100%)"
+            : `linear-gradient(180deg, ${
+                filterForCategory?.productCategory?.color || "#FFFFFF"
+              } 94.86%, rgba(255, 255, 255, 0.00) 100%)`,
         }}
       >
         <div
@@ -211,7 +395,7 @@ const SelectVariantContainer = (props) => {
               handleSearch(event.target.value);
             }}
           />
-          {!popularProductsData.length ? (
+          {searchStringValue ? (
             <button
               onClick={() => {
                 setSearchStringValue("");
@@ -237,6 +421,13 @@ const SelectVariantContainer = (props) => {
             </button>
           ) : null}
         </div>
+
+        {isFromCategory ? (
+          <FilterSection
+            listProductsData={listProductsData}
+            inFixedBar={true}
+          />
+        ) : null}
       </div>
 
       <div
@@ -245,96 +436,134 @@ const SelectVariantContainer = (props) => {
           paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
-        <React.Fragment>
-          <h2
-            className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-          >
-            Search rice by category
-          </h2>
+        {!isFromCategory ? (
+          <React.Fragment>
+            <h2
+              className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+            >
+              Search rice by category
+            </h2>
 
-          <div className="grid grid-cols-4 gap-4 px-5">
-            {[...riceCategory].map((items, index) => {
-              return (
-                <div
-                  key={items?.name + index}
-                  className="inline-flex flex-col items-center justify-center space-y-[10px]"
-                >
-                  <div
-                    style={{
-                      background: items?.color,
-                    }}
-                    className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
-                  >
-                    <img
-                      src={
-                        "assets/images/rice_cat.png"
-                        // items.images[0] ||
-                        // "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
-                      }
-                      className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
-                    />
-                  </div>
-                  <span className="text-pwip-gray-700 text-sm font-[500] font-sans text-center line-clamp-1">
-                    {items?.name}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </React.Fragment>
-
-        <React.Fragment>
-          <h2
-            className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-          >
-            Popular sourcing locations
-          </h2>
-
-          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
-            <div className="flex flex-nowrap">
-              {[...popularSourceLocations].map((items, index) => {
+            <div className="grid grid-cols-4 gap-4 px-5">
+              {[...riceCategory].map((items, index) => {
                 return (
                   <div
-                    key={items?.name + (index + 1 * 2)}
-                    className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
-                    style={{
-                      boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                      backdropFilter: "blur(8px)",
+                    key={items?.name + index}
+                    className="inline-flex flex-col items-center justify-center space-y-[10px]"
+                    onClick={() => {
+                      dispatch(
+                        fetchCategoryRequest({
+                          productCategory: {
+                            name: items.name,
+                            color:
+                              index === 0
+                                ? "#F3F7F9"
+                                : index === 1
+                                ? "#F7FFF2"
+                                : index === 2
+                                ? "#FFF5EF"
+                                : index === 3
+                                ? "#FFFBED"
+                                : "#F3F7F9",
+                          },
+                        })
+                      );
+
+                      router.push("/category");
                     }}
                   >
-                    <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                    <div
+                      style={{
+                        background: items?.color,
+                      }}
+                      className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
+                    >
                       <img
-                        src={"/assets/images/" + items?.icon}
-                        className="w-[24px] h-[24px]"
+                        src={
+                          "assets/images/rice_cat.png"
+                          // items.images[0] ||
+                          // "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+                        }
+                        className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
                       />
-                      <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                        <span className="line-clamp-1">Karnataka (IN)</span>
-                        <span className="text-sm">🇮🇳</span>
-                      </div>
-                      <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
-                        Raichur
-                      </span>
-                      <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
-                        12 variety of rice available
-                      </span>
                     </div>
+                    <span className="text-pwip-gray-700 text-sm font-[500] font-sans text-center line-clamp-1">
+                      {items?.name}
+                    </span>
                   </div>
                 );
               })}
             </div>
-          </div>
-        </React.Fragment>
+          </React.Fragment>
+        ) : null}
+
+        {!isFromCategory ? (
+          <React.Fragment>
+            <h2
+              className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+            >
+              Popular sourcing locations
+            </h2>
+
+            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
+              <div className="flex flex-nowrap">
+                {[...popularSourceLocationData].map((items, index) => {
+                  return (
+                    <div
+                      key={items?.sourceName + (index + 1 * 2)}
+                      className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
+                      style={{
+                        boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                        backdropFilter: "blur(8px)",
+                      }}
+                      onClick={() => {
+                        dispatch(
+                          fetchCategoryRequest({
+                            sourceId: items._sourceId,
+                          })
+                        );
+
+                        router.push("/category");
+                      }}
+                    >
+                      <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                        <img
+                          src={"/assets/images/" + items?.icon}
+                          className="w-[24px] h-[24px]"
+                        />
+                        <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
+                          <span className="line-clamp-1">Karnataka (IN)</span>
+                          <span className="text-sm">🇮🇳</span>
+                        </div>
+                        <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
+                          {items?.sourceName || ""}
+                        </span>
+                        <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
+                          {items?.totalVariants || 0} variety of rice available
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </React.Fragment>
+        ) : null}
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            <div className="flex w-full flex-col px-5">
+            {!isFromCategory ? (
+              <FilterSection listProductsData={listProductsData} />
+            ) : null}
+
+            {/* <div className="flex w-full flex-col">
               <h2
-                className={`mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
+                className={`px-5 mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
               >
                 {listProductsData?.length || 0} varieties to explore
               </h2>
 
-              <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
+              <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px] px-5">
                 <div className="flex flex-nowrap">
                   <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
                     <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
@@ -398,15 +627,15 @@ const SelectVariantContainer = (props) => {
                   })}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div
               className="w-full h-full space-y-[24px] px-5 pb-[88px] overflow-y-auto hide-scroll-bar"
-              style={{
-                maxHeight: `calc(100vh - ${
-                  mainContainerHeight + 56 + 64 + 46
-                }px)`,
-              }}
+              // style={{
+              //   maxHeight: `calc(100vh - ${
+              //     mainContainerHeight + 56 + 64 + 46
+              //   }px)`,
+              // }}
             >
               {listProductsData.map((items, index) => {
                 return (
@@ -465,7 +694,7 @@ const SelectVariantContainer = (props) => {
                         router.push("/export-costing/select-pod");
                       }
                     }}
-                    className="inline-flex items-center w-full p-[5px] space-x-[15px] bg-white"
+                    className="inline-flex items-center w-full space-x-[15px] bg-white"
                   >
                     <div className="min-h-[110px] min-w-[112px] rounded-lg relative">
                       <img

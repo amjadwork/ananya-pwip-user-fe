@@ -138,6 +138,10 @@ module.exports = {
     "bg-green-800",
     "text-green-200",
     "z-[2000]",
+    "bg-[#F3F7F9]",
+    "bg-[#F7FFF2]",
+    "bg-[#FFF5EF]",
+    "bg-[#FFFBED]",
   ],
   theme: {
     extend: {
