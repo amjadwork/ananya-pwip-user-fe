@@ -14,6 +14,7 @@ import {
   // setTermsOfShipmentFailure,
 } from "@/redux/actions/shipmentTerms.actions";
 import { resetCustomCostingSelection } from "@/redux/actions/costing.actions";
+import { searchScreenFailure } from "@/redux/actions/utils.actions.js";
 
 const atRoutes = [
   "select-pod",
@@ -32,8 +33,10 @@ export function Header(props) {
 
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const forexRate = useSelector((state) => state.utils.forexRate);
-  // const backgroundColor = props.backgroundColor || "bg-[#2475c0]";
-  // const component = props.component;
+  const searchScreenActive = useSelector(
+    (state) => state.utils.searchScreenActive
+  );
+
   const hideLogo = props.hideLogo || false;
   const handleClickEdit = props.handleClickEdit || null;
   const backgroundColor = props.backgroundColor || "bg-white";
@@ -87,17 +90,27 @@ export function Header(props) {
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
-          {!hideLogo && !atRoutes.includes(activeRoute) && (
-            <img
-              src="/assets/images/logo-blue.png"
-              className="h-full w-[40px]"
-            />
-          )}
+          {!hideLogo &&
+            !atRoutes.includes(activeRoute) &&
+            !searchScreenActive && (
+              <img
+                src="/assets/images/logo-blue.png"
+                className="h-full w-[40px]"
+              />
+            )}
 
-          {atRoutes.includes(activeRoute) && (
+          {(atRoutes.includes(activeRoute) || searchScreenActive) && (
             <div
               className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
-              onClick={() => handleBack()}
+              onClick={() => {
+                if (!searchScreenActive) {
+                  handleBack();
+                }
+
+                if (searchScreenActive) {
+                  dispatch(searchScreenFailure());
+                }
+              }}
             >
               {arrowLeftBackIcon}
               <span>Back</span>

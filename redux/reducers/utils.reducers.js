@@ -3,6 +3,8 @@ import {
   SHOW_LOADER_FAILURE,
   SET_FOREX_RATE_SUCCESS,
   SET_FOREX_RATE_FAILURE,
+  SET_SEARCH_SCREEN_SUCCESS,
+  SET_SEARCH_SCREEN_FAILURE,
 } from "../actions/types/utils.types";
 
 const initialState = {
@@ -10,6 +12,7 @@ const initialState = {
   forexRate: {
     USD: 0,
   },
+  searchScreenActive: false,
 };
 
 const utilsReducer = (state = initialState, action) => {
@@ -38,6 +41,17 @@ const utilsReducer = (state = initialState, action) => {
         forexRate: {
           USD: 0,
         },
+      };
+
+    case SET_SEARCH_SCREEN_SUCCESS:
+      return {
+        ...state,
+        searchScreenActive: true,
+      };
+    case SET_SEARCH_SCREEN_FAILURE:
+      return {
+        ...state,
+        searchScreenActive: false,
       };
 
     default:

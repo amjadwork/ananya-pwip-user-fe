@@ -15,6 +15,11 @@ import {
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
 
+import {
+  searchScreenRequest,
+  searchScreenFailure,
+} from "@/redux/actions/utils.actions.js";
+
 import { fetchMyCostingSuccess } from "@/redux/actions/myCosting.actions.js";
 
 const popularFilters = [
@@ -241,7 +246,9 @@ const SelectVariantContainer = (props) => {
     return null;
   });
   const filterForCategory = useSelector((state) => state.category.category);
-
+  const searchScreenActive = useSelector(
+    (state) => state.utils.searchScreenActive
+  );
   const { roundedTop = false, noTop = false, noPaddingBottom = false } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -250,7 +257,7 @@ const SelectVariantContainer = (props) => {
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
-  const [searchFocus, setSearchFocus] = React.useState(false);
+  // const [searchFocus, setSearchFocus] = React.useState(false);
 
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
@@ -499,11 +506,13 @@ const SelectVariantContainer = (props) => {
               handleSearch(event.target.value);
             }}
             onFocus={() => {
-              setSearchFocus(true);
+              // setSearchFocus(true);
+              dispatch(searchScreenRequest(true));
               window.clearTimeout(blurOccurred);
             }}
             onBlur={(e) => {
-              setSearchFocus(false);
+              // setSearchFocus(false);
+              dispatch(searchScreenFailure());
               blurOccurred = window.setTimeout(function () {
                 handleInputDoneClick(e);
               }, 10);
@@ -560,7 +569,7 @@ const SelectVariantContainer = (props) => {
           paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromCategory && !searchFocus && !searchStringValue ? (
+        {!isFromCategory && !searchScreenActive && !searchStringValue ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -621,7 +630,7 @@ const SelectVariantContainer = (props) => {
           </React.Fragment>
         ) : null}
 
-        {!isFromCategory && !searchFocus && !searchStringValue ? (
+        {!isFromCategory && !searchScreenActive && !searchStringValue ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -676,12 +685,12 @@ const SelectVariantContainer = (props) => {
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            {!isFromCategory && !searchFocus && !searchStringValue ? (
+            {!isFromCategory && !searchScreenActive && !searchStringValue ? (
               <FilterSection
                 fixedDivRef={fixedDivRef}
                 listProductsData={listProductsData}
                 isFixed={isFixed}
-                searchFocus={searchFocus}
+                searchFocus={searchScreenActive}
               />
             ) : null}
 
