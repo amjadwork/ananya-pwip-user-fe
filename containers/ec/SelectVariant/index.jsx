@@ -436,13 +436,15 @@ const SelectVariantContainer = (props) => {
     }
   }, [isFromEdit, isFromCategory]);
 
-  React.useEffect(() => {
-    window.addEventListener("focusout", handleInputDoneClick);
+  // React.useEffect(() => {
+  //   window.addEventListener("focusout", handleInputDoneClick);
 
-    return () => {
-      window.removeEventListener("focusout", handleInputDoneClick);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("focusout", handleInputDoneClick);
+  //   };
+  // }, []);
+
+  let blurOccurred = null;
 
   return (
     <React.Fragment>
@@ -498,13 +500,21 @@ const SelectVariantContainer = (props) => {
             }}
             onFocus={() => {
               setSearchFocus(true);
+              window.clearTimeout(blurOccurred);
             }}
-            onBlur={() => {
+            onBlur={(e) => {
               setSearchFocus(false);
+              blurOccurred = window.setTimeout(function () {
+                handleInputDoneClick(e);
+              }, 10);
             }}
             inputMode="search"
             onKeyDown={(event) => {
-              if (event.key === "Enter" || event.keyCode === 13) {
+              if (
+                event.key === "Enter" ||
+                event.key === "Done" ||
+                event.keyCode === 13
+              ) {
                 event.target.blur(); // Blur the input on "Enter" key press
               }
             }}
