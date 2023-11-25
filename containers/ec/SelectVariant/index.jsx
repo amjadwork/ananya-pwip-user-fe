@@ -422,6 +422,10 @@ const SelectVariantContainer = (props) => {
 
   const debouncedCheckY = debounce(checkY, 5);
 
+  const handleInputDoneClick = (event) => {
+    event.target.blur();
+  };
+
   React.useEffect(() => {
     if (!isFromEdit && !isFromCategory) {
       window.addEventListener("scroll", debouncedCheckY);
@@ -431,6 +435,14 @@ const SelectVariantContainer = (props) => {
       };
     }
   }, [isFromEdit, isFromCategory]);
+
+  React.useEffect(() => {
+    window.addEventListener("focusout", handleInputDoneClick);
+
+    return () => {
+      window.removeEventListener("focusout", handleInputDoneClick);
+    };
+  }, []);
 
   return (
     <React.Fragment>
