@@ -87,6 +87,7 @@ const FilterSection = ({
   inFixedBar,
   fixedDivRef,
   isFixed,
+  searchFocus,
 }) => {
   return (
     <div
@@ -94,20 +95,24 @@ const FilterSection = ({
       className={`flex w-full flex-col ${
         !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
       }
-      ${isFixed ? "fixed left-0 top-[158px] bg-white z-20" : ""} pb-4
+      ${
+        isFixed && !searchFocus ? "fixed left-0 top-[158px] bg-white z-20" : ""
+      } pb-4
       `}
       style={{
-        animation: isFixed
-          ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
-          : "unset",
-        background: isFixed
-          ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
-          : "unset",
+        animation:
+          isFixed && !searchFocus
+            ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
+            : "unset",
+        background:
+          isFixed && !searchFocus
+            ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
+            : "unset",
       }}
     >
       <h2
         className={`text-pwip-v2-primary font-sans text-base font-bold ${
-          inFixedBar ? "mb-[24px] mt-[38px]" : ""
+          inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
         }`}
       >
         {listProductsData?.length || 0} varieties to explore
@@ -245,7 +250,7 @@ const SelectVariantContainer = (props) => {
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
-  // const [isFixedFlag, setIsFixedFlag] = React.useState(false);
+  const [searchFocus, setSearchFocus] = React.useState(false);
 
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
@@ -389,27 +394,29 @@ const SelectVariantContainer = (props) => {
   let isFixedFlag = false;
 
   const checkY = () => {
-    const fixedDiv = fixedDivRef.current.getBoundingClientRect();
-    const divHeight = fixedDivRef.current.offsetHeight;
-    const startY = fixedDiv.bottom;
+    if (fixedDivRef?.current) {
+      const fixedDiv = fixedDivRef.current.getBoundingClientRect();
+      const divHeight = fixedDivRef.current.offsetHeight;
+      const startY = fixedDiv.bottom;
 
-    const shouldBeFixed =
-      parseInt(window.scrollY.toFixed(0)) >
-      parseInt((startY + divHeight * 2).toFixed(0));
+      const shouldBeFixed =
+        parseInt(window.scrollY.toFixed(0)) >
+        parseInt((startY + divHeight * 2).toFixed(0));
 
-    // console.log(
-    //   parseInt(window.scrollY.toFixed(0)) >
-    //     parseInt((startY + divHeight * 2).toFixed(0)),
-    //   parseInt(window.scrollY.toFixed(0)),
-    //   parseInt((startY + divHeight * 2).toFixed(0))
-    // );
+      // console.log(
+      //   parseInt(window.scrollY.toFixed(0)) >
+      //     parseInt((startY + divHeight * 2).toFixed(0)),
+      //   parseInt(window.scrollY.toFixed(0)),
+      //   parseInt((startY + divHeight * 2).toFixed(0))
+      // );
 
-    if (shouldBeFixed && !isFixedFlag) {
-      setIsFixed(true);
-      isFixedFlag = true;
-    } else if (!shouldBeFixed && isFixedFlag) {
-      setIsFixed(false);
-      isFixedFlag = false;
+      if (shouldBeFixed && !isFixedFlag) {
+        setIsFixed(true);
+        isFixedFlag = true;
+      } else if (!shouldBeFixed && isFixedFlag) {
+        setIsFixed(false);
+        isFixedFlag = false;
+      }
     }
   };
 
@@ -477,6 +484,12 @@ const SelectVariantContainer = (props) => {
               setSearchStringValue(event.target.value);
               handleSearch(event.target.value);
             }}
+            onFocus={() => {
+              setSearchFocus(true);
+            }}
+            onBlur={() => {
+              setSearchFocus(false);
+            }}
           />
           {searchStringValue ? (
             <button
@@ -519,7 +532,7 @@ const SelectVariantContainer = (props) => {
           paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromCategory ? (
+        {!isFromCategory && !searchFocus ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -580,7 +593,7 @@ const SelectVariantContainer = (props) => {
           </React.Fragment>
         ) : null}
 
-        {!isFromCategory ? (
+        {!isFromCategory && !searchFocus ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -635,11 +648,12 @@ const SelectVariantContainer = (props) => {
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            {!isFromCategory ? (
+            {!isFromCategory && !searchFocus ? (
               <FilterSection
                 fixedDivRef={fixedDivRef}
                 listProductsData={listProductsData}
                 isFixed={isFixed}
+                searchFocus={searchFocus}
               />
             ) : null}
 
