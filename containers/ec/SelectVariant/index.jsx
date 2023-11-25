@@ -490,6 +490,12 @@ const SelectVariantContainer = (props) => {
             onBlur={() => {
               setSearchFocus(false);
             }}
+            inputMode="search"
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.target.blur(); // Blur the input on "Enter" key press
+              }
+            }}
           />
           {searchStringValue ? (
             <button
@@ -733,7 +739,7 @@ const SelectVariantContainer = (props) => {
             <div
               className={`w-full h-full space-y-[24px] px-5 pb-[88px] ${
                 isFixed ? "pt-[162px]" : ""
-              } overflow-y-auto hide-scroll-bar`}
+              } overflow-y-auto hide-scroll-bar transition-all`}
               // style={{
               //   maxHeight: `calc(100vh - ${
               //     mainContainerHeight + 56 + 64 + 46
