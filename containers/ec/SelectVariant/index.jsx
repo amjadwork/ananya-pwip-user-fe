@@ -492,15 +492,9 @@ const SelectVariantContainer = (props) => {
             }}
             inputMode="search"
             onKeyDown={(event) => {
-              if (event.key === "Enter") {
+              if (event.key === "Enter" || event.keyCode === 13) {
                 event.target.blur(); // Blur the input on "Enter" key press
               }
-            }}
-            onSearch={() => {
-              // Handle "Done" button click
-              // This event is triggered when the "Done" button is clicked on the iPhone keyboard
-              // You can also use this event to blur the input
-              event.target.blur();
             }}
           />
           {searchStringValue ? (
