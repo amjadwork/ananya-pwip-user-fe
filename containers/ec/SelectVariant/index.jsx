@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -80,12 +80,25 @@ const riceCategory = [
   },
 ];
 
-const FilterSection = ({ listProductsData, inFixedBar }) => {
+const FilterSection = ({
+  listProductsData,
+  inFixedBar,
+  fixedDivRef,
+  isFixed,
+}) => {
   return (
     <div
+      ref={fixedDivRef}
       className={`flex w-full flex-col ${
         !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
-      }`}
+      }
+      ${isFixed ? "fixed left-0 top-[142px] bg-white z-20 pb-4" : ""}
+      `}
+      style={{
+        animation: "500ms ease-in-out 0s 1 normal none running fadeInDown",
+        background:
+          "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)",
+      }}
     >
       <h2
         className={`text-pwip-v2-primary font-sans text-base font-bold ${
@@ -97,7 +110,7 @@ const FilterSection = ({ listProductsData, inFixedBar }) => {
 
       <div
         className={`flex overflow-x-scroll hide-scroll-bar ${
-          !inFixedBar ? "mt-[24px]" : ""
+          !inFixedBar ? "mt-[20px]" : ""
         }`}
       >
         <div className="flex flex-nowrap">
@@ -195,6 +208,8 @@ function getUniqueObjectsBySourceId(inputArray) {
 }
 
 const SelectVariantContainer = (props) => {
+  const fixedDivRef = useRef();
+
   const isFromEdit = props.isFromEdit || false;
   const isFromCategory = props.isFromCategory || false;
 
@@ -224,6 +239,8 @@ const SelectVariantContainer = (props) => {
   const [popularProductsData, setPopularProductsData] = React.useState([]);
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
+  const [isFixed, setIsFixed] = React.useState(false);
+
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
 
@@ -344,6 +361,33 @@ const SelectVariantContainer = (props) => {
       setListProductsData([...productList]);
     }
   }
+
+  const checkY = () => {
+    const fixedDiv = fixedDivRef.current.getBoundingClientRect();
+    const divHeight = fixedDivRef.current.offsetHeight;
+    const startY = fixedDiv.bottom;
+
+    // console.log(
+    //   window.scrollY,
+    //   startY,
+    //   window.scrollY > startY + divHeight * 2
+    // );
+
+    if (window.scrollY > startY + divHeight * 2) {
+      setIsFixed(true);
+    } else {
+      setIsFixed(false);
+    }
+  };
+
+  React.useEffect(() => {
+    if (!isFromEdit && !isFromCategory) {
+      window.addEventListener("scroll", checkY);
+      return () => {
+        window.removeEventListener("scroll", checkY);
+      };
+    }
+  }, [isFromEdit, isFromCategory]);
 
   return (
     <React.Fragment>
@@ -553,7 +597,11 @@ const SelectVariantContainer = (props) => {
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
             {!isFromCategory ? (
-              <FilterSection listProductsData={listProductsData} />
+              <FilterSection
+                fixedDivRef={fixedDivRef}
+                listProductsData={listProductsData}
+                isFixed={isFixed}
+              />
             ) : null}
 
             {/* <div className="flex w-full flex-col">
