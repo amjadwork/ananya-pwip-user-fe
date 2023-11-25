@@ -517,7 +517,7 @@ const SelectVariantContainer = (props) => {
                 handleInputDoneClick(e);
               }, 10);
             }}
-            inputMode="search"
+            inputMode="text"
             onKeyDown={(event) => {
               if (
                 event.key === "Enter" ||
