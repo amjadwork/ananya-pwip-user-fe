@@ -1,4 +1,6 @@
 import React, { useRef } from "react";
+import { debounce } from "lodash";
+
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -92,12 +94,15 @@ const FilterSection = ({
       className={`flex w-full flex-col ${
         !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
       }
-      ${isFixed ? "fixed left-0 top-[142px] bg-white z-20 pb-4" : ""}
+      ${isFixed ? "fixed left-0 top-[158px] bg-white z-20" : ""} pb-4
       `}
       style={{
-        animation: "500ms ease-in-out 0s 1 normal none running fadeInDown",
-        background:
-          "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)",
+        animation: isFixed
+          ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
+          : "unset",
+        background: isFixed
+          ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
+          : "unset",
       }}
     >
       <h2
@@ -240,6 +245,7 @@ const SelectVariantContainer = (props) => {
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
+  // const [isFixedFlag, setIsFixedFlag] = React.useState(false);
 
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
@@ -362,29 +368,59 @@ const SelectVariantContainer = (props) => {
     }
   }
 
+  // const checkY = () => {
+  //   const fixedDiv = fixedDivRef.current.getBoundingClientRect();
+  //   const divHeight = fixedDivRef.current.offsetHeight;
+  //   const startY = fixedDiv.bottom;
+
+  //   // console.log(
+  //   //   window.scrollY,
+  //   //   startY,
+  //   //   window.scrollY > startY + divHeight * 2
+  //   // );
+
+  //   if (window.scrollY >= startY + divHeight * 2) {
+  //     setIsFixed(true);
+  //   } else {
+  //     setIsFixed(false);
+  //   }
+  // };
+
+  let isFixedFlag = false;
+
   const checkY = () => {
     const fixedDiv = fixedDivRef.current.getBoundingClientRect();
     const divHeight = fixedDivRef.current.offsetHeight;
     const startY = fixedDiv.bottom;
 
+    const shouldBeFixed =
+      parseInt(window.scrollY.toFixed(0)) >
+      parseInt((startY + divHeight * 2).toFixed(0));
+
     // console.log(
-    //   window.scrollY,
-    //   startY,
-    //   window.scrollY > startY + divHeight * 2
+    //   parseInt(window.scrollY.toFixed(0)) >
+    //     parseInt((startY + divHeight * 2).toFixed(0)),
+    //   parseInt(window.scrollY.toFixed(0)),
+    //   parseInt((startY + divHeight * 2).toFixed(0))
     // );
 
-    if (window.scrollY > startY + divHeight * 2) {
+    if (shouldBeFixed && !isFixedFlag) {
       setIsFixed(true);
-    } else {
+      isFixedFlag = true;
+    } else if (!shouldBeFixed && isFixedFlag) {
       setIsFixed(false);
+      isFixedFlag = false;
     }
   };
 
+  const debouncedCheckY = debounce(checkY, 5);
+
   React.useEffect(() => {
     if (!isFromEdit && !isFromCategory) {
-      window.addEventListener("scroll", checkY);
+      window.addEventListener("scroll", debouncedCheckY);
+
       return () => {
-        window.removeEventListener("scroll", checkY);
+        window.removeEventListener("scroll", debouncedCheckY);
       };
     }
   }, [isFromEdit, isFromCategory]);
@@ -399,11 +435,14 @@ const SelectVariantContainer = (props) => {
           isFromCategory ? "pb-[12px]" : "pb-[32px]"
         } px-5`}
         style={{
-          background: !isFromCategory
-            ? "linear-gradient(180deg, #FFFFFF 94.86%, rgba(255, 255, 255, 0.00) 100%)"
-            : `linear-gradient(180deg, ${
-                filterForCategory?.productCategory?.color || "#FFFFFF"
-              } 94.86%, rgba(255, 255, 255, 0.00) 100%)`,
+          background:
+            !isFromCategory && !isFixed
+              ? "linear-gradient(180deg, #FFFFFF 94.86%, rgba(255, 255, 255, 0.00) 100%)"
+              : !isFromCategory && isFixed
+              ? "#ffffff"
+              : `linear-gradient(180deg, ${
+                  filterForCategory?.productCategory?.color || "#FFFFFF"
+                } 94.86%, rgba(255, 255, 255, 0.00) 100%)`,
         }}
       >
         <div
@@ -678,7 +717,9 @@ const SelectVariantContainer = (props) => {
             </div> */}
 
             <div
-              className="w-full h-full space-y-[24px] px-5 pb-[88px] overflow-y-auto hide-scroll-bar"
+              className={`w-full h-full space-y-[24px] px-5 pb-[88px] ${
+                isFixed ? "pt-[162px]" : ""
+              } overflow-y-auto hide-scroll-bar`}
               // style={{
               //   maxHeight: `calc(100vh - ${
               //     mainContainerHeight + 56 + 64 + 46
