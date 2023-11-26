@@ -58,7 +58,14 @@ import {
   shlCardIcon,
   chaCardIcon,
   inspectionCardIcon,
+  transportationCardIcon,
+  ofcCardIcon,
+  financeCardIcon,
+  overheadsCardIcon,
+  marginCardIcon,
+  dutyCardIcon,
   chevronDown,
+  checkIcon,
 } from "../../../../theme/icon";
 
 const tabsItems = [
@@ -74,7 +81,7 @@ const tabsItems = [
 
   {
     title: "Handling & Inspection",
-    description: "CHA, OFC, SHL, etc",
+    description: "CHA, SHL, etc",
   },
 
   {
@@ -82,6 +89,19 @@ const tabsItems = [
     description: "Finance cost, overheads, etc",
   },
 ];
+
+function calculateCurrentRicePrice(originalRicePrice, brokenPercent) {
+  // Ensure brokenPercent is within the valid range [0, 100]
+  brokenPercent = Math.min(100, Math.max(0, brokenPercent));
+
+  // Calculate the adjustment factor based on brokenPercent
+  let adjustmentFactor = Math.floor(brokenPercent / 5) * 0.3;
+
+  // Calculate the current rice price
+  let currentRicePrice = originalRicePrice + adjustmentFactor;
+
+  return currentRicePrice;
+}
 
 function convertUnits(currentUnit, neededUnit, value) {
   // Define conversion factors for each unit
@@ -140,9 +160,10 @@ function EditCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { openBottomSheet } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
 
   const formik = useRef();
+  const bottomSheetInputRef = useRef();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
@@ -522,9 +543,9 @@ function EditCosting() {
                   <div
                     key={item.title + "_" + index}
                     onClick={() => setActiveTab(index)}
-                    className="inline-block px-5 py-[14px] bg-pwip-v2-gray-100 border-r-[1px] border-r-pwip-v2-gray-300"
+                    className="inline-block px-5 py-[14px] bg-pwip-v2-gray-100 border-r-[1px] border-r-pwip-v2-gray-300 transition-opacity"
                     style={{
-                      opacity: activeTab === index ? 1 : 0.4,
+                      opacity: activeTab === index ? 1 : 0.3,
                       borderBottom:
                         activeTab === index ? "2px solid #006EB4" : "unset",
                     }}
@@ -595,10 +616,9 @@ function EditCosting() {
                             type: "input",
                             name: "costOfRice",
                             placeholder: "Ex: 52.5",
-                            unit: values?._variantId?.sourceRates?.unit,
-                            value: values?._variantId?.sourceRates?.price
-                              ? `₹${values?._variantId?.sourceRates?.price}`
-                              : "",
+                            showCurrency: true,
+                            unit: selectedUnitForPayload,
+                            value: values?.costOfRice ? values?.costOfRice : "",
                           },
                           {
                             label: "Broken %",
@@ -634,6 +654,38 @@ function EditCosting() {
                           },
                         ],
                       },
+
+                      {
+                        cardTitle: "Transportation",
+                        icon: transportationCardIcon,
+                        form: [
+                          {
+                            label: "Enter cost of transportation",
+                            type: "input",
+                            name: "transportation",
+                            placeholder: "",
+                            showCurrency: true,
+                            unit: selectedUnitForPayload,
+                            value: values?.transportation,
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Ocean freight charges (OFC)",
+                        icon: ofcCardIcon,
+                        form: [
+                          {
+                            label: "Enter OFC",
+                            type: "input",
+                            name: "ofc",
+                            placeholder: "",
+                            showCurrency: true,
+                            unit: "container",
+                            value: values?.ofc,
+                          },
+                        ],
+                      },
                     ],
                   },
 
@@ -662,11 +714,10 @@ function EditCosting() {
                             label: "Bag cost",
                             type: "input",
                             name: "bagPrice",
+                            showCurrency: true,
                             placeholder: "Ex: 10.5",
-                            unit: "mt",
-                            value: values?.bagPrice
-                              ? `₹${values?.bagPrice}`
-                              : "",
+                            unit: selectedUnitForPayload,
+                            value: values?.bagPrice ? values?.bagPrice : "",
                           },
                           // {
                           //   label: "Broken %",
@@ -706,7 +757,7 @@ function EditCosting() {
                             name: "containerWeight",
                             hideUSD: true,
                             hideUnit: false,
-                            unit: "mt",
+                            unit: selectedUnitForPayload,
                             placeholder: "",
                             value: values?.containerWeight || "",
                           },
@@ -727,8 +778,9 @@ function EditCosting() {
                             type: "input",
                             name: "shl",
                             placeholder: "",
+                            showCurrency: true,
                             unit: "container",
-                            value: `₹${values?.shl}` || "",
+                            value: values?.shl,
                           },
                         ],
                       },
@@ -742,8 +794,9 @@ function EditCosting() {
                             type: "input",
                             name: "cfsHandling",
                             placeholder: "",
+                            showCurrency: true,
                             unit: "container",
-                            value: `₹${values?.cfsHandling}` || "",
+                            value: values?.cfsHandling,
                           },
                         ],
                       },
@@ -757,8 +810,9 @@ function EditCosting() {
                             type: "input",
                             name: "inspectionCost",
                             placeholder: "",
+                            showCurrency: true,
                             unit: "container",
-                            value: `₹${values?.inspectionCost}`,
+                            value: values?.inspectionCost,
                           },
                         ],
                       },
@@ -770,60 +824,64 @@ function EditCosting() {
                     section: [
                       {
                         cardTitle: "Finance Cost",
-                        icon: shlCardIcon,
+                        icon: financeCardIcon,
                         form: [
                           {
                             label: "Enter finance cost",
                             type: "input",
                             name: "financeCost",
                             placeholder: "",
+                            showCurrency: true,
                             hideUnit: true,
-                            value: `₹${values?.financeCost}` || "",
+                            value: values?.financeCost,
                           },
                         ],
                       },
 
                       {
                         cardTitle: "Overheads",
-                        icon: chaCardIcon,
+                        icon: overheadsCardIcon,
                         form: [
                           {
                             label: "Enter overheads",
                             type: "input",
                             name: "overheads",
                             placeholder: "",
+                            showCurrency: true,
                             hideUnit: true,
-                            value: `₹${values?.overheads}` || "",
+                            value: values?.overheads,
                           },
                         ],
                       },
 
                       {
                         cardTitle: "Margin",
-                        icon: inspectionCardIcon,
+                        icon: marginCardIcon,
                         form: [
                           {
                             label: "Enter margin",
                             type: "input",
                             name: "margin",
                             placeholder: "",
+                            showCurrency: true,
                             hideUnit: true,
-                            value: `₹${values?.inspectionCost}`,
+                            value: values?.inspectionCost,
                           },
                         ],
                       },
 
                       {
                         cardTitle: "Export duty",
-                        icon: inspectionCardIcon,
+                        icon: dutyCardIcon,
                         form: [
                           {
-                            label: "Enter your own duty (default is 20%",
+                            label: "Enter your own duty (default is 20%)",
                             type: "input",
                             name: "exportDutyValue",
                             placeholder: "",
+                            showCurrency: true,
                             hideUnit: true,
-                            value: `₹${values?.exportDutyValue}`,
+                            value: values?.exportDutyValue,
                           },
                         ],
                       },
@@ -835,200 +893,380 @@ function EditCosting() {
                       {sec.tab === activeTab ? (
                         <React.Fragment>
                           {sec.section.map((d, i) => {
+                            const fieldName = d.form.find((d) => d.name)?.name;
+
                             return (
-                              <div
-                                key={d.cardTitle + " " + i}
-                                className="bg-white w-full h-auto px-5 py-7 mb-3"
-                              >
-                                <div className="inline-flex items-center space-x-2 mb-6">
-                                  {d.icon}
-                                  <h2 className="text-pwip-v2-primary font-[700] text-lg">
-                                    {d.cardTitle}
-                                  </h2>
-                                </div>
+                              <React.Fragment key={d.cardTitle + " " + i}>
+                                {fieldName === "exportDutyValue" ? (
+                                  <div className="inline-flex items-center py-8 px-5 space-x-4">
+                                    <input
+                                      type="checkbox"
+                                      checked={values?.exportDuty}
+                                      name="exportDuty"
+                                      onChange={handleChange}
+                                      className="text-pwip-v2-primary h-[17px] w-[17px] rounded-md"
+                                    />
+                                    <label
+                                      onClick={() => {
+                                        setFieldValue(
+                                          "exportDuty",
+                                          !values.exportDuty
+                                        );
+                                      }}
+                                      className="text-sm font-[500] text-pwip-black-600"
+                                    >
+                                      20% export duty applicable
+                                    </label>
+                                  </div>
+                                ) : null}
+                                <div
+                                  className="bg-white w-full h-auto px-5 py-7 mb-3 transition-opacity"
+                                  style={{
+                                    opacity:
+                                      !values?.exportDuty &&
+                                      fieldName === "exportDutyValue"
+                                        ? 0.25
+                                        : 1,
+                                  }}
+                                >
+                                  <div className="inline-flex items-center space-x-2 mb-6">
+                                    {d.icon}
+                                    <h2 className="text-pwip-v2-primary font-[700] text-lg">
+                                      {d.cardTitle}
+                                    </h2>
+                                  </div>
 
-                                <div className="inline-flex w-full flex-col space-y-5">
-                                  {d.form.map((field, index) => {
-                                    return (
-                                      <div
-                                        key={field.label + index}
-                                        className="inline-flex flex-col w-full"
-                                      >
-                                        <label className="text-sm font-[500] text-pwip-black-600">
-                                          {field.label}
-                                        </label>
-                                        {field.type === "select" ? (
-                                          <div className="inline-flex items-center relative mt-2">
-                                            <input
-                                              placeholder={field.placeholder}
-                                              type="text"
-                                              name={field.name}
-                                              readOnly={true}
-                                              value={field?.value || ""}
-                                              onChange={handleChange}
-                                              onBlur={handleBlur}
+                                  <div className="inline-flex w-full flex-col space-y-5">
+                                    {d.form.map((field, index) => {
+                                      return (
+                                        <div
+                                          key={field.label + index}
+                                          className="inline-flex flex-col w-full"
+                                        >
+                                          <label className="text-sm font-[500] text-pwip-black-600">
+                                            {field.label}
+                                          </label>
+                                          {field.type === "select" ? (
+                                            <div className="inline-flex items-center relative mt-2">
+                                              <input
+                                                placeholder={field.placeholder}
+                                                type="text"
+                                                name={field.name}
+                                                readOnly={true}
+                                                value={field?.value || ""}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                                onClick={() => {
+                                                  if (
+                                                    field.name === "_variantId"
+                                                  ) {
+                                                    const content = (
+                                                      <div>
+                                                        <SelectVariantContainer
+                                                          roundedTop={false}
+                                                          noTop={true}
+                                                          noPaddingBottom={true}
+                                                          isFromEdit={true}
+                                                          setFieldValue={
+                                                            setFieldValue
+                                                          }
+                                                        />
+                                                      </div>
+                                                    );
+                                                    openBottomSheet(content);
+                                                  }
+
+                                                  if (
+                                                    field.name === "_originId"
+                                                  ) {
+                                                    const content = (
+                                                      <div>
+                                                        <SelectLocationContainer
+                                                          title="Select Port of Origin"
+                                                          roundedTop={false}
+                                                          noTop={true}
+                                                          noPaddingBottom={true}
+                                                          isFromEdit={true}
+                                                          locationType="origin"
+                                                          setFieldValue={
+                                                            setFieldValue
+                                                          }
+                                                          containerWeight={parseFloat(
+                                                            values?.containerWeight
+                                                          )}
+                                                        />
+                                                      </div>
+                                                    );
+                                                    openBottomSheet(content);
+                                                  }
+
+                                                  if (
+                                                    field.name ===
+                                                    "_destinationId"
+                                                  ) {
+                                                    const content = (
+                                                      <div>
+                                                        <SelectLocationContainer
+                                                          title="Select Port of Destination"
+                                                          roundedTop={false}
+                                                          noTop={true}
+                                                          noPaddingBottom={true}
+                                                          isFromEdit={true}
+                                                          locationType="destination"
+                                                          setFieldValue={
+                                                            setFieldValue
+                                                          }
+                                                          containerWeight={parseFloat(
+                                                            values?.containerWeight
+                                                          )}
+                                                        />
+                                                      </div>
+                                                    );
+                                                    openBottomSheet(content);
+                                                  }
+
+                                                  if (field.name === "_bagId") {
+                                                    const content = (
+                                                      <div>
+                                                        <SelectBagsContainer
+                                                          roundedTop={false}
+                                                          noTop={true}
+                                                          noPaddingBottom={true}
+                                                        />
+                                                      </div>
+                                                    );
+                                                    openBottomSheet(content);
+                                                  }
+
+                                                  if (
+                                                    field.name ===
+                                                    "_containerId"
+                                                  ) {
+                                                    const content = (
+                                                      <div>
+                                                        <SelectCargoContainersContainer
+                                                          roundedTop={false}
+                                                          noTop={true}
+                                                          noPaddingBottom={true}
+                                                        />
+                                                      </div>
+                                                    );
+                                                    openBottomSheet(content);
+                                                  }
+                                                }}
+                                                className="inline-flex items-center h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                                              />
+                                              <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                                                {chevronDown}
+                                              </div>
+                                            </div>
+                                          ) : null}
+
+                                          {field.type === "input" ? (
+                                            <div
+                                              className="inline-flex items-start flex-col w-full relative mt-2"
                                               onClick={() => {
-                                                if (
-                                                  field.name === "_variantId"
-                                                ) {
-                                                  const content = (
-                                                    <div>
-                                                      <SelectVariantContainer
-                                                        roundedTop={false}
-                                                        noTop={true}
-                                                        noPaddingBottom={true}
-                                                        isFromEdit={true}
-                                                        setFieldValue={
-                                                          setFieldValue
-                                                        }
-                                                      />
-                                                    </div>
-                                                  );
-                                                  openBottomSheet(content);
-                                                }
+                                                const content = (
+                                                  <div
+                                                    className="px-5 mb-5"
+                                                    onClick={() => {
+                                                      bottomSheetInputRef.current.focus();
+                                                    }}
+                                                  >
+                                                    <h2 className="mt-4 text-pwip-v2-primary font-sans text-base font-bold">
+                                                      {field.label}
+                                                    </h2>
 
-                                                if (
-                                                  field.name === "_originId"
-                                                ) {
-                                                  const content = (
-                                                    <div>
-                                                      <SelectLocationContainer
-                                                        title="Select Port of Origin"
-                                                        roundedTop={false}
-                                                        noTop={true}
-                                                        noPaddingBottom={true}
-                                                        isFromEdit={true}
-                                                        locationType="origin"
-                                                        setFieldValue={
-                                                          setFieldValue
-                                                        }
-                                                        containerWeight={parseFloat(
-                                                          values?.containerWeight
+                                                    <div className="mt-[18px] flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]">
+                                                      <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1">
+                                                        <span>₹</span>
+                                                        <input
+                                                          ref={
+                                                            bottomSheetInputRef
+                                                          }
+                                                          className="bg-transparent outline-none border-none"
+                                                          defaultValue={
+                                                            field?.value
+                                                          }
+                                                          name={field?.name}
+                                                          onChange={
+                                                            handleChange
+                                                          }
+                                                          pattern="[0-9]*"
+                                                          inputMode="numeric"
+                                                        />
+                                                      </div>
+
+                                                      <span className="text-pwip-v2-green-800 font-[400] text-sm mt-2">
+                                                        $
+                                                        {inrToUsd(
+                                                          field?.value,
+                                                          forexRate.USD
                                                         )}
+                                                      </span>
+                                                      <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
+                                                        per{" "}
+                                                        {selectedUnitForPayload}
+                                                      </span>
+                                                    </div>
+
+                                                    <div className="inline-flex items-center w-full space-x-5 mt-[30px]">
+                                                      <Button
+                                                        type="outline"
+                                                        label="Cancel"
+                                                        minHeight="!min-h-[42px]"
+                                                        // disabled={
+                                                        //   isSubmitting ||
+                                                        //   !Object.keys(values?._variantId).length ||
+                                                        //   !Object.keys(values?._originId).length ||
+                                                        //   !Object.keys(values?._destinationId).length
+                                                        // }
+                                                        onClick={() => {
+                                                          closeBottomSheet();
+                                                        }}
+                                                      />
+                                                      <Button
+                                                        type="primary"
+                                                        label="Done"
+                                                        minHeight="!min-h-[42px]"
+                                                        // disabled={
+                                                        //   isSubmitting ||
+                                                        //   !Object.keys(values?._variantId).length ||
+                                                        //   !Object.keys(values?._originId).length ||
+                                                        //   !Object.keys(values?._destinationId).length
+                                                        // }
+                                                        onClick={() => {
+                                                          closeBottomSheet();
+                                                        }}
                                                       />
                                                     </div>
-                                                  );
-                                                  openBottomSheet(content);
-                                                }
+                                                  </div>
+                                                );
 
                                                 if (
                                                   field.name ===
-                                                  "_destinationId"
+                                                    "exportDutyValue" &&
+                                                  !values.exportDuty
                                                 ) {
-                                                  const content = (
-                                                    <div>
-                                                      <SelectLocationContainer
-                                                        title="Select Port of Destination"
-                                                        roundedTop={false}
-                                                        noTop={true}
-                                                        noPaddingBottom={true}
-                                                        isFromEdit={true}
-                                                        locationType="destination"
-                                                        setFieldValue={
-                                                          setFieldValue
-                                                        }
-                                                        containerWeight={parseFloat(
-                                                          values?.containerWeight
-                                                        )}
-                                                      />
-                                                    </div>
-                                                  );
-                                                  openBottomSheet(content);
+                                                  return null;
                                                 }
-
-                                                if (field.name === "_bagId") {
-                                                  const content = (
-                                                    <div>
-                                                      <SelectBagsContainer
-                                                        roundedTop={false}
-                                                        noTop={true}
-                                                        noPaddingBottom={true}
-                                                      />
-                                                    </div>
-                                                  );
-                                                  openBottomSheet(content);
-                                                }
-
-                                                if (
-                                                  field.name === "_containerId"
-                                                ) {
-                                                  const content = (
-                                                    <div>
-                                                      <SelectCargoContainersContainer
-                                                        roundedTop={false}
-                                                        noTop={true}
-                                                        noPaddingBottom={true}
-                                                      />
-                                                    </div>
-                                                  );
-                                                  openBottomSheet(content);
-                                                }
+                                                openBottomSheet(content, () => {
+                                                  bottomSheetInputRef.current.focus();
+                                                });
                                               }}
-                                              className="inline-flex items-center h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
-                                            />
-                                            <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
-                                              {chevronDown}
-                                            </div>
-                                          </div>
-                                        ) : null}
-
-                                        {field.type === "input" ? (
-                                          <div className="inline-flex items-center relative mt-2">
-                                            <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans">
-                                              <div className="inline-flex items-end space-x-1">
-                                                <span className="text-pwip-gray-850 font-[700] text-sm">
-                                                  {field?.value}
-                                                </span>
-                                                {!field?.hideUSD &&
-                                                field?.value ? (
-                                                  <span className="text-pwip-v2-green-800 font-[700] text-sm">
-                                                    $
-                                                    {inrToUsd(
-                                                      field?.value.split(
-                                                        "₹"
-                                                      )[1],
-                                                      forexRate.USD
-                                                    )}
+                                            >
+                                              <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans">
+                                                <div className="inline-flex items-end space-x-2">
+                                                  <div className="inline-flex items-center text-pwip-gray-850 font-[700] text-xs">
+                                                    {field?.showCurrency ? (
+                                                      <span>₹</span>
+                                                    ) : null}
+                                                    <span>{field?.value}</span>
+                                                  </div>
+                                                  {!field?.hideUSD &&
+                                                  field?.value ? (
+                                                    <span className="text-pwip-v2-green-800 font-[400] text-xs">
+                                                      $
+                                                      {inrToUsd(
+                                                        field?.value || 0,
+                                                        forexRate.USD
+                                                      )}
+                                                    </span>
+                                                  ) : null}
+                                                </div>
+                                                {!field?.hideUnit &&
+                                                field?.unit ? (
+                                                  <span className="text-pwip-v2-primary-700 font-[700] text-xs">
+                                                    /{field?.unit}
                                                   </span>
                                                 ) : null}
                                               </div>
-                                              {!field?.hideUnit &&
-                                              field?.unit ? (
-                                                <span className="text-pwip-v2-primary-700 font-[700] text-sm">
-                                                  /{field?.unit}
-                                                </span>
-                                              ) : null}
                                             </div>
-                                          </div>
-                                        ) : null}
+                                          ) : null}
 
-                                        {field.type === "tagSelect" ? (
-                                          <div className="flex w-full overflow-x-scroll hide-scroll-bar mt-2">
-                                            <div className="flex w-full flex-nowrap space-x-[7px]">
-                                              {field.option.map(
-                                                (opt, optIndex) => {
-                                                  return (
-                                                    <div
-                                                      className="inline-block"
-                                                      key={opt + "_" + optIndex}
-                                                    >
-                                                      <div className="inline-flex items-center justify-between h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 border-[0.1px] border-[#006EB4] text-pwip-gray-850 px-3 py-[6px] font-sans">
-                                                        <span className="font-[600] text-xs">
-                                                          {opt}%
-                                                        </span>
+                                          {field.type === "tagSelect" ? (
+                                            <div className="flex w-full overflow-x-scroll hide-scroll-bar mt-2">
+                                              <div className="flex w-full flex-nowrap space-x-[7px]">
+                                                {field.option.map(
+                                                  (opt, optIndex) => {
+                                                    let selected =
+                                                      "border-[1px] text-pwip-gray-850 border-pwip-v2-gray-400";
+                                                    let icon = null;
+
+                                                    if (
+                                                      opt === values[field.name]
+                                                    ) {
+                                                      icon = checkIcon;
+                                                      selected =
+                                                        "border-[1px] text-pwip-v2-primary-700 border-pwip-v2-primary-700";
+                                                    }
+
+                                                    return (
+                                                      <div
+                                                        className="inline-block"
+                                                        key={
+                                                          opt + "_" + optIndex
+                                                        }
+                                                        onClick={() => {
+                                                          if (
+                                                            field.name ===
+                                                            "brokenPercentage"
+                                                          ) {
+                                                            let currentCostOfRice =
+                                                              parseFloat(
+                                                                convertUnits(
+                                                                  selectedUnitForPayload,
+                                                                  "kg",
+                                                                  parseFloat(
+                                                                    values?.costOfRice
+                                                                  )
+                                                                )
+                                                              ) || 0;
+
+                                                            setFieldValue(
+                                                              "costOfRice",
+                                                              convertUnits(
+                                                                "kg",
+                                                                selectedUnitForPayload,
+                                                                calculateCurrentRicePrice(
+                                                                  currentCostOfRice,
+                                                                  opt
+                                                                )
+                                                              )
+                                                            );
+                                                          }
+
+                                                          setFieldValue(
+                                                            field.name,
+                                                            opt
+                                                          );
+                                                        }}
+                                                      >
+                                                        <div
+                                                          className={`inline-flex items-center justify-between h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
+                                                        >
+                                                          {icon ? (
+                                                            <div className="mr-[10px]">
+                                                              {icon}
+                                                            </div>
+                                                          ) : null}
+                                                          <span className="font-[600] text-xs">
+                                                            {opt}%
+                                                          </span>
+                                                        </div>
                                                       </div>
-                                                    </div>
-                                                  );
-                                                }
-                                              )}
+                                                    );
+                                                  }
+                                                )}
+                                              </div>
                                             </div>
-                                          </div>
-                                        ) : null}
-                                      </div>
-                                    );
-                                  })}
+                                          ) : null}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
                                 </div>
-                              </div>
+                              </React.Fragment>
                             );
                           })}
                         </React.Fragment>

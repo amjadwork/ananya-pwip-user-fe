@@ -22,6 +22,7 @@ export function OverlayProvider({ children }) {
   const [toastContent, setToastContent] = useState(null);
 
   const [bottomSheetChildren, setBottomSheetChildren] = useState(null);
+
   const [autoHideToast, setAutoHideToast] = useState(true);
   const [usdValue, setUSDValue] = useState(0);
   const [usdInputValue, setUSDInputValue] = useState(0);
@@ -34,9 +35,14 @@ export function OverlayProvider({ children }) {
   };
   const closeModal = () => setIsModalOpen(false);
 
-  const openBottomSheet = (content) => {
+  const openBottomSheet = async (content, handler) => {
     setIsBottomSheetOpen(true);
-    setBottomSheetChildren(content);
+
+    await setBottomSheetChildren(content);
+
+    if (handler) {
+      handler();
+    }
   };
   const closeBottomSheet = () => setIsBottomSheetOpen(false);
 

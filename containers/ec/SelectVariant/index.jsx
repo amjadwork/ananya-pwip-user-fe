@@ -795,6 +795,11 @@ const SelectVariantContainer = (props) => {
                     onClick={() => {
                       if (isFromEdit) {
                         if (setFieldValue) {
+                          setFieldValue(
+                            "brokenPercentage",
+                            items?.brokenPercentage || "0"
+                          );
+
                           setFieldValue("_originId", {});
                           setFieldValue("_destinationId", {});
                           setFieldValue("_variantId", items);
