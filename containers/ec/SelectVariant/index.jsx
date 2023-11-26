@@ -253,7 +253,7 @@ const SelectVariantContainer = (props) => {
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [productsData, setProductsData] = React.useState([]);
-  const [popularProductsData, setPopularProductsData] = React.useState([]);
+  // const [popularProductsData, setPopularProductsData] = React.useState([]);
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
@@ -460,7 +460,7 @@ const SelectVariantContainer = (props) => {
         className={`fixed ${
           !noTop ? "top-[56px]" : "top-[18px]"
         }  h-[auto] w-full z-10 py-3 ${
-          isFromCategory ? "pb-[12px]" : "pb-[32px]"
+          isFromCategory || isFromEdit ? "pb-[12px]" : "pb-[32px]"
         } px-5`}
         style={{
           background:
@@ -555,7 +555,7 @@ const SelectVariantContainer = (props) => {
           ) : null}
         </div>
 
-        {isFromCategory ? (
+        {isFromCategory || isFromEdit ? (
           <FilterSection
             listProductsData={listProductsData}
             inFixedBar={true}
@@ -566,10 +566,15 @@ const SelectVariantContainer = (props) => {
       <div
         className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
         style={{
-          paddingTop: mainContainerHeight + 32 + "px",
+          paddingTop: isFromEdit
+            ? mainContainerHeight + 110 + "px"
+            : mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromCategory && !searchScreenActive && !searchStringValue ? (
+        {!isFromCategory &&
+        !isFromEdit &&
+        !searchScreenActive &&
+        !searchStringValue ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -630,7 +635,10 @@ const SelectVariantContainer = (props) => {
           </React.Fragment>
         ) : null}
 
-        {!isFromCategory && !searchScreenActive && !searchStringValue ? (
+        {!isFromCategory &&
+        !isFromEdit &&
+        !searchScreenActive &&
+        !searchStringValue ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -685,7 +693,10 @@ const SelectVariantContainer = (props) => {
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            {!isFromCategory && !searchScreenActive && !searchStringValue ? (
+            {!isFromCategory &&
+            !isFromEdit &&
+            !searchScreenActive &&
+            !searchStringValue ? (
               <FilterSection
                 fixedDivRef={fixedDivRef}
                 listProductsData={listProductsData}

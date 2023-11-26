@@ -7,7 +7,14 @@ import {
   fetchDestinationRequest,
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
-import { api } from "@/utils/helper";
+import { useOverlayContext } from "@/context/OverlayContext";
+
+import SelectVariantContainer from "@/containers/ec/SelectVariant";
+import SelectLocationContainer from "@/containers/ec/SelectLocation";
+import SelectBagsContainer from "@/containers/ec/SelectBags";
+import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
+
+import { api, inrToUsd } from "@/utils/helper";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -42,6 +49,39 @@ import CostingForm from "@/containers/ec/Forms/CostingForm";
 import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
 import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+
+import {
+  riceCardIcon,
+  locationCardIcon,
+  bagsCardIcon,
+  containerCardIcon,
+  shlCardIcon,
+  chaCardIcon,
+  inspectionCardIcon,
+  chevronDown,
+} from "../../../../theme/icon";
+
+const tabsItems = [
+  {
+    title: "Product & transportation",
+    description: "Rice, POD, POL, OFC, etc",
+  },
+
+  {
+    title: "Bags & containers",
+    description: "Bags, bag price, containers",
+  },
+
+  {
+    title: "Handling & Inspection",
+    description: "CHA, OFC, SHL, etc",
+  },
+
+  {
+    title: "Other Charges",
+    description: "Finance cost, overheads, etc",
+  },
+];
 
 function convertUnits(currentUnit, neededUnit, value) {
   // Define conversion factors for each unit
@@ -100,6 +140,8 @@ function EditCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const { openBottomSheet } = useOverlayContext();
+
   const formik = useRef();
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -124,7 +166,7 @@ function EditCosting() {
   const customCostingSelection = useSelector(
     (state) => state.costing.customCostingSelection
   );
-
+  const forexRate = useSelector((state) => state.utils.forexRate);
   const selectedMyCostingFromHistory = useSelector((state) => {
     if (
       state.myCosting &&
@@ -447,9 +489,9 @@ function EditCosting() {
 
         <div
           id="fixedMenuSection"
-          className="fixed top-[72px] h-[auto] w-full bg-pwip-gray-45 z-10 py-5 px-5"
+          className="fixed top-[56px] h-[auto] w-full bg-pwip-gray-45 z-10"
         >
-          <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
+          {/* <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
             <div
               onClick={() => setActiveTab(0)}
               className={`w-[50%] h-full inline-flex items-center justify-center ${
@@ -471,13 +513,42 @@ function EditCosting() {
                 Breakup
               </span>
             </div>
+          </div> */}
+
+          <div className={`flex overflow-x-scroll hide-scroll-bar`}>
+            <div className="flex flex-nowrap">
+              {[...tabsItems].map((item, index) => {
+                return (
+                  <div
+                    key={item.title + "_" + index}
+                    onClick={() => setActiveTab(index)}
+                    className="inline-block px-5 py-[14px] bg-pwip-v2-gray-100 border-r-[1px] border-r-pwip-v2-gray-300"
+                    style={{
+                      opacity: activeTab === index ? 1 : 0.4,
+                      borderBottom:
+                        activeTab === index ? "2px solid #006EB4" : "unset",
+                    }}
+                  >
+                    <div className="overflow-hidden w-auto h-auto inline-flex flex-col items-start space-y-[4px]">
+                      <span className="text-pwip-v2-primary-700 font-[600] text-sm whitespace-nowrap">
+                        {item.title}
+                      </span>
+                      <span className="text-pwip-gray-600 font-[400] text-xs line-clamp-1">
+                        {item.description}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
         <div
-          className={`min-h-screen h-full w-full bg-pwip-gray-45 pb-[32px] overflow-auto px-5 hide-scroll-bar`}
+          className={`min-h-screen h-full w-full bg-pwip-v2-gray-50 pb-[32px] overflow-auto hide-scroll-bar`}
           style={{
-            paddingTop: mainContainerHeight + 92 + "px",
+            paddingTop: mainContainerHeight + 68 + "px",
+            paddingBottom: "82px",
           }}
         >
           <Formik
@@ -504,7 +575,468 @@ function EditCosting() {
                 className="inline-flex flex-col w-full"
                 onSubmit={handleSubmit}
               >
-                <CostingForm
+                {[
+                  {
+                    tab: 0,
+                    section: [
+                      {
+                        cardTitle: "Update rice",
+                        icon: riceCardIcon,
+                        form: [
+                          {
+                            label: "Select a variety of rice",
+                            type: "select",
+                            name: "_variantId",
+                            placeholder: "Ex: Sona masuri",
+                            value: values?._variantId?.variantName || "",
+                          },
+                          {
+                            label: "Ex-mill price",
+                            type: "input",
+                            name: "costOfRice",
+                            placeholder: "Ex: 52.5",
+                            unit: values?._variantId?.sourceRates?.unit,
+                            value: values?._variantId?.sourceRates?.price
+                              ? `₹${values?._variantId?.sourceRates?.price}`
+                              : "",
+                          },
+                          {
+                            label: "Broken %",
+                            type: "tagSelect",
+                            name: "brokenPercentage",
+                            placeholder: "5%",
+                            value: values?.brokenPercentage || "",
+                            option: [5, 10, 15, 20, 25, 100],
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Update location",
+                        icon: locationCardIcon,
+                        form: [
+                          {
+                            label: "Select port of origin",
+                            type: "select",
+                            name: "_originId",
+                            placeholder: "Ex: Vizag port",
+                            value:
+                              values?._originId?.portName ||
+                              values?._originId?.originPortName ||
+                              "",
+                          },
+                          {
+                            label: "Select port of destination",
+                            type: "select",
+                            name: "_destinationId",
+                            placeholder: "Ex: Singapore",
+                            value: values?._destinationId?.portName || "",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+
+                  {
+                    tab: 1,
+                    section: [
+                      {
+                        cardTitle: "Update bags",
+                        icon: bagsCardIcon,
+                        form: [
+                          {
+                            label: "Select a bag type",
+                            type: "select",
+                            name: "_bagId",
+                            placeholder: "Ex: Jute",
+                            value: values?._bagId?.bag || "",
+                          },
+                          {
+                            label: "Select a Bag size",
+                            type: "select",
+                            name: "bagSize",
+                            placeholder: "Ex: 15kg",
+                            value: values?.bagSize || "",
+                          },
+                          {
+                            label: "Bag cost",
+                            type: "input",
+                            name: "bagPrice",
+                            placeholder: "Ex: 10.5",
+                            unit: "mt",
+                            value: values?.bagPrice
+                              ? `₹${values?.bagPrice}`
+                              : "",
+                          },
+                          // {
+                          //   label: "Broken %",
+                          //   type: "tagSelect",
+                          //   name: "brokenPercentage",
+                          //   placeholder: "5%",
+                          //   value: values?.brokenPercentage || "",
+                          //   option: [5, 10, 15, 20, 25, 100],
+                          // },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Update containers",
+                        icon: containerCardIcon,
+                        form: [
+                          {
+                            label: "Select a container type",
+                            type: "select",
+                            name: "_containerId",
+                            placeholder: "",
+                            value: `${values?._containerId?.type || ""} ${
+                              values?._containerId?.size || ""
+                            }`,
+                          },
+                          {
+                            label: "Number of containers",
+                            type: "input",
+                            name: "containersCount",
+                            placeholder: "",
+                            hideUSD: true,
+                            value: values?.containersCount || "",
+                          },
+                          {
+                            label: "Container weight",
+                            type: "input",
+                            name: "containerWeight",
+                            hideUSD: true,
+                            hideUnit: false,
+                            unit: "mt",
+                            placeholder: "",
+                            value: values?.containerWeight || "",
+                          },
+                        ],
+                      },
+                    ],
+                  },
+
+                  {
+                    tab: 2,
+                    section: [
+                      {
+                        cardTitle: "Update SHL",
+                        icon: shlCardIcon,
+                        form: [
+                          {
+                            label: "Enter SHL",
+                            type: "input",
+                            name: "shl",
+                            placeholder: "",
+                            unit: "container",
+                            value: `₹${values?.shl}` || "",
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Update CHA",
+                        icon: chaCardIcon,
+                        form: [
+                          {
+                            label: "Enter CHA",
+                            type: "input",
+                            name: "cfsHandling",
+                            placeholder: "",
+                            unit: "container",
+                            value: `₹${values?.cfsHandling}` || "",
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Inspection Cost",
+                        icon: inspectionCardIcon,
+                        form: [
+                          {
+                            label: "Enter cost of inspection",
+                            type: "input",
+                            name: "inspectionCost",
+                            placeholder: "",
+                            unit: "container",
+                            value: `₹${values?.inspectionCost}`,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+
+                  {
+                    tab: 3,
+                    section: [
+                      {
+                        cardTitle: "Finance Cost",
+                        icon: shlCardIcon,
+                        form: [
+                          {
+                            label: "Enter finance cost",
+                            type: "input",
+                            name: "financeCost",
+                            placeholder: "",
+                            hideUnit: true,
+                            value: `₹${values?.financeCost}` || "",
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Overheads",
+                        icon: chaCardIcon,
+                        form: [
+                          {
+                            label: "Enter overheads",
+                            type: "input",
+                            name: "overheads",
+                            placeholder: "",
+                            hideUnit: true,
+                            value: `₹${values?.overheads}` || "",
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Margin",
+                        icon: inspectionCardIcon,
+                        form: [
+                          {
+                            label: "Enter margin",
+                            type: "input",
+                            name: "margin",
+                            placeholder: "",
+                            hideUnit: true,
+                            value: `₹${values?.inspectionCost}`,
+                          },
+                        ],
+                      },
+
+                      {
+                        cardTitle: "Export duty",
+                        icon: inspectionCardIcon,
+                        form: [
+                          {
+                            label: "Enter your own duty (default is 20%",
+                            type: "input",
+                            name: "exportDutyValue",
+                            placeholder: "",
+                            hideUnit: true,
+                            value: `₹${values?.exportDutyValue}`,
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ].map((sec, secIndex) => {
+                  return (
+                    <React.Fragment key={"section" + "_#" + secIndex}>
+                      {sec.tab === activeTab ? (
+                        <React.Fragment>
+                          {sec.section.map((d, i) => {
+                            return (
+                              <div
+                                key={d.cardTitle + " " + i}
+                                className="bg-white w-full h-auto px-5 py-7 mb-3"
+                              >
+                                <div className="inline-flex items-center space-x-2 mb-6">
+                                  {d.icon}
+                                  <h2 className="text-pwip-v2-primary font-[700] text-lg">
+                                    {d.cardTitle}
+                                  </h2>
+                                </div>
+
+                                <div className="inline-flex w-full flex-col space-y-5">
+                                  {d.form.map((field, index) => {
+                                    return (
+                                      <div
+                                        key={field.label + index}
+                                        className="inline-flex flex-col w-full"
+                                      >
+                                        <label className="text-sm font-[500] text-pwip-black-600">
+                                          {field.label}
+                                        </label>
+                                        {field.type === "select" ? (
+                                          <div className="inline-flex items-center relative mt-2">
+                                            <input
+                                              placeholder={field.placeholder}
+                                              type="text"
+                                              name={field.name}
+                                              readOnly={true}
+                                              value={field?.value || ""}
+                                              onChange={handleChange}
+                                              onBlur={handleBlur}
+                                              onClick={() => {
+                                                if (
+                                                  field.name === "_variantId"
+                                                ) {
+                                                  const content = (
+                                                    <div>
+                                                      <SelectVariantContainer
+                                                        roundedTop={false}
+                                                        noTop={true}
+                                                        noPaddingBottom={true}
+                                                        isFromEdit={true}
+                                                        setFieldValue={
+                                                          setFieldValue
+                                                        }
+                                                      />
+                                                    </div>
+                                                  );
+                                                  openBottomSheet(content);
+                                                }
+
+                                                if (
+                                                  field.name === "_originId"
+                                                ) {
+                                                  const content = (
+                                                    <div>
+                                                      <SelectLocationContainer
+                                                        title="Select Port of Origin"
+                                                        roundedTop={false}
+                                                        noTop={true}
+                                                        noPaddingBottom={true}
+                                                        isFromEdit={true}
+                                                        locationType="origin"
+                                                        setFieldValue={
+                                                          setFieldValue
+                                                        }
+                                                        containerWeight={parseFloat(
+                                                          values?.containerWeight
+                                                        )}
+                                                      />
+                                                    </div>
+                                                  );
+                                                  openBottomSheet(content);
+                                                }
+
+                                                if (
+                                                  field.name ===
+                                                  "_destinationId"
+                                                ) {
+                                                  const content = (
+                                                    <div>
+                                                      <SelectLocationContainer
+                                                        title="Select Port of Destination"
+                                                        roundedTop={false}
+                                                        noTop={true}
+                                                        noPaddingBottom={true}
+                                                        isFromEdit={true}
+                                                        locationType="destination"
+                                                        setFieldValue={
+                                                          setFieldValue
+                                                        }
+                                                        containerWeight={parseFloat(
+                                                          values?.containerWeight
+                                                        )}
+                                                      />
+                                                    </div>
+                                                  );
+                                                  openBottomSheet(content);
+                                                }
+
+                                                if (field.name === "_bagId") {
+                                                  const content = (
+                                                    <div>
+                                                      <SelectBagsContainer
+                                                        roundedTop={false}
+                                                        noTop={true}
+                                                        noPaddingBottom={true}
+                                                      />
+                                                    </div>
+                                                  );
+                                                  openBottomSheet(content);
+                                                }
+
+                                                if (
+                                                  field.name === "_containerId"
+                                                ) {
+                                                  const content = (
+                                                    <div>
+                                                      <SelectCargoContainersContainer
+                                                        roundedTop={false}
+                                                        noTop={true}
+                                                        noPaddingBottom={true}
+                                                      />
+                                                    </div>
+                                                  );
+                                                  openBottomSheet(content);
+                                                }
+                                              }}
+                                              className="inline-flex items-center h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] text-xs font-sans"
+                                            />
+                                            <div className="absolute h-full mt-[4px] inline-flex items-center right-[18px]">
+                                              {chevronDown}
+                                            </div>
+                                          </div>
+                                        ) : null}
+
+                                        {field.type === "input" ? (
+                                          <div className="inline-flex items-center relative mt-2">
+                                            <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans">
+                                              <div className="inline-flex items-end space-x-1">
+                                                <span className="text-pwip-gray-850 font-[700] text-sm">
+                                                  {field?.value}
+                                                </span>
+                                                {!field?.hideUSD &&
+                                                field?.value ? (
+                                                  <span className="text-pwip-v2-green-800 font-[700] text-sm">
+                                                    $
+                                                    {inrToUsd(
+                                                      field?.value.split(
+                                                        "₹"
+                                                      )[1],
+                                                      forexRate.USD
+                                                    )}
+                                                  </span>
+                                                ) : null}
+                                              </div>
+                                              {!field?.hideUnit &&
+                                              field?.unit ? (
+                                                <span className="text-pwip-v2-primary-700 font-[700] text-sm">
+                                                  /{field?.unit}
+                                                </span>
+                                              ) : null}
+                                            </div>
+                                          </div>
+                                        ) : null}
+
+                                        {field.type === "tagSelect" ? (
+                                          <div className="flex w-full overflow-x-scroll hide-scroll-bar mt-2">
+                                            <div className="flex w-full flex-nowrap space-x-[7px]">
+                                              {field.option.map(
+                                                (opt, optIndex) => {
+                                                  return (
+                                                    <div
+                                                      className="inline-block"
+                                                      key={opt + "_" + optIndex}
+                                                    >
+                                                      <div className="inline-flex items-center justify-between h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 border-[0.1px] border-[#006EB4] text-pwip-gray-850 px-3 py-[6px] font-sans">
+                                                        <span className="font-[600] text-xs">
+                                                          {opt}%
+                                                        </span>
+                                                      </div>
+                                                    </div>
+                                                  );
+                                                }
+                                              )}
+                                            </div>
+                                          </div>
+                                        ) : null}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </React.Fragment>
+                      ) : null}
+                    </React.Fragment>
+                  );
+                })}
+                {/* <CostingForm
                   values={values}
                   handleChange={handleChange}
                   handleBlur={handleBlur}
@@ -517,13 +1049,39 @@ function EditCosting() {
                   handleChange={handleChange}
                   handleBlur={handleBlur}
                   activeTab={activeTab}
-                />
-
-                <div className="w-full !mt-[32px]">
+                /> */}
+                <div className="w-full fixed left-0 bottom-0 px-5 py-4 bg-white inline-flex items-start space-x-[20px]">
+                  <div className="w-[42px]">
+                    <Button
+                      type="outline"
+                      minHeight="!min-h-[42px]"
+                      label={
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                        >
+                          <path
+                            d="M7 3L2 8M2 8L7 13M2 8H14"
+                            stroke="#1B6EA7"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      }
+                      onClick={() => {
+                        router.back();
+                      }}
+                    />
+                  </div>
                   <Button
                     type="primary"
                     buttonType="submit"
-                    label="Update costing"
+                    label="Save to see full details"
+                    minHeight="!min-h-[42px]"
                     disabled={
                       isSubmitting ||
                       !Object.keys(values?._variantId).length ||

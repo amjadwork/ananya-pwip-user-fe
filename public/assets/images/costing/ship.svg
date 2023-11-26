@@ -66,8 +66,8 @@
 <g id="Group_14">
 <path id="Vector_40" d="M32.45 44.9529H30.064V52.8671H32.45V44.9529Z" fill="#E1DCD7"/>
 <path id="Vector_41" d="M32.4499 44.9847L32.4191 57.9296H48.8874V44.9573L32.4499 44.9847Z" fill="white"/>
-<path id="Vector_42" d="M30.0937 46.875H48.9019" stroke="#B5B5B5" strokeWidth="0.5" stroke-miterlimit="10"/>
-<path id="Vector_43" d="M30.0333 48.5485H48.8404" stroke="#B5B5B5" strokeWidth="0.5" stroke-miterlimit="10"/>
+<path id="Vector_42" d="M30.0937 46.875H48.9019" stroke="#B5B5B5" strokeWidth="0.5" strokeMiterlimit="10"/>
+<path id="Vector_43" d="M30.0333 48.5485H48.8404" stroke="#B5B5B5" strokeWidth="0.5" strokeMiterlimit="10"/>
 <g id="Group_15">
 <path id="Vector_44" d="M33.6893 45.5183H33.4103V46.5106H33.6893V45.5183Z" fill="#282B4D"/>
 <path id="Vector_45" d="M34.8154 45.5188H34.5363V46.5111H34.8154V45.5188Z" fill="#282B4D"/>
@@ -1622,8 +1622,8 @@
 <g id="Group_200">
 <g id="Group_201">
 <g id="Group_202">
-<path id="Vector_599" d="M21.6822 57.0363H43.3137" stroke="#B5B5B5" stroke-miterlimit="10"/>
-<path id="Vector_600" d="M21.769 57.3561H43.4005" stroke="#B5B5B5" stroke-miterlimit="10"/>
+<path id="Vector_599" d="M21.6822 57.0363H43.3137" stroke="#B5B5B5" strokeMiterlimit="10"/>
+<path id="Vector_600" d="M21.769 57.3561H43.4005" stroke="#B5B5B5" strokeMiterlimit="10"/>
 <g id="Group_203">
 <path id="Vector_601" d="M22.1638 56.636H21.4607V57.7558H22.1638V56.636Z" fill="#B5B5B5"/>
 <path id="Vector_602" d="M29.2732 56.636H28.5701V57.7558H29.2732V56.636Z" fill="#B5B5B5"/>
@@ -1632,8 +1632,8 @@
 </g>
 </g>
 <g id="Group_204">
-<path id="Vector_605" d="M45.8032 57.0363H65.287" stroke="#B5B5B5" stroke-miterlimit="10"/>
-<path id="Vector_606" d="M45.8809 57.3561H65.3647" stroke="#B5B5B5" stroke-miterlimit="10"/>
+<path id="Vector_605" d="M45.8032 57.0363H65.287" stroke="#B5B5B5" strokeMiterlimit="10"/>
+<path id="Vector_606" d="M45.8809 57.3561H65.3647" stroke="#B5B5B5" strokeMiterlimit="10"/>
 <g id="Group_205">
 <path id="Vector_607" d="M46.236 56.636H45.6033V57.7558H46.236V56.636Z" fill="#B5B5B5"/>
 <path id="Vector_608" d="M52.6396 56.636H52.0068V57.7558H52.6396V56.636Z" fill="#B5B5B5"/>
@@ -1657,8 +1657,8 @@
 <path id="Vector_619" d="M25.4244 58.8589H24.8796V59.438H25.4244V58.8589Z" fill="#265378"/>
 <path id="Vector_620" d="M26.5519 58.8589H26.007V59.438H26.5519V58.8589Z" fill="#265378"/>
 </g>
-<path id="Vector_621" d="M70.4684 56.6688H77.9056" stroke="#32719A" stroke-miterlimit="10"/>
-<path id="Vector_622" d="M29.7541 60.6931H65.4492" stroke="#32719A" stroke-miterlimit="10"/>
+<path id="Vector_621" d="M70.4684 56.6688H77.9056" stroke="#32719A" strokeMiterlimit="10"/>
+<path id="Vector_622" d="M29.7541 60.6931H65.4492" stroke="#32719A" strokeMiterlimit="10"/>
 </g>
 </g>
 </g>
