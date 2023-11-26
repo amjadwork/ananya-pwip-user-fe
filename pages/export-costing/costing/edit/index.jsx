@@ -1150,13 +1150,9 @@ function EditCosting() {
                                                 ) {
                                                   return null;
                                                 }
-                                                openBottomSheet(
-                                                  content,
-                                                  () => {
-                                                    bottomSheetInputRef.current.focus();
-                                                  },
-                                                  true
-                                                );
+                                                openBottomSheet(content, () => {
+                                                  bottomSheetInputRef.current.focus();
+                                                });
                                               }}
                                             >
                                               <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans">
