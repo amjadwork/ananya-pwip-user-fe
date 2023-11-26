@@ -26,6 +26,7 @@ export function OverlayProvider({ children }) {
   const [autoHideToast, setAutoHideToast] = useState(true);
   const [usdValue, setUSDValue] = useState(0);
   const [usdInputValue, setUSDInputValue] = useState(0);
+  const [initialFocusRef, setInitialFocusRef] = useState(false);
 
   const openModal = (usdValue) => {
     if (usdValue) {
@@ -35,10 +36,16 @@ export function OverlayProvider({ children }) {
   };
   const closeModal = () => setIsModalOpen(false);
 
-  const openBottomSheet = async (content, handler) => {
+  const openBottomSheet = async (content, handler, initialFocus) => {
     setIsBottomSheetOpen(true);
 
     await setBottomSheetChildren(content);
+
+    if (initialFocus) {
+      setInitialFocusRef(true);
+    } else {
+      setInitialFocusRef(false);
+    }
 
     if (handler) {
       handler();
@@ -95,7 +102,7 @@ export function OverlayProvider({ children }) {
         open={isBottomSheetOpen}
         onDismiss={closeBottomSheet}
         snapPoints={({ minHeight, maxHeight }) => [minHeight, maxHeight - 72]}
-        initialFocusRef={false}
+        initialFocusRef={initialFocusRef || false}
       >
         <div className="w-full h-auto pb-8">{bottomSheetChildren}</div>
       </BottomSheet>
