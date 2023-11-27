@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
+import { resetCostingSelection } from "@/redux/actions/costing.actions";
 
 import {
   chevronDown,
@@ -109,6 +110,10 @@ export function Header(props) {
 
                 if (searchScreenActive) {
                   dispatch(searchScreenFailure());
+                }
+
+                if (activeRoute === "select-pod") {
+                  dispatch(resetCostingSelection());
                 }
               }}
             >
