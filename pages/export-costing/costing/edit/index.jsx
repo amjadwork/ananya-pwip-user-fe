@@ -608,7 +608,6 @@ function EditCosting() {
                 className="inline-flex flex-col w-full"
                 onSubmit={handleSubmit}
               >
-                {console.log(values, selectedCosting)}
                 {[
                   {
                     tab: 0,
@@ -883,7 +882,7 @@ function EditCosting() {
                             placeholder: "",
                             showCurrency: true,
                             hideUnit: true,
-                            value: values?.inspectionCost,
+                            value: values?.margin,
                           },
                         ],
                       },
@@ -1192,11 +1191,6 @@ function EditCosting() {
                                                                   parseFloat(
                                                                     values.containerWeight
                                                                   );
-
-                                                                console.log(
-                                                                  totalCHA,
-                                                                  totalSHL
-                                                                );
 
                                                                 setFieldValue(
                                                                   "cfsHandling",

@@ -27,8 +27,10 @@ import {
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
 
-// import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
-
+import {
+  setTermsOfShipmentRequest,
+  // setTermsOfShipmentFailure,
+} from "@/redux/actions/shipmentTerms.actions";
 import {
   chevronDown,
   transportationCostIcon,
@@ -570,6 +572,68 @@ function CostingOverview() {
     openBottomSheet(content);
   };
 
+  const handleOpenShipmentTermSelectBottomSheet = () => {
+    const content = (
+      <React.Fragment>
+        <div
+          id="fixedMenuSection"
+          className={`h-[auto] w-full bg-white z-10 py-6 px-5`}
+        >
+          <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
+            Select terms of shipment
+          </h2>
+        </div>
+
+        <div
+          className={`h-full w-full bg-white py-8 overflow-auto px-5 hide-scroll-bar`}
+        >
+          <div className="grid grid-cols-1 gap-4">
+            {[
+              {
+                label: "FOB (Free On Board)",
+                value: "FOB",
+              },
+              {
+                label: "CIF (Cost, insurance, and freight)",
+                value: "CIF",
+              },
+            ].map((items, index) => {
+              return (
+                <div
+                  key={items.label + index}
+                  onClick={async () => {
+                    const action = {
+                      selected: items?.value,
+                      showShipmentTermDropdown: false,
+                    };
+                    dispatch(setTermsOfShipmentRequest(action));
+                    closeBottomSheet();
+                  }}
+                  className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex items-center"
+                >
+                  <input
+                    type="radio"
+                    checked={shipmentTerm === items.value ? true : false}
+                    onChange={(e) => {
+                      console.log(e.target.checked);
+                      dispatch(setTermsOfShipmentRequest(items.value));
+                    }}
+                  />
+                  <div className="p-3 flex w-fill flex-col space-y-[4px]">
+                    <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
+                      {items.label}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </React.Fragment>
+    );
+    openBottomSheet(content);
+  };
+
   const handleOpenUnitSelectBottomSheet = () => {
     const content = (
       <React.Fragment>
@@ -1103,12 +1167,22 @@ function CostingOverview() {
                 backdropFilter: "blur(3px)",
               }}
             >
-              <div className="w-full inline-flex items-center justify-start space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]">
+              <div
+                onClick={() => {
+                  handleOpenUnitSelectBottomSheet();
+                }}
+                className="w-full inline-flex items-center justify-start space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]"
+              >
                 <span>{selectedUnit?.label}</span>
                 {chevronDown}
               </div>
 
-              <div className="w-full inline-flex items-center justify-center space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]">
+              <div
+                onClick={() => {
+                  handleOpenShipmentTermSelectBottomSheet();
+                }}
+                className="w-full inline-flex items-center justify-center space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]"
+              >
                 <span>{shipmentTerm}</span>
                 {chevronDown}
               </div>
