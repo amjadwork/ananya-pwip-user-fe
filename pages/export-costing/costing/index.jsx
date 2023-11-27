@@ -18,6 +18,7 @@ import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
   generateCustomCostingRequest,
+  resetCostingSelection,
 } from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
@@ -1205,6 +1206,7 @@ function CostingOverview() {
                   onClick={() => {
                     dispatch(saveCostingFailure());
                     setGeneratedCostingData(null);
+                    dispatch(resetCostingSelection());
                     router.replace("/export-costing");
                   }}
                 />
