@@ -526,11 +526,10 @@ const SelectLocationContainer = (props) => {
               </svg>
             </button>
           ) : null}
-
-          {isFromEdit ? (
-            <FilterSection locationType={locationType} inFixedBar={true} />
-          ) : null}
         </div>
+        {isFromEdit ? (
+          <FilterSection locationType={locationType} inFixedBar={true} />
+        ) : null}
       </div>
 
       <div
@@ -538,7 +537,9 @@ const SelectLocationContainer = (props) => {
           !noPaddingBottom ? "pb-[172px]" : "pb-0"
         } overflow-auto hide-scroll-bar`}
         style={{
-          paddingTop: mainContainerHeight + 32 + "px",
+          paddingTop: isFromEdit
+            ? mainContainerHeight + 120 + "px"
+            : mainContainerHeight + 32 + "px",
         }}
       >
         {!isFromEdit && !searchStringValue && !searchScreenActive ? (
@@ -815,6 +816,7 @@ const SelectLocationContainer = (props) => {
                           : "#ffffff",
                     }}
                     onClick={async () => {
+                      console.log(selectedCosting);
                       if (isFromEdit) {
                         if (locationType === "destination") {
                           const response = await fetchCHAandSHLandOFCCost(
