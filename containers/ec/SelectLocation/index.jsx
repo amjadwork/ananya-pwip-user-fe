@@ -352,20 +352,20 @@ const SelectLocationContainer = (props) => {
       <div
         className={`min-h-screen h-full w-full bg-white ${
           !noPaddingBottom ? "pb-[172px]" : "pb-0"
-        } overflow-auto px-5 hide-scroll-bar`}
+        } overflow-auto hide-scroll-bar`}
         style={{
           paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromEdit ? (
+        {!isFromEdit && !searchStringValue ? (
           <React.Fragment>
             <h2
-              className={`mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+              className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
               Popular destination ports
             </h2>
 
-            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-[1px]">
+            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
               <div className="flex flex-nowrap">
                 {[...popularDestinationData].map((items, index) => {
                   const imageURI =
@@ -542,13 +542,13 @@ const SelectLocationContainer = (props) => {
             }`}
           >
             <h2
-              className={`mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
+              className={`px-5 mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
             >
               Choose your {locationType} port
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
-              <div className="flex flex-nowrap">
+              <div className="flex flex-nowrap px-5">
                 <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
                   <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
                     <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
@@ -617,7 +617,13 @@ const SelectLocationContainer = (props) => {
                 return (
                   <div
                     key={items._id + index}
-                    className="inline-flex items-center w-full p-[5px] space-x-[15px] bg-white"
+                    className="inline-flex items-center w-full p-[5px] px-5 space-x-[15px] bg-white"
+                    style={{
+                      backgroundColor:
+                        selectedCosting?.portOfDestination?._id === items._id
+                          ? "#F5FAFF"
+                          : "#ffffff",
+                    }}
                     onClick={async () => {
                       if (isFromEdit) {
                         if (locationType === "destination") {
@@ -683,8 +689,6 @@ const SelectLocationContainer = (props) => {
                             })
                           );
                         }
-
-                        console.log(selectedCosting, items);
 
                         if (locationType === "origin") {
                           if (
