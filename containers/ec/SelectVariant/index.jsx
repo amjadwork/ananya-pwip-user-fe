@@ -673,7 +673,9 @@ const SelectVariantContainer = (props) => {
                           className="w-[24px] h-[24px]"
                         />
                         <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                          <span className="line-clamp-1">Karnataka (IN)</span>
+                          <span className="line-clamp-1">
+                            {items?.sourceState} (IN)
+                          </span>
                           <span className="text-sm">🇮🇳</span>
                         </div>
                         <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">

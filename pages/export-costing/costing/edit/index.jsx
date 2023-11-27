@@ -68,6 +68,23 @@ import {
   checkIcon,
 } from "../../../../theme/icon";
 
+const lineBetweenLocation = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    height="2"
+    viewBox="0 0 32 2"
+    fill="none"
+    className="w-auto"
+  >
+    <path
+      d="M0.682129 1L60.8784 1"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeDasharray="2 2"
+    />
+  </svg>
+);
+
 const tabsItems = [
   {
     title: "Product & transportation",
@@ -184,6 +201,7 @@ function EditCosting() {
     React.useState("mt");
   const [componentShipmentTerm, setComponentShipmentTerm] =
     React.useState(null);
+  const [isFixed, setIsFixed] = React.useState(false);
 
   const authToken = useSelector((state) => state.auth.token);
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -457,6 +475,8 @@ function EditCosting() {
             },
             portOfOrigin:
               selectedMyCostingFromHistory?.details?.originPortObject,
+            portOfDestination:
+              selectedMyCostingFromHistory?.details?.destinationObject,
             shlData: response?.shl[0]?.destinations[0],
             ofcData: response?.ofc[0]?.destinations[0],
             chaData: response?.cha[0]?.destinations[0],
@@ -518,11 +538,88 @@ function EditCosting() {
       </Head>
 
       <AppLayout>
+        <div
+          className={`${
+            !isFixed
+              ? "fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700"
+              : "hidden opacity-0 h-0 top-[-10px]"
+          } px-5 py-4 transition-all duration-500`}
+        >
+          <div className="w-full flex items-center justify-between">
+            <div className="flex flex-col items-start flex-grow pr-3">
+              <span className="text-white text-xs font-normal font-sans line-clamp-1">
+                {customCostingSelection?.product?.variantName ||
+                  generatedCosting?.details?.variantObject?.variantName ||
+                  "-/-"}
+              </span>
+
+              <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
+                <div className="inline-flex items-center space-x-3 max-w-[28%]">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {customCostingSelection?.portOfOrigin?.portName ===
+                    "Visakhapatnam Port"
+                      ? "Vizag Port"
+                      : customCostingSelection?.portOfOrigin?.portName}
+                  </span>
+                </div>
+
+                <div className="inline-flex items-center space-x-3 text-white">
+                  {lineBetweenLocation}
+                </div>
+
+                <div className="inline-flex items-center space-x-3">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {customCostingSelection?.product?.sourceRates
+                      ?.sourceName === "Visakhapatnam" ||
+                    customCostingSelection?.product?.sourceObject?.region ===
+                      "Visakhapatnam"
+                      ? "Vizag"
+                      : customCostingSelection?.product?.sourceRates
+                          ?.sourceName ||
+                        customCostingSelection?.product?.sourceObject?.region}
+                  </span>
+                </div>
+
+                <div className="inline-flex items-center space-x-3 text-white">
+                  {lineBetweenLocation}
+                </div>
+
+                <div className="inline-flex items-center space-x-3">
+                  <span className="text-white text-xs font-[700] font-sans line-clamp-1">
+                    {customCostingSelection?.portOfDestination?.portName ||
+                      selectedMyCostingFromHistory?.details?.destinationObject
+                        ?.portName}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end w-[35%]">
+              <div className="inline-flex flex-col space-x-1 text-pwip-v2-green-700">
+                <span className="text-white text-xs font-[700] font-sans line-clamp-1 text-right">
+                  Total ({shipmentTerm})
+                </span>
+                <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-700">
+                  <span className="font-[700] font-sans line-clamp-1">
+                    $
+                    {inrToUsd(
+                      selectedMyCostingFromHistory?.grandTotal || 0,
+                      forexRate.USD
+                    )}
+                  </span>
+                  <span className="font-[400] font-sans line-clamp-1 mt-[6px]">
+                    /{selectedUnitForPayload}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <Header />
 
         <div
           id="fixedMenuSection"
-          className="fixed top-[56px] h-[auto] w-full bg-pwip-gray-45 z-10"
+          className="fixed top-[74px] h-[auto] w-full bg-pwip-gray-45 z-10"
         >
           {/* <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
             <div
@@ -1498,6 +1595,7 @@ function EditCosting() {
                       setSelectedUnitForPayload(
                         selectedMyCostingFromHistory?.unit || "mt"
                       );
+                      console.log("givenData", givenData);
                       givenData.sourceId =
                         givenData?._variantId?.sourceRates?._sourceId ||
                         givenData?._variantId?.sourceObject?._id;
