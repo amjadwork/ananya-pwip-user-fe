@@ -1534,7 +1534,12 @@ function EditCosting() {
                   handleBlur={handleBlur}
                   activeTab={activeTab}
                 /> */}
-                <div className="w-full fixed left-0 bottom-0 px-5 py-4 bg-white inline-flex items-start space-x-[20px]">
+                <div
+                  className="w-full fixed left-0 bottom-0 px-5 py-4 bg-white inline-flex items-start space-x-[20px]"
+                  style={{
+                    boxShadow: "0px -1px 12px #00000021",
+                  }}
+                >
                   <div className="w-[42px]">
                     <Button
                       type="outline"
