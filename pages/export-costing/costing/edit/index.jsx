@@ -90,6 +90,18 @@ const tabsItems = [
   },
 ];
 
+function sumNumericalValues(obj) {
+  let total = 0;
+
+  for (const key in obj) {
+    if (!isNaN(obj[key]) && !["pqc", "surrender", "blFee"].includes(key)) {
+      total += parseFloat(obj[key]);
+    }
+  }
+
+  return total;
+}
+
 function calculateCurrentRicePrice(originalRicePrice, brokenPercent) {
   // Ensure brokenPercent is within the valid range [0, 100]
   brokenPercent = Math.min(100, Math.max(0, brokenPercent));
@@ -596,6 +608,7 @@ function EditCosting() {
                 className="inline-flex flex-col w-full"
                 onSubmit={handleSubmit}
               >
+                {console.log(values, selectedCosting)}
                 {[
                   {
                     tab: 0,
@@ -705,10 +718,15 @@ function EditCosting() {
                           },
                           {
                             label: "Select a Bag size",
-                            type: "select",
+                            type: "input",
                             name: "bagSize",
+                            showCurrency: false,
+
+                            hideUSD: true,
                             placeholder: "Ex: 15kg",
-                            value: values?.bagSize || "",
+                            value:
+                              `${values?.bagSize} ${values?._bagId?.unit}` ||
+                              "",
                           },
                           {
                             label: "Bag cost",
@@ -716,7 +734,7 @@ function EditCosting() {
                             name: "bagPrice",
                             showCurrency: true,
                             placeholder: "Ex: 10.5",
-                            unit: selectedUnitForPayload,
+                            unit: values?._bagId?.unit,
                             value: values?.bagPrice ? values?.bagPrice : "",
                           },
                           // {
@@ -904,6 +922,7 @@ function EditCosting() {
                                       checked={values?.exportDuty}
                                       name="exportDuty"
                                       onChange={handleChange}
+                                      onBlur={handleBlur}
                                       className="text-pwip-v2-primary h-[17px] w-[17px] rounded-md"
                                     />
                                     <label
@@ -1092,6 +1111,133 @@ function EditCosting() {
                                                           onChange={
                                                             handleChange
                                                           }
+                                                          onBlur={(e) => {
+                                                            handleBlur(e);
+                                                            if (
+                                                              field?.name ===
+                                                              "containersCount"
+                                                            ) {
+                                                              if (
+                                                                selectedCosting
+                                                                  .customCostingSelection
+                                                                  .shlData &&
+                                                                selectedCosting
+                                                                  .customCostingSelection
+                                                                  .chaData &&
+                                                                e.target.value
+                                                              ) {
+                                                                const blFee =
+                                                                  selectedCosting
+                                                                    .customCostingSelection
+                                                                    .shlData
+                                                                    .blFee;
+                                                                const blSurrender =
+                                                                  selectedCosting
+                                                                    .customCostingSelection
+                                                                    .shlData
+                                                                    .surrender;
+
+                                                                const pqc =
+                                                                  selectedCosting
+                                                                    .customCostingSelection
+                                                                    .chaData
+                                                                    .pqc;
+
+                                                                const updatedBlFee =
+                                                                  blFee /
+                                                                  (parseFloat(
+                                                                    values.containerWeight
+                                                                  ) *
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    ));
+                                                                const updatedBlSurrender =
+                                                                  blSurrender /
+                                                                  (parseFloat(
+                                                                    values.containerWeight
+                                                                  ) *
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    ));
+                                                                const updatedpqc =
+                                                                  pqc /
+                                                                  (parseFloat(
+                                                                    values.containerWeight
+                                                                  ) *
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    ));
+
+                                                                const totalSHL =
+                                                                  (sumNumericalValues(
+                                                                    selectedCosting
+                                                                      .customCostingSelection
+                                                                      .shlData
+                                                                  ) +
+                                                                    updatedBlFee +
+                                                                    updatedBlSurrender) /
+                                                                  parseFloat(
+                                                                    values.containerWeight
+                                                                  );
+                                                                const totalCHA =
+                                                                  (sumNumericalValues(
+                                                                    selectedCosting
+                                                                      .customCostingSelection
+                                                                      .chaData
+                                                                  ) +
+                                                                    updatedpqc) /
+                                                                  parseFloat(
+                                                                    values.containerWeight
+                                                                  );
+
+                                                                console.log(
+                                                                  totalCHA,
+                                                                  totalSHL
+                                                                );
+
+                                                                setFieldValue(
+                                                                  "cfsHandling",
+                                                                  Math.floor(
+                                                                    totalCHA
+                                                                  )
+                                                                );
+
+                                                                setFieldValue(
+                                                                  "shl",
+                                                                  Math.floor(
+                                                                    totalSHL
+                                                                  )
+                                                                );
+
+                                                                dispatch(
+                                                                  setCustomCostingSelection(
+                                                                    {
+                                                                      ...selectedCosting,
+                                                                      customCostingSelection:
+                                                                        {
+                                                                          ...selectedCosting.customCostingSelection,
+                                                                          shl: Math.floor(
+                                                                            totalSHL
+                                                                          ),
+                                                                          cha: Math.floor(
+                                                                            totalCHA
+                                                                          ),
+                                                                          containerCount:
+                                                                            parseInt(
+                                                                              e
+                                                                                .target
+                                                                                .value
+                                                                            ),
+                                                                        },
+                                                                    }
+                                                                  )
+                                                                );
+                                                              }
+                                                            }
+                                                          }}
                                                           pattern="[0-9]*"
                                                           inputMode="numeric"
                                                         />
@@ -1115,12 +1261,6 @@ function EditCosting() {
                                                         type="outline"
                                                         label="Cancel"
                                                         minHeight="!min-h-[42px]"
-                                                        // disabled={
-                                                        //   isSubmitting ||
-                                                        //   !Object.keys(values?._variantId).length ||
-                                                        //   !Object.keys(values?._originId).length ||
-                                                        //   !Object.keys(values?._destinationId).length
-                                                        // }
                                                         onClick={() => {
                                                           closeBottomSheet();
                                                         }}
@@ -1129,12 +1269,6 @@ function EditCosting() {
                                                         type="primary"
                                                         label="Done"
                                                         minHeight="!min-h-[42px]"
-                                                        // disabled={
-                                                        //   isSubmitting ||
-                                                        //   !Object.keys(values?._variantId).length ||
-                                                        //   !Object.keys(values?._originId).length ||
-                                                        //   !Object.keys(values?._destinationId).length
-                                                        // }
                                                         onClick={() => {
                                                           closeBottomSheet();
                                                         }}
@@ -1150,12 +1284,33 @@ function EditCosting() {
                                                 ) {
                                                   return null;
                                                 }
-                                                openBottomSheet(content, () => {
-                                                  bottomSheetInputRef.current.focus();
-                                                });
+                                                if (
+                                                  field.name ===
+                                                    "containerWeight" ||
+                                                  field.name === "bagSize"
+                                                ) {
+                                                  return null;
+                                                }
+                                                openBottomSheet(
+                                                  content,
+                                                  () => {
+                                                    bottomSheetInputRef.current.focus();
+                                                  },
+                                                  true
+                                                );
                                               }}
                                             >
-                                              <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans">
+                                              <div
+                                                className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans"
+                                                style={{
+                                                  backgroundColor:
+                                                    field.name ===
+                                                      "containerWeight" ||
+                                                    field.name === "bagSize"
+                                                      ? "#f6f6f6"
+                                                      : null,
+                                                }}
+                                              >
                                                 <div className="inline-flex items-end space-x-2">
                                                   <div className="inline-flex items-center text-pwip-gray-850 font-[700] text-xs">
                                                     {field?.showCurrency ? (
@@ -1316,7 +1471,14 @@ function EditCosting() {
                     />
                   </div>
                   <Button
-                    type="primary"
+                    type={
+                      isSubmitting ||
+                      !Object.keys(values?._variantId).length ||
+                      !Object.keys(values?._originId).length ||
+                      !Object.keys(values?._destinationId).length
+                        ? "disabled"
+                        : "primary"
+                    }
                     buttonType="submit"
                     label="Save to see full details"
                     minHeight="!min-h-[42px]"
@@ -1342,6 +1504,13 @@ function EditCosting() {
                       setSelectedUnitForPayload(
                         selectedMyCostingFromHistory?.unit || "mt"
                       );
+                      givenData.sourceId =
+                        givenData?._variantId?.sourceRates?._sourceId ||
+                        givenData?._variantId?.sourceObject?._id;
+
+                      givenData._sourceId =
+                        givenData?._variantId?.sourceRates?._sourceId ||
+                        givenData?._variantId?.sourceObject?._id;
 
                       const payload =
                         generatePayloadForCustomCosting(givenData);

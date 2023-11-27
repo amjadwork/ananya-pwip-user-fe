@@ -141,46 +141,55 @@ const SelectLocationContainer = (props) => {
     ) {
       setDestinationList(locationsData.locations.destinations);
 
-      if ([...locationsData.locations.destinations].slice(0, 4)) {
+      if ([...locationsData.locations.destinations].slice(0, 5)) {
         setPopularDestinationData(
-          [...locationsData.locations.destinations].slice(0, 4)
+          [...locationsData.locations.destinations].slice(0, 5)
         );
       }
 
       if (locationsData.locations.destinations) {
         setPopularDestinationData(
-          [...locationsData.locations.destinations].slice(0, 4)
+          [...locationsData.locations.destinations].slice(0, 5)
         );
-        setListDestinationData(
-          [...locationsData.locations.destinations].slice(
-            4,
-            locationsData.locations.destinations.length - 1
-          )
-        );
+
+        if (isFromEdit) {
+          setListDestinationData([...locationsData.locations.destinations]);
+        } else {
+          setListDestinationData(
+            [...locationsData.locations.destinations].slice(
+              5,
+              locationsData.locations.destinations.length - 1
+            )
+          );
+        }
       }
     }
     if (locationsData?.locations?.origin?.length && locationType === "origin") {
       setDestinationList(locationsData.locations.origin);
 
-      if ([...locationsData.locations.origin].slice(0, 4)) {
+      if ([...locationsData.locations.origin].slice(0, 5)) {
         setPopularDestinationData(
-          [...locationsData.locations.origin].slice(0, 4)
+          [...locationsData.locations.origin].slice(0, 5)
         );
       }
 
       if (locationsData.locations.origin) {
         setPopularDestinationData(
-          [...locationsData.locations.origin].slice(0, 4)
+          [...locationsData.locations.origin].slice(0, 5)
         );
-        setListDestinationData(
-          [...locationsData.locations.origin].slice(
-            4,
-            locationsData.locations.origin.length - 1
-          )
-        );
+        if (isFromEdit) {
+          setListDestinationData([...locationsData.locations.origin]);
+        } else {
+          setListDestinationData(
+            [...locationsData.locations.origin].slice(
+              5,
+              locationsData.locations.origin.length - 1
+            )
+          );
+        }
       }
     }
-  }, [locationsData, locationType]);
+  }, [locationsData, locationType, isFromEdit]);
 
   React.useEffect(() => {
     if (selectedCosting && selectedCosting.product) {
@@ -224,26 +233,46 @@ const SelectLocationContainer = (props) => {
 
     if (!searchString && locationType === "destination") {
       setPopularDestinationData(
-        [...locationsData.locations.destinations].slice(0, 4)
+        [...locationsData.locations.destinations].slice(0, 5)
       );
-      setListDestinationData(
-        [...locationsData.locations.destinations].slice(
-          4,
-          locationsData.locations.destinations.length - 1
-        )
-      );
+      // setListDestinationData(
+      //   [...locationsData.locations.destinations].slice(
+      //     4,
+      //     locationsData.locations.destinations.length - 1
+      //   )
+      // );
+      if (isFromEdit) {
+        setListDestinationData([...locationsData.locations.destinations]);
+      } else {
+        setListDestinationData(
+          [...locationsData.locations.destinations].slice(
+            5,
+            locationsData.locations.destinations.length - 1
+          )
+        );
+      }
     }
 
     if (!searchString && locationType === "origin") {
       setPopularDestinationData(
-        [...locationsData.locations.origin].slice(0, 4)
+        [...locationsData.locations.origin].slice(0, 5)
       );
-      setListDestinationData(
-        [...locationsData.locations.origin].slice(
-          4,
-          locationsData.locations.origin.length - 1
-        )
-      );
+      // setListDestinationData(
+      //   [...locationsData.locations.origin].slice(
+      //     4,
+      //     locationsData.locations.origin.length - 1
+      //   )
+      // );
+      if (isFromEdit) {
+        setListDestinationData([...locationsData.locations.origin]);
+      } else {
+        setListDestinationData(
+          [...locationsData.locations.origin].slice(
+            5,
+            locationsData.locations.origin.length - 1
+          )
+        );
+      }
     }
   }
 
@@ -284,7 +313,7 @@ const SelectLocationContainer = (props) => {
             </svg>
           </button>
           <input
-            placeholder="Search for destination port "
+            placeholder={`Search for ${locationType} port`}
             className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
             value={searchStringValue}
             onChange={(event) => {
@@ -328,188 +357,194 @@ const SelectLocationContainer = (props) => {
           paddingTop: mainContainerHeight + 32 + "px",
         }}
       >
-        <React.Fragment>
-          <h2
-            className={`mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-          >
-            Popular destination ports
-          </h2>
+        {!isFromEdit ? (
+          <React.Fragment>
+            <h2
+              className={`mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+            >
+              Popular destination ports
+            </h2>
 
-          <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-[1px]">
-            <div className="flex flex-nowrap">
-              {[...popularDestinationData].map((items, index) => {
-                const imageURI =
-                  "/assets/images/" +
-                  `${
-                    index === 0
-                      ? "one.png"
-                      : index === 1
-                      ? "two.png"
-                      : index === 2
-                      ? "three.png"
-                      : index === 3
-                      ? "four.png"
-                      : index === 4
-                      ? "five.png"
-                      : ""
-                  }`;
-                return (
-                  <div
-                    key={`${index}_` + (index + 1 * 2)}
-                    className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
-                    style={{
-                      boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                      backdropFilter: "blur(8px)",
-                    }}
-                    onClick={async () => {
-                      if (isFromEdit) {
-                        if (locationType === "destination") {
-                          const sourceId =
-                            selectedCosting.customCostingSelection.portOfOrigin
-                              ._id;
+            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-[1px]">
+              <div className="flex flex-nowrap">
+                {[...popularDestinationData].map((items, index) => {
+                  const imageURI =
+                    "/assets/images/" +
+                    `${
+                      index === 0
+                        ? "one.png"
+                        : index === 1
+                        ? "two.png"
+                        : index === 2
+                        ? "three.png"
+                        : index === 3
+                        ? "four.png"
+                        : index === 4
+                        ? "five.png"
+                        : ""
+                    }`;
+                  return (
+                    <div
+                      key={`${index}_` + (index + 1 * 2)}
+                      className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
+                      style={{
+                        boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                        backdropFilter: "blur(8px)",
+                      }}
+                      onClick={async () => {
+                        if (isFromEdit) {
+                          if (locationType === "destination") {
+                            const sourceId =
+                              selectedCosting.customCostingSelection
+                                .portOfOrigin._id;
 
-                          const response = await fetchCHAandSHLandOFCCost(
-                            sourceId,
-                            items?._id
-                          );
-
-                          if (response.cha.length) {
-                            setFieldValue(
-                              "cfsHandling",
-                              Math.floor(
-                                response?.cha[0]?.destinations[0]?.chaCharge /
-                                  containerWeight
-                              )
+                            const response = await fetchCHAandSHLandOFCCost(
+                              sourceId,
+                              items?._id
                             );
-                          }
 
-                          if (response.ofc.length) {
-                            setFieldValue(
-                              "ofc",
-                              Math.floor(
-                                response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
-
-                          if (response.shl.length) {
-                            setFieldValue(
-                              "shl",
-                              Math.floor(
-                                response?.shl[0]?.destinations[0]?.shlCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
-
-                          dispatch(
-                            setCustomCostingSelection({
-                              ...selectedCosting,
-                              customCostingSelection: {
-                                ...selectedCosting.customCostingSelection,
-                                portOfDestination: items,
-                                shl: Math.floor(
-                                  response?.shl[0]?.destinations[0]?.shlCharge /
-                                    containerWeight
-                                ),
-                                ofc: Math.floor(
-                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                    containerWeight
-                                ),
-                                cha: Math.floor(
+                            if (response.cha.length) {
+                              setFieldValue(
+                                "cfsHandling",
+                                Math.floor(
                                   response?.cha[0]?.destinations[0]?.chaCharge /
                                     containerWeight
-                                ),
-
-                                shlData: response?.shl[0]?.destinations[0],
-                                ofcData: response?.ofc[0]?.destinations[0],
-                                chaData: response?.cha[0]?.destinations[0],
-                              },
-                            })
-                          );
-                        }
-
-                        if (locationType === "origin") {
-                          if (
-                            selectedCosting?.customCostingSelection?.product
-                          ) {
-                            const sourceId =
-                              selectedCosting?.customCostingSelection?.product
-                                ?.sourceRates?._sourceId ||
-                              selectedCosting?.customCostingSelection?.product
-                                ?.sourceObject?._id;
-
-                            const response = await fetchTransportationCost(
-                              items?._id,
-                              sourceId
-                            );
-
-                            if (
-                              response?.data &&
-                              response?.data?.length &&
-                              response?.data[0]?.sourceLocations?.length
-                            ) {
-                              setFieldValue(
-                                "transportation",
-                                response?.data[0]?.sourceLocations[0]
-                                  ?.transportationCharge
-                              );
-
-                              dispatch(
-                                setCustomCostingSelection({
-                                  ...selectedCosting,
-                                  customCostingSelection: {
-                                    ...selectedCosting.customCostingSelection,
-                                    portOfOrigin: items,
-                                    transportation:
-                                      response?.data[0]?.sourceLocations[0]
-                                        ?.transportationCharge,
-                                  },
-                                })
+                                )
                               );
                             }
-                          }
-                        }
 
-                        closeBottomSheet();
-                      } else {
-                        dispatch(
-                          setCostingSelection({
-                            ...selectedCosting,
-                            portOfDestination: items,
-                          })
-                        );
-                        // router.push("/export-costing/overview");
-                      }
-                    }}
-                  >
-                    <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
-                      <img src={imageURI} className="w-[24px] h-[24px]" />
-                      <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                        <span className="line-clamp-1">{items.country}</span>
-                        <span className="text-sm">🇮🇳</span>
+                            if (response.ofc.length) {
+                              setFieldValue(
+                                "ofc",
+                                Math.floor(
+                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
+
+                            if (response.shl.length) {
+                              setFieldValue(
+                                "shl",
+                                Math.floor(
+                                  response?.shl[0]?.destinations[0]?.shlCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
+
+                            dispatch(
+                              setCustomCostingSelection({
+                                ...selectedCosting,
+                                customCostingSelection: {
+                                  ...selectedCosting.customCostingSelection,
+                                  portOfDestination: items,
+                                  shl: Math.floor(
+                                    response?.shl[0]?.destinations[0]
+                                      ?.shlCharge / containerWeight
+                                  ),
+                                  ofc: Math.floor(
+                                    response?.ofc[0]?.destinations[0]
+                                      ?.ofcCharge / containerWeight
+                                  ),
+                                  cha: Math.floor(
+                                    response?.cha[0]?.destinations[0]
+                                      ?.chaCharge / containerWeight
+                                  ),
+
+                                  shlData: response?.shl[0]?.destinations[0],
+                                  ofcData: response?.ofc[0]?.destinations[0],
+                                  chaData: response?.cha[0]?.destinations[0],
+                                },
+                              })
+                            );
+                          }
+
+                          if (locationType === "origin") {
+                            if (
+                              selectedCosting?.customCostingSelection?.product
+                            ) {
+                              const sourceId =
+                                selectedCosting?.customCostingSelection?.product
+                                  ?.sourceRates?._sourceId ||
+                                selectedCosting?.customCostingSelection?.product
+                                  ?.sourceObject?._id;
+
+                              const response = await fetchTransportationCost(
+                                items?._id,
+                                sourceId
+                              );
+
+                              if (
+                                response?.data &&
+                                response?.data?.length &&
+                                response?.data[0]?.sourceLocations?.length
+                              ) {
+                                setFieldValue(
+                                  "transportation",
+                                  response?.data[0]?.sourceLocations[0]
+                                    ?.transportationCharge
+                                );
+
+                                dispatch(
+                                  setCustomCostingSelection({
+                                    ...selectedCosting,
+                                    customCostingSelection: {
+                                      ...selectedCosting.customCostingSelection,
+                                      portOfOrigin: items,
+                                      transportation:
+                                        response?.data[0]?.sourceLocations[0]
+                                          ?.transportationCharge,
+                                    },
+                                  })
+                                );
+                              }
+                            }
+                          }
+
+                          closeBottomSheet();
+                        } else {
+                          dispatch(
+                            setCostingSelection({
+                              ...selectedCosting,
+                              portOfDestination: items,
+                            })
+                          );
+                          // router.push("/export-costing/overview");
+                        }
+                      }}
+                    >
+                      <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                        <img src={imageURI} className="w-[24px] h-[24px]" />
+                        <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
+                          <span className="line-clamp-1">{items.country}</span>
+                          <span className="text-sm">🇮🇳</span>
+                        </div>
+                        <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
+                          {items.portName}
+                        </span>
+                        <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1 uppercase">
+                          {items.portCode}
+                        </span>
                       </div>
-                      <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
-                        {items.portName}
-                      </span>
-                      <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1 uppercase">
-                        {items.portCode}
-                      </span>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </React.Fragment>
+          </React.Fragment>
+        ) : null}
 
         <React.Fragment>
-          <div className="w-full h-auto inline-flex flex-col mt-[32px]">
+          <div
+            className={`w-full h-auto inline-flex flex-col ${
+              !isFromEdit ? "mt-[32px]" : ""
+            }`}
+          >
             <h2
               className={`mb-[24px] text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Choose your destination port
+              Choose your {locationType} port
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar mb-[32px]">
@@ -649,6 +684,8 @@ const SelectLocationContainer = (props) => {
                           );
                         }
 
+                        console.log(selectedCosting, items);
+
                         if (locationType === "origin") {
                           if (
                             selectedCosting?.customCostingSelection?.product
@@ -656,7 +693,9 @@ const SelectLocationContainer = (props) => {
                             const response = await fetchTransportationCost(
                               items?._id,
                               selectedCosting?.customCostingSelection?.product
-                                ?.sourceRates?._sourceId
+                                ?.sourceRates?._sourceId ||
+                                selectedCosting?.customCostingSelection?.product
+                                  ?.sourceObject?._id
                             );
 
                             if (
