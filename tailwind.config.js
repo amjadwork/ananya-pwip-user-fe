@@ -142,6 +142,8 @@ module.exports = {
     "bg-[#F7FFF2]",
     "bg-[#FFF5EF]",
     "bg-[#FFFBED]",
+    "text-yellow-200",
+    "bg-yellow-800",
   ],
   theme: {
     extend: {

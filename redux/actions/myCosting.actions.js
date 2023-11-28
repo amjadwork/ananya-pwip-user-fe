@@ -48,10 +48,11 @@ export const updateCostingFailure = () => ({
 });
 
 // Get my costing
-export const fetchMyCostingRequest = (id) => {
+export const fetchMyCostingRequest = (id, apiType) => {
   return {
     type: FETCH_MY_COSTING_REQUEST,
     payload: id,
+    apiType: apiType,
   };
 };
 

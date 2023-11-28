@@ -65,14 +65,27 @@ function* updateMyCostingSheet(action) {
 
 function* getMyCostingSheetById(action) {
   const id = action.payload;
-  try {
-    const response = yield call(
-      makeApiCall,
-      `/historyCosting/preview/${id}`,
-      "get"
-    );
 
-    yield put(fetchMyCostingSuccess(response.data));
+  let url = `/historyCosting/preview/${id}`;
+  let secretHeader = null;
+
+  if (action?.apiType === "shared") {
+    url = `/historyCosting/sharedpreview/${id}`;
+    secretHeader = {
+      "secret-key": "5e4a8c7f9b89a7d2e3f8c89a7d2e3f8",
+    };
+  }
+
+  try {
+    if (id) {
+      const response = yield call(makeApiCall, url, "get", null, {
+        headers: {
+          ...secretHeader,
+        },
+      });
+
+      yield put(fetchMyCostingSuccess(response.data));
+    }
   } catch (error) {
     yield put(fetchMyCostingFailure(error));
   }

@@ -409,13 +409,6 @@ const SelectLocationContainer = (props) => {
       const shouldBeFixed =
         parseInt(window.scrollY.toFixed(0)) > parseInt(startY.toFixed(0));
 
-      // console.log(
-      //   parseInt(window.scrollY.toFixed(0)) >
-      //     parseInt((startY + divHeight * 2).toFixed(0)),
-      //   parseInt(window.scrollY.toFixed(0)),
-      //   parseInt((startY + divHeight * 2).toFixed(0))
-      // );
-
       if (shouldBeFixed && !isFixedFlag) {
         setIsFixed(true);
         isFixedFlag = true;
@@ -816,7 +809,6 @@ const SelectLocationContainer = (props) => {
                           : "#ffffff",
                     }}
                     onClick={async () => {
-                      console.log(selectedCosting);
                       if (isFromEdit) {
                         if (locationType === "destination") {
                           const response = await fetchCHAandSHLandOFCCost(

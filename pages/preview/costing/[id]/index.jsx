@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { inrToUsd } from "@/utils/helper";
 import { useOverlayContext } from "@/context/OverlayContext";
 
-import withAuth from "@/hoc/withAuth";
+// import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
@@ -50,7 +50,7 @@ import {
   pencilIcon,
   downloadIcon,
   shareIcon,
-} from "../../../theme/icon";
+} from "../../../../theme/icon";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 
@@ -355,7 +355,7 @@ let breakupArr = [
   },
 ];
 
-function CostingOverview() {
+function CostingPreview() {
   const costingCardRef = useRef(null);
 
   const router = useRouter();
@@ -419,11 +419,11 @@ function CostingOverview() {
     };
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setComponentShipmentTerm(shipmentTerm);
   }, [isShipmentTermDropdownOpen]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (shipmentTerm && componentShipmentTerm) {
       dispatch(updateCostingFailure());
       const payloadBody = {
@@ -436,7 +436,7 @@ function CostingOverview() {
     }
   }, [shipmentTerm]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (generatedCosting && selectedUnit && isChangingUnit && shipmentTerm) {
       dispatch(updateCostingFailure());
       const payloadBody = {
@@ -452,7 +452,7 @@ function CostingOverview() {
     }
   }, [generatedCosting, selectedUnit, isChangingUnit, shipmentTerm]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (generatedCosting) {
       breakupArr[0].rowItems[1].label = `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
     }
@@ -500,6 +500,23 @@ function CostingOverview() {
       dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     }
   }, [myRecentSavedCosting, currentCostingFromHistory]);
+
+  async function constructPage() {
+    if (router?.query?.id) {
+      await dispatch(saveCostingFailure());
+      await dispatch(fetchGeneratedCostingFailure());
+      await dispatch(fetchMyCostingRequest(router?.query?.id, "shared"));
+      // const action = {
+      //   selected: items?.termOfAgreement,
+      //   showShipmentTermDropdown: false,
+      // };
+      // await dispatch(setTermsOfShipmentRequest(action));
+    }
+  }
+
+  useEffect(() => {
+    constructPage();
+  }, [router]);
 
   const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
@@ -601,7 +618,7 @@ function CostingOverview() {
             ].map((items, index) => {
               return (
                 <div
-                  key={items.label + index}
+                  key={items.label + index * 17}
                   onClick={async () => {
                     const action = {
                       selected: items?.value,
@@ -667,7 +684,7 @@ function CostingOverview() {
             ].map((items, index) => {
               return (
                 <div
-                  key={items.label + index}
+                  key={items.label + index * 19}
                   onClick={async () => {
                     const body = {
                       destinationPortId: selectedCosting.portOfDestination._id,
@@ -765,7 +782,6 @@ function CostingOverview() {
   // };
 
   const handleShare = () => {
-    console.log(generatedCostingData?._id);
     if (navigator && navigator.share) {
       navigator
         .share({
@@ -773,7 +789,7 @@ function CostingOverview() {
           text: "1121 steam 5% Broken, Chennai - Singapore, ₹42000 ($345)",
           url:
             window.location.origin +
-            `/preview/costing/${generatedCostingData?._id}?utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03`,
+            "/preview/costing/123?utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03",
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
@@ -782,50 +798,11 @@ function CostingOverview() {
 
   const handleDownload = () => {
     openToastMessage({
-      type: "loading",
-      message: "Downloading ...",
+      type: "info",
+      message: "You need to login",
       // autoHide: false,
     });
     closeBottomSheet();
-    axios
-      .post(
-        "https://api-stage.pwip.co/api/generateCostingSheet/download",
-        {
-          historyId: currentCostingFromHistory[0]?._id,
-        },
-        {
-          responseType: "arraybuffer",
-          headers: {
-            Authorization: "Bearer " + session?.accessToken,
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-          },
-        }
-      )
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute(
-          "download",
-          currentCostingFromHistory[0]?.costingName + ".pdf"
-        ); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-
-        closeToastMessage();
-      })
-      .catch((error) => {
-        closeToastMessage();
-        openToastMessage({
-          type: "error",
-          message:
-            error?.response?.message ||
-            error?.response?.data?.message ||
-            "Something went wrong",
-        });
-      });
   };
 
   return (
@@ -927,6 +904,8 @@ function CostingOverview() {
           </div>
         </div>
         <Header
+          hideBack={true}
+          showLogoForPreview={true}
           handleClickEdit={async () => {
             if (myRecentSavedCosting) {
               await dispatch(updateCostingFailure());
@@ -1038,7 +1017,7 @@ function CostingOverview() {
                       (d) => d?.breakUp?.length
                     );
                     return (
-                      <React.Fragment key={item.title + index}>
+                      <React.Fragment key={item.title + index * 23}>
                         <div className="bg-white border-[1px] border-pwip-v2-gray-250 rounded-lg">
                           <div className="inline-flex items-center justify-between w-full px-5 py-6 rounded-t-lg">
                             <div className="inline-flex flex-col items-start space-y-[4px] w-full">
@@ -1058,10 +1037,9 @@ function CostingOverview() {
                                 paddingBottom = "pb-4";
                               }
                               return (
-                                <React.Fragment>
+                                <React.Fragment key={row.label + rowIndex}>
                                   <div className="w-full px-5">
                                     <div
-                                      key={row.label + rowIndex}
                                       className={`inline-flex items-start w-full ${
                                         rowIndex === item.rowItems.length - 1
                                           ? ""
@@ -1203,12 +1181,9 @@ function CostingOverview() {
               <div className="w-full">
                 <Button
                   type="outline"
-                  label="Back to home"
+                  label="Go to login"
                   onClick={() => {
-                    dispatch(saveCostingFailure());
-                    setGeneratedCostingData(null);
-                    dispatch(resetCostingSelection());
-                    router.replace("/export-costing");
+                    router.push("/");
                   }}
                 />
               </div>
@@ -1271,4 +1246,4 @@ function CostingOverview() {
   );
 }
 
-export default withAuth(CostingOverview);
+export default CostingPreview;

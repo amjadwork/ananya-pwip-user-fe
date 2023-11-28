@@ -30,7 +30,7 @@ const atRoutes = [
 export function Header(props) {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { openModal } = useOverlayContext();
+  const { openModal, openToastMessage } = useOverlayContext();
 
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const forexRate = useSelector((state) => state.utils.forexRate);
@@ -39,6 +39,9 @@ export function Header(props) {
   );
 
   const hideLogo = props.hideLogo || false;
+  const showLogoForPreview = props.showLogoForPreview || false;
+
+  const hideBack = props.hideBack || false;
   const handleClickEdit = props.handleClickEdit || null;
   const backgroundColor = props.backgroundColor || "bg-white";
 
@@ -91,43 +94,53 @@ export function Header(props) {
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
-          {!hideLogo &&
+          {((!hideLogo &&
             !atRoutes.includes(activeRoute) &&
-            !searchScreenActive && (
-              <img
-                src="/assets/images/logo-blue.png"
-                className="h-full w-[40px]"
-              />
-            )}
-
-          {(atRoutes.includes(activeRoute) || searchScreenActive) && (
-            <div
-              className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
-              onClick={() => {
-                if (!searchScreenActive) {
-                  handleBack();
-                }
-
-                if (searchScreenActive) {
-                  dispatch(searchScreenFailure());
-                }
-
-                if (activeRoute === "select-pod") {
-                  dispatch(resetCostingSelection());
-                }
-              }}
-            >
-              {arrowLeftBackIcon}
-              <span>Back</span>
-            </div>
+            !searchScreenActive) ||
+            showLogoForPreview) && (
+            <img
+              src="/assets/images/logo-blue.png"
+              className="h-full w-[40px]"
+            />
           )}
+
+          {(atRoutes.includes(activeRoute) || searchScreenActive) &&
+            !hideBack && (
+              <div
+                className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
+                onClick={() => {
+                  if (!searchScreenActive) {
+                    handleBack();
+                  }
+
+                  if (searchScreenActive) {
+                    dispatch(searchScreenFailure());
+                  }
+
+                  if (activeRoute === "select-pod") {
+                    dispatch(resetCostingSelection());
+                  }
+                }}
+              >
+                {arrowLeftBackIcon}
+                <span>Back</span>
+              </div>
+            )}
         </div>
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
           {["more", "costing"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={() => {
-                if (activeRoute === "costing") {
+                if (activeRoute === "costing" && showLogoForPreview) {
+                  openToastMessage({
+                    type: "info",
+                    message: "You need to login",
+                    // autoHide: false,
+                  });
+                }
+
+                if (activeRoute === "costing" && !showLogoForPreview) {
                   router.push("/export-costing/costing/edit");
                 }
 

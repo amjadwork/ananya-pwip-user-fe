@@ -74,7 +74,9 @@ const AppLayout = ({ children }) => {
         >
           {children}
         </main>
-        {!hideBottomBarAtRoutes.includes(activeRoute) ? <BottomNavBar /> : null}
+        {!hideBottomBarAtRoutes.includes(activeRoute) && !router?.query?.id ? (
+          <BottomNavBar />
+        ) : null}
 
         {shipmentTerms?.shipmentTerm?.showShipmentTermDropdown ? (
           <div

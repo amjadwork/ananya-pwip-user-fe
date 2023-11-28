@@ -33,15 +33,28 @@ export function* makeApiCall(
     let response = null;
 
     if (method === "get") {
-      response = yield call(api[method], url, {
-        headers: {
-          ...headers,
-        },
-      });
+      if (overrideHeaders) {
+        let headerOfRequest = { ...overrideHeaders };
+        if (authState.token) {
+          headerOfRequest.headers.Authorization = `Bearer ${authState.token}`;
+        }
+
+        response = yield call(api[method], url, {
+          ...overrideHeaders,
+        });
+      } else {
+        response = yield call(api[method], url, {
+          headers: {
+            ...headers,
+          },
+        });
+      }
     } else {
       if (overrideHeaders) {
         let headerOfRequest = { ...overrideHeaders };
-        headerOfRequest.headers.Authorization = `Bearer ${authState.token}`;
+        if (authState.token) {
+          headerOfRequest.headers.Authorization = `Bearer ${authState.token}`;
+        }
 
         response = yield call(api[method], url, data, {
           ...headerOfRequest,
