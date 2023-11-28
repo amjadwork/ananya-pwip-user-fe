@@ -765,12 +765,18 @@ function CostingOverview() {
   // };
 
   const handleShare = () => {
-    console.log(generatedCostingData?._id);
+    console.log(generatedCostingData?.details?.variantObject?.variantName);
     if (navigator && navigator.share) {
       navigator
         .share({
           title: "Export costing",
-          text: "1121 steam 5% Broken, Chennai - Singapore, ₹42000 ($345)",
+          text: `${generatedCostingData?.details?.variantObject?.variantName} ${
+            generatedCostingData?.details?.variantObject?.brokenPercentage
+          }, ${generatedCostingData?.details?.originPortObject?.portName} - ${
+            generatedCostingData?.details?.destinationObject?.portName
+          }, ${generatedCostingData?.termOfAgreement} - ${
+            generatedCostingData?.grandTotal
+          } (${inrToUsd(generatedCostingData?.grandTotal, forexRate.USD)})`,
           url:
             window.location.origin +
             `/preview/costing/${generatedCostingData?._id}?utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03`,
