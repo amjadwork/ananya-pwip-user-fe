@@ -128,11 +128,11 @@ export function Header(props) {
             )}
         </div>
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
-          {["more", "costing"].includes(activeRoute) && (
+          {(["more", "costing"].includes(activeRoute) || router?.query?.id) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={() => {
-                if (activeRoute === "costing" && showLogoForPreview) {
+                if (router?.query?.id) {
                   openToastMessage({
                     type: "info",
                     message: "You need to login",
@@ -140,7 +140,7 @@ export function Header(props) {
                   });
                 }
 
-                if (activeRoute === "costing" && !showLogoForPreview) {
+                if (activeRoute === "costing" && !router?.query?.id) {
                   router.push("/export-costing/costing/edit");
                 }
 
@@ -154,36 +154,21 @@ export function Header(props) {
             </div>
           )}
 
-          {!["profile-edit", "more", "costing"].includes(activeRoute) && (
-            <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
-              <button
-                type="button"
-                onClick={() => {
-                  openModal(forexRate?.USD || 0);
-                }}
-                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
-              >
-                <span>USD = ₹{forexRate?.USD}</span>
-                {pencilIcon}
-              </button>
-              {/* <span>|</span> */}
-              {/* <button
-                type="button"
-                onClick={() => {
-                  const action = {
-                    ...shipmentTerms?.shipmentTerm,
-                    showShipmentTermDropdown:
-                      !shipmentTerms?.shipmentTerm?.showShipmentTermDropdown,
-                  };
-                  dispatch(setTermsOfShipmentRequest(action));
-                }}
-                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
-              >
-                <span>{shipmentTerms?.shipmentTerm?.selected}</span>
-                {chevronDown}
-              </button> */}
-            </div>
-          )}
+          {!["profile-edit", "more", "costing"].includes(activeRoute) &&
+            !router?.query?.id && (
+              <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    openModal(forexRate?.USD || 0);
+                  }}
+                  className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
+                >
+                  <span>USD = ₹{forexRate?.USD}</span>
+                  {pencilIcon}
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </header>
