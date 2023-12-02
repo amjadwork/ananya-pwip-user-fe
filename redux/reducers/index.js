@@ -14,6 +14,7 @@ import profileEditReducer from "./profileEdit.reducers";
 import userEditReducer from "./userEdit.reducers";
 import subscriptionReducer from "./subscription.reducers";
 import categoryReducer from "./category.reducers";
+import learnListReducer from "./learn.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -31,6 +32,7 @@ const rootReducer = combineReducers({
   user: userEditReducer,
   subscription: subscriptionReducer,
   category: categoryReducer,
+  learnList: learnListReducer,
 });
 
 export default rootReducer;

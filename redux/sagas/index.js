@@ -14,6 +14,7 @@ import profileEditSaga from "./profileEdit.saga";
 import userEditSaga from "./userEdit.saga";
 import subscriptionSaga from "./subscription.saga";
 import categorySaga from "./category.saga";
+import learnListSaga from "./learn.saga";
 
 function* rootSaga() {
   yield all([
@@ -32,6 +33,7 @@ function* rootSaga() {
     userEditSaga(),
     subscriptionSaga(),
     categorySaga(),
+    learnListSaga(),
   ]);
 }
 

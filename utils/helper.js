@@ -148,3 +148,18 @@ export function convertUnits(currentUnit, neededUnit, value) {
   ).toFixed(0);
   return priceInNeededUnit;
 }
+
+export function secondsToMinutes(seconds) {
+  // Calculate minutes
+  const minutes = Math.floor(seconds / 60);
+
+  // Calculate remaining seconds
+  const remainingSeconds = seconds % 60;
+
+  // Format the result with two decimal places
+  const formattedMinutes = `${minutes}.${
+    remainingSeconds < 10 ? "0" : ""
+  }${remainingSeconds}`;
+
+  return formattedMinutes;
+}

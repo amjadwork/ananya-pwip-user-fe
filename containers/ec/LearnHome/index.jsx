@@ -1,14 +1,7 @@
-import React, { useRef, useCallback } from "react";
-import { call, select, put } from "redux-saga/effects";
+import React, { useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import Slider from "react-slick";
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
-
-import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 import { useSelector, useDispatch } from "react-redux";
-import { useOverlayContext } from "@/context/OverlayContext";
-import { api } from "@/utils/helper";
 import {
   searchScreenRequest,
   searchScreenFailure,
@@ -16,9 +9,11 @@ import {
 import { debounce } from "lodash";
 
 import {
-  setCostingSelection,
-  setCustomCostingSelection,
-} from "@/redux/actions/costing.actions.js";
+  fetchLearnListRequest,
+  fetchLearnIDRequest,
+} from "@/redux/actions/learn.actions.js";
+
+import { secondsToMinutes } from "@/utils/helper.js";
 
 const popularFilters = [
   {
@@ -104,39 +99,28 @@ const FilterSection = ({ inFixedBar, fixedDivRef, isFixed, searchFocus }) => {
 const LearnHomeContainer = (props) => {
   const fixedDivRef = useRef();
 
-  const isFromEdit = props.isFromEdit || false;
-  const locationType = props.locationType || "destination";
-
   const router = useRouter();
   const dispatch = useDispatch();
-  const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
-  const locationsData = useSelector((state) => state.locations);
-  const authToken = useSelector((state) => state.auth.token);
+  // const authToken = useSelector((state) => state.auth.token);
 
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
   );
 
-  const {
-    roundedTop = false,
-    noTop = false,
-    noPaddingBottom = false,
-    title = "",
-    showSelectedVariant = false,
-  } = props;
+  const learnListData = useSelector((state) => state.learnList.learnList) || [];
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
-  const [selectedCostingProduct, setSelectedCostingProduct] =
-    React.useState(null);
-  const [destinationList, setDestinationList] = React.useState([]);
 
-  const [popularDestinationData, setPopularDestinationData] = React.useState(
-    []
-  );
-  const [listDestinationData, setListDestinationData] = React.useState([]);
+  const [learnData, setLearnData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
   const [activeSlide, setActiveSlide] = React.useState(0);
+
+  useEffect(() => {
+    if (learnListData) {
+      setLearnData(learnListData);
+    }
+  }, [learnListData]);
 
   const sliderSettings = {
     dots: true,
@@ -150,7 +134,6 @@ const LearnHomeContainer = (props) => {
       setActiveSlide(next);
     },
     customPaging: function (i) {
-      // console.log(i);
       return (
         <div
           className={`${
@@ -163,147 +146,16 @@ const LearnHomeContainer = (props) => {
     },
   };
 
-  async function fetchTransportationCost(originId, sourceId) {
-    try {
-      const response = await api.get(
-        `/transportation?origin=${originId}&sourcePort=${sourceId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      return response;
-    } catch (error) {
-      // Dispatch a failure action in case of an error
-      return error;
-    }
-  }
-
-  async function fetchCHAandSHLandOFCCost(originId, destinationId) {
-    try {
-      const responseCHA = await api.get(
-        `/cha?origin=${originId}&destination=${destinationId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      const responseSHL = await api.get(
-        `/shl?origin=${originId}&destination=${destinationId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      const responseOFC = await api.get(
-        `/ofc?origin=${originId}&destination=${destinationId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      const response = {
-        shl: responseSHL?.data || [],
-        ofc: responseOFC?.data || [],
-        cha: responseCHA?.data || [],
-      };
-
-      return response;
-    } catch (error) {
-      // Dispatch a failure action in case of an error
-      return error;
-    }
-  }
-
-  React.useEffect(() => {
-    if (
-      locationsData?.locations?.destinations?.length &&
-      locationType === "destination"
-    ) {
-      setDestinationList(locationsData.locations.destinations);
-
-      if ([...locationsData.locations.destinations].slice(0, 5)) {
-        setPopularDestinationData(
-          [...locationsData.locations.destinations].slice(0, 5)
-        );
-      }
-
-      if (locationsData.locations.destinations) {
-        setPopularDestinationData(
-          [...locationsData.locations.destinations].slice(0, 5)
-        );
-
-        if (isFromEdit) {
-          setListDestinationData([...locationsData.locations.destinations]);
-        } else {
-          setListDestinationData(
-            [...locationsData.locations.destinations].slice(
-              5,
-              locationsData.locations.destinations.length - 1
-            )
-          );
-        }
-      }
-    }
-    if (locationsData?.locations?.origin?.length && locationType === "origin") {
-      setDestinationList(locationsData.locations.origin);
-
-      if ([...locationsData.locations.origin].slice(0, 5)) {
-        setPopularDestinationData(
-          [...locationsData.locations.origin].slice(0, 5)
-        );
-      }
-
-      if (locationsData.locations.origin) {
-        setPopularDestinationData(
-          [...locationsData.locations.origin].slice(0, 5)
-        );
-        if (isFromEdit) {
-          setListDestinationData([...locationsData.locations.origin]);
-        } else {
-          setListDestinationData(
-            [...locationsData.locations.origin].slice(
-              5,
-              locationsData.locations.origin.length - 1
-            )
-          );
-        }
-      }
-    }
-  }, [locationsData, locationType, isFromEdit]);
-
-  React.useEffect(() => {
-    if (selectedCosting && selectedCosting.product) {
-      setSelectedCostingProduct(selectedCosting.product);
-    }
-  }, [selectedCosting]);
-
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, [selectedCostingProduct]);
+  }, []);
 
   function handleSearch(searchString) {
-    const dataToFilter = [...destinationList];
+    const dataToFilter = [...learnListData];
 
     // Create an empty array to store the matching variants
     const matchingVariants = [];
@@ -314,7 +166,7 @@ const LearnHomeContainer = (props) => {
     // Iterate through the array of variants
     for (const variant of dataToFilter) {
       // Convert the variant name to lowercase for comparison
-      const variantNameLower = variant.portName.toLowerCase();
+      const variantNameLower = variant.title.toLowerCase();
 
       // Check if the variant name contains the search string
       if (variantNameLower.includes(searchLower)) {
@@ -324,52 +176,11 @@ const LearnHomeContainer = (props) => {
     }
 
     if (searchString) {
-      setPopularDestinationData([]);
-      setListDestinationData(matchingVariants);
+      setLearnData([...matchingVariants]);
     }
 
-    if (!searchString && locationType === "destination") {
-      setPopularDestinationData(
-        [...locationsData.locations.destinations].slice(0, 5)
-      );
-      // setListDestinationData(
-      //   [...locationsData.locations.destinations].slice(
-      //     4,
-      //     locationsData.locations.destinations.length - 1
-      //   )
-      // );
-      if (isFromEdit) {
-        setListDestinationData([...locationsData.locations.destinations]);
-      } else {
-        setListDestinationData(
-          [...locationsData.locations.destinations].slice(
-            5,
-            locationsData.locations.destinations.length - 1
-          )
-        );
-      }
-    }
-
-    if (!searchString && locationType === "origin") {
-      setPopularDestinationData(
-        [...locationsData.locations.origin].slice(0, 5)
-      );
-      // setListDestinationData(
-      //   [...locationsData.locations.origin].slice(
-      //     4,
-      //     locationsData.locations.origin.length - 1
-      //   )
-      // );
-      if (isFromEdit) {
-        setListDestinationData([...locationsData.locations.origin]);
-      } else {
-        setListDestinationData(
-          [...locationsData.locations.origin].slice(
-            5,
-            locationsData.locations.origin.length - 1
-          )
-        );
-      }
+    if (!searchString) {
+      setLearnData([...learnListData]);
     }
   }
 
@@ -396,9 +207,9 @@ const LearnHomeContainer = (props) => {
 
   const debouncedCheckY = debounce(checkY, 5);
 
-  const handleInputDoneClick = (event) => {
-    event.target.blur();
-  };
+  // const handleInputDoneClick = (event) => {
+  //   event.target.blur();
+  // };
 
   React.useEffect(() => {
     window.addEventListener("scroll", debouncedCheckY);
@@ -408,171 +219,169 @@ const LearnHomeContainer = (props) => {
     };
   }, []);
 
-  let blurOccurred = null;
+  useEffect(() => {
+    dispatch(fetchLearnListRequest());
+  }, []);
 
   return (
     <React.Fragment>
       <div
         id="fixedMenuSection"
-        className={`fixed ${
-          !noTop ? "top-[56px]" : "top-[18px]"
-        }  h-[auto] w-full z-10 py-3 pb-[30px] px-5`}
+        className={`fixed top-[56px] h-[auto] w-full z-10 py-3 pb-[30px]`}
         style={{
           background:
             "linear-gradient(180deg, #FFF 84.97%, rgba(255, 255, 255, 0.00) 100%)",
         }}
       >
-        <div
-          style={{
-            filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
-          }}
-          className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
-        >
-          <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
-            <svg
-              width="17"
-              height="16"
-              viewBox="0 0 17 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                opacity="0.7"
-                d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
-                stroke="#878D96"
-                strokeWidth="1.52292"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <input
-            placeholder={`Search for videos and courses`}
-            className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
-            value={searchStringValue}
-            onChange={(event) => {
-              setSearchStringValue(event.target.value);
-              handleSearch(event.target.value);
+        <div className="w-full px-5">
+          <div
+            style={{
+              filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
             }}
-            onFocus={() => {
-              // setSearchFocus(true);
-              dispatch(searchScreenRequest(true));
-              window.clearTimeout(blurOccurred);
-            }}
-            onBlur={(e) => {
-              // setSearchFocus(false);
-              dispatch(searchScreenFailure());
-              blurOccurred = window.setTimeout(function () {
-                handleInputDoneClick(e);
-              }, 10);
-            }}
-          />
-          {!popularDestinationData.length ? (
-            <button
-              onClick={() => {
-                setSearchStringValue("");
-                handleSearch("");
-              }}
-              className="outline-none border-none bg-transparent inline-flex items-center justify-center"
-            >
+            className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
+          >
+            <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
               <svg
-                width="19"
-                height="19"
-                viewBox="0 0 19 19"
+                width="17"
+                height="16"
+                viewBox="0 0 17 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
-                  stroke="#686E6D"
-                  strokeWidth="2"
+                  opacity="0.7"
+                  d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
+                  stroke="#878D96"
+                  strokeWidth="1.52292"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
             </button>
-          ) : null}
+            <input
+              placeholder={`Search for videos and courses`}
+              className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
+              value={searchStringValue}
+              onChange={(event) => {
+                setSearchStringValue(event.target.value);
+                handleSearch(event.target.value);
+              }}
+              onFocus={() => {
+                dispatch(searchScreenRequest(true));
+              }}
+              onBlur={(e) => {
+                dispatch(searchScreenFailure());
+              }}
+            />
+            {searchStringValue.length ? (
+              <button
+                onClick={() => {
+                  setSearchStringValue("");
+                  handleSearch("");
+                }}
+                className="outline-none border-none bg-transparent inline-flex items-center justify-center"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
+                    stroke="#686E6D"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 
       <div
-        className={`min-h-screen h-full w-full bg-white ${
-          !noPaddingBottom ? "pb-[172px]" : "pb-0"
-        } overflow-auto hide-scroll-bar`}
+        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
         style={{
           paddingTop: mainContainerHeight + 52 + "px",
         }}
       >
-        <React.Fragment>
-          <div className="h-auto min-h-[190px] w-screen overflow-hidden hide-scroll-bar py-2 px-5">
-            <Slider {...sliderSettings}>
-              {[...popularDestinationData].map((items, index) => {
-                return (
-                  <div
-                    key={`${index}_` + (index + 1 * 2)}
-                    className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
-                  >
+        {!searchScreenActive ? (
+          <React.Fragment>
+            <div className="h-auto min-h-[190px] w-screen overflow-hidden hide-scroll-bar py-2 px-5">
+              <Slider {...sliderSettings}>
+                {[...learnData].map((items, index) => {
+                  return (
                     <div
-                      className="w-full h-full px-[15px] py-[18px] rounded-xl grid grid-cols-2 gap-4"
-                      style={{
-                        boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                        backdropFilter: "blur(8px)",
-                        background: `linear-gradient(88deg, #8FC7EC 1.22%, #C7E8FF 83.53%)`,
-                      }}
+                      key={`${index}_` + (index + 1 * 2)}
+                      className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
                     >
-                      <div className="overflow-hidden w-auto h-auto inline-flex flex-col">
-                        <div className="w-full">
-                          <span className="mt-[4px] text-[24px] text-pwip-v2-gray-800 font-[800] line-clamp-2">
-                            Rice & Exports
-                          </span>
+                      <div
+                        className="w-full h-full px-[15px] py-[18px] rounded-xl grid grid-cols-2 gap-4"
+                        style={{
+                          boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                          backdropFilter: "blur(8px)",
+                          background: `linear-gradient(88deg, #8FC7EC 1.22%, #C7E8FF 83.53%)`,
+                        }}
+                      >
+                        <div className="overflow-hidden w-auto h-auto inline-flex flex-col">
+                          <div className="w-full">
+                            <span className="mt-[4px] text-[24px] text-pwip-v2-gray-800 font-[800] line-clamp-2">
+                              Rice & Exports
+                            </span>
+                          </div>
+                          <div className="mt-3">
+                            <button
+                              onClick={() => null}
+                              className="bg-pwip-v2-primary-700 rounded-lg outline-none border-none py-[3px] px-4 text-white text-xs w-auto"
+                            >
+                              Check Out
+                            </button>
+                          </div>
                         </div>
-                        <div className="mt-3">
-                          <button
-                            onClick={() => null}
-                            className="bg-pwip-v2-primary-700 rounded-lg outline-none border-none py-[3px] px-4 text-white text-xs w-auto"
-                          >
-                            Check Out
-                          </button>
-                        </div>
-                      </div>
 
-                      <div className="w-auto h-auto">
-                        <img
-                          src="https://www.thestatesman.com/wp-content/uploads/2021/09/rice-stock.jpg"
-                          className="w-full h-full object-cover rounded-xl"
-                        />
+                        <div className="w-auto h-auto">
+                          <img
+                            src="https://www.thestatesman.com/wp-content/uploads/2021/09/rice-stock.jpg"
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </Slider>
-          </div>
-        </React.Fragment>
+                  );
+                })}
+              </Slider>
+            </div>
+          </React.Fragment>
+        ) : null}
 
         <React.Fragment>
-          <div className={`w-full h-auto inline-flex flex-col mt-[12px]`}>
-            <div className="flex overflow-x-scroll hide-scroll-bar">
-              <FilterSection
-                fixedDivRef={fixedDivRef}
-                isFixed={isFixed}
-                searchFocus={searchScreenActive}
-              />
-            </div>
+          <div
+            className={`w-full h-auto inline-flex flex-col mt-[12px] pb-[72px]`}
+          >
+            {!searchScreenActive ? (
+              <div className="flex overflow-x-scroll hide-scroll-bar">
+                <FilterSection
+                  fixedDivRef={fixedDivRef}
+                  isFixed={isFixed}
+                  searchFocus={searchScreenActive}
+                />
+              </div>
+            ) : null}
 
             <div className="w-full h-full space-y-[24px]">
-              {[...listDestinationData].map((items, index) => {
+              {[...learnData].map((items, index) => {
                 return (
                   <div
                     key={items._id + index}
                     className="inline-flex items-center w-full p-[5px] px-5 space-x-[15px] bg-white transition-all"
                     style={{
-                      backgroundColor:
-                        selectedCosting?.portOfDestination?._id === items._id
-                          ? "#F5FAFF"
-                          : "#ffffff",
+                      backgroundColor: "#ffffff",
                     }}
                     onClick={async () => {
+                      dispatch(fetchLearnIDRequest(items._id));
                       router.push("/learn/detail");
                     }}
                   >
@@ -587,42 +396,54 @@ const LearnHomeContainer = (props) => {
                     <div className="w-full h-[100px] inline-flex flex-col justify-between">
                       <div className="w-auto h-auto relative">
                         <div className="inline-flex items-center justify-between w-full">
-                          <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md mr-[12px]">
-                            <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                              Rice
-                            </span>
+                          <div className="inline-flex items-center space-x-2">
+                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                Rice
+                              </span>
+                            </div>
+
+                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                Exports
+                              </span>
+                            </div>
                           </div>
 
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
                             fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="2"
+                            stroke="currentColor"
+                            class="w-6 h-6 text-pwip-v2-primary-700"
                           >
                             <path
-                              d="M14.6608 2.76765C15.5775 2.87432 16.25 3.66515 16.25 4.58848V17.4993L10 14.3743L3.75 17.4993V4.58848C3.75 3.66515 4.42167 2.87432 5.33917 2.76765C8.43599 2.40818 11.564 2.40818 14.6608 2.76765Z"
-                              stroke="#006EB4"
-                              stroke-width="1.5"
                               stroke-linecap="round"
                               stroke-linejoin="round"
+                              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
                             />
                           </svg>
                         </div>
 
                         <div className="inline-flex flex-col w-full mt-[6px] space-y-[6px]">
                           <span className="text-pwip-black-600 text-sm font-[700] font-sans line-clamp-1">
-                            Kolam Rice vs Bullet Rice
+                            {items?.title || ""}
                           </span>
                           <span className="text-pwip-gray-800 text-xs font-[400] font-sans line-clamp-1">
-                            By Dhanraj Kidiyoor
+                            By {items?.author || ""}
                           </span>
                         </div>
                       </div>
 
                       <div className="inline-flex flex-col w-full mt-[6px]">
                         <span className="text-pwip-black-600 text-xs font-[400] font-sans line-clamp-1">
-                          14.32 min
+                          {secondsToMinutes(items?.duration_seconds) || 0} min
                         </span>
                       </div>
                     </div>

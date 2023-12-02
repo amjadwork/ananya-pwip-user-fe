@@ -21,6 +21,7 @@ const persistConfig = {
     "myCosting",
     "shipmentTerm",
     "category",
+    "learnList",
   ], // List of reducers to persist
 };
 
