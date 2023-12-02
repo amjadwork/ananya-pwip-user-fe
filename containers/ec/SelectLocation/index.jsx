@@ -156,6 +156,8 @@ const SelectLocationContainer = (props) => {
   const locationType = props.locationType || "destination";
   const setFieldValue = props.setFieldValue;
   const containerWeight = props.containerWeight || 26;
+  const formValues = props.formValues;
+  const shipmentTerm = props.shipmentTerm;
 
   const { closeBottomSheet } = useOverlayContext();
   const router = useRouter();
@@ -614,32 +616,6 @@ const SelectLocationContainer = (props) => {
                                 )
                               );
                             }
-
-                            dispatch(
-                              setCustomCostingSelection({
-                                ...selectedCosting,
-                                customCostingSelection: {
-                                  ...selectedCosting.customCostingSelection,
-                                  portOfDestination: items,
-                                  shl: Math.floor(
-                                    response?.shl[0]?.destinations[0]
-                                      ?.shlCharge / containerWeight
-                                  ),
-                                  ofc: Math.floor(
-                                    response?.ofc[0]?.destinations[0]
-                                      ?.ofcCharge / containerWeight
-                                  ),
-                                  cha: Math.floor(
-                                    response?.cha[0]?.destinations[0]
-                                      ?.chaCharge / containerWeight
-                                  ),
-
-                                  shlData: response?.shl[0]?.destinations[0],
-                                  ofcData: response?.ofc[0]?.destinations[0],
-                                  chaData: response?.cha[0]?.destinations[0],
-                                },
-                              })
-                            );
                           }
 
                           if (locationType === "origin") {
@@ -667,19 +643,6 @@ const SelectLocationContainer = (props) => {
                                   response?.data[0]?.sourceLocations[0]
                                     ?.transportationCharge
                                 );
-
-                                dispatch(
-                                  setCustomCostingSelection({
-                                    ...selectedCosting,
-                                    customCostingSelection: {
-                                      ...selectedCosting.customCostingSelection,
-                                      portOfOrigin: items,
-                                      transportation:
-                                        response?.data[0]?.sourceLocations[0]
-                                          ?.transportationCharge,
-                                    },
-                                  })
-                                );
                               }
                             }
                           }
@@ -692,7 +655,6 @@ const SelectLocationContainer = (props) => {
                               portOfDestination: items,
                             })
                           );
-                          // router.push("/export-costing/overview");
                         }
                       }}
                     >
@@ -732,68 +694,6 @@ const SelectLocationContainer = (props) => {
                   searchFocus={searchScreenActive}
                 />
               ) : null}
-              {/* <div className="flex flex-nowrap px-5">
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Filter
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="19"
-                      height="11"
-                      viewBox="0 0 19 11"
-                      fill="none"
-                    >
-                      <path
-                        d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Sort
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="13"
-                      height="8"
-                      viewBox="0 0 13 8"
-                      fill="none"
-                    >
-                      <path
-                        d="M12 1L6.5 6.5L1 1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {[...popularFilters].map((items, index) => {
-                  return (
-                    <div
-                      key={items?.name + (index + 1 * 2)}
-                      className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
-                    >
-                      <div className="overflow-hidden w-auto h-auto inline-flex items-center">
-                        <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                          {items?.name}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div> */}
             </div>
 
             <div className="w-full h-full space-y-[24px]">
@@ -811,9 +711,12 @@ const SelectLocationContainer = (props) => {
                     onClick={async () => {
                       if (isFromEdit) {
                         if (locationType === "destination") {
+                          setFieldValue("_destinationId", items);
+
                           const response = await fetchCHAandSHLandOFCCost(
-                            selectedCosting.customCostingSelection.portOfOrigin
-                              ._id,
+                            formValues?._originId?._id ||
+                              selectedCosting.customCostingSelection
+                                .portOfOrigin._id,
                             items?._id
                           );
 
@@ -827,7 +730,7 @@ const SelectLocationContainer = (props) => {
                             );
                           }
 
-                          if (response.ofc.length) {
+                          if (response.ofc.length && shipmentTerm !== "FOB") {
                             setFieldValue(
                               "ofc",
                               Math.floor(
@@ -846,35 +749,11 @@ const SelectLocationContainer = (props) => {
                               )
                             );
                           }
-
-                          dispatch(
-                            setCustomCostingSelection({
-                              ...selectedCosting,
-                              customCostingSelection: {
-                                ...selectedCosting.customCostingSelection,
-                                portOfDestination: items,
-                                shl: Math.floor(
-                                  response?.shl[0]?.destinations[0]?.shlCharge /
-                                    containerWeight
-                                ),
-                                ofc: Math.floor(
-                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                    containerWeight
-                                ),
-                                cha: Math.floor(
-                                  response?.cha[0]?.destinations[0]?.chaCharge /
-                                    containerWeight
-                                ),
-
-                                shlData: response?.shl[0]?.destinations[0],
-                                ofcData: response?.ofc[0]?.destinations[0],
-                                chaData: response?.cha[0]?.destinations[0],
-                              },
-                            })
-                          );
                         }
 
                         if (locationType === "origin") {
+                          setFieldValue("_originId", items);
+
                           if (
                             selectedCosting?.customCostingSelection?.product
                           ) {
@@ -896,19 +775,6 @@ const SelectLocationContainer = (props) => {
                                 response?.data[0]?.sourceLocations[0]
                                   ?.transportationCharge
                               );
-
-                              dispatch(
-                                setCustomCostingSelection({
-                                  ...selectedCosting,
-                                  customCostingSelection: {
-                                    ...selectedCosting.customCostingSelection,
-                                    portOfOrigin: items,
-                                    transportation:
-                                      response?.data[0]?.sourceLocations[0]
-                                        ?.transportationCharge,
-                                  },
-                                })
-                              );
                             }
                           }
                         }
@@ -920,7 +786,6 @@ const SelectLocationContainer = (props) => {
                             portOfDestination: items,
                           })
                         );
-                        // router.push("/export-costing/overview");
                       }
                     }}
                   >
@@ -931,17 +796,6 @@ const SelectLocationContainer = (props) => {
                         }
                         className="bg-cover h-[110px] w-[112px] rounded-lg"
                       />
-                      {/* <div
-                        className="min-h-[110px] min-w-[112px] rounded-lg absolute top-0 left-0 inline-flex items-end justify-end px-[10px] py-[12px]"
-                        style={{
-                          background:
-                            "linear-gradient(rgba(27, 27, 27, 0) 0%, rgba(27, 27, 27, 0.48) 49.24%, rgba(27, 27, 27, 0.56) 65%, rgb(27 27 27 / 85%) 100%)",
-                        }}
-                      >
-                        <span className="text-white text-sm font-bold font-sans line-clamp-1 capitalize">
-                          ₹{items.sourceRates.price}/{items.sourceRates.unit}
-                        </span>
-                      </div> */}
                     </div>
                     <div className="w-full inline-flex flex-col space-y-[20px]">
                       <div className="inline-flex items-center justify-between w-full">

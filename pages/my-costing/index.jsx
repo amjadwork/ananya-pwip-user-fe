@@ -8,9 +8,11 @@ import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 import {
-  fetchMyCostingRequest,
+  // fetchMyCostingRequest,
   fetchAllMyCostingsRequest,
   saveCostingFailure,
+  fetchMyCostingFailure,
+  saveCostingSuccess,
 } from "@/redux/actions/myCosting.actions";
 import { fetchGeneratedCostingFailure } from "@/redux/actions/costing.actions";
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
@@ -290,8 +292,10 @@ function MyCosting() {
                     }}
                     onClick={async () => {
                       await dispatch(saveCostingFailure());
+                      await dispatch(fetchMyCostingFailure());
                       await dispatch(fetchGeneratedCostingFailure());
-                      await dispatch(fetchMyCostingRequest(items._id));
+                      await dispatch(saveCostingSuccess(items));
+                      // await dispatch(fetchMyCostingRequest(items._id));
                       const action = {
                         selected: items?.termOfAgreement,
                         showShipmentTermDropdown: false,

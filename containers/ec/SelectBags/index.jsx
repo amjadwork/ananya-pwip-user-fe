@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
 
 import { useOverlayContext } from "@/context/OverlayContext";
+import { api, inrToUsd, convertUnits } from "@/utils/helper";
 
 const SelectBagsContainer = (props) => {
   const router = useRouter();
@@ -19,6 +20,8 @@ const SelectBagsContainer = (props) => {
     noTop = false,
     noPaddingBottom = false,
     title = "",
+    setFieldValue,
+    selectedUnitForPayload,
   } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -69,15 +72,16 @@ const SelectBagsContainer = (props) => {
               <div
                 key={items._id + index}
                 onClick={() => {
-                  dispatch(
-                    setCustomCostingSelection({
-                      ...selectedCosting,
-                      customCostingSelection: {
-                        ...selectedCosting.customCostingSelection,
-                        bags: items,
-                      },
-                    })
-                  );
+                  setFieldValue("_bagId", items);
+                  setFieldValue("bagSize", items?.weight);
+                  // setFieldValue(
+                  //   "bagPrice",
+                  //   convertUnits(
+                  //     items?.unit,
+                  //     selectedUnitForPayload,
+                  //     items?.cost
+                  //   )
+                  // );
                   closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"

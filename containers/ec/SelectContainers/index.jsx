@@ -20,6 +20,7 @@ const SelectCargoContainersContainer = (props) => {
     noTop = false,
     noPaddingBottom = false,
     title = "",
+    setFieldValue,
   } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -70,16 +71,8 @@ const SelectCargoContainersContainer = (props) => {
               <div
                 key={items._id + index}
                 onClick={() => {
-                  dispatch(
-                    setCustomCostingSelection({
-                      ...selectedCosting,
-                      customCostingSelection: {
-                        ...selectedCosting.customCostingSelection,
-                        containers: items,
-                      },
-                    })
-                  );
-
+                  setFieldValue("_containerId", items);
+                  setFieldValue("containerWeight", items?.weight);
                   closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"

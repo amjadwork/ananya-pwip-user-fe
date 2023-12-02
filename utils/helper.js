@@ -127,3 +127,24 @@ export function getChangedPropertiesFromObject(original, updated) {
 
   return changedProperties;
 }
+
+export function convertUnits(currentUnit, neededUnit, value) {
+  // Define conversion factors for each unit
+  const conversionFactors = {
+    kg: 1,
+    qt: 0.01, // 1 quintal = 10 kg
+    mt: 0.001, // 1 metric ton = 1000 kg
+  };
+
+  // Check if the units are valid
+  if (!conversionFactors[currentUnit] || !conversionFactors[neededUnit]) {
+    return "Invalid units provided";
+  }
+
+  // Convert the price to the needed unit
+  const priceInNeededUnit = (
+    (value * conversionFactors[currentUnit]) /
+    conversionFactors[neededUnit]
+  ).toFixed(0);
+  return priceInNeededUnit;
+}

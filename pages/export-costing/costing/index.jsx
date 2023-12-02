@@ -465,14 +465,6 @@ function CostingOverview() {
       !generatedCosting &&
       forexRate
     ) {
-      // Following commented code causing re-renders, need to fix
-
-      // const action = {
-      //   selected: currentCostingFromHistory[0]?.termOfAgreement,
-      //   showShipmentTermDropdown: false,
-      // };
-
-      // dispatch(setTermsOfShipmentRequest(action));
       setGeneratedCostingData(currentCostingFromHistory[0]);
       const sheet = currentCostingFromHistory[0];
 
@@ -496,10 +488,11 @@ function CostingOverview() {
   }, [currentCostingFromHistory, generatedCosting, forexRate]);
 
   useEffect(() => {
-    if (myRecentSavedCosting && !currentCostingFromHistory) {
+    console.log(myRecentSavedCosting);
+    if (myRecentSavedCosting) {
       dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     }
-  }, [myRecentSavedCosting, currentCostingFromHistory]);
+  }, [myRecentSavedCosting]);
 
   const handleOpenBreakUpBottomSheet = (itemIndex) => {
     const selectedBreakup = breakupChargesData[itemIndex].rowItems.filter(
@@ -679,14 +672,14 @@ function CostingOverview() {
                     setGeneratedCostingData(null);
 
                     if (
-                      currentCostingFromHistory &&
-                      currentCostingFromHistory?.length &&
-                      currentCostingFromHistory[0]?.isQuickCosting
+                      generatedCostingData &&
+                      Object.keys(generatedCostingData).length &&
+                      generatedCostingData?.isQuickCosting
                     ) {
                       await dispatch(generateQuickCostingRequest(body));
                     } else {
                       let givenData = {
-                        ...currentCostingFromHistory[0],
+                        ...generatedCostingData,
                       };
 
                       let payload = extractCustomCostingPayload({
@@ -728,44 +721,7 @@ function CostingOverview() {
     openBottomSheet(content);
   };
 
-  // const handleShareBottomSheet = () => {
-  //   const content = (
-  //     <React.Fragment>
-  //       <div className="px-5 mb-6 pt-5">
-  //         <span className="text-base font-sans font-medium text-pwip-gray-900 text-left">
-  //           Download or share your costing
-  //         </span>
-  //       </div>
-  //       <div className="inline-flex flex-col w-full space-y-6">
-  //         <button
-  //           type="button"
-  //           onClick={() => {
-  //             handleDownload();
-  //           }}
-  //           className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
-  //         >
-  //           {downloadIcon}
-  //           <span className="text-base font-medium font-sans">Download</span>
-  //         </button>
-
-  //         <button
-  //           type="button"
-  //           onClick={() => {
-  //             handleShare();
-  //           }}
-  //           className="w-full space-x-4 text-pwip-gray-850 inline-flex items-center px-5 hover:bg-pwip-white-100 dark:hover:bg-pwip-white-100 group"
-  //         >
-  //           {shareIcon}
-  //           <span className="text-base font-medium font-sans">Share</span>
-  //         </button>
-  //       </div>
-  //     </React.Fragment>
-  //   );
-  //   openBottomSheet(content);
-  // };
-
   const handleShare = () => {
-    console.log(generatedCostingData?.details?.variantObject?.variantName);
     if (navigator && navigator.share) {
       navigator
         .share({
@@ -797,7 +753,7 @@ function CostingOverview() {
       .post(
         "https://api-stage.pwip.co/api/generateCostingSheet/download",
         {
-          historyId: currentCostingFromHistory[0]?._id,
+          historyId: generatedCostingData?._id,
         },
         {
           responseType: "arraybuffer",
@@ -814,7 +770,7 @@ function CostingOverview() {
         link.href = url;
         link.setAttribute(
           "download",
-          currentCostingFromHistory[0]?.costingName + ".pdf"
+          generatedCostingData?.costingName + ".pdf"
         ); //or any other extension
         document.body.appendChild(link);
         link.click();
@@ -868,7 +824,7 @@ function CostingOverview() {
           } px-5 py-4 transition-all duration-500`}
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex flex-col items-start flex-grow pr-3">
+            <div className="flex flex-col items-start flex-grow w-[65%] overflow-hidden pr-3">
               {/* Use flex-grow for 70% width */}
               <span className="text-white text-xs font-normal font-sans line-clamp-1">
                 {generatedCostingData?.details?.variantObject?.variantName ||
@@ -934,10 +890,10 @@ function CostingOverview() {
         </div>
         <Header
           handleClickEdit={async () => {
-            if (myRecentSavedCosting) {
-              await dispatch(updateCostingFailure());
-              await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
-            }
+            // if (myRecentSavedCosting) {
+            //   await dispatch(updateCostingFailure());
+            //   await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
+            // }
             router.push("/export-costing/costing/edit");
           }}
         />
@@ -1001,11 +957,8 @@ function CostingOverview() {
                     <div className="w-full mt-[12px] flex items-center justify-between">
                       <div className="inline-flex items-center justify-center space-x-3">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
-                          {generatedCostingData?.details?.originPortObject
-                            ?.portName === "Visakhapatnam Port"
-                            ? "Vizag Port"
-                            : generatedCostingData?.details?.originPortObject
-                                ?.portName}
+                          {generatedCostingData?.details?.sourceObject
+                            ?.region || "-/-"}
                         </span>
                       </div>
 
@@ -1015,8 +968,11 @@ function CostingOverview() {
 
                       <div className="inline-flex items-center justify-center space-x-3">
                         <span className="text-pwip-v2-primary text-xs font-[700] font-sans line-clamp-1">
-                          {generatedCostingData?.details?.sourceObject
-                            ?.region || "-/-"}
+                          {generatedCostingData?.details?.originPortObject
+                            ?.portName === "Visakhapatnam Port"
+                            ? "Vizag Port"
+                            : generatedCostingData?.details?.originPortObject
+                                ?.portName}
                         </span>
                       </div>
 

@@ -14,7 +14,7 @@ import SelectLocationContainer from "@/containers/ec/SelectLocation";
 import SelectBagsContainer from "@/containers/ec/SelectBags";
 import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
-import { api, inrToUsd } from "@/utils/helper";
+import { api, inrToUsd, convertUnits } from "@/utils/helper";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -33,7 +33,7 @@ import {
   fetchMyCostingFailure,
   saveCostingRequest,
   saveCostingFailure,
-  updateCostingRequest,
+  // updateCostingRequest,
   fetchMyCostingRequest,
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
@@ -45,8 +45,8 @@ import {
 } from "@/redux/actions/costing.actions";
 
 // Import Containers
-import CostingForm from "@/containers/ec/Forms/CostingForm";
-import BreakupForm from "@/containers/ec/Forms/BreakupForm";
+// import CostingForm from "@/containers/ec/Forms/CostingForm";
+// import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
 import { getCostingToSaveHistoryPayload } from "@/utils/helper";
 
@@ -132,35 +132,12 @@ function calculateCurrentRicePrice(originalRicePrice, brokenPercent) {
   return currentRicePrice;
 }
 
-function convertUnits(currentUnit, neededUnit, value) {
-  // Define conversion factors for each unit
-  const conversionFactors = {
-    kg: 1,
-    qt: 0.01, // 1 quintal = 10 kg
-    mt: 0.001, // 1 metric ton = 1000 kg
-  };
-
-  // Check if the units are valid
-  if (!conversionFactors[currentUnit] || !conversionFactors[neededUnit]) {
-    return "Invalid units provided";
-  }
-
-  // Convert the price to the needed unit
-  const priceInNeededUnit = (
-    (value * conversionFactors[currentUnit]) /
-    conversionFactors[neededUnit]
-  ).toFixed(0);
-  return priceInNeededUnit;
-}
-
 const initialValues = {
   costingName: "",
   _variantId: {},
-  // costOfRice: "",
   brokenPercentage: "",
   _bagId: {},
   bagSize: "",
-  // bagPrice: "",
   _originId: {},
   _destinationId: {},
   _containerId: {},
@@ -168,7 +145,6 @@ const initialValues = {
   containerWeight: "",
   exportDuty: false,
   exportDutyValue: 0,
-  // pwipFullfillment: false,
 
   // breakup
   costOfRice: "",
@@ -181,8 +157,6 @@ const initialValues = {
   financeCost: "",
   overheads: "",
   margin: "",
-  // exportDuty: false,
-  // pwipFullfillment: false,
 };
 
 function EditCosting() {
@@ -194,27 +168,28 @@ function EditCosting() {
   const formik = useRef();
   const bottomSheetInputRef = useRef();
 
+  const [
+    pageConstructedForInitialization,
+    setPageConstructedForInitialization,
+  ] = React.useState(false);
+
+  const [customCostingSelection, setCustomCostingSelectionItem] =
+    React.useState(null);
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [activeTab, setActiveTab] = React.useState(0);
   const [isGenerated, setIsGenerated] = React.useState(false);
   const [selectedUnitForPayload, setSelectedUnitForPayload] =
     React.useState("mt");
-  const [componentShipmentTerm, setComponentShipmentTerm] =
-    React.useState(null);
-  const [isFixed, setIsFixed] = React.useState(false);
 
   const authToken = useSelector((state) => state.auth.token);
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const shipmentTerm = useSelector(
     (state) => state.shipmentTerm.shipmentTerm.selected
   );
-  const isShipmentTermDropdownOpen = useSelector(
-    (state) => state.shipmentTerm.shipmentTerm.showShipmentTermDropdown
-  );
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
-  const customCostingSelection = useSelector(
+  const customCostingSelectionFromSelector = useSelector(
     (state) => state.costing.customCostingSelection
   );
   const forexRate = useSelector((state) => state.utils.forexRate);
@@ -228,183 +203,184 @@ function EditCosting() {
     }
     return null;
   });
+  const myRecentSavedCosting = useSelector(
+    (state) => state.myCosting.myRecentSavedCosting
+  );
 
-  React.useEffect(() => {
-    setComponentShipmentTerm(shipmentTerm);
-  }, [isShipmentTermDropdownOpen]);
+  useEffect(() => {
+    dispatch(fetchMyCostingFailure());
+  }, []);
 
-  const handleShipmentChangeCalls = async () => {
-    await dispatch(updateCostingFailure());
+  useEffect(() => {
+    if (
+      customCostingSelectionFromSelector &&
+      !customCostingSelection?.product
+    ) {
+      setCustomCostingSelectionItem(customCostingSelectionFromSelector);
+    }
+  }, [customCostingSelectionFromSelector, customCostingSelection]);
 
-    const payloadBody = {
-      shipmentTermType: shipmentTerm || "FOB",
-      termOfAgreement: shipmentTerm || "FOB",
-    };
-
-    await dispatch(updateCostingRequest(payloadBody));
-    await dispatch(updateCostingFailure());
-    await dispatch(fetchMyCostingRequest(selectedMyCostingFromHistory?._id));
+  const constructPage = async () => {
+    await dispatch(fetchPackagingBagsRequest());
+    await dispatch(fetchContainersRequest());
+    await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
+    setPageConstructedForInitialization(true);
   };
 
-  React.useEffect(() => {
-    if (shipmentTerm && componentShipmentTerm) {
-      handleShipmentChangeCalls();
+  useEffect(() => {
+    if (myRecentSavedCosting && !selectedMyCostingFromHistory && !isGenerated) {
+      constructPage();
     }
-  }, [shipmentTerm]);
+  }, [myRecentSavedCosting, selectedMyCostingFromHistory, isGenerated]);
 
-  React.useEffect(() => {
-    if (generatedCosting && isGenerated) {
-      const saveHistoryPayload = getCostingToSaveHistoryPayload({
-        ...generatedCosting,
-        costingName: formik.current.values.costingName,
-      });
-
-      let payloadBody = {
-        ...saveHistoryPayload,
-        isQuickCosting: false,
-        unit: selectedUnitForPayload,
-        isExportDuty: formik.current.values.exportDuty,
-        brokenPercentage: formik.current.values.brokenPercentage || 5,
-        containersCount: parseFloat(formik.current.values.containersCount),
-        _containerId: formik.current.values._containerId._id,
+  useEffect(() => {
+    if (selectedMyCostingFromHistory && pageConstructedForInitialization) {
+      const customCostingMapping = {
+        bags: selectedMyCostingFromHistory?.details?.packageDetails,
+        chaData: selectedMyCostingFromHistory,
+        containers: selectedMyCostingFromHistory?.details?.containerObject,
+        portOfDestination:
+          selectedMyCostingFromHistory?.details?.destinationObject,
+        portOfOrigin: selectedMyCostingFromHistory?.details?.originPortObject,
+        product: {
+          ...selectedMyCostingFromHistory?.details?.variantObject,
+          sourceObject: selectedMyCostingFromHistory?.details?.sourceObject,
+        },
+        brokenPercentage: selectedMyCostingFromHistory?.brokenPercentage || 0,
+        exMillPrice:
+          selectedMyCostingFromHistory?.details?.variantObject?.sourceRates.find(
+            (d) =>
+              d._sourceId ===
+              selectedMyCostingFromHistory?.details?.sourceObject?._id
+          )?.price,
+        unit: selectedMyCostingFromHistory?.unit,
+        containersCount:
+          selectedMyCostingFromHistory?.details?.containerCount || 1,
+        transportation: selectedMyCostingFromHistory?.costing?.transportCharge,
+        shlCost: selectedMyCostingFromHistory?.costing?.shlCost,
+        chaCost: selectedMyCostingFromHistory?.costing?.cfsHandling,
+        ofcCost: selectedMyCostingFromHistory?.costing?.ofcCost,
+        bagCost: selectedMyCostingFromHistory?.costing?.package,
+        constants: selectedMyCostingFromHistory?.constants,
+        ofcData: null,
+        shlData: null,
       };
 
-      if (!formik.current.values.exportDuty) {
-        payloadBody.exportDuty = 0;
-      }
+      const originId =
+        selectedMyCostingFromHistory.details.originPortObject._id;
+      const destinationId =
+        selectedMyCostingFromHistory.details.destinationObject._id;
 
-      dispatch(fetchGeneratedCostingFailure());
-      dispatch(saveCostingFailure());
-      dispatch(saveCostingRequest(payloadBody));
-      setIsGenerated(false);
-      dispatch(resetCustomCostingSelection());
-      router.replace("/export-costing/costing");
+      setPageConstructedForInitialization(false);
+
+      callFetchCHAandSHLandOFCCost(
+        originId,
+        destinationId,
+        customCostingMapping
+      );
+    }
+  }, [selectedMyCostingFromHistory, pageConstructedForInitialization]);
+
+  async function saveCustomCostingToHistory() {
+    const saveHistoryPayload = getCostingToSaveHistoryPayload({
+      ...generatedCosting,
+      costingName: formik.current.values.costingName,
+    });
+
+    let payloadBody = {
+      ...saveHistoryPayload,
+      isQuickCosting: false,
+      unit: selectedUnitForPayload,
+      isExportDuty: formik.current.values.exportDuty,
+      brokenPercentage: formik.current.values.brokenPercentage || 5,
+      containersCount: parseFloat(formik.current.values.containersCount),
+      _containerId: formik.current.values._containerId._id,
+    };
+
+    if (!formik.current.values.exportDuty) {
+      payloadBody.exportDuty = 0;
+    }
+
+    await dispatch(saveCostingRequest(payloadBody));
+    await dispatch(resetCustomCostingSelection());
+    await dispatch(fetchMyCostingFailure());
+    await dispatch(fetchGeneratedCostingFailure());
+    await dispatch(saveCostingFailure());
+    await dispatch(updateCostingFailure());
+    router.back("/export-costing/costing");
+    setIsGenerated(false);
+  }
+
+  useEffect(() => {
+    if (generatedCosting && isGenerated) {
+      saveCustomCostingToHistory();
     }
   }, [generatedCosting, isGenerated]);
 
   useEffect(() => {
-    if (
-      formik &&
-      formik.current &&
-      customCostingSelection &&
-      selectedMyCostingFromHistory
-    ) {
+    if (formik && formik.current && customCostingSelection) {
       const formikRef = formik.current;
 
-      let customProductPrice =
-        customCostingSelection?.product?.sourceRates?.price;
+      const formValues = formikRef?.values || {};
 
-      if (
-        customCostingSelection &&
-        customCostingSelection?.product &&
-        customProductPrice
-      ) {
+      let customProductPrice = customCostingSelection?.exMillPrice;
+
+      if (customCostingSelection && customProductPrice) {
         customProductPrice = convertUnits(
           "kg",
-          selectedMyCostingFromHistory.unit,
-          customCostingSelection?.product?.sourceRates?.price
+          customCostingSelection.unit,
+          customCostingSelection?.exMillPrice
         );
       }
 
       const breakUpFormValues = {
-        costingName: selectedMyCostingFromHistory?.costingName || "",
-        _variantId:
-          customCostingSelection?.product ||
-          selectedMyCostingFromHistory?.details?.variantObject,
+        ...formValues,
+        _variantId: customCostingSelection?.product,
         brokenPercentage:
           formik.current.values.brokenPercentage ||
-          customCostingSelection?.product?.brokenPercentage ||
-          selectedMyCostingFromHistory?.brokenPercentage ||
+          customCostingSelection?.brokenPercentage ||
           0,
-        _bagId:
-          customCostingSelection?.bags ||
-          selectedMyCostingFromHistory?.details.packageDetails,
-        bagSize:
-          customCostingSelection?.bags?.weight ||
-          selectedMyCostingFromHistory?.details.packageDetails.weight,
-        _originId:
-          customCostingSelection?.portOfOrigin ||
-          selectedMyCostingFromHistory?.details?.originPortObject,
-        _destinationId:
-          customCostingSelection?.portOfDestination ||
-          selectedMyCostingFromHistory?.details.destinationObject,
-        _containerId:
-          customCostingSelection?.containers ||
-          selectedMyCostingFromHistory?.details?.containerObject,
-        containersCount:
-          customCostingSelection?.containerCount ||
-          selectedMyCostingFromHistory?.details?.containerCount ||
-          1,
+        _bagId: customCostingSelection?.bags,
+        bagSize: customCostingSelection?.bags?.weight,
+        _originId: customCostingSelection?.portOfOrigin,
+        _destinationId: customCostingSelection?.portOfDestination,
+        _containerId: customCostingSelection?.containers,
+        containersCount: customCostingSelection?.containerCount || 1,
         containerWeight:
           customCostingSelection?.containersWeight ||
-          customCostingSelection?.containers?.weight ||
-          selectedMyCostingFromHistory?.details?.containerObject.weight,
+          customCostingSelection?.containers?.weight,
 
         // Breakup values
-        costOfRice:
-          customProductPrice ||
-          selectedMyCostingFromHistory?.costing?.exmillPrice ||
-          0,
-        bagPrice:
-          customCostingSelection?.bags?.cost ||
-          selectedMyCostingFromHistory?.costing?.package,
-        transportation:
-          customCostingSelection?.transportation ||
-          selectedMyCostingFromHistory?.costing?.transportCharge,
-        cfsHandling:
-          customCostingSelection?.cha ||
-          selectedMyCostingFromHistory?.costing?.cfsHandling,
-        shl:
-          customCostingSelection?.shl ||
-          selectedMyCostingFromHistory?.costing?.shlCost,
-        ofc:
-          shipmentTerm === "FOB"
-            ? 0
-            : customCostingSelection?.ofc
-            ? customCostingSelection?.ofc
-            : selectedMyCostingFromHistory?.costing?.ofcCost,
-        inspectionCost:
-          selectedMyCostingFromHistory?.constants?.inspectionCharge,
-        financeCost: selectedMyCostingFromHistory?.constants?.financeCost,
-        overheads: selectedMyCostingFromHistory?.constants?.overHeadCharge,
-        margin: selectedMyCostingFromHistory?.constants?.margin,
-        exportDuty: selectedMyCostingFromHistory?.constants?.exportDutyCharge
+        costOfRice: customProductPrice || 0,
+        bagPrice: customCostingSelection?.bagCost,
+        transportation: customCostingSelection?.transportation,
+        cfsHandling: customCostingSelection?.chaCost,
+        shl: customCostingSelection?.shlCost,
+        ofc: shipmentTerm === "FOB" ? 0 : customCostingSelection?.ofcCost,
+        inspectionCost: customCostingSelection?.constants?.inspectionCharge,
+        financeCost: customCostingSelection?.constants?.financeCost,
+        overheads: customCostingSelection?.constants?.overHeadCharge,
+        margin: customCostingSelection?.constants?.margin,
+        exportDuty: customCostingSelection?.constants?.exportDutyCharge
           ? true
           : false,
         exportDutyValue:
-          selectedMyCostingFromHistory?.constants?.exportDutyCharge,
-        pwipFullfillment: selectedMyCostingFromHistory?.constants
-          .pwipFullfillment
-          ? true
-          : false,
+          customCostingSelection?.constants?.exportDutyCharge || 0,
       };
 
       formikRef.setValues(breakUpFormValues);
     }
-  }, [formik, customCostingSelection, selectedMyCostingFromHistory]);
-
-  // possible issue for bag in edit screen
-  React.useEffect(() => {
-    if (customCostingSelection?.bags || generatedCosting) {
-      breakupArr[0].rowItems[1].label = customCostingSelection?.bags
-        ? `${customCostingSelection?.bags?.bag}-${customCostingSelection?.bags?.weight}${customCostingSelection?.bags?.unit}`
-        : `${generatedCosting?.details?.packageDetails?.bag}-${generatedCosting?.details?.packageDetails?.weight}${generatedCosting?.details?.packageDetails?.unit}`;
-    }
-  }, [breakupArr, customCostingSelection, generatedCosting]);
+  }, [formik, customCostingSelection]);
 
   useEffect(() => {
-    if (selectedMyCostingFromHistory && !generatedCosting) {
-      const sheet = selectedMyCostingFromHistory;
-
-      breakupArr[0].rowItems[1].label = `${sheet?.details?.packageDetails?.bag}-${sheet?.details?.packageDetails?.weight}${sheet?.details?.packageDetails?.unit}`;
+    if (customCostingSelection?.bags) {
+      breakupArr[0].rowItems[1].label = customCostingSelection?.bags
+        ? `${customCostingSelection?.bags?.bag}-${customCostingSelection?.bags?.weight}${customCostingSelection?.bags?.unit}`
+        : "";
     }
-  }, [selectedMyCostingFromHistory, generatedCosting]);
-  // possible issue for bag in edit screen ends
+  }, [breakupArr, customCostingSelection]);
 
-  React.useEffect(() => {
-    dispatch(fetchPackagingBagsRequest());
-    dispatch(fetchContainersRequest());
-
+  useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
@@ -460,7 +436,11 @@ function EditCosting() {
     }
   }
 
-  async function callFetchCHAandSHLandOFCCost(originId, destinationId) {
+  async function callFetchCHAandSHLandOFCCost(
+    originId,
+    destinationId,
+    customMapping
+  ) {
     const response = await fetchCHAandSHLandOFCCost(originId, destinationId);
 
     if (response) {
@@ -468,15 +448,7 @@ function EditCosting() {
         setCustomCostingSelection({
           ...selectedCosting,
           customCostingSelection: {
-            ...selectedCosting.customCostingSelection,
-            product: {
-              ...selectedMyCostingFromHistory?.details?.variantObject,
-              sourceObject: selectedMyCostingFromHistory?.details?.sourceObject,
-            },
-            portOfOrigin:
-              selectedMyCostingFromHistory?.details?.originPortObject,
-            portOfDestination:
-              selectedMyCostingFromHistory?.details?.destinationObject,
+            ...customMapping,
             shlData: response?.shl[0]?.destinations[0],
             ofcData: response?.ofc[0]?.destinations[0],
             chaData: response?.cha[0]?.destinations[0],
@@ -496,21 +468,6 @@ function EditCosting() {
       );
     }
   }
-
-  React.useEffect(() => {
-    if (
-      selectedMyCostingFromHistory &&
-      !selectedCosting?.customCostingSelection?.product &&
-      !selectedCosting?.customCostingSelection?.shlData
-    ) {
-      const originId =
-        selectedMyCostingFromHistory.details.originPortObject._id;
-      const destinationId =
-        selectedMyCostingFromHistory.details.destinationObject._id;
-
-      callFetchCHAandSHLandOFCCost(originId, destinationId);
-    }
-  }, [selectedMyCostingFromHistory, selectedCosting]);
 
   return (
     <React.Fragment>
@@ -539,18 +496,12 @@ function EditCosting() {
 
       <AppLayout>
         <div
-          className={`${
-            !isFixed
-              ? "fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700"
-              : "hidden opacity-0 h-0 top-[-10px]"
-          } px-5 py-4 transition-all duration-500`}
+          className={`fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700 px-5 py-4 transition-all duration-500`}
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex flex-col items-start flex-grow pr-3">
+            <div className="flex flex-col items-start flex-grow w-[65%] overflow-hidden pr-3">
               <span className="text-white text-xs font-normal font-sans line-clamp-1">
-                {customCostingSelection?.product?.variantName ||
-                  generatedCosting?.details?.variantObject?.variantName ||
-                  "-/-"}
+                {customCostingSelection?.product?.variantName || "-/-"}
               </span>
 
               <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
@@ -621,30 +572,6 @@ function EditCosting() {
           id="fixedMenuSection"
           className="fixed top-[74px] h-[auto] w-full bg-pwip-gray-45 z-10"
         >
-          {/* <div className="w-full h-[46px] bg-pwip-gray-300 rounded-full inline-flex items-center p-1">
-            <div
-              onClick={() => setActiveTab(0)}
-              className={`w-[50%] h-full inline-flex items-center justify-center ${
-                activeTab === 0 ? "bg-white" : "opacity-40"
-              } rounded-full`}
-            >
-              <span className="text-pwip-gray-1100 font-sans font-bold text-sm">
-                Costing
-              </span>
-            </div>
-
-            <div
-              onClick={() => setActiveTab(1)}
-              className={`w-[50%] h-full inline-flex items-center justify-center ${
-                activeTab === 1 ? "bg-white" : "opacity-40"
-              } rounded-full`}
-            >
-              <span className="text-pwip-gray-1100 font-sans font-bold text-sm">
-                Breakup
-              </span>
-            </div>
-          </div> */}
-
           <div className={`flex overflow-x-scroll hide-scroll-bar`}>
             <div className="flex flex-nowrap">
               {[...tabsItems].map((item, index) => {
@@ -830,7 +757,7 @@ function EditCosting() {
                             name: "bagPrice",
                             showCurrency: true,
                             placeholder: "Ex: 10.5",
-                            unit: values?._bagId?.unit,
+                            unit: selectedUnitForPayload,
                             value: values?.bagPrice ? values?.bagPrice : "",
                           },
                           // {
@@ -1085,6 +1012,9 @@ function EditCosting() {
                                                           setFieldValue={
                                                             setFieldValue
                                                           }
+                                                          selectedUnitForPayload={
+                                                            selectedUnitForPayload
+                                                          }
                                                         />
                                                       </div>
                                                     );
@@ -1109,10 +1039,15 @@ function EditCosting() {
                                                           containerWeight={parseFloat(
                                                             values?.containerWeight
                                                           )}
+                                                          formValues={values}
                                                         />
                                                       </div>
                                                     );
                                                     openBottomSheet(content);
+                                                  }
+
+                                                  {
+                                                    console.log(values);
                                                   }
 
                                                   if (
@@ -1134,6 +1069,10 @@ function EditCosting() {
                                                           containerWeight={parseFloat(
                                                             values?.containerWeight
                                                           )}
+                                                          formValues={values}
+                                                          shipmentTerm={
+                                                            shipmentTerm
+                                                          }
                                                         />
                                                       </div>
                                                     );
@@ -1147,6 +1086,12 @@ function EditCosting() {
                                                           roundedTop={false}
                                                           noTop={true}
                                                           noPaddingBottom={true}
+                                                          setFieldValue={
+                                                            setFieldValue
+                                                          }
+                                                          selectedUnitForPayload={
+                                                            selectedUnitForPayload
+                                                          }
                                                         />
                                                       </div>
                                                     );
@@ -1163,6 +1108,9 @@ function EditCosting() {
                                                           roundedTop={false}
                                                           noTop={true}
                                                           noPaddingBottom={true}
+                                                          setFieldValue={
+                                                            setFieldValue
+                                                          }
                                                         />
                                                       </div>
                                                     );
@@ -1204,9 +1152,25 @@ function EditCosting() {
                                                             field?.value
                                                           }
                                                           name={field?.name}
-                                                          onChange={
-                                                            handleChange
-                                                          }
+                                                          onChange={(e) => {
+                                                            // handleChange()
+                                                            const bottomSheetUSDValueElement =
+                                                              document.getElementById(
+                                                                "bottomSheetUSDValue"
+                                                              );
+                                                            if (
+                                                              bottomSheetUSDValueElement &&
+                                                              e.target.value
+                                                            ) {
+                                                              bottomSheetUSDValueElement.innerText =
+                                                                "$" +
+                                                                `${inrToUsd(
+                                                                  e.target
+                                                                    .value,
+                                                                  forexRate.USD
+                                                                )}`;
+                                                            }
+                                                          }}
                                                           onBlur={(e) => {
                                                             handleBlur(e);
                                                             if (
@@ -1303,29 +1267,29 @@ function EditCosting() {
                                                                   )
                                                                 );
 
-                                                                dispatch(
-                                                                  setCustomCostingSelection(
-                                                                    {
-                                                                      ...selectedCosting,
-                                                                      customCostingSelection:
-                                                                        {
-                                                                          ...selectedCosting.customCostingSelection,
-                                                                          shl: Math.floor(
-                                                                            totalSHL
-                                                                          ),
-                                                                          cha: Math.floor(
-                                                                            totalCHA
-                                                                          ),
-                                                                          containerCount:
-                                                                            parseInt(
-                                                                              e
-                                                                                .target
-                                                                                .value
-                                                                            ),
-                                                                        },
-                                                                    }
-                                                                  )
-                                                                );
+                                                                // dispatch(
+                                                                //   setCustomCostingSelection(
+                                                                //     {
+                                                                //       ...selectedCosting,
+                                                                //       customCostingSelection:
+                                                                //         {
+                                                                //           ...selectedCosting.customCostingSelection,
+                                                                //           shl: Math.floor(
+                                                                //             totalSHL
+                                                                //           ),
+                                                                //           cha: Math.floor(
+                                                                //             totalCHA
+                                                                //           ),
+                                                                //           containerCount:
+                                                                //             parseInt(
+                                                                //               e
+                                                                //                 .target
+                                                                //                 .value
+                                                                //             ),
+                                                                //         },
+                                                                //     }
+                                                                //   )
+                                                                // );
                                                               }
                                                             }
                                                           }}
@@ -1334,7 +1298,10 @@ function EditCosting() {
                                                         />
                                                       </div>
 
-                                                      <span className="text-pwip-v2-green-800 font-[400] text-sm mt-2">
+                                                      <span
+                                                        id="bottomSheetUSDValue"
+                                                        className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
+                                                      >
                                                         $
                                                         {inrToUsd(
                                                           field?.value,
@@ -1361,6 +1328,11 @@ function EditCosting() {
                                                         label="Done"
                                                         minHeight="!min-h-[42px]"
                                                         onClick={() => {
+                                                          setFieldValue(
+                                                            field?.name,
+                                                            bottomSheetInputRef
+                                                              .current.value
+                                                          );
                                                           closeBottomSheet();
                                                         }}
                                                       />
@@ -1520,20 +1492,7 @@ function EditCosting() {
                     </React.Fragment>
                   );
                 })}
-                {/* <CostingForm
-                  values={values}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  setFieldValue={setFieldValue}
-                  activeTab={activeTab}
-                />
 
-                <BreakupForm
-                  values={values}
-                  handleChange={handleChange}
-                  handleBlur={handleBlur}
-                  activeTab={activeTab}
-                /> */}
                 <div
                   className="w-full fixed left-0 bottom-0 px-5 py-4 bg-white inline-flex items-start space-x-[20px]"
                   style={{
@@ -1569,9 +1528,9 @@ function EditCosting() {
                   <Button
                     type={
                       isSubmitting ||
-                      !Object.keys(values?._variantId).length ||
-                      !Object.keys(values?._originId).length ||
-                      !Object.keys(values?._destinationId).length
+                      !values?._variantId ||
+                      !values?._originId ||
+                      !values?._destinationId
                         ? "disabled"
                         : "primary"
                     }
@@ -1580,19 +1539,18 @@ function EditCosting() {
                     minHeight="!min-h-[42px]"
                     disabled={
                       isSubmitting ||
-                      !Object.keys(values?._variantId).length ||
-                      !Object.keys(values?._originId).length ||
-                      !Object.keys(values?._destinationId).length
+                      !values?._variantId ||
+                      !values?._originId ||
+                      !values?._destinationId
+                        ? true
+                        : false
                     }
                     onClick={() => {
                       let givenData = { ...values };
                       givenData.unit =
                         selectedMyCostingFromHistory?.unit || "mt";
                       givenData.shipmentTermType = shipmentTerm;
-                      // ===
-                      //   selectedMyCostingFromHistory?.termOfAgreement
-                      //     ? shipmentTerm
-                      //     : selectedMyCostingFromHistory?.termOfAgreement;
+
                       givenData.variantCost = parseFloat(values?.costOfRice);
                       givenData.exportDutyValue =
                         parseFloat(values.exportDutyValue) || 0;
@@ -1600,7 +1558,7 @@ function EditCosting() {
                       setSelectedUnitForPayload(
                         selectedMyCostingFromHistory?.unit || "mt"
                       );
-                      console.log("givenData", givenData);
+
                       givenData.sourceId =
                         givenData?._variantId?.sourceRates?._sourceId ||
                         givenData?._variantId?.sourceObject?._id;
@@ -1612,7 +1570,6 @@ function EditCosting() {
                       const payload =
                         generatePayloadForCustomCosting(givenData);
                       dispatch(generateCustomCostingRequest(payload));
-                      dispatch(fetchMyCostingFailure());
                       setIsGenerated(true);
                     }}
                   />
