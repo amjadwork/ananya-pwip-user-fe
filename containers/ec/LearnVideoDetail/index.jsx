@@ -89,9 +89,6 @@ const YouTubePlayer = () => {
               }
             }
 
-            setShowPlayerCustomControls(!showPlayerCustomControls);
-            clearTimeout(timeoutId);
-
             return null;
           }}
           className="h-full w-full bg-[#00000047] absolute top-0 left-0 z-10"
@@ -133,7 +130,19 @@ const YouTubePlayer = () => {
               </button>
             </div>
 
-            <div className="h-full w-full"></div>
+            <div
+              onClick={() => {
+                setShowPlayerCustomControls(!showPlayerCustomControls);
+                clearTimeout(timeoutId);
+
+                return null;
+              }}
+              className={`h-full w-full ${
+                !showPlayerCustomControls
+                  ? "absolute top-0 left-0 overflow-hidden z-20"
+                  : ""
+              }`}
+            ></div>
 
             <div
               className={`inline-flex items-center justify-center w-full px-4 py-3 space-x-3 transition-all ${
@@ -710,7 +719,13 @@ const LearnVideoDetailContainer = (props) => {
           </div>
 
           <div className="w-auto">
-            <button className="text-white text-sm font-[500] bg-[#C53A2E] inline-flex items-center justify-between rounded-[4px] border-none outline-none px-[8px] py-[6px] space-x-2">
+            <button
+              onClick={() => {
+                const urlToOpen = "https://www.youtube.com/@pwipindia";
+                window.open(urlToOpen, "_blank");
+              }}
+              className="text-white text-sm font-[500] bg-[#C53A2E] inline-flex items-center justify-between rounded-[4px] border-none outline-none px-[8px] py-[6px] space-x-2"
+            >
               <svg
                 width="21"
                 height="20"
