@@ -80,7 +80,9 @@ const YouTubePlayer = ({ url }) => {
 
             return null;
           }}
-          className="h-full w-full bg-[#00000047] absolute top-0 left-0 z-10"
+          className={`h-full w-full ${
+            showPlayerCustomControls ? "bg-[#00000047]" : "bg-transparent"
+          } absolute top-0 left-0 z-10`}
         >
           <div className="h-full w-full inline-flex flex-col justify-between">
             <div
