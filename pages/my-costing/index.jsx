@@ -21,7 +21,7 @@ import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions
 import { Header } from "@/components/Header";
 import { inrToUsd } from "@/utils/helper";
 
-import { riceGrainIcon } from "../../theme/icon";
+// import { riceGrainIcon } from "../../theme/icon";
 
 // Import Containers
 

@@ -147,3 +147,24 @@ body::-webkit-scrollbar {
 }
 
 /* remvoe this ends */
+
+/* slider start */
+.slick-dots {
+  bottom: -32px !important;
+}
+
+.slick-dots li {
+  margin: 0;
+  margin-right: 5px;
+  width: auto;
+}
+
+.react-player__preview {
+  pointer-events: none; /* Disable click on the overlay */
+  /* opacity: 0; Make the overlay invisible */
+}
+
+/* iframe {
+  border-radius: 8px;
+} */
+/* slider ends */

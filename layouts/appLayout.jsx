@@ -9,7 +9,7 @@ import { BottomNavBar } from "@/components/BottomNavBar";
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 import { forexRateRequest } from "@/redux/actions/utils.actions";
 
-const hideBottomBarAtRoutes = ["costing", "edit"];
+const hideBottomBarAtRoutes = ["costing", "edit", "detail"];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();

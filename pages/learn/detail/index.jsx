@@ -10,12 +10,12 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import { Header } from "@/components/Header";
 
 // Import Containers
-import LearnHomeContainer from "@/containers/ec/LearnHome";
+import LearnVideoDetailContainer from "@/containers/ec/LearnVideoDetail";
 
-import { riceAndBagsIcon, underConstruction } from "../../theme/icon";
+import { riceAndBagsIcon, underConstruction } from "../../../theme/icon";
 // Import Layouts
 
-function Learn() {
+function LearnDetail() {
   const router = useRouter();
   const dispatch = useDispatch();
 
@@ -57,9 +57,9 @@ function Learn() {
       </Head>
 
       <AppLayout>
-        <Header />
+        {/* <Header /> */}
 
-        <LearnHomeContainer />
+        <LearnVideoDetailContainer />
 
         {/*  */}
       </AppLayout>
@@ -67,4 +67,4 @@ function Learn() {
   );
 }
 
-export default withAuth(Learn);
+export default withAuth(LearnDetail);
