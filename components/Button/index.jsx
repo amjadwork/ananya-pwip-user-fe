@@ -13,49 +13,49 @@ export function Button(props) {
   const rounded = props.rounded || null;
   const minHeight = props.minHeight || null;
 
-  let additionalClass = "";
+  let additionalclassName = "";
 
   if (type === "disabled") {
-    additionalClass = "bg-pwip-v2-primary-500 text-white opacity-[0.5]";
+    additionalclassName = "bg-pwip-v2-primary-500 text-white opacity-[0.5]";
   }
 
   if (type === "primary") {
-    additionalClass = "bg-pwip-v2-primary-500 text-white";
+    additionalclassName = "bg-pwip-v2-primary-500 text-white";
   }
 
   if (type === "outline") {
-    additionalClass =
+    additionalclassName =
       "bg-white border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500";
   }
 
   if (type === "subtle") {
-    additionalClass =
+    additionalclassName =
       "bg-pwip-gray-650 border-[1px] border-pwip-gray-650 text-pwip-v2-primary-500";
   }
 
   if (type === "white") {
-    additionalClass = "bg-white text-pwip-black-600";
+    additionalclassName = "bg-white text-pwip-black-600";
   }
 
   if (rounded) {
-    additionalClass = additionalClass + " " + rounded;
+    additionalclassName = additionalclassName + " " + rounded;
   }
 
   if (labelAsIcon) {
-    additionalClass =
-      additionalClass +
+    additionalclassName =
+      additionalclassName +
       " " +
       "min-w-[50px] max-w-[50px] min-h-[50px] max-h-[50px]";
   }
 
   if (minHeight) {
-    additionalClass = additionalClass + " " + minHeight;
+    additionalclassName = additionalclassName + " " + minHeight;
   }
 
   return (
     <button
       type={buttonType}
-      className={`inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalClass}`}
+      className={`inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalclassName}`}
       onClick={onClick}
       disabled={disabled}
     >

@@ -46,7 +46,7 @@ export function Header(props) {
   const backgroundColor = props.backgroundColor || "bg-white";
 
   const [activeRoute, setActiveRoute] = React.useState("");
-  // const [environmentBasedClasses, setEnvironmentBasedClasses] =
+  // const [environmentBasedclassNamees, setEnvironmentBasedclassNamees] =
   //   React.useState("");
 
   const handleBack = () => {
@@ -73,15 +73,15 @@ export function Header(props) {
 
   //   if (isInStandaloneMode()) {
   //     if (route.includes(activeRoute)) {
-  //       setEnvironmentBasedClasses("h-[130px]");
+  //       setEnvironmentBasedclassNamees("h-[130px]");
   //     } else {
-  //       setEnvironmentBasedClasses("h-[140px]");
+  //       setEnvironmentBasedclassNamees("h-[140px]");
   //     }
   //   } else {
   //     if (route.includes(activeRoute)) {
-  //       setEnvironmentBasedClasses("h-[56px]");
+  //       setEnvironmentBasedclassNamees("h-[56px]");
   //     } else {
-  //       setEnvironmentBasedClasses("h-[56px]");
+  //       setEnvironmentBasedclassNamees("h-[56px]");
   //     }
   //   }
   // }, [activeRoute]);

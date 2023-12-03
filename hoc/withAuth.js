@@ -12,7 +12,9 @@ const withAuth = (WrappedComponent) => {
 
     useEffect(() => {
       if (status === "authenticated") {
-        dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+        dispatch(
+          handleSettingAuthDataRequest(session.user, session.accessToken)
+        );
       }
     }, [status]);
 

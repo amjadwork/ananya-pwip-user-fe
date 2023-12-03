@@ -401,11 +401,11 @@ const SelectLocationContainer = (props) => {
   }
 
   React.useEffect(() => {
-    if (!searchScreenActive) {
+    if (!searchScreenActive && destinationList?.length) {
       handleSearch("");
       setSearchStringValue("");
     }
-  }, [searchScreenActive]);
+  }, [searchScreenActive, destinationList]);
 
   let isFixedFlag = false;
 

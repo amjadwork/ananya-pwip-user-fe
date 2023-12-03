@@ -9,29 +9,6 @@ import {
   fetchLearnDetailRequest,
 } from "@/redux/actions/learn.actions.js";
 
-const popularFilters = [
-  {
-    name: "All",
-    icon: "one.png",
-  },
-  {
-    name: "Rice",
-    icon: "two.png",
-  },
-  {
-    name: "Exports",
-    icon: "three.png",
-  },
-  {
-    name: "Founder's fun network",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
-
 const YouTubePlayer = ({ url }) => {
   const router = useRouter();
   const videoRef = useRef();
@@ -296,7 +273,7 @@ const LearnVideoDetailContainer = (props) => {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, []);
+  }, [learnID]);
 
   return (
     <React.Fragment>
@@ -337,9 +314,9 @@ const LearnVideoDetailContainer = (props) => {
                   d="M14.6608 3.76765C15.5775 3.87432 16.25 4.66515 16.25 5.58848V18.4993L10 15.3743L3.75 18.4993V5.58848C3.75 4.66515 4.42167 3.87432 5.33917 3.76765C8.43599 3.40818 11.564 3.40818 14.6608 3.76765Z"
                   fill="#3A72A8"
                   stroke="#005F81"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg> */}
             </div>
@@ -386,9 +363,9 @@ const LearnVideoDetailContainer = (props) => {
                 <path
                   d="M7.15833 11.2577L12.85 14.5743M12.8417 5.42435L7.15833 8.74102M17.5 4.16602C17.5 5.54673 16.3807 6.66602 15 6.66602C13.6193 6.66602 12.5 5.54673 12.5 4.16602C12.5 2.7853 13.6193 1.66602 15 1.66602C16.3807 1.66602 17.5 2.7853 17.5 4.16602ZM7.5 9.99935C7.5 11.3801 6.38071 12.4993 5 12.4993C3.61929 12.4993 2.5 11.3801 2.5 9.99935C2.5 8.61864 3.61929 7.49935 5 7.49935C6.38071 7.49935 7.5 8.61864 7.5 9.99935ZM17.5 15.8327C17.5 17.2134 16.3807 18.3327 15 18.3327C13.6193 18.3327 12.5 17.2134 12.5 15.8327C12.5 14.452 13.6193 13.3327 15 13.3327C16.3807 13.3327 17.5 14.452 17.5 15.8327Z"
                   stroke="#686E6D"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </div>
@@ -497,18 +474,18 @@ const LearnVideoDetailContainer = (props) => {
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
                             viewBox="0 0 24 24"
-                            stroke-width="2"
+                            strokeWidth="2"
                             stroke="currentColor"
-                            class="w-6 h-6 text-pwip-v2-primary-700"
+                            className="w-6 h-6 text-pwip-v2-primary-700"
                           >
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                             <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
                               d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z"
                             />
                           </svg>

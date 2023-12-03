@@ -91,7 +91,10 @@ function MyCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const myCosting = useSelector((state) => state.myCosting);
+  // const myCosting = useSelector((state) => state.myCosting);
+  const allMyCostingsFromHistory = useSelector(
+    (state) => state.myCosting.allMyCostingsFromHistory
+  );
   const forexRate = useSelector((state) => state.utils.forexRate);
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
@@ -102,7 +105,7 @@ function MyCosting() {
   const [searchStringValue, setSearchStringValue] = React.useState("");
 
   function handleSearch(searchString) {
-    const dataToFilter = [...myCosting.allMyCostingsFromHistory];
+    const dataToFilter = [...allMyCostingsFromHistory];
 
     // Create an empty array to store the matching variants
     const matchingVariants = [];
@@ -127,29 +130,26 @@ function MyCosting() {
     }
 
     if (!searchString) {
-      setAllMyCostingsData([...myCosting.allMyCostingsFromHistory]);
+      setAllMyCostingsData([...allMyCostingsFromHistory]);
     }
   }
 
   React.useEffect(() => {
-    if (
-      myCosting?.allMyCostingsFromHistory &&
-      myCosting?.allMyCostingsFromHistory?.length
-    ) {
-      setAllMyCostingsData([...myCosting.allMyCostingsFromHistory]);
+    if (allMyCostingsFromHistory && allMyCostingsFromHistory?.length) {
+      setAllMyCostingsData([...allMyCostingsFromHistory]);
     }
-  }, [myCosting]);
+  }, [allMyCostingsFromHistory]);
 
   React.useEffect(() => {
     dispatch(fetchAllMyCostingsRequest());
   }, []);
 
   React.useEffect(() => {
-    if (!searchScreenActive) {
+    if (!searchScreenActive && allMyCostingsFromHistory?.length) {
       handleSearch("");
       setSearchStringValue("");
     }
-  }, [searchScreenActive]);
+  }, [searchScreenActive, allMyCostingsFromHistory]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
