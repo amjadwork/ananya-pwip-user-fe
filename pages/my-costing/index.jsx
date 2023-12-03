@@ -102,8 +102,6 @@ function MyCosting() {
   const [searchStringValue, setSearchStringValue] = React.useState("");
 
   function handleSearch(searchString) {
-    console.log(searchString);
-
     const dataToFilter = [...myCosting.allMyCostingsFromHistory];
 
     // Create an empty array to store the matching variants

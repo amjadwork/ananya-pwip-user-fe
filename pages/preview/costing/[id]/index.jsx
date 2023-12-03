@@ -633,7 +633,6 @@ function CostingPreview() {
                     type="radio"
                     checked={shipmentTerm === items.value ? true : false}
                     onChange={(e) => {
-                      console.log(e.target.checked);
                       dispatch(setTermsOfShipmentRequest(items.value));
                     }}
                   />

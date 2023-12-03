@@ -217,7 +217,6 @@ const YouTubePlayer = ({ url }) => {
             },
           }}
           onProgress={(progress) => {
-            // console.log(progress);
             const totalDuration = videoDuration;
             const currentProgress = progress?.playedSeconds
               ? Math.ceil(progress?.playedSeconds)
