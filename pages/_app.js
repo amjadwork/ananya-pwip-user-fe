@@ -21,7 +21,7 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
               />
               <meta
                 name="apple-mobile-web-app-status-bar-style"
-                content="black-translucent"
+                content="default"
               />
               <meta name="theme-color" content="#14517B" />
             </Head>
