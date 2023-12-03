@@ -19,32 +19,9 @@ import {
   searchScreenRequest,
   searchScreenFailure,
 } from "@/redux/actions/utils.actions.js";
-import { api, inrToUsd, convertUnits } from "@/utils/helper";
+import { convertUnits } from "@/utils/helper";
 
-import { fetchMyCostingSuccess } from "@/redux/actions/myCosting.actions.js";
-
-const popularFilters = [
-  {
-    name: "Basmati",
-    icon: "one.png",
-  },
-  {
-    name: "Parboiled",
-    icon: "two.png",
-  },
-  {
-    name: "Raw",
-    icon: "three.png",
-  },
-  {
-    name: "Steam",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
+// import { fetchMyCostingSuccess } from "@/redux/actions/myCosting.actions.js";
 
 const riceCategory = [
   {
@@ -71,7 +48,15 @@ const FilterSection = ({
   fixedDivRef,
   isFixed,
   searchFocus,
+  handleRadioSelection,
+  sortByMethod,
+  filterByMethod,
+  filterOptions = [],
+  handleFilterSelect,
+  selectedFilter,
 }) => {
+  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
+
   return (
     <div
       ref={fixedDivRef}
@@ -107,10 +92,66 @@ const FilterSection = ({
         }`}
       >
         <div className="flex flex-nowrap">
-          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+          <div
+            onClick={() => {
+              const content = (
+                <React.Fragment>
+                  <div className={`h-[auto] w-full bg-white z-10 py-6 px-5`}>
+                    <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
+                      Filter by
+                    </h2>
+                  </div>
+
+                  <div
+                    className={`h-full w-full bg-white pb-12 overflow-auto px-5 hide-scroll-bar`}
+                  >
+                    <div className="grid grid-cols-1 gap-4">
+                      {[
+                        {
+                          label: "Source",
+                          value: "source",
+                        },
+                        {
+                          label: "Category",
+                          value: "category",
+                        },
+                      ].map((items, index) => {
+                        return (
+                          <div
+                            key={items.label + index}
+                            onClick={async () => {
+                              handleRadioSelection(items, "filter");
+                              closeBottomSheet();
+                            }}
+                            className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex items-center"
+                          >
+                            <input
+                              type="radio"
+                              checked={filterByMethod?.value === items?.value}
+                              onChange={(e) => {
+                                handleRadioSelection(items, "filter");
+                              }}
+                            />
+                            <div className="p-3 flex w-fill flex-col space-y-[4px]">
+                              <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
+                                {items.label}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+              openBottomSheet(content);
+            }}
+            className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+          >
             <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-              <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                Filter
+              <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
+                Filter{" "}
+                {filterByMethod?.value ? `by ${filterByMethod?.value}` : ""}
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -130,10 +171,65 @@ const FilterSection = ({
             </div>
           </div>
 
-          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+          {/* <div
+            onClick={() => {
+              const content = (
+                <React.Fragment>
+                  <div className={`h-[auto] w-full bg-white z-10 py-6 px-5`}>
+                    <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
+                      Sort by
+                    </h2>
+                  </div>
+
+                  <div
+                    className={`h-full w-full bg-white pb-12 overflow-auto px-5 hide-scroll-bar`}
+                  >
+                    <div className="grid grid-cols-1 gap-4">
+                      {[
+                        {
+                          label: "Price",
+                          value: "price",
+                        },
+                        {
+                          label: "Name",
+                          value: "name",
+                        },
+                      ].map((items, index) => {
+                        return (
+                          <div
+                            key={items.label + index}
+                            onClick={async () => {
+                              handleRadioSelection(items, "sort");
+                              closeBottomSheet();
+                            }}
+                            className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex items-center"
+                          >
+                            <input
+                              type="radio"
+                              checked={sortByMethod?.value === items?.value}
+                              onChange={(e) => {
+                                handleRadioSelection(items, "sort");
+                              }}
+                            />
+                            <div className="p-3 flex w-fill flex-col space-y-[4px]">
+                              <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
+                                {items.label}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </React.Fragment>
+              );
+              openBottomSheet(content);
+            }}
+            className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+          >
             <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-              <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                Sort
+              <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
+                Sort {sortByMethod?.value ? `by ${sortByMethod?.value}` : ""}
               </span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -151,13 +247,21 @@ const FilterSection = ({
                 />
               </svg>
             </div>
-          </div>
+          </div> */}
 
-          {[...popularFilters].map((items, index) => {
+          {filterOptions.map((items, index) => {
+            const isSelected = selectedFilter?.name === items?.name;
             return (
               <div
                 key={items?.name + (index + 1 * 2)}
-                className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                onClick={() => {
+                  handleFilterSelect(items);
+                }}
+                className={`inline-block px-[16px] py-[4px] border-[1px] ${
+                  isSelected
+                    ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
+                    : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
+                } rounded-full mr-[12px] transition-all`}
               >
                 <div className="overflow-hidden w-auto h-auto inline-flex items-center">
                   <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
@@ -237,8 +341,12 @@ const SelectVariantContainer = (props) => {
   const [listProductsData, setListProductsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
-  // const [searchFocus, setSearchFocus] = React.useState(false);
+  const [sortByMethod, setSortByMethod] = React.useState(null);
+  const [filterByMethod, setFilterByMethod] = React.useState(null);
+  const [filterOptions, setFilterOptions] = React.useState([]);
+  const [selectedFilter, setSelectedFilter] = React.useState(null);
 
+  // setFilterOptions
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
 
@@ -324,6 +432,8 @@ const SelectVariantContainer = (props) => {
 
       if (productList) {
         setListProductsData([...productList]);
+
+        setFilterOptions([...riceCategory]);
       }
     }
   }, [products, popularSourceLocationData, isFromCategory]);
@@ -512,6 +622,102 @@ const SelectVariantContainer = (props) => {
           <FilterSection
             listProductsData={listProductsData}
             inFixedBar={true}
+            filterOptions={filterOptions}
+            handleFilterSelect={(item) => {
+              setSelectedFilter(item);
+              if (selectedFilter?.name === item?.name) {
+                setSelectedFilter(null);
+                setListProductsData([...productsData]);
+                return null;
+              } else {
+                setSelectedFilter(item);
+              }
+              const dataToFilterOrSort = [...productsData];
+
+              const filteredData = dataToFilterOrSort.filter((d) => {
+                if (
+                  d.variantName.toLowerCase().includes(item.name.toLowerCase())
+                ) {
+                  return d;
+                }
+
+                if (
+                  d.sourceRates.sourceName
+                    .toLowerCase()
+                    .includes(item.name.toLowerCase())
+                ) {
+                  return d;
+                }
+              });
+
+              setListProductsData([...filteredData]);
+            }}
+            selectedFilter={selectedFilter}
+            handleRadioSelection={(item, method) => {
+              const dataToFilterOrSort = [...productsData];
+
+              if (method === "sort") {
+                setSortByMethod(item);
+
+                if (item.value === "name") {
+                  const sortedArrary = dataToFilterOrSort.sort((a, b) => {
+                    const variantNameA = a?.variantName;
+                    const variantNameB = b?.variantName;
+
+                    if (variantNameA < variantNameB) {
+                      return -1;
+                    }
+                    if (variantNameA > variantNameB) {
+                      return 1;
+                    }
+                    return 0;
+                  });
+                  setListProductsData([...sortedArrary]);
+                }
+
+                if (item.value === "price") {
+                  const sortedArrary = dataToFilterOrSort.sort(
+                    (a, b) => a?.sourceRates?.price - b?.sourceRates?.price
+                  );
+
+                  setListProductsData([...sortedArrary]);
+                }
+              }
+
+              if (method === "filter") {
+                setFilterByMethod(item);
+
+                if (item?.value === "source") {
+                  const filterOpt = dataToFilterOrSort.map((d) => {
+                    return {
+                      name: d?.sourceRates?.sourceName,
+                    };
+                  });
+
+                  const uniqueNamesSet = new Set();
+                  filterOpt.forEach((item) => {
+                    uniqueNamesSet.add(item.name);
+                  });
+
+                  const uniqueNamesArray = Array.from(uniqueNamesSet);
+                  setFilterOptions(
+                    uniqueNamesArray.map((d) => ({
+                      name: d,
+                    }))
+                  );
+                }
+
+                if (item?.value === "category") {
+                  const filterOpt = [...riceCategory];
+
+                  setFilterOptions(filterOpt);
+                }
+              }
+
+              return null;
+            }}
+            filterByMethod={filterByMethod}
+            sortByMethod={sortByMethod}
           />
         ) : null}
       </div>
@@ -659,6 +865,103 @@ const SelectVariantContainer = (props) => {
                 listProductsData={listProductsData}
                 isFixed={isFixed}
                 searchFocus={searchScreenActive}
+                filterOptions={filterOptions}
+                handleFilterSelect={(item) => {
+                  if (selectedFilter?.name === item?.name) {
+                    setSelectedFilter(null);
+                    setListProductsData([...productsData]);
+                    return null;
+                  } else {
+                    setSelectedFilter(item);
+                  }
+                  const dataToFilterOrSort = [...productsData];
+
+                  const filteredData = dataToFilterOrSort.filter((d) => {
+                    if (
+                      d.variantName
+                        .toLowerCase()
+                        .includes(item.name.toLowerCase())
+                    ) {
+                      return d;
+                    }
+
+                    if (
+                      d.sourceRates.sourceName
+                        .toLowerCase()
+                        .includes(item.name.toLowerCase())
+                    ) {
+                      return d;
+                    }
+                  });
+
+                  setListProductsData([...filteredData]);
+                }}
+                selectedFilter={selectedFilter}
+                handleRadioSelection={(item, method) => {
+                  const dataToFilterOrSort = [...productsData];
+
+                  if (method === "sort") {
+                    setSortByMethod(item);
+
+                    if (item.value === "name") {
+                      const sortedArrary = dataToFilterOrSort.sort((a, b) => {
+                        const variantNameA = a?.variantName;
+                        const variantNameB = b?.variantName;
+
+                        if (variantNameA < variantNameB) {
+                          return -1;
+                        }
+                        if (variantNameA > variantNameB) {
+                          return 1;
+                        }
+                        return 0;
+                      });
+                      setListProductsData([...sortedArrary]);
+                    }
+
+                    if (item.value === "price") {
+                      const sortedArrary = dataToFilterOrSort.sort(
+                        (a, b) => a?.sourceRates?.price - b?.sourceRates?.price
+                      );
+
+                      setListProductsData([...sortedArrary]);
+                    }
+                  }
+
+                  if (method === "filter") {
+                    setFilterByMethod(item);
+
+                    if (item?.value === "source") {
+                      const filterOpt = dataToFilterOrSort.map((d) => {
+                        return {
+                          name: d?.sourceRates?.sourceName,
+                        };
+                      });
+
+                      const uniqueNamesSet = new Set();
+                      filterOpt.forEach((item) => {
+                        uniqueNamesSet.add(item.name);
+                      });
+
+                      const uniqueNamesArray = Array.from(uniqueNamesSet);
+                      setFilterOptions(
+                        uniqueNamesArray.map((d) => ({
+                          name: d,
+                        }))
+                      );
+                    }
+
+                    if (item?.value === "category") {
+                      const filterOpt = [...riceCategory];
+
+                      setFilterOptions(filterOpt);
+                    }
+                  }
+
+                  return null;
+                }}
+                filterByMethod={filterByMethod}
+                sortByMethod={sortByMethod}
               />
             ) : null}
 

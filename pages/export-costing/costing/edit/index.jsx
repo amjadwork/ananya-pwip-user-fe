@@ -1346,18 +1346,6 @@ function EditCosting() {
                                                                           .value
                                                                       ));
 
-                                                                  console.log(
-                                                                    "values.shl",
-                                                                    customCostingSelection.shlData,
-                                                                    (values.shl +
-                                                                      updatedBlFee +
-                                                                      updatedBlSurrender) /
-                                                                      parseFloat(
-                                                                        values.containerWeight
-                                                                      ),
-                                                                    values.cfsHandling
-                                                                  );
-
                                                                   const totalSHL =
                                                                     (sumNumericalValues(
                                                                       customCostingSelection.shlData

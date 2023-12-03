@@ -16,35 +16,15 @@ import {
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
 
-const popularFilters = [
-  {
-    name: "Basmati",
-    icon: "one.png",
-  },
-  {
-    name: "Paraboiled",
-    icon: "two.png",
-  },
-  {
-    name: "Raw",
-    icon: "three.png",
-  },
-  {
-    name: "Steam",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
-
 const FilterSection = ({
   locationType,
   inFixedBar,
   fixedDivRef,
   isFixed,
   searchFocus,
+  filterOptions = [],
+  handleFilterSelect,
+  selectedFilter,
 }) => {
   return (
     <div
@@ -83,7 +63,7 @@ const FilterSection = ({
         }`}
       >
         <div className="flex flex-nowrap">
-          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+          {/* <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
             <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
               <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
                 Filter
@@ -104,9 +84,9 @@ const FilterSection = ({
                 />
               </svg>
             </div>
-          </div>
+          </div> */}
 
-          <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+          {/* <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
             <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
               <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
                 Sort
@@ -127,16 +107,25 @@ const FilterSection = ({
                 />
               </svg>
             </div>
-          </div>
+          </div> */}
 
-          {[...popularFilters].map((items, index) => {
+          {[...filterOptions].map((items, index) => {
+            const isSelected = selectedFilter?.name === items?.name;
+
             return (
               <div
                 key={items?.name + (index + 1 * 2)}
-                className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                onClick={() => {
+                  handleFilterSelect(items);
+                }}
+                className={`inline-block px-[16px] py-[4px] border-[1px] ${
+                  isSelected
+                    ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
+                    : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
+                } rounded-full mr-[12px] transition-all`}
               >
                 <div className="overflow-hidden w-auto h-auto inline-flex items-center">
-                  <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                  <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
                     {items?.name}
                   </span>
                 </div>
@@ -159,7 +148,7 @@ const SelectLocationContainer = (props) => {
   const formValues = props.formValues;
   const shipmentTerm = props.shipmentTerm;
 
-  const { closeBottomSheet } = useOverlayContext();
+  const { closeBottomSheet, openBottomSheet } = useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -189,6 +178,8 @@ const SelectLocationContainer = (props) => {
   const [listDestinationData, setListDestinationData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
+  const [filterOptions, setFilterOptions] = React.useState([]);
+  const [selectedFilter, setSelectedFilter] = React.useState(null);
 
   async function fetchTransportationCost(originId, sourceId) {
     try {
@@ -286,6 +277,21 @@ const SelectLocationContainer = (props) => {
             )
           );
         }
+
+        const filterOpt = [...locationsData.locations.destinations];
+
+        const uniqueNamesSet = new Set();
+        filterOpt.forEach((item) => {
+          uniqueNamesSet.add(item.country);
+        });
+
+        const uniqueNamesArray = Array.from(uniqueNamesSet);
+
+        setFilterOptions(
+          uniqueNamesArray.map((d) => ({
+            name: d,
+          }))
+        );
       }
     }
     if (locationsData?.locations?.origin?.length && locationType === "origin") {
@@ -311,6 +317,21 @@ const SelectLocationContainer = (props) => {
             )
           );
         }
+
+        const filterOpt = [...locationsData.locations.origin];
+
+        const uniqueNamesSet = new Set();
+        filterOpt.forEach((item) => {
+          uniqueNamesSet.add(item.state);
+        });
+
+        const uniqueNamesArray = Array.from(uniqueNamesSet);
+
+        setFilterOptions(
+          uniqueNamesArray.map((d) => ({
+            name: d,
+          }))
+        );
       }
     }
   }, [locationsData, locationType, isFromEdit]);
@@ -531,7 +552,51 @@ const SelectLocationContainer = (props) => {
           ) : null}
         </div>
         {isFromEdit ? (
-          <FilterSection locationType={locationType} inFixedBar={true} />
+          <FilterSection
+            locationType={locationType}
+            inFixedBar={true}
+            filterOptions={filterOptions}
+            selectedFilter={selectedFilter}
+            handleFilterSelect={(item) => {
+              if (selectedFilter?.name === item?.name) {
+                setSelectedFilter(null);
+                setListDestinationData([
+                  ...locationsData.locations.destinations,
+                ]);
+                return null;
+              } else {
+                setSelectedFilter(item);
+              }
+
+              if (locationType === "destination") {
+                const dataToFilterOrSort = [
+                  ...locationsData.locations.destinations,
+                ];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (
+                    d.country.toLowerCase().includes(item.name.toLowerCase())
+                  ) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+
+              if (locationType === "origin") {
+                const dataToFilterOrSort = [...locationsData.locations.origin];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+            }}
+          />
         ) : null}
       </div>
 
@@ -700,6 +765,55 @@ const SelectLocationContainer = (props) => {
                   locationType={locationType}
                   isFixed={isFixed}
                   searchFocus={searchScreenActive}
+                  filterOptions={filterOptions}
+                  selectedFilter={selectedFilter}
+                  handleFilterSelect={(item) => {
+                    if (selectedFilter?.name === item?.name) {
+                      setSelectedFilter(null);
+                      setListDestinationData([
+                        ...locationsData.locations.destinations,
+                      ]);
+                      return null;
+                    } else {
+                      setSelectedFilter(item);
+                    }
+
+                    if (locationType === "destination") {
+                      const dataToFilterOrSort = [
+                        ...locationsData.locations.destinations,
+                      ];
+
+                      const filteredData = dataToFilterOrSort.filter((d) => {
+                        if (
+                          d.country
+                            .toLowerCase()
+                            .includes(item.name.toLowerCase())
+                        ) {
+                          return d;
+                        }
+                      });
+
+                      setListDestinationData([...filteredData]);
+                    }
+
+                    if (locationType === "origin") {
+                      const dataToFilterOrSort = [
+                        ...locationsData.locations.origin,
+                      ];
+
+                      const filteredData = dataToFilterOrSort.filter((d) => {
+                        if (
+                          d.country
+                            .toLowerCase()
+                            .includes(item.name.toLowerCase())
+                        ) {
+                          return d;
+                        }
+                      });
+
+                      setListDestinationData([...filteredData]);
+                    }
+                  }}
                 />
               ) : null}
             </div>
@@ -818,7 +932,7 @@ const SelectLocationContainer = (props) => {
 
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-pwip-black-600 text-xs font-[400] font-sans line-clamp-1">
-                          {items.country}
+                          {items.country || items.state}
                         </span>
                       </div>
                     </div>
