@@ -54,6 +54,8 @@ function LearnDetail() {
 */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
+        <meta name="theme-color" content="#1B1B1B" />
+
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
