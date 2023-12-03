@@ -830,7 +830,7 @@ function CostingOverview() {
                 {generatedCostingData?.details?.variantObject?.variantName ||
                   "-/-"}
               </span>
-              <div className="w-full mt-[8px] flex items-center justify-between space-x-2">
+              <div className="w-full mt-[8px] flex items-center space-x-3">
                 <div className="inline-flex items-center space-x-3">
                   <span className="text-white text-xs font-[700] font-sans line-clamp-1">
                     {generatedCostingData?.details?.originPortObject
