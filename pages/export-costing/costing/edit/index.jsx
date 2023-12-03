@@ -66,6 +66,7 @@ import {
   dutyCardIcon,
   chevronDown,
   checkIcon,
+  arrowLeftBackIcon,
 } from "../../../../theme/icon";
 
 function getUniqueBagsWeight(inputArray) {
@@ -570,11 +571,20 @@ function EditCosting() {
 
       <AppLayout>
         <div
-          className={`fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700 px-5 py-4 transition-all duration-500`}
+          className={`fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700 px-5 py-2 transition-all duration-500`}
         >
           <div className="w-full flex items-center justify-between">
-            <div className="flex flex-col items-start flex-grow w-[65%] overflow-hidden pr-3">
-              <span className="text-white text-xs font-normal font-sans line-clamp-1">
+            <div className="flex flex-col items-start flex-grow w-[65%] max-w-[40%] overflow-hidden pr-3">
+              <div
+                className="inline-flex items-center space-x-2 text-white text-sm"
+                onClick={() => {
+                  router.back();
+                }}
+              >
+                {arrowLeftBackIcon}
+                <span>Back</span>
+              </div>
+              {/* <span className="text-white text-xs font-normal font-sans line-clamp-1">
                 {customCostingSelection?.product?.variantName || "-/-"}
               </span>
 
@@ -616,7 +626,7 @@ function EditCosting() {
                         ?.portName}
                   </span>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex justify-end w-[35%]">
@@ -624,7 +634,7 @@ function EditCosting() {
                 <span className="text-white text-xs font-[700] font-sans line-clamp-1 text-right">
                   Total ({shipmentTerm})
                 </span>
-                <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-700">
+                <div className="inline-flex items-end justify-end space-x-1 text-right text-sm text-pwip-v2-green-700">
                   <span className="font-[700] font-sans line-clamp-1">
                     ${inrToUsd(grandTotal || 0, forexRate.USD)}
                   </span>
@@ -640,7 +650,7 @@ function EditCosting() {
 
         <div
           id="fixedMenuSection"
-          className="fixed top-[74px] h-[auto] w-full bg-pwip-gray-45 z-10"
+          className="fixed top-[58px] h-[auto] w-full bg-pwip-gray-45 z-10"
         >
           <div className={`flex overflow-x-scroll hide-scroll-bar`}>
             <div className="flex flex-nowrap">
@@ -1859,7 +1869,7 @@ function EditCosting() {
                     boxShadow: "0px -1px 12px #00000021",
                   }}
                 >
-                  <div className="w-[42px]">
+                  {/* <div className="w-[42px]">
                     <Button
                       type="outline"
                       minHeight="!min-h-[42px]"
@@ -1884,7 +1894,7 @@ function EditCosting() {
                         router.back();
                       }}
                     />
-                  </div>
+                  </div> */}
                   <Button
                     type={
                       isSubmitting ||
