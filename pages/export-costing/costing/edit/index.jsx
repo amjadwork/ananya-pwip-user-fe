@@ -1346,9 +1346,21 @@ function EditCosting() {
                                                                           .value
                                                                       ));
 
+                                                                  console.log(
+                                                                    "values.shl",
+                                                                    customCostingSelection.shlData,
+                                                                    (values.shl +
+                                                                      updatedBlFee +
+                                                                      updatedBlSurrender) /
+                                                                      parseFloat(
+                                                                        values.containerWeight
+                                                                      ),
+                                                                    values.cfsHandling
+                                                                  );
+
                                                                   const totalSHL =
                                                                     (sumNumericalValues(
-                                                                      values.shl
+                                                                      customCostingSelection.shlData
                                                                     ) +
                                                                       updatedBlFee +
                                                                       updatedBlSurrender) /
@@ -1357,7 +1369,7 @@ function EditCosting() {
                                                                     );
                                                                   const totalCHA =
                                                                     (sumNumericalValues(
-                                                                      values.cfsHandling
+                                                                      customCostingSelection.chaData
                                                                     ) +
                                                                       updatedpqc) /
                                                                     parseFloat(

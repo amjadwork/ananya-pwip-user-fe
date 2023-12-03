@@ -681,6 +681,7 @@ const SelectVariantContainer = (props) => {
                           setFieldValue("_originId", {});
                           setFieldValue("_destinationId", {});
                           setFieldValue("_variantId", items);
+                          setFieldValue("containersCount", 1);
 
                           setFieldValue(
                             "costOfRice",
