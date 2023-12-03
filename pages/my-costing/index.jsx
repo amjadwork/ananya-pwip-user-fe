@@ -278,7 +278,7 @@ function MyCosting() {
               paddingBottom: mainContainerHeight + 20 + "px",
             }}
           >
-            {!searchStringValue && !searchScreenActive ? (
+            {/* {!searchStringValue && !searchScreenActive ? (
               <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
                 <div className="flex flex-nowrap">
                   <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
@@ -343,7 +343,7 @@ function MyCosting() {
                   })}
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
 
             <div className="w-full space-y-5">
               {allMyCostingsData?.map((items, index) => {
