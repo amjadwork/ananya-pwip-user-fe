@@ -28,17 +28,17 @@ export const moreSettingOptions = [
     path: "/subscriptions",
   },
 
-  {
-    label: "Notifications",
-    icon: notificationsIcon,
-    backgroundColor: "#E7C9E066",
-    path: "!#",
-  },
+  // {
+  //   label: "Notifications",
+  //   icon: notificationsIcon,
+  //   backgroundColor: "#E7C9E066",
+  //   path: "!#",
+  // },
 
   {
     label: "Help and support",
     icon: supportIcon,
     backgroundColor: "#FFEADB66",
-    path: "!#",
+    path: "https://api.whatsapp.com/send?phone=918105632544&text=Hi",
   },
 ];
