@@ -23,7 +23,7 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
                 name="apple-mobile-web-app-status-bar-style"
                 content="default"
               />
-              <meta name="theme-color" content="#14517B" />
+              <meta name="theme-color" content="#FFFFFF" />
             </Head>
             <Component {...pageProps} />
           </OverlayProvider>
