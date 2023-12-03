@@ -8,6 +8,7 @@ import { BottomNavBar } from "@/components/BottomNavBar";
 
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 import { forexRateRequest } from "@/redux/actions/utils.actions";
+import { Button } from "@/components/Button";
 
 const hideBottomBarAtRoutes = ["costing", "edit", "detail"];
 
@@ -23,6 +24,7 @@ const AppLayout = ({ children }) => {
   const { openToastMessage, startLoading, stopLoading } = useOverlayContext();
 
   const [activeRoute, setActiveRoute] = React.useState("");
+  const [deferredPrompt, setDeferredPrompt] = React.useState(null);
 
   React.useEffect(() => {
     if (showLoader) {
@@ -61,6 +63,36 @@ const AppLayout = ({ children }) => {
     );
   }, []);
 
+  React.useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setDeferredPrompt(event);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+    };
+  }, []);
+
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("User accepted the A2HS prompt");
+        } else {
+          console.log("User dismissed the A2HS prompt");
+        }
+        setDeferredPrompt(null);
+      });
+    }
+  };
+
   return (
     <React.Fragment>
       <Head>{/* Common head content */}</Head>
@@ -74,6 +106,25 @@ const AppLayout = ({ children }) => {
         >
           {children}
         </main>
+
+        {deferredPrompt && (
+          <div className="fixed bottom-[64px] z-[1000] w-full px-5 py-3 bg-pwip-v2-primary-700 inline-flex items-center space-x-2">
+            <div className="w-full">
+              <span className="text-sm text-white font-sans font-[500]">
+                Install the pwip app now for best experience
+              </span>
+            </div>
+            <div className="inline-flex w-full">
+              <Button
+                type="white"
+                label="Install now"
+                onClick={handleInstallClick}
+                minHeight="min-h-[34px] max-h-[32px]"
+              />
+            </div>
+          </div>
+        )}
+
         {!hideBottomBarAtRoutes.includes(activeRoute) && !router?.query?.id ? (
           <BottomNavBar />
         ) : null}
