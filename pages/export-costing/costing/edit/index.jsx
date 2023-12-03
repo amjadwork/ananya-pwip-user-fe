@@ -199,7 +199,12 @@ function EditCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
 
   const formik = useRef();
   const bottomSheetInputRef = useRef();
@@ -1711,23 +1716,66 @@ function EditCosting() {
                     type={
                       isSubmitting ||
                       !values?._variantId ||
+                      (values?._variantId &&
+                        !Object?.keys(values?._variantId)?.length) ||
                       !values?._originId ||
-                      !values?._destinationId
+                      (values?._originId &&
+                        !Object?.keys(values?._originId)?.length) ||
+                      !values?._destinationId ||
+                      (values?._destinationId &&
+                        !Object?.keys(values?._destinationId)?.length)
                         ? "disabled"
                         : "primary"
                     }
                     buttonType="submit"
                     label="Save to see full details"
                     minHeight="!min-h-[42px]"
-                    disabled={
-                      isSubmitting ||
-                      !values?._variantId ||
-                      !values?._originId ||
-                      !values?._destinationId
-                        ? true
-                        : false
-                    }
+                    // disabled={
+                    //   isSubmitting ||
+                    //   !values?._variantId ||
+                    //   (values?._variantId &&
+                    //     !Object?.keys(values?._variantId)?.length) ||
+                    //   !values?._originId ||
+                    //   (values?._originId &&
+                    //     !Object?.keys(values?._originId)?.length) ||
+                    //   !values?._destinationId ||
+                    //   (values?._destinationId &&
+                    //     !Object?.keys(values?._destinationId)?.length)
+                    //     ? true
+                    //     : false
+                    // }
                     onClick={() => {
+                      if (
+                        !values?._variantId ||
+                        !values?._originId ||
+                        !values?._destinationId
+                      ) {
+                        openToastMessage({
+                          type: "info",
+                          message:
+                            "Please select port of origin and port of destination",
+                          // autoHide: false,
+                        });
+                        return null;
+                      }
+
+                      if (
+                        (values?._variantId &&
+                          !Object?.keys(values?._variantId)?.length) ||
+                        (values?._originId &&
+                          !Object?.keys(values?._originId)?.length) ||
+                        (values?._destinationId &&
+                          !Object?.keys(values?._destinationId)?.length)
+                      ) {
+                        openToastMessage({
+                          type: "info",
+                          message:
+                            "Please select port of origin and port of destination",
+                          // autoHide: false,
+                        });
+                        return null;
+                      }
+
                       let givenData = { ...values };
                       givenData.unit =
                         selectedMyCostingFromHistory?.unit || "mt";
