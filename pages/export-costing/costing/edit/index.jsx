@@ -163,7 +163,7 @@ function calculateCurrentRicePrice(originalRicePrice, brokenPercent) {
   let adjustmentFactor = Math.floor(brokenPercent / 5) * 0.3;
 
   // Calculate the current rice price
-  let currentRicePrice = originalRicePrice + adjustmentFactor;
+  let currentRicePrice = originalRicePrice - adjustmentFactor;
 
   return currentRicePrice;
 }
@@ -1277,33 +1277,32 @@ function EditCosting() {
                                                             }}
                                                             onBlur={(e) => {
                                                               handleBlur(e);
+
                                                               if (
                                                                 field?.name ===
                                                                 "containersCount"
                                                               ) {
+                                                                console.log(
+                                                                  "customCostingSelection",
+                                                                  customCostingSelection,
+                                                                  values
+                                                                );
                                                                 if (
-                                                                  selectedCosting
-                                                                    .customCostingSelection
-                                                                    .shlData &&
-                                                                  selectedCosting
-                                                                    .customCostingSelection
-                                                                    .chaData &&
+                                                                  customCostingSelection.shlData &&
+                                                                  customCostingSelection.chaData &&
                                                                   e.target.value
                                                                 ) {
                                                                   const blFee =
-                                                                    selectedCosting
-                                                                      .customCostingSelection
+                                                                    customCostingSelection
                                                                       .shlData
                                                                       .blFee;
                                                                   const blSurrender =
-                                                                    selectedCosting
-                                                                      .customCostingSelection
+                                                                    customCostingSelection
                                                                       .shlData
                                                                       .surrender;
 
                                                                   const pqc =
-                                                                    selectedCosting
-                                                                      .customCostingSelection
+                                                                    customCostingSelection
                                                                       .chaData
                                                                       .pqc;
 
@@ -1337,9 +1336,7 @@ function EditCosting() {
 
                                                                   const totalSHL =
                                                                     (sumNumericalValues(
-                                                                      selectedCosting
-                                                                        .customCostingSelection
-                                                                        .shlData
+                                                                      values.shl
                                                                     ) +
                                                                       updatedBlFee +
                                                                       updatedBlSurrender) /
@@ -1348,9 +1345,7 @@ function EditCosting() {
                                                                     );
                                                                   const totalCHA =
                                                                     (sumNumericalValues(
-                                                                      selectedCosting
-                                                                        .customCostingSelection
-                                                                        .chaData
+                                                                      values.cfsHandling
                                                                     ) +
                                                                       updatedpqc) /
                                                                     parseFloat(
@@ -1615,28 +1610,45 @@ function EditCosting() {
                                                             field.name ===
                                                             "brokenPercentage"
                                                           ) {
-                                                            let currentCostOfRice =
-                                                              parseFloat(
+                                                            const ricePrice =
+                                                              values?._variantId?.sourceRates.find(
+                                                                (d) =>
+                                                                  d?._sourceId ===
+                                                                  values
+                                                                    ?._variantId
+                                                                    ?.sourceObject
+                                                                    ?._id
+                                                              )?.price;
+
+                                                            if (
+                                                              opt ===
+                                                              customCostingSelection?.brokenPercentage
+                                                            ) {
+                                                              setFieldValue(
+                                                                "costOfRice",
                                                                 convertUnits(
-                                                                  selectedUnitForPayload,
                                                                   "kg",
+                                                                  selectedUnitForPayload,
                                                                   parseFloat(
-                                                                    values?.costOfRice
+                                                                    customCostingSelection?.exMillPrice
                                                                   )
                                                                 )
-                                                              ) || 0;
-
-                                                            setFieldValue(
-                                                              "costOfRice",
-                                                              convertUnits(
-                                                                "kg",
-                                                                selectedUnitForPayload,
-                                                                calculateCurrentRicePrice(
-                                                                  currentCostOfRice,
-                                                                  opt
+                                                              );
+                                                            } else {
+                                                              setFieldValue(
+                                                                "costOfRice",
+                                                                convertUnits(
+                                                                  "kg",
+                                                                  selectedUnitForPayload,
+                                                                  parseFloat(
+                                                                    calculateCurrentRicePrice(
+                                                                      ricePrice,
+                                                                      opt
+                                                                    )
+                                                                  )
                                                                 )
-                                                              )
-                                                            );
+                                                              );
+                                                            }
                                                           }
 
                                                           setFieldValue(

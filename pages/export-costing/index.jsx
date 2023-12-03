@@ -2,6 +2,9 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
+
+// import { useOverlayContext } from "@/context/OverlayContext";
+
 import { fetchProductsRequest } from "../../redux/actions/products.actions";
 
 import withAuth from "@/hoc/withAuth";
@@ -21,7 +24,7 @@ function ExportCosting() {
 
   const token = useSelector((state) => state.auth.token);
 
-  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  // const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   async function getProductList() {
     try {
@@ -37,13 +40,13 @@ function ExportCosting() {
     }
   }, [token]);
 
-  React.useEffect(() => {
-    const element = document.getElementById("fixedMenuSection");
-    if (element) {
-      const height = element.offsetHeight;
-      setMainContainerHeight(height);
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const element = document.getElementById("fixedMenuSection");
+  //   if (element) {
+  //     const height = element.offsetHeight;
+  //     setMainContainerHeight(height);
+  //   }
+  // }, []);
 
   return (
     <React.Fragment>

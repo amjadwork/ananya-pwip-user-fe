@@ -143,9 +143,10 @@ export function convertUnits(currentUnit, neededUnit, value) {
 
   // Convert the price to the needed unit
   const priceInNeededUnit = (
-    (value * conversionFactors[currentUnit]) /
-    conversionFactors[neededUnit]
+    (parseFloat(value) * parseFloat(conversionFactors[currentUnit])) /
+    parseFloat(conversionFactors[neededUnit])
   ).toFixed(0);
+
   return priceInNeededUnit;
 }
 

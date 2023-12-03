@@ -46,29 +46,6 @@ const popularFilters = [
   },
 ];
 
-const popularSourceLocations = [
-  {
-    name: "Basmati",
-    icon: "one.png",
-  },
-  {
-    name: "Paraboiled",
-    icon: "two.png",
-  },
-  {
-    name: "Raw",
-    icon: "three.png",
-  },
-  {
-    name: "Steam",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
-
 const riceCategory = [
   {
     name: "Basmati",
@@ -121,7 +98,7 @@ const FilterSection = ({
           inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
         }`}
       >
-        {listProductsData?.length || 0} varieties to explore
+        Choose from {listProductsData?.length || 0} varieties
       </h2>
 
       <div
@@ -232,7 +209,8 @@ const SelectVariantContainer = (props) => {
 
   const setFieldValue = props.setFieldValue;
 
-  const { closeBottomSheet } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet } = useOverlayContext();
+
   const router = useRouter();
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products); // Use api reducer slice
@@ -619,7 +597,7 @@ const SelectVariantContainer = (props) => {
             <h2
               className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Popular sourcing locations
+              Choose by popular sourcing locations
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
