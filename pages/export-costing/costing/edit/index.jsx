@@ -203,7 +203,7 @@ function EditCosting() {
     openBottomSheet,
     closeBottomSheet,
     openToastMessage,
-    closeToastMessage,
+    isBottomSheetOpen,
   } = useOverlayContext();
 
   const formik = useRef();
@@ -417,11 +417,7 @@ function EditCosting() {
   }, [formik, customCostingSelection]);
 
   useEffect(() => {
-    if (
-      formik?.current?.values &&
-      Object.keys(formik?.current?.values)?.length &&
-      shipmentTerm
-    ) {
+    if (formik?.current?.values && !isBottomSheetOpen) {
       const grandTotal = calculateGrandTotal(
         {
           ...formik?.current?.values,
@@ -431,7 +427,7 @@ function EditCosting() {
 
       setGrandTotal(grandTotal);
     }
-  }, [formik?.current?.values]);
+  }, [formik?.current?.values, isBottomSheetOpen]);
 
   useEffect(() => {
     if (customCostingSelection?.bags) {

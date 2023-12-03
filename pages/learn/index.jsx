@@ -29,7 +29,7 @@ function Learn() {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, []);
+  }, [token]);
 
   return (
     <React.Fragment>
