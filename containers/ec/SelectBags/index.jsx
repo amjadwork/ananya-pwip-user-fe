@@ -6,6 +6,20 @@ import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { api, inrToUsd, convertUnits } from "@/utils/helper";
 
+function getUniqueBags(inputArray) {
+  const uniqueBagsMap = new Map();
+
+  // Iterate through the array and store each object in the Map with the "bag" as the key
+  inputArray.forEach((item) => {
+    uniqueBagsMap.set(item.bag, item);
+  });
+
+  // Convert the Map values back to an array
+  const uniqueBagsArray = Array.from(uniqueBagsMap.values());
+
+  return uniqueBagsArray;
+}
+
 const SelectBagsContainer = (props) => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -29,7 +43,8 @@ const SelectBagsContainer = (props) => {
 
   React.useEffect(() => {
     if (packagingBags && !packagingBags?.error && packagingBags?.bags?.length) {
-      setPackagingBagsData([...packagingBags?.bags]);
+      setPackagingBagsData(getUniqueBags(packagingBags?.bags));
+      // setPackagingBagsData(packagingBags?.bags);
     }
   }, [packagingBags]);
 
@@ -74,14 +89,16 @@ const SelectBagsContainer = (props) => {
                 onClick={() => {
                   setFieldValue("_bagId", items);
                   setFieldValue("bagSize", items?.weight);
-                  // setFieldValue(
-                  //   "bagPrice",
-                  //   convertUnits(
-                  //     items?.unit,
-                  //     selectedUnitForPayload,
-                  //     items?.cost
-                  //   )
-                  // );
+                  // setFieldValue("bagPrice", items?.cost * items?.weight);
+
+                  setFieldValue(
+                    "bagPrice",
+                    convertUnits(
+                      items?.unit,
+                      selectedUnitForPayload,
+                      items?.cost
+                    ) / items?.weight
+                  );
                   closeBottomSheet();
                 }}
                 className="h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col space-t"
@@ -95,8 +112,9 @@ const SelectBagsContainer = (props) => {
                 </div>
                 <div className="p-3 flex w-fill flex-col space-y-[4px]">
                   <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    {items?.bag || ""} - {items?.weight}
-                    {items?.unit}
+                    {items?.bag || ""}
+                    {/* - {items?.weight}
+                    {items?.unit} */}
                   </span>
                 </div>
               </div>

@@ -68,6 +68,20 @@ import {
   checkIcon,
 } from "../../../../theme/icon";
 
+function getUniqueBagsWeight(inputArray) {
+  const uniqueBagsWeightMap = new Map();
+
+  // Iterate through the array and store each object in the Map with the "bag" as the key
+  inputArray.forEach((item) => {
+    uniqueBagsWeightMap.set(item.weight, item);
+  });
+
+  // Convert the Map values back to an array
+  const uniqueBagsArray = Array.from(uniqueBagsWeightMap.values());
+
+  return uniqueBagsArray;
+}
+
 const calculateGrandTotal = (formValues, shipmentTerm) => {
   const {
     costOfRice,
@@ -225,6 +239,7 @@ function EditCosting() {
   const [selectedUnitForPayload, setSelectedUnitForPayload] =
     React.useState("mt");
 
+  const packagingBags = useSelector((state) => state.bags);
   const authToken = useSelector((state) => state.auth.token);
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
   const shipmentTerm = useSelector(
@@ -796,15 +811,17 @@ function EditCosting() {
                           },
                           {
                             label: "Select a Bag size",
-                            type: "input",
+                            type: "inputTagSelect",
                             name: "bagSize",
                             showCurrency: false,
-
+                            option:
+                              packagingBags?.bags?.filter(
+                                (f) => f.bag === values?._bagId?.bag
+                              ) || [],
                             hideUSD: true,
                             placeholder: "Ex: 15kg",
-                            value:
-                              `${values?.bagSize} ${values?._bagId?.unit}` ||
-                              "",
+                            unit: `${values?._bagId?.unit}`,
+                            value: `${values?.bagSize}` || "",
                           },
                           {
                             label: "Bag cost",
@@ -815,14 +832,6 @@ function EditCosting() {
                             unit: selectedUnitForPayload,
                             value: values?.bagPrice ? values?.bagPrice : "",
                           },
-                          // {
-                          //   label: "Broken %",
-                          //   type: "tagSelect",
-                          //   name: "brokenPercentage",
-                          //   placeholder: "5%",
-                          //   value: values?.brokenPercentage || "",
-                          //   option: [5, 10, 15, 20, 25, 100],
-                          // },
                         ],
                       },
 
@@ -1214,7 +1223,10 @@ function EditCosting() {
                                                         className="inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]"
                                                       >
                                                         <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
-                                                          <span>₹</span>
+                                                          {field?.name !==
+                                                          "containersCount" ? (
+                                                            <span>₹</span>
+                                                          ) : null}
                                                           <input
                                                             ref={
                                                               bottomSheetInputRef
@@ -1282,11 +1294,11 @@ function EditCosting() {
                                                                 field?.name ===
                                                                 "containersCount"
                                                               ) {
-                                                                console.log(
-                                                                  "customCostingSelection",
-                                                                  customCostingSelection,
-                                                                  values
-                                                                );
+                                                                // console.log(
+                                                                //   "customCostingSelection",
+                                                                //   customCostingSelection,
+                                                                //   values
+                                                                // );
                                                                 if (
                                                                   customCostingSelection.shlData &&
                                                                   customCostingSelection.chaData &&
@@ -1634,6 +1646,25 @@ function EditCosting() {
                                                                   )
                                                                 )
                                                               );
+                                                              const grandTotal =
+                                                                calculateGrandTotal(
+                                                                  {
+                                                                    ...values,
+                                                                    costOfRice:
+                                                                      convertUnits(
+                                                                        "kg",
+                                                                        selectedUnitForPayload,
+                                                                        parseFloat(
+                                                                          customCostingSelection?.exMillPrice
+                                                                        )
+                                                                      ),
+                                                                  },
+                                                                  shipmentTerm
+                                                                );
+
+                                                              setGrandTotal(
+                                                                grandTotal
+                                                              );
                                                             } else {
                                                               setFieldValue(
                                                                 "costOfRice",
@@ -1648,6 +1679,29 @@ function EditCosting() {
                                                                   )
                                                                 )
                                                               );
+
+                                                              const grandTotal =
+                                                                calculateGrandTotal(
+                                                                  {
+                                                                    ...values,
+                                                                    costOfRice:
+                                                                      convertUnits(
+                                                                        "kg",
+                                                                        selectedUnitForPayload,
+                                                                        parseFloat(
+                                                                          calculateCurrentRicePrice(
+                                                                            ricePrice,
+                                                                            opt
+                                                                          )
+                                                                        )
+                                                                      ),
+                                                                  },
+                                                                  shipmentTerm
+                                                                );
+
+                                                              setGrandTotal(
+                                                                grandTotal
+                                                              );
                                                             }
                                                           }
 
@@ -1658,7 +1712,7 @@ function EditCosting() {
                                                         }}
                                                       >
                                                         <div
-                                                          className={`inline-flex items-center justify-between h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
+                                                          className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
                                                         >
                                                           {icon ? (
                                                             <div className="mr-[10px]">
@@ -1675,6 +1729,115 @@ function EditCosting() {
                                                 )}
                                               </div>
                                             </div>
+                                          ) : null}
+
+                                          {field.type === "inputTagSelect" ? (
+                                            <React.Fragment>
+                                              <div className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans my-2">
+                                                <div className="inline-flex items-end space-x-2">
+                                                  <div className="inline-flex items-center text-pwip-gray-850 font-[700] text-xs">
+                                                    {field?.showCurrency ? (
+                                                      <span>₹</span>
+                                                    ) : null}
+                                                    <span>{field?.value}</span>
+                                                  </div>
+                                                  {!field?.hideUSD &&
+                                                  field?.value ? (
+                                                    <span className="text-pwip-v2-green-800 font-[400] text-xs">
+                                                      $
+                                                      {inrToUsd(
+                                                        field?.value || 0,
+                                                        forexRate.USD
+                                                      )}
+                                                    </span>
+                                                  ) : null}
+                                                </div>
+                                                {!field?.hideUnit &&
+                                                field?.unit ? (
+                                                  <span className="text-pwip-v2-primary-700 font-[700] text-xs">
+                                                    /{field?.unit}
+                                                  </span>
+                                                ) : null}
+                                              </div>
+                                              <div className="flex w-full overflow-x-scroll hide-scroll-bar mt-2">
+                                                <div className="flex w-full flex-nowrap space-x-[7px]">
+                                                  {field.option.map(
+                                                    (opt, optIndex) => {
+                                                      let selected =
+                                                        "border-[1px] text-pwip-gray-850 border-pwip-v2-gray-400";
+                                                      let icon = null;
+
+                                                      if (
+                                                        opt?.weight ===
+                                                        values[field.name]
+                                                      ) {
+                                                        icon = checkIcon;
+                                                        selected =
+                                                          "border-[1px] text-pwip-v2-primary-700 border-pwip-v2-primary-700";
+                                                      }
+
+                                                      return (
+                                                        <div
+                                                          className="inline-block"
+                                                          key={
+                                                            opt?.bag +
+                                                            "_" +
+                                                            optIndex
+                                                          }
+                                                          onClick={() => {
+                                                            setFieldValue(
+                                                              field.name,
+                                                              opt?.weight
+                                                            );
+
+                                                            setFieldValue(
+                                                              "bagPrice",
+                                                              convertUnits(
+                                                                opt?.unit,
+                                                                selectedUnitForPayload,
+                                                                opt?.cost
+                                                              ) / opt?.weight
+                                                            );
+
+                                                            const grandTotal =
+                                                              calculateGrandTotal(
+                                                                {
+                                                                  ...values,
+                                                                  bagPrice:
+                                                                    convertUnits(
+                                                                      opt?.unit,
+                                                                      selectedUnitForPayload,
+                                                                      opt?.cost
+                                                                    ) /
+                                                                    opt?.weight,
+                                                                },
+                                                                shipmentTerm
+                                                              );
+
+                                                            setGrandTotal(
+                                                              grandTotal
+                                                            );
+                                                          }}
+                                                        >
+                                                          <div
+                                                            className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
+                                                          >
+                                                            {icon ? (
+                                                              <div className="mr-[10px]">
+                                                                {icon}
+                                                              </div>
+                                                            ) : null}
+                                                            <span className="font-[600] text-xs">
+                                                              {opt?.weight}
+                                                            </span>
+                                                          </div>
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </React.Fragment>
                                           ) : null}
                                         </div>
                                       );
