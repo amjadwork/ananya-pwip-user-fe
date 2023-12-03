@@ -720,7 +720,6 @@ const SelectVariantContainer = (props) => {
                     key={items._id + index}
                     onClick={() => {
                       if (isFromEdit) {
-                        console.log("items", items);
                         if (setFieldValue) {
                           setFieldValue(
                             "brokenPercentage",
@@ -740,8 +739,12 @@ const SelectVariantContainer = (props) => {
                             )
                           );
                         }
-                        dispatch(fetchOriginRequest());
-                        dispatch(fetchDestinationRequest());
+                        dispatch(
+                          fetchOriginRequest(items?.sourceRates?._sourceId)
+                        );
+                        dispatch(
+                          fetchDestinationRequest(items?.sourceRates?._sourceId)
+                        );
                         closeBottomSheet();
                       } else {
                         dispatch(

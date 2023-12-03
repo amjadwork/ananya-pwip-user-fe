@@ -68,6 +68,42 @@ import {
   checkIcon,
 } from "../../../../theme/icon";
 
+const calculateGrandTotal = (formValues, shipmentTerm) => {
+  const {
+    costOfRice,
+    bagPrice,
+    transportation,
+    cfsHandling,
+    shl,
+    ofc,
+    inspectionCost,
+    financeCost,
+    overheads,
+    margin,
+    exportDuty,
+    exportDutyValue,
+  } = formValues;
+
+  const shipmentTermAdjustmentForOFC =
+    shipmentTerm === "FOB" ? 0 : parseFloat(ofc);
+  const exportDutyAdjustment = exportDuty ? parseFloat(exportDutyValue) : 0;
+
+  const grandTotal =
+    parseFloat(costOfRice) +
+    parseFloat(bagPrice) +
+    parseFloat(transportation) +
+    parseFloat(cfsHandling) +
+    parseFloat(shl) +
+    shipmentTermAdjustmentForOFC +
+    parseFloat(inspectionCost) +
+    parseFloat(financeCost) +
+    parseFloat(overheads) +
+    parseFloat(margin) +
+    exportDutyAdjustment;
+
+  return grandTotal;
+};
+
 const lineBetweenLocation = (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -167,11 +203,14 @@ function EditCosting() {
 
   const formik = useRef();
   const bottomSheetInputRef = useRef();
+  const bottomSheetSecondaryInputRef = useRef();
 
   const [
     pageConstructedForInitialization,
     setPageConstructedForInitialization,
   ] = React.useState(false);
+
+  const [grandTotal, setGrandTotal] = React.useState(0);
 
   const [customCostingSelection, setCustomCostingSelectionItem] =
     React.useState(null);
@@ -333,7 +372,7 @@ function EditCosting() {
         );
       }
 
-      const breakUpFormValues = {
+      let breakUpFormValues = {
         ...formValues,
         _variantId: customCostingSelection?.product,
         brokenPercentage:
@@ -371,6 +410,23 @@ function EditCosting() {
       formikRef.setValues(breakUpFormValues);
     }
   }, [formik, customCostingSelection]);
+
+  useEffect(() => {
+    if (
+      formik?.current?.values &&
+      Object.keys(formik?.current?.values)?.length &&
+      shipmentTerm
+    ) {
+      const grandTotal = calculateGrandTotal(
+        {
+          ...formik?.current?.values,
+        },
+        shipmentTerm
+      );
+
+      setGrandTotal(grandTotal);
+    }
+  }, [formik?.current?.values]);
 
   useEffect(() => {
     if (customCostingSelection?.bags) {
@@ -552,11 +608,7 @@ function EditCosting() {
                 </span>
                 <div className="inline-flex items-end space-x-1 text-right text-sm text-pwip-v2-green-700">
                   <span className="font-[700] font-sans line-clamp-1">
-                    $
-                    {inrToUsd(
-                      selectedMyCostingFromHistory?.grandTotal || 0,
-                      forexRate.USD
-                    )}
+                    ${inrToUsd(grandTotal || 0, forexRate.USD)}
                   </span>
                   <span className="font-[400] font-sans line-clamp-1 mt-[6px]">
                     /{selectedUnitForPayload}
@@ -936,6 +988,13 @@ function EditCosting() {
                           {sec.section.map((d, i) => {
                             const fieldName = d.form.find((d) => d.name)?.name;
 
+                            const showSecondInput = [
+                              "ofc",
+                              "shl",
+                              "cfsHandling",
+                              "inspectionCost",
+                            ].includes(fieldName);
+
                             return (
                               <React.Fragment key={d.cardTitle + " " + i}>
                                 {fieldName === "exportDutyValue" ? (
@@ -980,6 +1039,13 @@ function EditCosting() {
 
                                   <div className="inline-flex w-full flex-col space-y-5">
                                     {d.form.map((field, index) => {
+                                      let secondFieldDefaultValue = 0;
+
+                                      if (showSecondInput) {
+                                        secondFieldDefaultValue =
+                                          field?.value / 26;
+                                      }
+
                                       return (
                                         <div
                                           key={field.label + index}
@@ -1044,10 +1110,6 @@ function EditCosting() {
                                                       </div>
                                                     );
                                                     openBottomSheet(content);
-                                                  }
-
-                                                  {
-                                                    console.log(values);
                                                   }
 
                                                   if (
@@ -1130,188 +1192,307 @@ function EditCosting() {
                                               className="inline-flex items-start flex-col w-full relative mt-2"
                                               onClick={() => {
                                                 const content = (
-                                                  <div
-                                                    className="px-5 mb-5"
-                                                    onClick={() => {
-                                                      bottomSheetInputRef.current.focus();
-                                                    }}
-                                                  >
+                                                  <div className="px-5 mb- 5">
                                                     <h2 className="mt-4 text-pwip-v2-primary font-sans text-base font-bold">
                                                       {field.label}
                                                     </h2>
 
-                                                    <div className="mt-[18px] flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]">
-                                                      <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1">
-                                                        <span>₹</span>
-                                                        <input
-                                                          ref={
-                                                            bottomSheetInputRef
-                                                          }
-                                                          className="bg-transparent outline-none border-none"
-                                                          defaultValue={
-                                                            field?.value
-                                                          }
-                                                          name={field?.name}
-                                                          onChange={(e) => {
-                                                            // handleChange()
-                                                            const bottomSheetUSDValueElement =
-                                                              document.getElementById(
-                                                                "bottomSheetUSDValue"
-                                                              );
-                                                            if (
-                                                              bottomSheetUSDValueElement &&
-                                                              e.target.value
-                                                            ) {
-                                                              bottomSheetUSDValueElement.innerText =
-                                                                "$" +
-                                                                `${inrToUsd(
-                                                                  e.target
-                                                                    .value,
-                                                                  forexRate.USD
-                                                                )}`;
+                                                    <div
+                                                      className={`w-full grid ${
+                                                        showSecondInput
+                                                          ? "grid-cols-2 gap-2"
+                                                          : "grid-cols-1"
+                                                      } mt-[18px]`}
+                                                    >
+                                                      <div
+                                                        onClick={() => {
+                                                          bottomSheetInputRef.current.focus();
+                                                        }}
+                                                        className="inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]"
+                                                      >
+                                                        <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
+                                                          <span>₹</span>
+                                                          <input
+                                                            ref={
+                                                              bottomSheetInputRef
                                                             }
-                                                          }}
-                                                          onBlur={(e) => {
-                                                            handleBlur(e);
-                                                            if (
-                                                              field?.name ===
-                                                              "containersCount"
-                                                            ) {
+                                                            className="w-full bg-transparent outline-none border-none"
+                                                            defaultValue={
+                                                              field?.value
+                                                            }
+                                                            name={field?.name}
+                                                            onChange={(e) => {
+                                                              const bottomSheetUSDValueElement =
+                                                                document.getElementById(
+                                                                  "bottomSheetUSDValue"
+                                                                );
+
+                                                              // here modify 2nd input
                                                               if (
-                                                                selectedCosting
-                                                                  .customCostingSelection
-                                                                  .shlData &&
-                                                                selectedCosting
-                                                                  .customCostingSelection
-                                                                  .chaData &&
+                                                                showSecondInput
+                                                              ) {
+                                                                bottomSheetSecondaryInputRef.current.value =
+                                                                  (
+                                                                    e.target
+                                                                      .value /
+                                                                    26
+                                                                  ).toFixed(2);
+
+                                                                const secondaryBottomSheetUSDValue =
+                                                                  document.getElementById(
+                                                                    "bottomSheetSecondaryUSDValue"
+                                                                  );
+
+                                                                if (
+                                                                  secondaryBottomSheetUSDValue &&
+                                                                  e.target.value
+                                                                ) {
+                                                                  secondaryBottomSheetUSDValue.innerText =
+                                                                    "$" +
+                                                                    `${inrToUsd(
+                                                                      e.target
+                                                                        .value /
+                                                                        26,
+                                                                      forexRate.USD
+                                                                    )}`;
+                                                                }
+                                                              }
+                                                              // end
+
+                                                              if (
+                                                                bottomSheetUSDValueElement &&
                                                                 e.target.value
                                                               ) {
-                                                                const blFee =
+                                                                bottomSheetUSDValueElement.innerText =
+                                                                  "$" +
+                                                                  `${inrToUsd(
+                                                                    e.target
+                                                                      .value,
+                                                                    forexRate.USD
+                                                                  )}`;
+                                                              }
+                                                            }}
+                                                            onBlur={(e) => {
+                                                              handleBlur(e);
+                                                              if (
+                                                                field?.name ===
+                                                                "containersCount"
+                                                              ) {
+                                                                if (
                                                                   selectedCosting
                                                                     .customCostingSelection
-                                                                    .shlData
-                                                                    .blFee;
-                                                                const blSurrender =
+                                                                    .shlData &&
                                                                   selectedCosting
                                                                     .customCostingSelection
-                                                                    .shlData
-                                                                    .surrender;
-
-                                                                const pqc =
-                                                                  selectedCosting
-                                                                    .customCostingSelection
-                                                                    .chaData
-                                                                    .pqc;
-
-                                                                const updatedBlFee =
-                                                                  blFee /
-                                                                  (parseFloat(
-                                                                    values.containerWeight
-                                                                  ) *
-                                                                    parseInt(
-                                                                      e.target
-                                                                        .value
-                                                                    ));
-                                                                const updatedBlSurrender =
-                                                                  blSurrender /
-                                                                  (parseFloat(
-                                                                    values.containerWeight
-                                                                  ) *
-                                                                    parseInt(
-                                                                      e.target
-                                                                        .value
-                                                                    ));
-                                                                const updatedpqc =
-                                                                  pqc /
-                                                                  (parseFloat(
-                                                                    values.containerWeight
-                                                                  ) *
-                                                                    parseInt(
-                                                                      e.target
-                                                                        .value
-                                                                    ));
-
-                                                                const totalSHL =
-                                                                  (sumNumericalValues(
+                                                                    .chaData &&
+                                                                  e.target.value
+                                                                ) {
+                                                                  const blFee =
                                                                     selectedCosting
                                                                       .customCostingSelection
                                                                       .shlData
-                                                                  ) +
-                                                                    updatedBlFee +
-                                                                    updatedBlSurrender) /
-                                                                  parseFloat(
-                                                                    values.containerWeight
-                                                                  );
-                                                                const totalCHA =
-                                                                  (sumNumericalValues(
+                                                                      .blFee;
+                                                                  const blSurrender =
+                                                                    selectedCosting
+                                                                      .customCostingSelection
+                                                                      .shlData
+                                                                      .surrender;
+
+                                                                  const pqc =
                                                                     selectedCosting
                                                                       .customCostingSelection
                                                                       .chaData
-                                                                  ) +
-                                                                    updatedpqc) /
-                                                                  parseFloat(
-                                                                    values.containerWeight
+                                                                      .pqc;
+
+                                                                  const updatedBlFee =
+                                                                    blFee /
+                                                                    (parseFloat(
+                                                                      values.containerWeight
+                                                                    ) *
+                                                                      parseInt(
+                                                                        e.target
+                                                                          .value
+                                                                      ));
+                                                                  const updatedBlSurrender =
+                                                                    blSurrender /
+                                                                    (parseFloat(
+                                                                      values.containerWeight
+                                                                    ) *
+                                                                      parseInt(
+                                                                        e.target
+                                                                          .value
+                                                                      ));
+                                                                  const updatedpqc =
+                                                                    pqc /
+                                                                    (parseFloat(
+                                                                      values.containerWeight
+                                                                    ) *
+                                                                      parseInt(
+                                                                        e.target
+                                                                          .value
+                                                                      ));
+
+                                                                  const totalSHL =
+                                                                    (sumNumericalValues(
+                                                                      selectedCosting
+                                                                        .customCostingSelection
+                                                                        .shlData
+                                                                    ) +
+                                                                      updatedBlFee +
+                                                                      updatedBlSurrender) /
+                                                                    parseFloat(
+                                                                      values.containerWeight
+                                                                    );
+                                                                  const totalCHA =
+                                                                    (sumNumericalValues(
+                                                                      selectedCosting
+                                                                        .customCostingSelection
+                                                                        .chaData
+                                                                    ) +
+                                                                      updatedpqc) /
+                                                                    parseFloat(
+                                                                      values.containerWeight
+                                                                    );
+
+                                                                  setFieldValue(
+                                                                    "cfsHandling",
+                                                                    Math.floor(
+                                                                      totalCHA
+                                                                    )
                                                                   );
 
-                                                                setFieldValue(
-                                                                  "cfsHandling",
-                                                                  Math.floor(
-                                                                    totalCHA
-                                                                  )
-                                                                );
-
-                                                                setFieldValue(
-                                                                  "shl",
-                                                                  Math.floor(
-                                                                    totalSHL
-                                                                  )
-                                                                );
-
-                                                                // dispatch(
-                                                                //   setCustomCostingSelection(
-                                                                //     {
-                                                                //       ...selectedCosting,
-                                                                //       customCostingSelection:
-                                                                //         {
-                                                                //           ...selectedCosting.customCostingSelection,
-                                                                //           shl: Math.floor(
-                                                                //             totalSHL
-                                                                //           ),
-                                                                //           cha: Math.floor(
-                                                                //             totalCHA
-                                                                //           ),
-                                                                //           containerCount:
-                                                                //             parseInt(
-                                                                //               e
-                                                                //                 .target
-                                                                //                 .value
-                                                                //             ),
-                                                                //         },
-                                                                //     }
-                                                                //   )
-                                                                // );
+                                                                  setFieldValue(
+                                                                    "shl",
+                                                                    Math.floor(
+                                                                      totalSHL
+                                                                    )
+                                                                  );
+                                                                }
                                                               }
-                                                            }
-                                                          }}
-                                                          pattern="[0-9]*"
-                                                          inputMode="numeric"
-                                                        />
+                                                            }}
+                                                            pattern="[0-9]*"
+                                                            inputMode="numeric"
+                                                          />
+                                                        </div>
+
+                                                        {field?.name !==
+                                                        "containersCount" ? (
+                                                          <React.Fragment>
+                                                            <span
+                                                              id="bottomSheetUSDValue"
+                                                              className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
+                                                            >
+                                                              $
+                                                              {inrToUsd(
+                                                                field?.value,
+                                                                forexRate.USD
+                                                              )}
+                                                            </span>
+                                                            <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
+                                                              per{" "}
+                                                              {showSecondInput
+                                                                ? "container"
+                                                                : selectedUnitForPayload}
+                                                              {/* {
+                                                                selectedUnitForPayload
+                                                              } */}
+                                                            </span>
+                                                          </React.Fragment>
+                                                        ) : null}
                                                       </div>
 
-                                                      <span
-                                                        id="bottomSheetUSDValue"
-                                                        className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
-                                                      >
-                                                        $
-                                                        {inrToUsd(
-                                                          field?.value,
-                                                          forexRate.USD
-                                                        )}
-                                                      </span>
-                                                      <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
-                                                        per{" "}
-                                                        {selectedUnitForPayload}
-                                                      </span>
+                                                      {/* per metric tonne */}
+                                                      {showSecondInput ? (
+                                                        <div
+                                                          onClick={() => {
+                                                            bottomSheetSecondaryInputRef.current.focus();
+                                                          }}
+                                                          className="inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]"
+                                                        >
+                                                          <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
+                                                            <span>₹</span>
+                                                            <input
+                                                              ref={
+                                                                bottomSheetSecondaryInputRef
+                                                              }
+                                                              className="w-full bg-transparent outline-none border-none"
+                                                              defaultValue={secondFieldDefaultValue.toFixed(
+                                                                2
+                                                              )}
+                                                              name={field?.name}
+                                                              onChange={(e) => {
+                                                                const bottomSheetUSDValueElement =
+                                                                  document.getElementById(
+                                                                    "bottomSheetSecondaryUSDValue"
+                                                                  );
+
+                                                                bottomSheetInputRef.current.value =
+                                                                  Math.ceil(
+                                                                    e.target
+                                                                      .value *
+                                                                      26
+                                                                  );
+
+                                                                const primaryBottomSheetUSDValue =
+                                                                  document.getElementById(
+                                                                    "bottomSheetUSDValue"
+                                                                  );
+
+                                                                if (
+                                                                  primaryBottomSheetUSDValue &&
+                                                                  e.target.value
+                                                                ) {
+                                                                  bottomSheetUSDValueElement.innerText =
+                                                                    "$" +
+                                                                    `${inrToUsd(
+                                                                      e.target
+                                                                        .value *
+                                                                        26,
+                                                                      forexRate.USD
+                                                                    )}`;
+                                                                }
+
+                                                                if (
+                                                                  bottomSheetUSDValueElement &&
+                                                                  e.target.value
+                                                                ) {
+                                                                  bottomSheetUSDValueElement.innerText =
+                                                                    "$" +
+                                                                    `${inrToUsd(
+                                                                      e.target
+                                                                        .value,
+                                                                      forexRate.USD
+                                                                    )}`;
+                                                                }
+                                                              }}
+                                                              onBlur={
+                                                                handleBlur
+                                                              }
+                                                              pattern="[0-9]*"
+                                                              inputMode="numeric"
+                                                            />
+                                                          </div>
+
+                                                          {field?.name !==
+                                                          "containersCount" ? (
+                                                            <React.Fragment>
+                                                              <span
+                                                                id="bottomSheetSecondaryUSDValue"
+                                                                className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
+                                                              >
+                                                                $
+                                                                {inrToUsd(
+                                                                  secondFieldDefaultValue,
+                                                                  forexRate.USD
+                                                                )}
+                                                              </span>
+                                                              <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
+                                                                per metric ton
+                                                              </span>
+                                                            </React.Fragment>
+                                                          ) : null}
+                                                        </div>
+                                                      ) : null}
                                                     </div>
 
                                                     <div className="inline-flex items-center w-full space-x-5 mt-[30px]">
@@ -1333,6 +1514,7 @@ function EditCosting() {
                                                             bottomSheetInputRef
                                                               .current.value
                                                           );
+
                                                           closeBottomSheet();
                                                         }}
                                                       />
