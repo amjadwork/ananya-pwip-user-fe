@@ -4,9 +4,7 @@ import { useRouter } from "next/router";
 import { useSession, signIn } from "next-auth/react";
 import { useDispatch } from "react-redux";
 
-import {
-    handleSettingAuthDataRequest,
-} from "redux/actions/auth.actions";
+import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 export default function Home() {
   const router = useRouter();
@@ -66,10 +64,12 @@ export default function Home() {
 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
+        {/*<meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+*/}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
@@ -116,21 +116,24 @@ export default function Home() {
                 onClick={() => setActive(0)}
                 className={`w-5 h-2 rounded-full bg-pwip-primary ${
                   active !== 0 ? "bg-opacity-30" : ""
-                }`}></button>
+                }`}
+              ></button>
 
               <button
                 type="button"
                 onClick={() => setActive(1)}
                 className={`w-5 h-2 rounded-full bg-pwip-primary ${
                   active !== 1 ? "bg-opacity-30" : ""
-                }`}></button>
+                }`}
+              ></button>
 
               <button
                 type="button"
                 onClick={() => setActive(2)}
                 className={`w-5 h-2 rounded-full bg-pwip-primary ${
                   active !== 2 ? "bg-opacity-30" : ""
-                }`}></button>
+                }`}
+              ></button>
             </div>
           </div>
 
@@ -138,21 +141,24 @@ export default function Home() {
             <p
               className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
                 active === 0 ? "block" : "hidden"
-              }`}>
+              }`}
+            >
               Say goodbye to spreadsheets and calculators!
             </p>
 
             <p
               className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
                 active === 1 ? "block" : "hidden"
-              }`}>
+              }`}
+            >
               Get Accurate Quotes by Just Entering Rice and Destination Port
             </p>
 
             <p
               className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
                 active === 2 ? "block" : "hidden"
-              }`}>
+              }`}
+            >
               Customize the costing, and share or download with your customer
             </p>
           </div>
@@ -160,7 +166,8 @@ export default function Home() {
 
         <button
           onClick={() => handleLogin()}
-          className="w-full rounded-md py-3 px-4 bg-pwip-primary text-pwip-white-100 text-center text-sm font-bold">
+          className="w-full rounded-md py-3 px-4 bg-pwip-primary text-pwip-white-100 text-center text-sm font-bold"
+        >
           Login / Sign up
         </button>
       </div>

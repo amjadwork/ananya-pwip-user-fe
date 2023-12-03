@@ -177,10 +177,12 @@ function MyCosting() {
 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
+        {/*<meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+*/}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />

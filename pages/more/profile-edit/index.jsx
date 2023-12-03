@@ -162,7 +162,8 @@ function ProfileEdit() {
                   boxShadow:
                     "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
                 }}
-                onClick={() => handleProfessionSelect(item.value)}>
+                onClick={() => handleProfessionSelect(item.value)}
+              >
                 <div className="w-full pt-3 inline-flex items-center justify-center">
                   <img src={item.image} />
                 </div>
@@ -265,10 +266,12 @@ function ProfileEdit() {
 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta
+        {/*<meta
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
+*/}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.ico" />
@@ -276,7 +279,8 @@ function ProfileEdit() {
       <Header />
       <div
         id="fixedMenuSection"
-        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}>
+        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}
+      >
         <div className="inline-flex items-center space-x-5">
           <div className="h-[134px] w-[134px] rounded-full ring-1 ring-white ml-[7rem] p-[2px] relative top-2 z-20">
             <div className="absolute inset-0 flex items-center justify-center">
@@ -298,7 +302,8 @@ function ProfileEdit() {
         style={{
           paddingTop: mainContainerHeight * 1.7 + "px",
           paddingBottom: mainContainerHeight - 52 + "px",
-        }}>
+        }}
+      >
         <Formik
           innerRef={formik}
           initialValues={{
@@ -309,7 +314,8 @@ function ProfileEdit() {
             setTimeout(() => {
               setSubmitting(false);
             }, 400);
-          }}>
+          }}
+        >
           {({
             values,
             errors,
@@ -326,7 +332,8 @@ function ProfileEdit() {
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit();
-              }}>
+              }}
+            >
               {/* <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
                 Personal details
               </span> */}
@@ -385,13 +392,15 @@ function ProfileEdit() {
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
                         <label
                           htmlFor={field.name}
-                          className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin">
+                          className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
+                        >
                           {field.label}
                         </label>
                       </>
