@@ -490,17 +490,18 @@ const SelectLocationContainer = (props) => {
             }}
             onBlur={(e) => {
               // setSearchFocus(false);
-              dispatch(searchScreenFailure());
+              // dispatch(searchScreenFailure());
               blurOccurred = window.setTimeout(function () {
                 handleInputDoneClick(e);
               }, 10);
             }}
           />
-          {!popularDestinationData.length ? (
+          {searchStringValue || searchScreenActive ? (
             <button
               onClick={() => {
                 setSearchStringValue("");
                 handleSearch("");
+                dispatch(searchScreenFailure());
               }}
               className="outline-none border-none bg-transparent inline-flex items-center justify-center"
             >

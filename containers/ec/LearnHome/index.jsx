@@ -270,13 +270,14 @@ const LearnHomeContainer = (props) => {
                 dispatch(searchScreenRequest(true));
               }}
               onBlur={(e) => {
-                dispatch(searchScreenFailure());
+                // dispatch(searchScreenFailure());
               }}
             />
-            {searchStringValue.length ? (
+            {searchStringValue.length || searchScreenActive ? (
               <button
                 onClick={() => {
                   setSearchStringValue("");
+                  dispatch(searchScreenFailure());
                   handleSearch("");
                 }}
                 className="outline-none border-none bg-transparent inline-flex items-center justify-center"

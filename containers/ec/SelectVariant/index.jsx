@@ -445,14 +445,6 @@ const SelectVariantContainer = (props) => {
     }
   }, [isFromEdit, isFromCategory]);
 
-  // React.useEffect(() => {
-  //   window.addEventListener("focusout", handleInputDoneClick);
-
-  //   return () => {
-  //     window.removeEventListener("focusout", handleInputDoneClick);
-  //   };
-  // }, []);
-
   let blurOccurred = null;
 
   return (
@@ -514,7 +506,7 @@ const SelectVariantContainer = (props) => {
             }}
             onBlur={(e) => {
               // setSearchFocus(false);
-              dispatch(searchScreenFailure());
+              // dispatch(searchScreenFailure());
               blurOccurred = window.setTimeout(function () {
                 handleInputDoneClick(e);
               }, 10);
@@ -530,10 +522,11 @@ const SelectVariantContainer = (props) => {
               }
             }}
           />
-          {searchStringValue ? (
+          {searchStringValue || searchScreenActive ? (
             <button
               onClick={() => {
                 setSearchStringValue("");
+                dispatch(searchScreenFailure());
                 handleSearch("");
               }}
               className="outline-none border-none bg-transparent inline-flex items-center justify-center"
@@ -710,9 +703,7 @@ const SelectVariantContainer = (props) => {
             ) : null}
 
             <div
-              className={`w-full h-full space-y-[24px] px-5 pb-[88px] ${
-                isFixed ? "pt-[162px]" : ""
-              } overflow-y-auto hide-scroll-bar transition-all`}
+              className={`w-full h-full space-y-[24px] px-5 pb-[88px] overflow-y-auto hide-scroll-bar transition-all`}
             >
               {listProductsData.map((items, index) => {
                 return (

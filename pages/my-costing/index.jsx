@@ -17,6 +17,11 @@ import {
 import { fetchGeneratedCostingFailure } from "@/redux/actions/costing.actions";
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 
+import {
+  searchScreenRequest,
+  searchScreenFailure,
+} from "@/redux/actions/utils.actions.js";
+
 // Import Components
 import { Header } from "@/components/Header";
 import { inrToUsd } from "@/utils/helper";
@@ -88,13 +93,44 @@ function MyCosting() {
 
   const myCosting = useSelector((state) => state.myCosting);
   const forexRate = useSelector((state) => state.utils.forexRate);
+  const searchScreenActive = useSelector(
+    (state) => state.utils.searchScreenActive
+  );
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
   const [searchStringValue, setSearchStringValue] = React.useState("");
 
   function handleSearch(searchString) {
-    //
+    console.log(searchString);
+
+    const dataToFilter = [...myCosting.allMyCostingsFromHistory];
+
+    // Create an empty array to store the matching variants
+    const matchingVariants = [];
+
+    // Convert the search string to lowercase for a case-insensitive search
+    const searchLower = searchString.toLowerCase();
+
+    // Iterate through the array of variants
+    for (const variant of dataToFilter) {
+      // Convert the variant name to lowercase for comparison
+      const variantNameLower = variant.costingName.toLowerCase();
+
+      // Check if the variant name contains the search string
+      if (variantNameLower.includes(searchLower)) {
+        // If it does, add the variant to the matchingVariants array
+        matchingVariants.push(variant);
+      }
+    }
+
+    if (searchString) {
+      setAllMyCostingsData([...matchingVariants]);
+    }
+
+    if (!searchString) {
+      setAllMyCostingsData([...myCosting.allMyCostingsFromHistory]);
+    }
   }
 
   React.useEffect(() => {
@@ -117,6 +153,12 @@ function MyCosting() {
       setMainContainerHeight(height);
     }
   }, []);
+
+  const handleInputDoneClick = (event) => {
+    event.target.blur();
+  };
+
+  let blurOccurred = null;
 
   return (
     <React.Fragment>
@@ -177,16 +219,29 @@ function MyCosting() {
                 placeholder="Search for a variety of rice"
                 className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
                 value={searchStringValue}
+                onFocus={() => {
+                  // setSearchFocus(true);
+                  dispatch(searchScreenRequest(true));
+                  window.clearTimeout(blurOccurred);
+                }}
+                onBlur={(e) => {
+                  // setSearchFocus(false);
+                  // dispatch(searchScreenFailure());
+                  blurOccurred = window.setTimeout(function () {
+                    handleInputDoneClick(e);
+                  }, 10);
+                }}
                 onChange={(event) => {
                   setSearchStringValue(event.target.value);
                   handleSearch(event.target.value);
                 }}
               />
-              {!allMyCostingsData.length ? (
+              {searchStringValue || searchScreenActive ? (
                 <button
                   onClick={() => {
                     setSearchStringValue("");
                     handleSearch("");
+                    dispatch(searchScreenFailure());
                   }}
                   className="outline-none border-none bg-transparent inline-flex items-center justify-center"
                 >
@@ -216,70 +271,72 @@ function MyCosting() {
               paddingBottom: mainContainerHeight + 20 + "px",
             }}
           >
-            <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
-              <div className="flex flex-nowrap">
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Filter
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="19"
-                      height="11"
-                      viewBox="0 0 19 11"
-                      fill="none"
-                    >
-                      <path
-                        d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
-                  <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
-                    <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                      Sort
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="13"
-                      height="8"
-                      viewBox="0 0 13 8"
-                      fill="none"
-                    >
-                      <path
-                        d="M12 1L6.5 6.5L1 1"
-                        stroke="#434B53"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                </div>
-
-                {[...popularFilters].map((items, index) => {
-                  return (
-                    <div
-                      key={items?.name + (index + 1 * 2)}
-                      className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
-                    >
-                      <div className="overflow-hidden w-auto h-auto inline-flex items-center">
-                        <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
-                          {items?.name}
-                        </span>
-                      </div>
+            {!searchStringValue && !searchScreenActive ? (
+              <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
+                <div className="flex flex-nowrap">
+                  <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                    <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                      <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                        Filter
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="19"
+                        height="11"
+                        viewBox="0 0 19 11"
+                        fill="none"
+                      >
+                        <path
+                          d="M7.75 2.5H17.5M7.75 2.5C7.75 2.89782 7.59196 3.27936 7.31066 3.56066C7.02936 3.84196 6.64782 4 6.25 4C5.85218 4 5.47064 3.84196 5.18934 3.56066C4.90804 3.27936 4.75 2.89782 4.75 2.5M7.75 2.5C7.75 2.10218 7.59196 1.72064 7.31066 1.43934C7.02936 1.15804 6.64782 1 6.25 1C5.85218 1 5.47064 1.15804 5.18934 1.43934C4.90804 1.72064 4.75 2.10218 4.75 2.5M4.75 2.5H1M13.75 8.5H17.5M13.75 8.5C13.75 8.89782 13.592 9.27936 13.3107 9.56066C13.0294 9.84196 12.6478 10 12.25 10C11.8522 10 11.4706 9.84196 11.1893 9.56066C10.908 9.27936 10.75 8.89782 10.75 8.5M13.75 8.5C13.75 8.10218 13.592 7.72064 13.3107 7.43934C13.0294 7.15804 12.6478 7 12.25 7C11.8522 7 11.4706 7.15804 11.1893 7.43934C10.908 7.72064 10.75 8.10218 10.75 8.5M10.75 8.5H1"
+                          stroke="#434B53"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     </div>
-                  );
-                })}
+                  </div>
+
+                  <div className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]">
+                    <div className="overflow-hidden w-auto h-auto inline-flex items-center space-x-[14px]">
+                      <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                        Sort
+                      </span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="13"
+                        height="8"
+                        viewBox="0 0 13 8"
+                        fill="none"
+                      >
+                        <path
+                          d="M12 1L6.5 6.5L1 1"
+                          stroke="#434B53"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {[...popularFilters].map((items, index) => {
+                    return (
+                      <div
+                        key={items?.name + (index + 1 * 2)}
+                        className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                      >
+                        <div className="overflow-hidden w-auto h-auto inline-flex items-center">
+                          <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                            {items?.name}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : null}
 
             <div className="w-full space-y-5">
               {allMyCostingsData?.map((items, index) => {

@@ -488,7 +488,6 @@ function CostingOverview() {
   }, [currentCostingFromHistory, generatedCosting, forexRate]);
 
   useEffect(() => {
-    console.log(myRecentSavedCosting);
     if (myRecentSavedCosting) {
       dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     }
@@ -609,7 +608,6 @@ function CostingOverview() {
                     type="radio"
                     checked={shipmentTerm === items.value ? true : false}
                     onChange={(e) => {
-                      console.log(e.target.checked);
                       dispatch(setTermsOfShipmentRequest(items.value));
                     }}
                   />
@@ -1020,10 +1018,9 @@ function CostingOverview() {
                                 paddingBottom = "pb-4";
                               }
                               return (
-                                <React.Fragment>
+                                <React.Fragment key={row.label + rowIndex}>
                                   <div className="w-full px-5">
                                     <div
-                                      key={row.label + rowIndex}
                                       className={`inline-flex items-start w-full ${
                                         rowIndex === item.rowItems.length - 1
                                           ? ""
