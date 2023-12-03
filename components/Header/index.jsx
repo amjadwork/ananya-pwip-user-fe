@@ -46,8 +46,8 @@ export function Header(props) {
   const backgroundColor = props.backgroundColor || "bg-white";
 
   const [activeRoute, setActiveRoute] = React.useState("");
-  const [environmentBasedClasses, setEnvironmentBasedClasses] =
-    React.useState("");
+  // const [environmentBasedClasses, setEnvironmentBasedClasses] =
+  //   React.useState("");
 
   const handleBack = () => {
     if (activeRoute === "edit") {
@@ -65,32 +65,30 @@ export function Header(props) {
     }
   }, []);
 
-  React.useEffect(() => {
-    const isInStandaloneMode = () =>
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone;
-    const route = ["costing", "edit", "my-costing", "more", "profile-edit"];
+  // React.useEffect(() => {
+  //   const isInStandaloneMode = () =>
+  //     window.matchMedia("(display-mode: standalone)").matches ||
+  //     window.navigator.standalone;
+  //   const route = ["costing", "edit", "my-costing", "more", "profile-edit"];
 
-    if (isInStandaloneMode()) {
-      if (route.includes(activeRoute)) {
-        setEnvironmentBasedClasses("h-[130px]");
-      } else {
-        setEnvironmentBasedClasses("h-[140px]");
-      }
-    } else {
-      if (route.includes(activeRoute)) {
-        setEnvironmentBasedClasses("h-[56px]");
-      } else {
-        setEnvironmentBasedClasses("h-[56px]");
-      }
-    }
-  }, [activeRoute]);
+  //   if (isInStandaloneMode()) {
+  //     if (route.includes(activeRoute)) {
+  //       setEnvironmentBasedClasses("h-[130px]");
+  //     } else {
+  //       setEnvironmentBasedClasses("h-[140px]");
+  //     }
+  //   } else {
+  //     if (route.includes(activeRoute)) {
+  //       setEnvironmentBasedClasses("h-[56px]");
+  //     } else {
+  //       setEnvironmentBasedClasses("h-[56px]");
+  //     }
+  //   }
+  // }, [activeRoute]);
 
   return (
     <header
-      className={`inline-flex items-center w-full ${environmentBasedClasses} px-5 py-4 ${
-        atRoutes.includes(activeRoute) ? "" : "pb-4"
-      }  space-x-4 ${backgroundColor} fixed top-0 z-10`}
+      className={`inline-flex items-center w-full h-[56px] px-5 py-4 space-x-4 ${backgroundColor} fixed top-0 z-10`}
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
