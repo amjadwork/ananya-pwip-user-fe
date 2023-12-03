@@ -147,6 +147,13 @@ function MyCosting() {
   }, []);
 
   React.useEffect(() => {
+    if (!searchScreenActive) {
+      handleSearch("");
+      setSearchStringValue("");
+    }
+  }, [searchScreenActive]);
+
+  React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;

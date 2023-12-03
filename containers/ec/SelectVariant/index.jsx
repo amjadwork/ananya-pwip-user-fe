@@ -237,21 +237,21 @@ const SelectVariantContainer = (props) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products); // Use api reducer slice
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
-  const selectedMyCostingFromHistory = useSelector((state) => {
-    if (
-      state.myCosting &&
-      state.myCosting.currentCostingFromHistory &&
-      state.myCosting.currentCostingFromHistory.length
-    ) {
-      return state.myCosting.currentCostingFromHistory[0];
-    }
-    return null;
-  });
+  // const selectedMyCostingFromHistory = useSelector((state) => {
+  //   if (
+  //     state.myCosting &&
+  //     state.myCosting.currentCostingFromHistory &&
+  //     state.myCosting.currentCostingFromHistory.length
+  //   ) {
+  //     return state.myCosting.currentCostingFromHistory[0];
+  //   }
+  //   return null;
+  // });
   const filterForCategory = useSelector((state) => state.category.category);
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
   );
-  const { roundedTop = false, noTop = false, noPaddingBottom = false } = props;
+  // const { roundedTop = false, noTop = false, noPaddingBottom = false } = props;
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [productsData, setProductsData] = React.useState([]);
@@ -344,6 +344,8 @@ const SelectVariantContainer = (props) => {
         );
       }
 
+      console.log("productList", productList);
+
       if (productList) {
         setListProductsData([...productList]);
       }
@@ -382,23 +384,12 @@ const SelectVariantContainer = (props) => {
     }
   }
 
-  // const checkY = () => {
-  //   const fixedDiv = fixedDivRef.current.getBoundingClientRect();
-  //   const divHeight = fixedDivRef.current.offsetHeight;
-  //   const startY = fixedDiv.bottom;
-
-  //   // console.log(
-  //   //   window.scrollY,
-  //   //   startY,
-  //   //   window.scrollY > startY + divHeight * 2
-  //   // );
-
-  //   if (window.scrollY >= startY + divHeight * 2) {
-  //     setIsFixed(true);
-  //   } else {
-  //     setIsFixed(false);
-  //   }
-  // };
+  React.useEffect(() => {
+    if (!searchScreenActive && productsData.length) {
+      handleSearch("");
+      setSearchStringValue("");
+    }
+  }, [searchScreenActive, productsData]);
 
   let isFixedFlag = false;
 
@@ -451,9 +442,7 @@ const SelectVariantContainer = (props) => {
     <React.Fragment>
       <div
         id="fixedMenuSection"
-        className={`fixed ${
-          !noTop ? "top-[56px]" : "top-[18px]"
-        }  h-[auto] w-full z-10 py-3 ${
+        className={`fixed top-[56px] h-[auto] w-full z-10 py-3 ${
           isFromCategory || isFromEdit ? "pb-[12px]" : "pb-[32px]"
         } px-5`}
         style={{
@@ -584,6 +573,7 @@ const SelectVariantContainer = (props) => {
                     key={items?.name + index}
                     className="inline-flex flex-col items-center justify-center space-y-[10px]"
                     onClick={() => {
+                      dispatch(searchScreenFailure());
                       dispatch(
                         fetchCategoryRequest({
                           productCategory: {
@@ -653,6 +643,7 @@ const SelectVariantContainer = (props) => {
                         backdropFilter: "blur(8px)",
                       }}
                       onClick={() => {
+                        dispatch(searchScreenFailure());
                         dispatch(
                           fetchCategoryRequest({
                             sourceId: items._sourceId,
@@ -710,6 +701,7 @@ const SelectVariantContainer = (props) => {
                   <div
                     key={items._id + index}
                     onClick={() => {
+                      dispatch(searchScreenFailure());
                       if (isFromEdit) {
                         if (setFieldValue) {
                           setFieldValue(

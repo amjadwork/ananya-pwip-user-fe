@@ -184,6 +184,13 @@ const LearnHomeContainer = (props) => {
     }
   }
 
+  React.useEffect(() => {
+    if (!searchScreenActive) {
+      handleSearch("");
+      setSearchStringValue("");
+    }
+  }, [searchScreenActive]);
+
   let isFixedFlag = false;
 
   const checkY = () => {

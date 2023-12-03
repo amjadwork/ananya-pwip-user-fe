@@ -115,7 +115,7 @@ export function Header(props) {
                     dispatch(searchScreenFailure());
                   }
 
-                  if (activeRoute === "select-pod") {
+                  if (activeRoute === "select-pod" && !searchScreenActive) {
                     dispatch(resetCostingSelection());
                   }
                 }}
