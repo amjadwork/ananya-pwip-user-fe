@@ -179,7 +179,7 @@ const YouTubePlayer = ({ url }) => {
           width="100%"
           height="100%"
           controls={false}
-          light={showDefaultThumbnail}
+          light={false}
           playing={videoPlaying}
           stopOnUnmount={true}
           volume={videoVolume ? 0 : 1}
