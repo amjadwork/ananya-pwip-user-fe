@@ -125,8 +125,7 @@ const lineBetweenLocation = (
     height="2"
     viewBox="0 0 32 2"
     fill="none"
-    className="w-auto"
-  >
+    className="w-auto">
     <path
       d="M0.682129 1L60.8784 1"
       stroke="currentColor"
@@ -162,7 +161,10 @@ function sumNumericalValues(obj) {
   let total = 0;
 
   for (const key in obj) {
-    if (!isNaN(obj[key]) && !["pqc", "surrender", "blFee"].includes(key)) {
+    if (
+      !isNaN(obj[key]) &&
+      !["pqc", "surrender", "blFee", "shlCharge", "chaCharge"].includes(key)
+    ) {
       total += parseFloat(obj[key]);
     }
   }
@@ -573,16 +575,14 @@ function EditCosting() {
 
       <AppLayout>
         <div
-          className={`fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700 px-5 py-2 transition-all duration-500`}
-        >
+          className={`fixed visible z-20 top-0 left-0 right-0 opacity-1 h-auto bg-pwip-v2-primary-700 px-5 py-2 transition-all duration-500`}>
           <div className="w-full flex items-center justify-between">
             <div className="flex flex-col items-start flex-grow w-[65%] max-w-[40%] overflow-hidden pr-3">
               <div
                 className="inline-flex items-center space-x-2 text-white text-sm"
                 onClick={() => {
                   router.back();
-                }}
-              >
+                }}>
                 {arrowLeftBackIcon}
                 <span>Back</span>
               </div>
@@ -652,8 +652,7 @@ function EditCosting() {
 
         <div
           id="fixedMenuSection"
-          className="fixed top-[58px] h-[auto] w-full bg-pwip-gray-45 z-10"
-        >
+          className="fixed top-[58px] h-[auto] w-full bg-pwip-gray-45 z-10">
           <div className={`flex overflow-x-scroll hide-scroll-bar`}>
             <div className="flex flex-nowrap">
               {[...tabsItems].map((item, index) => {
@@ -666,8 +665,7 @@ function EditCosting() {
                       opacity: activeTab === index ? 1 : 0.3,
                       borderBottom:
                         activeTab === index ? "2px solid #006EB4" : "unset",
-                    }}
-                  >
+                    }}>
                     <div className="overflow-hidden w-auto h-auto inline-flex flex-col items-start space-y-[4px]">
                       <span className="text-pwip-v2-primary-700 font-[600] text-sm whitespace-nowrap">
                         {item.title}
@@ -688,8 +686,7 @@ function EditCosting() {
           style={{
             paddingTop: mainContainerHeight + 68 + "px",
             paddingBottom: "82px",
-          }}
-        >
+          }}>
           <Formik
             innerRef={formik}
             initialValues={{
@@ -700,8 +697,7 @@ function EditCosting() {
               setTimeout(() => {
                 setSubmitting(false);
               }, 400);
-            }}
-          >
+            }}>
             {({
               values,
               setFieldValue,
@@ -712,8 +708,7 @@ function EditCosting() {
             }) => (
               <form
                 className="inline-flex flex-col w-full"
-                onSubmit={handleSubmit}
-              >
+                onSubmit={handleSubmit}>
                 {[
                   {
                     tab: 0,
@@ -1038,8 +1033,7 @@ function EditCosting() {
                                           !values.exportDuty
                                         );
                                       }}
-                                      className="text-sm font-[500] text-pwip-black-600"
-                                    >
+                                      className="text-sm font-[500] text-pwip-black-600">
                                       20% export duty applicable
                                     </label>
                                   </div>
@@ -1052,8 +1046,7 @@ function EditCosting() {
                                       fieldName === "exportDutyValue"
                                         ? 0.25
                                         : 1,
-                                  }}
-                                >
+                                  }}>
                                   <div className="inline-flex items-center space-x-2 mb-6">
                                     {d.icon}
                                     <h2 className="text-pwip-v2-primary font-[700] text-lg">
@@ -1073,8 +1066,7 @@ function EditCosting() {
                                       return (
                                         <div
                                           key={field.label + index}
-                                          className="inline-flex flex-col w-full"
-                                        >
+                                          className="inline-flex flex-col w-full">
                                           <label className="text-sm font-[500] text-pwip-black-600">
                                             {field.label}
                                           </label>
@@ -1226,8 +1218,7 @@ function EditCosting() {
                                                         showSecondInput
                                                           ? "grid-cols-2 gap-2"
                                                           : "grid-cols-1"
-                                                      } mt-[18px]`}
-                                                    >
+                                                      } mt-[18px]`}>
                                                       <div
                                                         onClick={() => {
                                                           bottomSheetInputRef.current.focus();
@@ -1357,31 +1348,23 @@ function EditCosting() {
 
                                                                   const updatedBlFee =
                                                                     blFee /
-                                                                    (parseFloat(
-                                                                      values.containerWeight
-                                                                    ) *
-                                                                      parseInt(
-                                                                        e.target
-                                                                          .value
-                                                                      ));
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    );
+
                                                                   const updatedBlSurrender =
                                                                     blSurrender /
-                                                                    (parseFloat(
-                                                                      values.containerWeight
-                                                                    ) *
-                                                                      parseInt(
-                                                                        e.target
-                                                                          .value
-                                                                      ));
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    );
                                                                   const updatedpqc =
                                                                     pqc /
-                                                                    (parseFloat(
-                                                                      values.containerWeight
-                                                                    ) *
-                                                                      parseInt(
-                                                                        e.target
-                                                                          .value
-                                                                      ));
+                                                                    parseInt(
+                                                                      e.target
+                                                                        .value
+                                                                    );
 
                                                                   const totalSHL =
                                                                     (sumNumericalValues(
@@ -1392,6 +1375,7 @@ function EditCosting() {
                                                                     parseFloat(
                                                                       values.containerWeight
                                                                     );
+
                                                                   const totalCHA =
                                                                     (sumNumericalValues(
                                                                       customCostingSelection.chaData
@@ -1427,8 +1411,7 @@ function EditCosting() {
                                                           <React.Fragment>
                                                             <span
                                                               id="bottomSheetUSDValue"
-                                                              className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
-                                                            >
+                                                              className="text-pwip-v2-green-800 font-[400] text-sm mt-2">
                                                               $
                                                               {inrToUsd(
                                                                 field?.value,
@@ -1549,8 +1532,7 @@ function EditCosting() {
                                                             <React.Fragment>
                                                               <span
                                                                 id="bottomSheetSecondaryUSDValue"
-                                                                className="text-pwip-v2-green-800 font-[400] text-sm mt-2"
-                                                              >
+                                                                className="text-pwip-v2-green-800 font-[400] text-sm mt-2">
                                                                 $
                                                                 {inrToUsd(
                                                                   secondFieldDefaultValue,
@@ -1616,8 +1598,7 @@ function EditCosting() {
                                                   },
                                                   true
                                                 );
-                                              }}
-                                            >
+                                              }}>
                                               <div
                                                 className="inline-flex items-center justify-between h-[40px] w-full rounded-md bg-white border-[1px] border-pwip-gray-650 px-[18px] font-sans"
                                                 style={{
@@ -1627,8 +1608,7 @@ function EditCosting() {
                                                     field.name === "bagSize"
                                                       ? "#f6f6f6"
                                                       : null,
-                                                }}
-                                              >
+                                                }}>
                                                 <div className="inline-flex items-end space-x-2">
                                                   <div className="inline-flex items-center text-pwip-gray-850 font-[700] text-xs">
                                                     {field?.showCurrency ? (
@@ -1772,11 +1752,9 @@ function EditCosting() {
                                                             field.name,
                                                             opt
                                                           );
-                                                        }}
-                                                      >
+                                                        }}>
                                                         <div
-                                                          className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
-                                                        >
+                                                          className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}>
                                                           {icon ? (
                                                             <div className="mr-[10px]">
                                                               {icon}
@@ -1880,11 +1858,9 @@ function EditCosting() {
                                                             setGrandTotal(
                                                               grandTotal
                                                             );
-                                                          }}
-                                                        >
+                                                          }}>
                                                           <div
-                                                            className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}
-                                                          >
+                                                            className={`inline-flex items-center justify-center h-auto w-auto min-w-[52px] rounded-md bg-pwip-v2-gray-50 ${selected} px-3 py-[6px] font-sans transition-all`}>
                                                             {icon ? (
                                                               <div className="mr-[10px]">
                                                                 {icon}
@@ -1920,8 +1896,7 @@ function EditCosting() {
                   className="w-full fixed left-0 bottom-0 px-5 py-4 bg-white inline-flex items-start space-x-[20px]"
                   style={{
                     boxShadow: "0px -1px 12px #00000021",
-                  }}
-                >
+                  }}>
                   {/* <div className="w-[42px]">
                     <Button
                       type="outline"
