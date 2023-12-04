@@ -384,6 +384,7 @@ function EditCosting() {
 
   useEffect(() => {
     if (formik && formik.current && customCostingSelection) {
+      console.log("customCostingSelection", customCostingSelection);
       const formikRef = formik.current;
 
       const formValues = formikRef?.values || {};
@@ -410,7 +411,7 @@ function EditCosting() {
         _originId: customCostingSelection?.portOfOrigin,
         _destinationId: customCostingSelection?.portOfDestination,
         _containerId: customCostingSelection?.containers,
-        containersCount: customCostingSelection?.containerCount || 1,
+        containersCount: customCostingSelection?.containersCount || 1,
         containerWeight:
           customCostingSelection?.containersWeight ||
           customCostingSelection?.containers?.weight,
