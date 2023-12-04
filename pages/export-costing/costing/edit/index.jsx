@@ -797,7 +797,7 @@ function EditCosting() {
                             name: "ofc",
                             placeholder: "",
                             showCurrency: true,
-                            unit: "container",
+                            unit: selectedUnitForPayload,
                             value: values?.ofc,
                           },
                         ],
@@ -894,7 +894,7 @@ function EditCosting() {
                             name: "shl",
                             placeholder: "",
                             showCurrency: true,
-                            unit: "container",
+                            unit: selectedUnitForPayload,
                             value: values?.shl,
                           },
                         ],
@@ -910,7 +910,7 @@ function EditCosting() {
                             name: "cfsHandling",
                             placeholder: "",
                             showCurrency: true,
-                            unit: "container",
+                            unit: selectedUnitForPayload,
                             value: values?.cfsHandling,
                           },
                         ],
@@ -926,7 +926,7 @@ function EditCosting() {
                             name: "inspectionCost",
                             placeholder: "",
                             showCurrency: true,
-                            unit: "container",
+                            unit: selectedUnitForPayload,
                             value: values?.inspectionCost,
                           },
                         ],
@@ -1410,12 +1410,9 @@ function EditCosting() {
                                                             </span>
                                                             <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
                                                               per{" "}
-                                                              {showSecondInput
-                                                                ? "container"
-                                                                : selectedUnitForPayload}
-                                                              {/* {
+                                                              {
                                                                 selectedUnitForPayload
-                                                              } */}
+                                                              }
                                                             </span>
                                                           </React.Fragment>
                                                         ) : null}
@@ -1507,7 +1504,9 @@ function EditCosting() {
                                                                 )}
                                                               </span>
                                                               <span className="text-pwip-v2-primary-700 font-[600] text-xs mt-2">
-                                                                per metric ton
+                                                                {showSecondInput
+                                                                  ? "container"
+                                                                  : selectedUnitForPayload}
                                                               </span>
                                                             </React.Fragment>
                                                           ) : null}

@@ -843,7 +843,12 @@ const SelectVariantContainer = (props) => {
                           {items?.sourceName || ""}
                         </span>
                         <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
-                          {items?.totalVariants || 0} variety of rice available
+                          {/* {items?.totalVariants || 0} {variety} of rice available */}
+                          {items?.totalVariants || 0}{" "}
+                          {items?.totalVariants?.length > 1
+                            ? "varieties"
+                            : "variety"}{" "}
+                          of rice available
                         </span>
                       </div>
                     </div>
