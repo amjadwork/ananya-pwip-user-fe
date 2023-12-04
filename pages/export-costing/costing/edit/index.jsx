@@ -1257,7 +1257,7 @@ function EditCosting() {
                                                           }
                                                         }}
                                                         id="inputContainerOne"
-                                                        className={`transition-all inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px] border-[1px] !border-pwip-v2-primary-700`}
+                                                        className={`transition-all inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px] border-pwip-v2-gray-100 border-[1px] !border-pwip-v2-primary-700`}
                                                       >
                                                         <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
                                                           {field?.name !==
