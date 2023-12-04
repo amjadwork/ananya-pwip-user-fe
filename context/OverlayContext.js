@@ -299,8 +299,8 @@ export function OverlayProvider({ children }) {
 
             <div className="inline-flex items-center w-full py-4">
               <div className="inline-flex items-center w-full">
-                <div className="border-[1px] rounded-l-md py-2 px-4 h-[36px] w-full max-w-[24%] inline-flex items-center">
-                  <span className="text-pwip-gray-1000 text-sm line-clamp-1">
+                <div className="border-[1px] rounded-l-md py-2 px-4 h-[36px] w-auto inline-flex items-center">
+                  <span className="text-pwip-gray-1000 text-sm whitespace-nowrap">
                     1 USD
                   </span>
                 </div>

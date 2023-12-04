@@ -240,6 +240,8 @@ function EditCosting() {
   const [selectedUnitForPayload, setSelectedUnitForPayload] =
     React.useState("mt");
 
+  // const [highlightBottomInput, setHighlightBottomInput] = React.useState(0);
+
   const packagingBags = useSelector((state) => state.bags);
   const authToken = useSelector((state) => state.auth.token);
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -1229,8 +1231,33 @@ function EditCosting() {
                                                       <div
                                                         onClick={() => {
                                                           bottomSheetInputRef.current.focus();
+
+                                                          if (showSecondInput) {
+                                                            const elementOne =
+                                                              document.getElementById(
+                                                                "inputContainerOne"
+                                                              );
+
+                                                            if (elementOne) {
+                                                              elementOne.classList.add(
+                                                                "!border-pwip-v2-primary-700"
+                                                              );
+                                                            }
+
+                                                            const elementTwo =
+                                                              document.getElementById(
+                                                                "inputContainerTwo"
+                                                              );
+
+                                                            if (elementTwo) {
+                                                              elementTwo.classList.remove(
+                                                                "!border-pwip-v2-primary-700"
+                                                              );
+                                                            }
+                                                          }
                                                         }}
-                                                        className="inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]"
+                                                        id="inputContainerOne"
+                                                        className={`transition-all inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px] border-[1px] !border-pwip-v2-primary-700`}
                                                       >
                                                         <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
                                                           {field?.name !==
@@ -1423,8 +1450,35 @@ function EditCosting() {
                                                         <div
                                                           onClick={() => {
                                                             bottomSheetSecondaryInputRef.current.focus();
+
+                                                            if (
+                                                              showSecondInput
+                                                            ) {
+                                                              const elementOne =
+                                                                document.getElementById(
+                                                                  "inputContainerOne"
+                                                                );
+
+                                                              if (elementOne) {
+                                                                elementOne.classList.remove(
+                                                                  "!border-pwip-v2-primary-700"
+                                                                );
+                                                              }
+
+                                                              const elementTwo =
+                                                                document.getElementById(
+                                                                  "inputContainerTwo"
+                                                                );
+
+                                                              if (elementTwo) {
+                                                                elementTwo.classList.add(
+                                                                  "!border-pwip-v2-primary-700"
+                                                                );
+                                                              }
+                                                            }
                                                           }}
-                                                          className="inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px]"
+                                                          id="inputContainerTwo"
+                                                          className={`transition-all inline-flex flex-col w-full bg-pwip-v2-gray-100 rounded-lg px-[24px] py-[14px] border-[1px] border-pwip-v2-gray-100`}
                                                         >
                                                           <div className="text-pwip-black-600 font-[700] text-[20px] inline-flex items-center space-x-1 overflow-hidden">
                                                             <span>₹</span>
