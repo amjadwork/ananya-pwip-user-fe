@@ -547,10 +547,10 @@ function CostingOverview() {
                           <span>:</span>
                         </div>
                         <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-800 text-xs font-normal font-sans">
-                          <span>₹{item.inr}</span>
+                          <span>₹{(item.inr / 26).toFixed(2)}</span>
                         </div>
                         <div className="w-[20%] inline-flex items-center justify-end text-pwip-gray-800 text-xs font-normal font-sans">
-                          <span>${item.usd}</span>
+                          <span>${inrToUsd(item.inr / 26, forexRate.USD)}</span>
                         </div>
                       </div>
                     );
@@ -608,7 +608,11 @@ function CostingOverview() {
                     type="radio"
                     checked={shipmentTerm === items.value ? true : false}
                     onChange={(e) => {
-                      dispatch(setTermsOfShipmentRequest(items.value));
+                      const action = {
+                        selected: items?.value,
+                        showShipmentTermDropdown: false,
+                      };
+                      dispatch(setTermsOfShipmentRequest(action));
                     }}
                   />
                   <div className="p-3 flex w-fill flex-col space-y-[4px]">
