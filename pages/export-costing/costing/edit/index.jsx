@@ -1874,6 +1874,32 @@ function EditCosting() {
                                                               opt?.weight
                                                             );
 
+                                                            const bagAsPerWeight =
+                                                              packagingBags?.bags.find(
+                                                                (p) => {
+                                                                  if (
+                                                                    p.bag ===
+                                                                      values
+                                                                        ._bagId
+                                                                        .bag &&
+                                                                    p.weight ===
+                                                                      opt?.weight
+                                                                  ) {
+                                                                    return p;
+                                                                  }
+                                                                }
+                                                              );
+
+                                                            if (
+                                                              bagAsPerWeight &&
+                                                              bagAsPerWeight?._id
+                                                            ) {
+                                                              setFieldValue(
+                                                                "_bagId",
+                                                                bagAsPerWeight
+                                                              );
+                                                            }
+
                                                             setFieldValue(
                                                               "bagPrice",
                                                               convertUnits(
@@ -2060,6 +2086,7 @@ function EditCosting() {
                         givenData?._variantId?.sourceRates?._sourceId ||
                         givenData?._variantId?.sourceObject?._id;
 
+                      console.log(givenData);
                       const payload =
                         generatePayloadForCustomCosting(givenData);
                       dispatch(generateCustomCostingRequest(payload));
