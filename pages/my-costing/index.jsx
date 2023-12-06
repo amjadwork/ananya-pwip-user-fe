@@ -106,29 +106,23 @@ function MyCosting() {
 
   function handleSearch(searchString) {
     const dataToFilter = [...allMyCostingsFromHistory];
-
     // Create an empty array to store the matching variants
     const matchingVariants = [];
-
     // Convert the search string to lowercase for a case-insensitive search
     const searchLower = searchString.toLowerCase();
-
     // Iterate through the array of variants
     for (const variant of dataToFilter) {
       // Convert the variant name to lowercase for comparison
       const variantNameLower = variant.costingName.toLowerCase();
-
       // Check if the variant name contains the search string
       if (variantNameLower.includes(searchLower)) {
         // If it does, add the variant to the matchingVariants array
         matchingVariants.push(variant);
       }
     }
-
     if (searchString) {
       setAllMyCostingsData([...matchingVariants]);
     }
-
     if (!searchString) {
       setAllMyCostingsData([...allMyCostingsFromHistory]);
     }
@@ -272,7 +266,9 @@ function MyCosting() {
             </div>
           </div>
           <div
-            className={`min-h-[calc(100vh-140px)] inline-flex flex-col h-full w-full px-5 bg-pwip-v2-gray-100 pb-0 overflow-auto hide-scroll-bar`}
+            className={`min-h-[calc(100vh-140px)] inline-flex flex-col h-full w-full px-5 ${
+              !allMyCostingsData.length ? "bg-white" : "bg-pwip-v2-gray-100"
+            } pb-0 overflow-auto hide-scroll-bar`}
             style={{
               paddingTop: mainContainerHeight + "px",
               paddingBottom: mainContainerHeight + 20 + "px",
@@ -462,6 +458,22 @@ function MyCosting() {
                   </div>
                 );
               })}
+
+              {!allMyCostingsData?.length ? (
+                <div className="inline-flex flex-col justify-center items-center w-full h-full">
+                  <img
+                    className="w-auto h-[260px]"
+                    src="/assets/images/no-state/no-costing.svg"
+                  />
+                  <h2 className="text-xl text-center text-pwip-v2-primary font-[700] mt-8">
+                    No Costings Found
+                  </h2>
+                  <p className="text-base text-center text-pwip-v2-gray-500 font-[500] mt-5">
+                    Oh seems like there are no costings saved for your export,
+                    create one now.
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
