@@ -46,7 +46,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
-    }, 2000);
+    }, 5000);
 
     return () => {
       clearInterval(interval);
@@ -75,101 +75,121 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen flex flex-col items-center justify-between pb-[124px] pt-8 px-4">
+      <div className="min-h-screen flex flex-col items-center bg-white pb-[94px] hide-scroll-bar">
         <div className="inline-flex flex-col items-center h-full w-full">
-          <img
-            src="/assets/images/logo-blue.png"
-            className="h-[66px] w-[66px]"
-          />
+          <div className="inline-flex justify-start items-center w-full px-5 py-3">
+            <img
+              src="/assets/images/logo-blue.png"
+              className="h-[38px] w-[38px]"
+            />
+          </div>
 
-          <div className="relative w-full h-full mt-[60px]">
-            <div className="relative h-full overflow-hidden rounded-lg">
-              <div className="duration-700 ease-in-out h-[250px]">
+          <div className="relative w-full h-full mt-[24px] px-5">
+            <div className="inline-flex w-full items-center justify-center">
+              <div
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
+                  active === 0 ? "block" : "hidden"
+                }`}
+              >
+                <h2>Costings made easy.</h2>
+                <p className="text-sm font-[400]">
+                  We have simplified generating costings for your export
+                  business, it just takes 2 clicks.
+                </p>
+              </div>
+
+              <div
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
+                  active === 1 ? "block" : "hidden"
+                }`}
+              >
+                <h2>Customize as you need.</h2>
+                <p className="text-sm font-[400]">
+                  We have simplified generating costings for your export
+                  business, it just takes 2 clicks.
+                </p>
+              </div>
+
+              <div
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
+                  active === 2 ? "block" : "hidden"
+                }`}
+              >
+                <h2>Experience designed for you.</h2>
+                <p className="text-sm font-[400]">
+                  We have simplified generating costings for your export
+                  business, it just takes 2 clicks.
+                </p>
+              </div>
+            </div>
+            <div className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg py-[24px]">
+              <div className="duration-700 ease-in-out h-[332px]">
                 <img
-                  src="/assets/images/onboarding1.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                  src="/assets/images/onboarding/one.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
                     active === 0 ? "block" : "hidden"
                   }`}
                   alt="onboarding 1 image"
                 />
 
                 <img
-                  src="/assets/images/onboarding2.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                  src="/assets/images/onboarding/two.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
                     active === 1 ? "block" : "hidden"
                   }`}
                   alt="onboarding 2 image"
                 />
 
                 <img
-                  src="/assets/images/onboarding2.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[250px] w-[212px] ${
+                  src="/assets/images/onboarding/three.svg"
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
                     active === 2 ? "block" : "hidden"
                   }`}
                   alt="onboarding 3 image"
                 />
               </div>
             </div>
-            <div className="flex items-center justify-center space-x-3 w-full mt-[48px]">
+            <div className="flex items-center justify-center space-x-[4px] w-full mt-[24px]">
               <button
                 type="button"
                 onClick={() => setActive(0)}
-                className={`w-5 h-2 rounded-full bg-pwip-primary ${
-                  active !== 0 ? "bg-opacity-30" : ""
+                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
+                  active !== 0 ? "bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
               <button
                 type="button"
                 onClick={() => setActive(1)}
-                className={`w-5 h-2 rounded-full bg-pwip-primary ${
-                  active !== 1 ? "bg-opacity-30" : ""
+                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
+                  active !== 1 ? "bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
               <button
                 type="button"
                 onClick={() => setActive(2)}
-                className={`w-5 h-2 rounded-full bg-pwip-primary ${
-                  active !== 2 ? "bg-opacity-30" : ""
+                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
+                  active !== 2 ? "bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
             </div>
           </div>
+        </div>
 
-          <div className="inline-flex w-full items-center justify-center mt-[30px]">
-            <p
-              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
-                active === 0 ? "block" : "hidden"
-              }`}
-            >
-              Say goodbye to spreadsheets and calculators!
-            </p>
-
-            <p
-              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
-                active === 1 ? "block" : "hidden"
-              }`}
-            >
-              Get Accurate Quotes by Just Entering Rice and Destination Port
-            </p>
-
-            <p
-              className={`mb-0 font-sans font-bold text-lg text-pwip-primary text-center ${
-                active === 2 ? "block" : "hidden"
-              }`}
-            >
-              Customize the costing, and share or download with your customer
+        <div className="px-5 w-full inline-flex flex-col items-center justify-center space-y-[24px] mt-[42px] bg-white">
+          <button
+            onClick={() => handleLogin()}
+            className="w-full rounded-md py-3 px-4 bg-pwip-v2-primary-600 text-pwip-white-100 text-center text-sm font-bold"
+          >
+            Get started
+          </button>
+          <div className="w-full max-w-[85%]">
+            <p className="text-center font-[400] text-sm">
+              By logging in you accept our terms of uses and privacy policy
             </p>
           </div>
         </div>
-
-        <button
-          onClick={() => handleLogin()}
-          className="w-full rounded-md py-3 px-4 bg-pwip-primary text-pwip-white-100 text-center text-sm font-bold"
-        >
-          Login / Sign up
-        </button>
       </div>
     </React.Fragment>
   );
