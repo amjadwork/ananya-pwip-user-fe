@@ -24,6 +24,9 @@ const AppLayout = ({ children }) => {
   const { openToastMessage, startLoading, stopLoading } = useOverlayContext();
 
   const [activeRoute, setActiveRoute] = React.useState("");
+  const [lastScrollTop, setLastScrollTop] = React.useState(0);
+  const [scrollDirection, setScrollDirection] = React.useState("up");
+
   // const [deferredPrompt, setDeferredPrompt] = React.useState(null);
 
   React.useEffect(() => {
@@ -62,6 +65,35 @@ const AppLayout = ({ children }) => {
       })
     );
   }, []);
+
+  React.useEffect(() => {
+    // Function to handle the scroll event
+    const handleScroll = () => {
+      // Get the current scroll position
+      const currentScrollTop =
+        window.scrollY || document.documentElement.scrollTop;
+
+      // Compare with the previous scroll position
+      if (currentScrollTop > lastScrollTop) {
+        // console.log("Scrolling Down");
+        setScrollDirection("down");
+      } else if (currentScrollTop < lastScrollTop) {
+        // console.log("Scrolling Up");
+        setScrollDirection("up");
+      }
+
+      // Update the last scroll position
+      setLastScrollTop(currentScrollTop);
+    };
+
+    // Attach the scroll event listener
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollTop]); // Dependency array to ensure the effect runs only when lastScrollTop changes
 
   // React.useEffect(() => {
   //   const handleBeforeInstallPrompt = (event) => {
@@ -126,7 +158,7 @@ const AppLayout = ({ children }) => {
         )} */}
 
         {!hideBottomBarAtRoutes.includes(activeRoute) && !router?.query?.id ? (
-          <BottomNavBar />
+          <BottomNavBar scrollDirection={scrollDirection} />
         ) : null}
 
         {shipmentTerms?.shipmentTerm?.showShipmentTermDropdown ? (

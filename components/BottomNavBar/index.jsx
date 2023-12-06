@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 import { options } from "@/constants/bottombarOptions";
 
-export function BottomNavBar() {
+export function BottomNavBar({ scrollDirection = "up" }) {
   const router = useRouter();
 
   const [activeRoute, setActiveRoute] = React.useState("");
@@ -14,7 +14,9 @@ export function BottomNavBar() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 z-50 w-full h-16 bg-white"
+      className={`fixed bottom-0 left-0 z-50 w-full h-16 bg-white transition-all ${
+        scrollDirection === "up" ? "translate-y-0" : "translate-y-16"
+      }`}
       style={{
         boxShadow: "12px -3px 29px 17px rgba(0, 0, 0, 0.08)",
       }}
