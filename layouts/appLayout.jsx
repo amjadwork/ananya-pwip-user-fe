@@ -158,7 +158,10 @@ const AppLayout = ({ children }) => {
         )} */}
 
         {!hideBottomBarAtRoutes.includes(activeRoute) && !router?.query?.id ? (
-          <BottomNavBar scrollDirection={scrollDirection} />
+          <BottomNavBar
+            scrollDirection={scrollDirection}
+            lastScrollTop={lastScrollTop}
+          />
         ) : null}
 
         {shipmentTerms?.shipmentTerm?.showShipmentTermDropdown ? (
