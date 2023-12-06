@@ -51,6 +51,7 @@ body {
 
 body {
   margin-top: constant(safe-area-inset-top);
+  padding-bottom: constant(safe-area-inset-bottom);
 }
 
 html,
