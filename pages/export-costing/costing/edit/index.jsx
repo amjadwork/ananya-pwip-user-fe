@@ -806,9 +806,9 @@ function EditCosting() {
                             value: values?.ofc,
                             showDescription: values?.ofc ? true : false,
                             fieldDescription: `OFC is calculated per container basis, 1 container is 26 tonnes, so OFC will be ₹${(
-                              values?.ofc / 26
+                              values?.ofc * 26
                             ).toFixed(2)} ($${inrToUsd(
-                              values?.ofc / 26,
+                              values?.ofc * 26,
                               forexRate.USD
                             )}) per container`,
                           },
@@ -913,9 +913,9 @@ function EditCosting() {
                             value: values?.shl,
                             showDescription: true,
                             fieldDescription: `SHL is calculated per container basis, 1 container is 26 tonnes, so SHL will be ₹${(
-                              values?.shl / 26
+                              values?.shl * 26
                             ).toFixed(2)} ($${inrToUsd(
-                              values?.shl / 26,
+                              values?.shl * 26,
                               forexRate.USD
                             )}) per container`,
                           },
@@ -936,9 +936,9 @@ function EditCosting() {
                             value: values?.cfsHandling,
                             showDescription: true,
                             fieldDescription: `CHA is calculated per container basis, 1 container is 26 tonnes, so CHA will be ₹${(
-                              values?.cfsHandling / 26
+                              values?.cfsHandling * 26
                             ).toFixed(2)} ($${inrToUsd(
-                              values?.cfsHandling / 26,
+                              values?.cfsHandling * 26,
                               forexRate.USD
                             )}) per container`,
                           },
@@ -1094,7 +1094,7 @@ function EditCosting() {
 
                                       if (showSecondInput) {
                                         secondFieldDefaultValue =
-                                          field?.value / 26;
+                                          field?.value * 26;
                                       }
 
                                       return (
@@ -1257,7 +1257,7 @@ function EditCosting() {
                                                     >
                                                       <div
                                                         onClick={() => {
-                                                          bottomSheetInputRef.current.focus();
+                                                          bottomSheetInputRef?.current?.focus();
 
                                                           if (showSecondInput) {
                                                             const elementOne =
@@ -1313,7 +1313,7 @@ function EditCosting() {
                                                                 bottomSheetSecondaryInputRef.current.value =
                                                                   (
                                                                     e.target
-                                                                      .value /
+                                                                      .value *
                                                                     26
                                                                   ).toFixed(2);
 
@@ -1330,7 +1330,7 @@ function EditCosting() {
                                                                     "$" +
                                                                     `${inrToUsd(
                                                                       e.target
-                                                                        .value /
+                                                                        .value *
                                                                         26,
                                                                       forexRate.USD
                                                                     )}`;
@@ -1515,7 +1515,7 @@ function EditCosting() {
                                                                 bottomSheetInputRef.current.value =
                                                                   Math.ceil(
                                                                     e.target
-                                                                      .value *
+                                                                      .value /
                                                                       26
                                                                   );
 
@@ -1627,7 +1627,7 @@ function EditCosting() {
                                                 openBottomSheet(
                                                   content,
                                                   () => {
-                                                    bottomSheetInputRef.current.focus();
+                                                    bottomSheetInputRef?.current?.focus();
                                                   },
                                                   true
                                                 );
