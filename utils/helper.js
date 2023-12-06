@@ -7,7 +7,7 @@ export function inrToUsd(inrAmount, exchangeRate) {
 }
 
 export let api = axios.create({
-  baseURL: "https://api-ec.pwip.co/", // Replace with your API base URL
+  baseURL: "https://api-ec.pwip.co/api", // Replace with your API base URL
   timeout: 5000,
 });
 
