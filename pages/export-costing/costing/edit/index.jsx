@@ -384,7 +384,6 @@ function EditCosting() {
 
   useEffect(() => {
     if (formik && formik.current && customCostingSelection) {
-      console.log("customCostingSelection", customCostingSelection);
       const formikRef = formik.current;
 
       const formValues = formikRef?.values || {};
@@ -1359,11 +1358,6 @@ function EditCosting() {
                                                                 field?.name ===
                                                                 "containersCount"
                                                               ) {
-                                                                // console.log(
-                                                                //   "customCostingSelection",
-                                                                //   customCostingSelection,
-                                                                //   values
-                                                                // );
                                                                 if (
                                                                   customCostingSelection.shlData &&
                                                                   customCostingSelection.chaData &&
@@ -2086,7 +2080,6 @@ function EditCosting() {
                         givenData?._variantId?.sourceRates?._sourceId ||
                         givenData?._variantId?.sourceObject?._id;
 
-                      console.log(givenData);
                       const payload =
                         generatePayloadForCustomCosting(givenData);
                       dispatch(generateCustomCostingRequest(payload));

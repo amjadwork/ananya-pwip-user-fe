@@ -753,7 +753,7 @@ function CostingOverview() {
     closeBottomSheet();
     axios
       .post(
-        "https://api-stage.pwip.co/api/generateCostingSheet/download",
+        "https://api-ec.pwip.co/api/generateCostingSheet/download",
         {
           historyId: generatedCostingData?._id,
         },
