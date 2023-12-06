@@ -12,7 +12,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+import { apiBaseURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 import {
   generateQuickCostingRequest,
@@ -753,7 +753,7 @@ function CostingOverview() {
     closeBottomSheet();
     axios
       .post(
-        "https://api-ec.pwip.co/api/generateCostingSheet/download",
+        apiBaseURL + "api/generateCostingSheet/download",
         {
           historyId: generatedCostingData?._id,
         },

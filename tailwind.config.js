@@ -145,6 +145,7 @@ module.exports = {
     "text-yellow-200",
     "bg-yellow-800",
     "bg-pwip-v2-gray-200",
+    "z-[1000]",
   ],
   theme: {
     extend: {

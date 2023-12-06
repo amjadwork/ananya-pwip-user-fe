@@ -147,7 +147,7 @@ export function OverlayProvider({ children }) {
       )}
       {isBottomSheetOpen ? bottomSheet : null}
       {showToast && (
-        <div className="w-full h-auto left-0 bottom-[82px] fixed inline-flex items-center justify-center !z-[99] px-6">
+        <div className="w-full h-auto left-0 bottom-[82px] fixed inline-flex items-center justify-center z-[1000] px-6">
           <div
             id="toast-danger"
             className="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"

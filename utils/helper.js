@@ -1,4 +1,6 @@
 import axios from "axios";
+require("dotenv").config();
+
 // import { useDispatch } from "react-redux";
 // import { useRouter } from "next/router";
 
@@ -6,8 +8,10 @@ export function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);
 }
 
+export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-stage.pwip.co/";
+
 export let api = axios.create({
-  baseURL: "https://api-ec.pwip.co/api", // Replace with your API base URL
+  baseURL: apiBaseURL + "api", // Replace with your API base URL
   timeout: 5000,
 });
 
