@@ -56,8 +56,8 @@ function LearnDetail() {
 
         <meta name="theme-color" content="#1B1B1B" />
 
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="manifest" href="/manifest.json" /> */}
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
       <AppLayout>

@@ -1,10 +1,10 @@
 {
-  "name": "pwip app",
-  "short_name": "pwip app",
+  "name": "PWIP App",
+  "short_name": "PWIP App",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#ffffff",
-  "background_color": "#005F81",
+  "background_color": "#1B6EA7",
   "fullscreen": false,
   "icons": [
     {

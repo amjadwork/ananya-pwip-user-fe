@@ -24,6 +24,8 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
                 content="default"
               />
               <meta name="theme-color" content="#FFFFFF" />
+              <link rel="manifest" href="/manifest.json" />
+              {/* <link rel="icon" href="/favicon.ico" /> */}
             </Head>
             <Component {...pageProps} />
           </OverlayProvider>

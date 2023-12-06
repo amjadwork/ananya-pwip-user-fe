@@ -71,8 +71,8 @@ export default function Home() {
 */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="manifest" href="/manifest.json" /> */}
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
       <div className="min-h-screen flex flex-col items-center bg-white pb-[94px] hide-scroll-bar">

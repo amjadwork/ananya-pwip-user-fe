@@ -570,8 +570,8 @@ function EditCosting() {
 */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="manifest" href="/manifest.json" /> */}
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
       <AppLayout>
