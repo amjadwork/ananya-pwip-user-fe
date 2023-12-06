@@ -75,7 +75,7 @@ export default function Home() {
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
-      <div className="min-h-screen flex flex-col items-center bg-white pb-[94px] hide-scroll-bar">
+      <div className="min-h-screen flex flex-col items-center bg-white pb-[82px] hide-scroll-bar">
         <div className="inline-flex flex-col items-center h-full w-full">
           <div className="inline-flex justify-start items-center w-full px-5 py-3">
             <img
@@ -123,10 +123,10 @@ export default function Home() {
               </div>
             </div>
             <div className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg py-[24px]">
-              <div className="duration-700 ease-in-out h-[332px]">
+              <div className="duration-700 ease-in-out h-[210px]">
                 <img
                   src="/assets/images/onboarding/one.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
                     active === 0 ? "block" : "hidden"
                   }`}
                   alt="onboarding 1 image"
@@ -134,7 +134,7 @@ export default function Home() {
 
                 <img
                   src="/assets/images/onboarding/two.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
                     active === 1 ? "block" : "hidden"
                   }`}
                   alt="onboarding 2 image"
@@ -142,7 +142,7 @@ export default function Home() {
 
                 <img
                   src="/assets/images/onboarding/three.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[332px] w-full ${
+                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
                     active === 2 ? "block" : "hidden"
                   }`}
                   alt="onboarding 3 image"
@@ -154,7 +154,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setActive(0)}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 0 ? "bg-pwip-v2-gray-200 !w-2" : ""
+                  active !== 0 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
@@ -162,7 +162,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setActive(1)}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 1 ? "bg-pwip-v2-gray-200 !w-2" : ""
+                  active !== 1 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
@@ -170,7 +170,7 @@ export default function Home() {
                 type="button"
                 onClick={() => setActive(2)}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 2 ? "bg-pwip-v2-gray-200 !w-2" : ""
+                  active !== 2 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
             </div>
