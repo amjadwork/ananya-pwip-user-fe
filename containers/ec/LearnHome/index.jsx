@@ -320,45 +320,66 @@ const LearnHomeContainer = (props) => {
           <React.Fragment>
             <div className="h-auto min-h-[190px] w-screen overflow-hidden hide-scroll-bar py-2 px-5">
               <Slider {...sliderSettings}>
-                {[...learnData].map((items, index) => {
-                  return (
-                    <div
-                      key={`${index}_` + (index + 1 * 2)}
-                      className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
-                    >
+                {[1].map((items, index) => {
+                  if (items === 1) {
+                    return (
                       <div
-                        className="w-full h-full px-[15px] py-[18px] rounded-xl grid grid-cols-2 gap-4"
-                        style={{
-                          boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                          backdropFilter: "blur(8px)",
-                          background: `linear-gradient(88deg, #8FC7EC 1.22%, #C7E8FF 83.53%)`,
+                        key={`${index}_` + (index + 1 * 2)}
+                        className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
+                        onClick={() => {
+                          if (items === 1) {
+                            window.open("https://tally.so/r/wQRKqA", "_blank");
+                          }
                         }}
                       >
-                        <div className="overflow-hidden w-auto h-auto inline-flex flex-col">
-                          <div className="w-full">
-                            <span className="mt-[4px] text-[24px] text-pwip-v2-gray-800 font-[800] line-clamp-2">
-                              Rice & Exports
-                            </span>
+                        <div
+                          className="w-full rounded-xl h-[148px]"
+                          style={{
+                            boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                            backdropFilter: "blur(8px)",
+                            background: `linear-gradient(88deg, #8FC7EC 1.22%, #C7E8FF 83.53%)`,
+                          }}
+                        >
+                          <div className="w-full h-full">
+                            <img
+                              src="/assets/images/learn/community-banner.svg"
+                              className="w-full h-full object-cover rounded-xl"
+                            />
                           </div>
-                          <div className="mt-3">
-                            <button
-                              onClick={() => null}
-                              className="bg-pwip-v2-primary-700 rounded-lg outline-none border-none py-[3px] px-4 text-white text-xs w-auto"
-                            >
-                              Check Out
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="w-auto h-auto">
-                          <img
-                            src="https://www.thestatesman.com/wp-content/uploads/2021/09/rice-stock.jpg"
-                            className="w-full h-full object-cover rounded-xl"
-                          />
                         </div>
                       </div>
-                    </div>
-                  );
+                    );
+                  }
+
+                  if (items === 2) {
+                    return (
+                      <div
+                        key={`${index}_` + (index + 1 * 2)}
+                        className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
+                        onClick={() => {
+                          if (items === 1) {
+                            window.open("https://tally.so/r/wQRKqA", "_blank");
+                          }
+                        }}
+                      >
+                        <div
+                          className="w-full rounded-xl h-[148px]"
+                          style={{
+                            boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                            backdropFilter: "blur(8px)",
+                            background: `linear-gradient(88deg, #8FC7EC 1.22%, #C7E8FF 83.53%)`,
+                          }}
+                        >
+                          <div className="w-full h-full">
+                            <img
+                              src="/assets/images/learn/courses-banner.svg"
+                              className="w-full h-full object-cover rounded-xl"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
                 })}
               </Slider>
             </div>
