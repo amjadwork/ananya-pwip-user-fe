@@ -10,6 +10,7 @@ import {
   searchScreenFailure,
 } from "@/redux/actions/utils.actions.js";
 import { debounce } from "lodash";
+const { flag, code, name, countries } = require("country-emoji");
 
 import {
   setCostingSelection,
@@ -735,7 +736,7 @@ const SelectLocationContainer = (props) => {
                         <img src={imageURI} className="w-[24px] h-[24px]" />
                         <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
                           <span className="line-clamp-1">{items.country}</span>
-                          <span className="text-sm">🇮🇳</span>
+                          <span className="text-sm">{flag(items.country)}</span>
                         </div>
                         <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
                           {items.portName}
