@@ -16,6 +16,7 @@ import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
   resetCostingSelection,
+  resetCustomCostingSelection,
 } from "@/redux/actions/costing.actions";
 import {
   saveCostingRequest,
@@ -212,6 +213,7 @@ function SelectPortOfDestination() {
                 };
                 await dispatch(generateQuickCostingRequest(body));
                 // await dispatch(resetCostingSelection());
+                await dispatch(resetCustomCostingSelection());
                 setIsGenerated(true);
               }
             }}

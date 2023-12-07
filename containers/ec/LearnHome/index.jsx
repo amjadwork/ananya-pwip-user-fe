@@ -320,16 +320,14 @@ const LearnHomeContainer = (props) => {
           <React.Fragment>
             <div className="h-auto min-h-[190px] w-screen overflow-hidden hide-scroll-bar py-2 px-5">
               <Slider {...sliderSettings}>
-                {[1].map((items, index) => {
+                {[1, 2].map((items, index) => {
                   if (items === 1) {
                     return (
                       <div
                         key={`${index}_` + (index + 1 * 2)}
                         className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
                         onClick={() => {
-                          if (items === 1) {
-                            window.open("https://tally.so/r/wQRKqA", "_blank");
-                          }
+                          window.open("https://tally.so/r/wQRKqA", "_blank");
                         }}
                       >
                         <div
@@ -357,9 +355,7 @@ const LearnHomeContainer = (props) => {
                         key={`${index}_` + (index + 1 * 2)}
                         className="inline-block rounded-xl transition-all pt-[2px] pb-2 px-[2px]"
                         onClick={() => {
-                          if (items === 1) {
-                            window.open("https://tally.so/r/wQRKqA", "_blank");
-                          }
+                          window.open("https://pwip.co/courses/", "_blank");
                         }}
                       >
                         <div

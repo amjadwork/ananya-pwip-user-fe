@@ -521,8 +521,10 @@ const SelectVariantContainer = (props) => {
     <React.Fragment>
       <div
         id="fixedMenuSection"
-        className={`fixed top-[56px] h-[auto] w-full z-10 py-3 ${
-          isFromCategory || isFromEdit ? "pb-[12px]" : "pb-[32px]"
+        className={`fixed ${
+          isFromEdit ? "top-[14px]" : "top-[56px]"
+        } h-[auto] w-full z-10 py-3 ${
+          isFromCategory || isFromEdit ? "pb-[18px]" : "pb-[32px]"
         } px-5`}
         style={{
           background:
