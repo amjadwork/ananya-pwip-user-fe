@@ -66,34 +66,47 @@ const AppLayout = ({ children }) => {
     );
   }, []);
 
-  React.useEffect(() => {
-    // Function to handle the scroll event
-    const handleScroll = () => {
-      // Get the current scroll position
-      const currentScrollTop =
-        window.scrollY || document.documentElement.scrollTop;
+  // Debounce function to limit the rate of execution
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
 
-      // Compare with the previous scroll position
-      if (currentScrollTop > lastScrollTop) {
-        // console.log("Scrolling Down");
+  // Function to handle the scroll event with debounce
+  const handleScroll = debounce(() => {
+    // Get the current scroll position
+    const currentScrollTop =
+      window.scrollY || document.documentElement.scrollTop;
+
+    // Compare with the previous scroll position
+    if (currentScrollTop > lastScrollTop) {
+      if (scrollDirection !== "down") {
         setScrollDirection("down");
-      } else if (currentScrollTop < lastScrollTop) {
-        // console.log("Scrolling Up");
+      }
+    } else if (currentScrollTop < lastScrollTop) {
+      if (scrollDirection !== "up") {
         setScrollDirection("up");
       }
+    }
 
-      // Update the last scroll position
-      setLastScrollTop(currentScrollTop);
-    };
+    // Update the last scroll position
+    setLastScrollTop(currentScrollTop);
+  }, 10); // Adjust the delay as needed // Adjust the delay as needed
 
-    // Attach the scroll event listener
-    window.addEventListener("scroll", handleScroll);
+  React.useEffect(() => {
+    // Attach the debounced scroll event listener
+    if (handleScroll) window.addEventListener("scroll", handleScroll);
 
     // Clean up the event listener on component unmount
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [lastScrollTop]); // Dependency array to ensure the effect runs only when lastScrollTop changes
+  }, [handleScroll, lastScrollTop]); // Dependency array to ensure the effect runs only when lastScrollTop changes
 
   // React.useEffect(() => {
   //   const handleBeforeInstallPrompt = (event) => {

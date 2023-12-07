@@ -401,23 +401,46 @@ function CostingOverview() {
   const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
   const [isFixed, setIsFixed] = useState(false);
 
-  const checkY = () => {
-    const costingCardDiv = costingCardRef.current.getBoundingClientRect();
-    const startY = costingCardDiv.bottom;
-
-    if (window.scrollY > startY) {
-      setIsFixed(true);
-    } else {
-      setIsFixed(false);
-    }
+  // Debounce function to limit the rate of execution
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
   };
 
+  // const checkY = () => {
+  //   const costingCardDiv = costingCardRef?.current?.getBoundingClientRect();
+  //   if (costingCardDiv) {
+  //     const startY = costingCardDiv.bottom;
+
+  //     if (window.scrollY > startY) {
+  //       setIsFixed(true);
+  //     } else {
+  //       setIsFixed(false);
+  //     }
+  //   }
+  // };
+
+  // Function to handle scroll events with debounce
+  const checkY = debounce(() => {
+    const costingCardDiv = costingCardRef?.current?.getBoundingClientRect();
+    if (costingCardDiv) {
+      const startY = costingCardDiv.bottom;
+      setIsFixed(window.scrollY > startY);
+    }
+  }, 50); // Adjust the delay as needed
+
   useEffect(() => {
-    window.addEventListener("scroll", checkY);
+    if (checkY) window.addEventListener("scroll", checkY);
+
     return () => {
       window.removeEventListener("scroll", checkY);
     };
-  }, []);
+  }, [checkY]);
 
   React.useEffect(() => {
     setComponentShipmentTerm(shipmentTerm);
@@ -1234,6 +1257,17 @@ function CostingOverview() {
       </AppLayout>
     </React.Fragment>
   );
+}
+
+export async function getServerSideProps() {
+  // Fetch data from an API or other source
+
+  // Pass the data as props to the component
+  return {
+    props: {
+      serverSide: true,
+    },
+  };
 }
 
 export default withAuth(CostingOverview);
