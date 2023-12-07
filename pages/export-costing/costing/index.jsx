@@ -689,9 +689,16 @@ function CostingOverview() {
                   key={items.label + index}
                   onClick={async () => {
                     const body = {
-                      destinationPortId: selectedCosting.portOfDestination._id,
-                      sourceId: selectedCosting.product.sourceRates._sourceId,
-                      sourceRateId: selectedCosting.product.sourceRates._id,
+                      destinationPortId:
+                        generatedCostingData?.details?.destinationObject?._id,
+                      sourceId:
+                        generatedCostingData?.details?.sourceObject?._id,
+                      sourceRateId:
+                        generatedCostingData?.details?.variantObject?.sourceRates?.find(
+                          (s) =>
+                            s._sourceId ===
+                            generatedCostingData?.details?.sourceObject?._id
+                        )?._id,
                       shipmentTermType: shipmentTerm || "FOB",
                       unit: items?.value || "mt",
                     };
