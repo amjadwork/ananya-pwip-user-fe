@@ -403,40 +403,40 @@ const LearnHomeContainer = (props) => {
 
                 if (items?.title === "Qatar's Rice Export Trade Secret") {
                   image =
-                    "/assets/images/learn/qatar-rice-export-trade-secret.svg";
+                    "/assets/images/learn/qatar-rice-export-trade-secret.png";
                 }
 
                 if (
                   items?.title === "ISO Certification for Rice Exporters Guide"
                 ) {
-                  image = "/assets/images/learn/iso-certification.svg";
+                  image = "/assets/images/learn/iso-certification.png";
                 }
 
                 if (
                   items?.title ===
                   "How Many Types of Rice Can You Name? Unbelievable!"
                 ) {
-                  image = "/assets/images/learn/75-variety.svg";
+                  image = "/assets/images/learn/75-variety.png";
                 }
 
                 if (
                   items?.title ===
                   "Guide to 1121 Basmati Rice for Beginners | Everything You Need to Know"
                 ) {
-                  image = "/assets/images/learn/longest-grain.svg";
+                  image = "/assets/images/learn/longest-grain.png";
                 }
 
                 if (
                   items?.title === "Double Boiled Rice: What You Need to Know"
                 ) {
-                  image = "/assets/images/learn/double-boiled.svg";
+                  image = "/assets/images/learn/double-boiled.png";
                 }
 
                 if (
                   items?.title ===
                   "Exploring Myanmar's Rice Market: A Window to Export Growth!"
                 ) {
-                  image = "/assets/images/learn/myanmar-rice.svg";
+                  image = "/assets/images/learn/myanmar-rice.png";
                 }
 
                 return (
