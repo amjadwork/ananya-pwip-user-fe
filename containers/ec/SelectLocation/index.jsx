@@ -876,6 +876,43 @@ const SelectLocationContainer = (props) => {
                         if (locationType === "origin") {
                           setFieldValue("_originId", items);
 
+                          const response = await fetchCHAandSHLandOFCCost(
+                            items?._id,
+                            formValues?._destinationId?._id ||
+                              selectedCosting.customCostingSelection
+                                .portOfDestination._id
+                          );
+
+                          if (response.cha.length) {
+                            setFieldValue(
+                              "cfsHandling",
+                              Math.floor(
+                                response?.cha[0]?.destinations[0]?.chaCharge /
+                                  containerWeight
+                              )
+                            );
+                          }
+
+                          if (response.ofc.length && shipmentTerm !== "FOB") {
+                            setFieldValue(
+                              "ofc",
+                              Math.floor(
+                                response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                  containerWeight
+                              )
+                            );
+                          }
+
+                          if (response.shl.length) {
+                            setFieldValue(
+                              "shl",
+                              Math.floor(
+                                response?.shl[0]?.destinations[0]?.shlCharge /
+                                  containerWeight
+                              )
+                            );
+                          }
+
                           if (
                             selectedCosting?.customCostingSelection?.product
                           ) {
