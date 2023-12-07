@@ -10,7 +10,7 @@ import {
   searchScreenFailure,
 } from "@/redux/actions/utils.actions.js";
 import { debounce } from "lodash";
-const { flag, code, name, countries } = require("country-emoji");
+const { flag } = require("country-emoji");
 
 import {
   setCostingSelection,
