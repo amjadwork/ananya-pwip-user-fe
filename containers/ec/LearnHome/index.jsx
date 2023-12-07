@@ -514,6 +514,22 @@ const LearnHomeContainer = (props) => {
                   </div>
                 );
               })}
+
+              {!learnData?.length && searchStringValue ? (
+                <div className="inline-flex flex-col justify-center items-center w-full h-full px-5">
+                  <img
+                    className="w-auto h-[260px]"
+                    src="/assets/images/no-state/no-result.svg"
+                  />
+                  <h2 className="text-xl text-center text-pwip-v2-primary font-[700] mt-8">
+                    No Results
+                  </h2>
+                  <p className="text-base text-center text-pwip-v2-gray-500 font-[500] mt-5">
+                    Sorry, there is no result for this search, let’s try another
+                    phrase
+                  </p>
+                </div>
+              ) : null}
             </div>
           </div>
         </React.Fragment>
