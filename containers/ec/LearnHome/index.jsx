@@ -340,7 +340,7 @@ const LearnHomeContainer = (props) => {
                         >
                           <div className="w-full h-full">
                             <img
-                              src="/assets/images/learn/community-banner.svg"
+                              src="/assets/images/learn/community-banner.png"
                               className="w-full h-full object-cover rounded-xl"
                             />
                           </div>
@@ -368,7 +368,7 @@ const LearnHomeContainer = (props) => {
                         >
                           <div className="w-full h-full">
                             <img
-                              src="/assets/images/learn/courses-banner.svg"
+                              src="/assets/images/learn/courses-banner.png"
                               className="w-full h-full object-cover rounded-xl"
                             />
                           </div>

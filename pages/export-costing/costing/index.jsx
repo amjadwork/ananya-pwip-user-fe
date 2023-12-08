@@ -365,7 +365,7 @@ function CostingOverview() {
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
-  const selectedCosting = useSelector((state) => state.costing);
+  // const selectedCosting = useSelector((state) => state.costing);
 
   const myRecentSavedCosting = useSelector(
     (state) => state.myCosting.myRecentSavedCosting

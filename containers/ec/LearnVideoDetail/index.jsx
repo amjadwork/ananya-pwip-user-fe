@@ -434,6 +434,47 @@ const LearnVideoDetailContainer = (props) => {
             {[...learnRecommendData]
               .filter((d) => d._id !== learnID)
               .map((items, index) => {
+                let image =
+                  "https://store-images.s-microsoft.com/image/apps.11879.13734281781052682.f6ae95d2-26ff-49d4-a8c8-440a26f9d100.6e86e456-aa0f-47e2-becd-b247e7862832?h=464";
+
+                if (items?.title === "Qatar's Rice Export Trade Secret") {
+                  image =
+                    "/assets/images/learn/qatar-rice-export-trade-secret.png";
+                }
+
+                if (
+                  items?.title === "ISO Certification for Rice Exporters Guide"
+                ) {
+                  image = "/assets/images/learn/iso-certification.png";
+                }
+
+                if (
+                  items?.title ===
+                  "How Many Types of Rice Can You Name? Unbelievable!"
+                ) {
+                  image = "/assets/images/learn/75-variety.png";
+                }
+
+                if (
+                  items?.title ===
+                  "Guide to 1121 Basmati Rice for Beginners | Everything You Need to Know"
+                ) {
+                  image = "/assets/images/learn/longest-grain.png";
+                }
+
+                if (
+                  items?.title === "Double Boiled Rice: What You Need to Know"
+                ) {
+                  image = "/assets/images/learn/double-boiled.png";
+                }
+
+                if (
+                  items?.title ===
+                  "Exploring Myanmar's Rice Market: A Window to Export Growth!"
+                ) {
+                  image = "/assets/images/learn/myanmar-rice.png";
+                }
+
                 return (
                   <div
                     key={items._id + index}
@@ -447,9 +488,7 @@ const LearnVideoDetailContainer = (props) => {
                   >
                     <div className="h-[110px] min-w-[112px] w-[112px] rounded-lg relative">
                       <img
-                        src={
-                          "https://store-images.s-microsoft.com/image/apps.11879.13734281781052682.f6ae95d2-26ff-49d4-a8c8-440a26f9d100.6e86e456-aa0f-47e2-becd-b247e7862832?h=464"
-                        }
+                        src={image}
                         className="bg-cover h-[110px] w-[112px] rounded-lg"
                       />
                     </div>
