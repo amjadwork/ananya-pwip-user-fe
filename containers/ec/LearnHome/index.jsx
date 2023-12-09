@@ -621,7 +621,7 @@ const LearnHomeContainer = (props) => {
                 );
               })}
 
-              {!learnData?.length && searchStringValue ? (
+              {!learnData?.length ? (
                 <div className="inline-flex flex-col justify-center items-center w-full h-full px-5">
                   <img
                     className="w-auto h-[260px]"
