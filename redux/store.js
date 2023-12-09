@@ -22,6 +22,7 @@ const persistConfig = {
     "shipmentTerm",
     "category",
     "learnList",
+    "tags",
   ], // List of reducers to persist
 };
 

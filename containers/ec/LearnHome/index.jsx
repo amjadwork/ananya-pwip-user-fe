@@ -13,6 +13,8 @@ import {
   fetchLearnIDRequest,
 } from "@/redux/actions/learn.actions.js";
 
+import { setTagsRequest } from "@/redux/actions/tags.actions.js";
+
 import { secondsToMinutes } from "@/utils/helper.js";
 
 const popularFilters = [
@@ -38,7 +40,15 @@ const popularFilters = [
   },
 ];
 
-const FilterSection = ({ inFixedBar, fixedDivRef, isFixed, searchFocus }) => {
+const FilterSection = ({
+  inFixedBar,
+  fixedDivRef,
+  isFixed,
+  searchFocus,
+  allTagsData,
+  handleFilterSelect,
+  selectedFilter,
+}) => {
   return (
     <div
       ref={fixedDivRef}
@@ -76,15 +86,44 @@ const FilterSection = ({ inFixedBar, fixedDivRef, isFixed, searchFocus }) => {
         }`}
       >
         <div className="flex flex-nowrap">
-          {[...popularFilters].map((items, index) => {
+          <div
+            className={`inline-block px-[16px] py-[4px] border-[1px] ${
+              selectedFilter === "All"
+                ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
+                : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
+            } rounded-full mr-[12px] transition-all`}
+            // className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+          >
+            <div
+              onClick={() => {
+                handleFilterSelect(null, true);
+              }}
+              className="overflow-hidden w-auto h-auto inline-flex items-center"
+            >
+              <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
+                All
+              </span>
+            </div>
+          </div>
+          {[...allTagsData].map((items, index) => {
+            const isSelected = selectedFilter?._id === items?._id;
+
             return (
               <div
-                key={items?.name + (index + 1 * 2)}
-                className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                key={items?.tagName + (index + 1 * 2)}
+                onClick={() => {
+                  handleFilterSelect(items);
+                }}
+                // className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
+                className={`inline-block px-[16px] py-[4px] border-[1px] ${
+                  isSelected
+                    ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
+                    : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
+                } rounded-full mr-[12px] transition-all`}
               >
                 <div className="overflow-hidden w-auto h-auto inline-flex items-center">
                   <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
-                    {items?.name}
+                    {items?.tagName}
                   </span>
                 </div>
               </div>
@@ -107,6 +146,8 @@ const LearnHomeContainer = (props) => {
     (state) => state.utils.searchScreenActive
   );
 
+  const tagsData = useSelector((state) => state.tags.tags);
+
   const learnListData = useSelector((state) => state.learnList.learnList) || [];
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
@@ -115,12 +156,24 @@ const LearnHomeContainer = (props) => {
   const [searchStringValue, setSearchStringValue] = React.useState("");
   const [isFixed, setIsFixed] = React.useState(false);
   const [activeSlide, setActiveSlide] = React.useState(0);
+  const [allTagsData, setAllTagsData] = React.useState([]);
+  const [selectedFilter, setSelectedFilter] = React.useState("All");
 
   useEffect(() => {
     if (learnListData) {
       setLearnData(learnListData);
     }
   }, [learnListData]);
+
+  useEffect(() => {
+    dispatch(setTagsRequest());
+  }, []);
+
+  useEffect(() => {
+    if (tagsData && tagsData.length) {
+      setAllTagsData(tagsData);
+    }
+  }, [tagsData]);
 
   const sliderSettings = {
     dots: true,
@@ -386,12 +439,39 @@ const LearnHomeContainer = (props) => {
           <div
             className={`w-full h-auto inline-flex flex-col mt-[12px] pb-[72px]`}
           >
-            {!searchScreenActive ? (
+            {!searchScreenActive && allTagsData?.length ? (
               <div className="flex overflow-x-scroll hide-scroll-bar">
                 <FilterSection
                   fixedDivRef={fixedDivRef}
                   isFixed={isFixed}
                   searchFocus={searchScreenActive}
+                  allTagsData={allTagsData}
+                  selectedFilter={selectedFilter}
+                  handleFilterSelect={(item, isAll) => {
+                    if (
+                      selectedFilter !== "All" &&
+                      selectedFilter?._id === item?._id
+                    ) {
+                      setSelectedFilter("All");
+                      setLearnData([...learnListData]);
+                      return null;
+                    }
+
+                    if (isAll && !item) {
+                      setSelectedFilter("All");
+                      setLearnData([...learnListData]);
+                    }
+
+                    if (item) {
+                      setSelectedFilter(item);
+                      const dataToFilter = [...learnListData];
+
+                      const filterTagOptions = dataToFilter.filter((d) => {
+                        return d.tags.includes(item?._id);
+                      });
+                      setLearnData([...filterTagOptions]);
+                    }
+                  }}
                 />
               </div>
             ) : null}
@@ -461,17 +541,43 @@ const LearnHomeContainer = (props) => {
                       <div className="w-auto h-auto relative">
                         <div className="inline-flex items-center justify-between w-full">
                           <div className="inline-flex items-center space-x-2">
-                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
-                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                                Rice
-                              </span>
-                            </div>
+                            {allTagsData.map((tag) => {
+                              if (
+                                items?.tags?.length > 2 &&
+                                items?.tags.slice(0, 2)?.includes(tag?._id)
+                              ) {
+                                return (
+                                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                    <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                      {tag?.tagName || ""}
+                                    </span>
+                                  </div>
+                                );
+                              }
 
-                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
-                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                                Exports
-                              </span>
-                            </div>
+                              if (
+                                items?.tags?.length <= 2 &&
+                                items?.tags?.includes(tag?._id)
+                              ) {
+                                return (
+                                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                    <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                      {tag?.tagName || ""}
+                                    </span>
+                                  </div>
+                                );
+                              }
+
+                              return null;
+                            })}
+
+                            {items?.tags?.length > 2 ? (
+                              <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                  + 1
+                                </span>
+                              </div>
+                            ) : null}
                           </div>
 
                           <svg

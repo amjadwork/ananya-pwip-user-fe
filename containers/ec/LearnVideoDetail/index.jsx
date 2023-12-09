@@ -231,10 +231,12 @@ const LearnVideoDetailContainer = (props) => {
   const learnID = useSelector((state) => state.learnList.id) || [];
   const learnDetail = useSelector((state) => state.learnList.detail) || [];
   const learnListData = useSelector((state) => state.learnList.learnList) || [];
+  const tagsData = useSelector((state) => state.tags.tags);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [learnDetailData, setLearnDetailData] = React.useState(null);
   const [learnRecommendData, setLearnRecommendData] = React.useState([]);
+  const [allTagsData, setAllTagsData] = React.useState([]);
 
   const handleShare = () => {
     if (navigator && navigator.share) {
@@ -248,6 +250,12 @@ const LearnVideoDetailContainer = (props) => {
         .catch((error) => console.log("Error sharing", error));
     }
   };
+
+  useEffect(() => {
+    if (tagsData && tagsData.length) {
+      setAllTagsData(tagsData);
+    }
+  }, [tagsData]);
 
   useEffect(() => {
     if (learnListData) {
@@ -321,20 +329,46 @@ const LearnVideoDetailContainer = (props) => {
               </svg> */}
             </div>
           </div>
-
           <div className="inline-flex items-center justify-between w-full h-auto mt-2">
             <div className="inline-flex items-center space-x-3">
-              <div className="inline-flex items-center">
-                <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md mr-[12px]">
-                  <span className="text-sm text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                    Rice
-                  </span>
-                </div>
-                <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md mr-[12px]">
-                  <span className="text-sm text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                    Exports
-                  </span>
-                </div>
+              <div className="inline-flex items-center space-x-3">
+                {allTagsData.map((tag) => {
+                  if (
+                    learnDetailData?.tags?.length > 2 &&
+                    learnDetailData?.tags.slice(0, 2)?.includes(tag?._id)
+                  ) {
+                    return (
+                      <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                        <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                          {tag?.tagName || ""}
+                        </span>
+                      </div>
+                    );
+                  }
+
+                  if (
+                    learnDetailData?.tags?.length <= 2 &&
+                    learnDetailData?.tags?.includes(tag?._id)
+                  ) {
+                    return (
+                      <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                        <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                          {tag?.tagName || ""}
+                        </span>
+                      </div>
+                    );
+                  }
+
+                  return null;
+                })}
+
+                {learnDetailData?.tags?.length > 2 ? (
+                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                    <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                      + 1
+                    </span>
+                  </div>
+                ) : null}
               </div>
 
               <div className="inline-flex items-center flex-col w-full">
