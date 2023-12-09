@@ -530,17 +530,43 @@ const LearnVideoDetailContainer = (props) => {
                       <div className="w-auto h-auto relative">
                         <div className="inline-flex items-center justify-between w-full">
                           <div className="inline-flex items-center space-x-2">
-                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
-                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                                Rice
-                              </span>
-                            </div>
+                            {allTagsData.map((tag) => {
+                              if (
+                                items?.tags?.length > 2 &&
+                                items?.tags.slice(0, 2)?.includes(tag?._id)
+                              ) {
+                                return (
+                                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                    <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                      {tag?.tagName || ""}
+                                    </span>
+                                  </div>
+                                );
+                              }
 
-                            <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
-                              <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
-                                Exports
-                              </span>
-                            </div>
+                              if (
+                                items?.tags?.length <= 2 &&
+                                items?.tags?.includes(tag?._id)
+                              ) {
+                                return (
+                                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                    <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                      {tag?.tagName || ""}
+                                    </span>
+                                  </div>
+                                );
+                              }
+
+                              return null;
+                            })}
+
+                            {items?.tags?.length > 2 ? (
+                              <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
+                                  + 1
+                                </span>
+                              </div>
+                            ) : null}
                           </div>
 
                           <svg
