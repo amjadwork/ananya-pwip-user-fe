@@ -1,10 +1,10 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { useSelector, useDispatch } from "react-redux";
-import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
+// import { useRouter } from "next/router";
+import { useSelector } from "react-redux";
+// import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
 
 import { useOverlayContext } from "@/context/OverlayContext";
-import { api, inrToUsd, convertUnits } from "@/utils/helper";
+import { convertUnits } from "@/utils/helper";
 
 function getUniqueBags(inputArray) {
   const uniqueBagsMap = new Map();
@@ -21,10 +21,10 @@ function getUniqueBags(inputArray) {
 }
 
 const SelectBagsContainer = (props) => {
-  const router = useRouter();
-  const dispatch = useDispatch();
+  // const router = useRouter();
+  // const dispatch = useDispatch();
 
-  const selectedCosting = useSelector((state) => state.costing);
+  // const selectedCosting = useSelector((state) => state.costing);
   const packagingBags = useSelector((state) => state.bags);
 
   const { closeBottomSheet } = useOverlayContext();
@@ -65,7 +65,7 @@ const SelectBagsContainer = (props) => {
         }  h-[auto] w-full bg-white z-10 py-6 px-5`}
       >
         <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
-          Select Bag type
+          Select bag type
         </h2>
         <input
           placeholder="Ex: PP Woven"

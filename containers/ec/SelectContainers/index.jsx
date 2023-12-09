@@ -49,7 +49,7 @@ const SelectCargoContainersContainer = (props) => {
         }  h-[auto] w-full bg-white z-10 py-6 px-5`}
       >
         <h2 className="text-base text-pwip-gray-900 font-sans font-bold">
-          Select Bag type
+          Select container type
         </h2>
         <input
           placeholder="Ex: PP Woven"

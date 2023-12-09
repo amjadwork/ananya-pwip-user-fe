@@ -129,7 +129,7 @@ export function Header(props) {
           {(["more", "costing"].includes(activeRoute) || router?.query?.id) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
-              onClick={() => {
+              onClick={async () => {
                 if (router?.query?.id) {
                   openToastMessage({
                     type: "info",
@@ -139,6 +139,8 @@ export function Header(props) {
                 }
 
                 if (activeRoute === "costing" && !router?.query?.id) {
+                  await dispatch(resetCustomCostingSelection());
+
                   router.push("/export-costing/costing/edit");
                 }
 

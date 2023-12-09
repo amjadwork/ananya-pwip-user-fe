@@ -214,9 +214,9 @@ const LearnHomeContainer = (props) => {
 
   const debouncedCheckY = debounce(checkY, 5);
 
-  // const handleInputDoneClick = (event) => {
-  //   event.target.blur();
-  // };
+  const handleInputDoneClick = (event) => {
+    event.target.blur();
+  };
 
   React.useEffect(() => {
     window.addEventListener("scroll", debouncedCheckY);
@@ -386,7 +386,7 @@ const LearnHomeContainer = (props) => {
           <div
             className={`w-full h-auto inline-flex flex-col mt-[12px] pb-[72px]`}
           >
-            {/* {!searchScreenActive ? (
+            {!searchScreenActive ? (
               <div className="flex overflow-x-scroll hide-scroll-bar">
                 <FilterSection
                   fixedDivRef={fixedDivRef}
@@ -394,7 +394,7 @@ const LearnHomeContainer = (props) => {
                   searchFocus={searchScreenActive}
                 />
               </div>
-            ) : null} */}
+            ) : null}
 
             <div className="w-full h-full space-y-[24px]">
               {[...learnData].map((items, index) => {

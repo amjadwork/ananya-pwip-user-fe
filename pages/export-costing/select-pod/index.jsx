@@ -80,7 +80,7 @@ function SelectPortOfDestination() {
 
     if (selectedProductForCosting) {
       dispatch(fetchDestinationRequest());
-      dispatch(fetchOriginRequest());
+      // dispatch(fetchOriginRequest());
     }
   }, [selectedProductForCosting]);
 

@@ -951,9 +951,7 @@ const SelectLocationContainer = (props) => {
                   >
                     <div className="min-h-[110px] min-w-[112px] rounded-lg relative">
                       <img
-                        src={
-                          "https://images-global.nhst.tech/image/Wms0M1VtY2oycjlOd1N5d2RoUTM5MnZmZGQwVXlhNjlmZmJZWkRTVS9rTT0=/nhst/binary/c739d40ffe66628a1e8196f515030223"
-                        }
+                        src={items.imageUrl}
                         className="bg-cover h-[110px] w-[112px] rounded-lg"
                       />
                     </div>

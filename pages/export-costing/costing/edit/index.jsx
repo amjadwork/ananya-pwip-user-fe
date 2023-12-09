@@ -281,14 +281,18 @@ function EditCosting() {
       customCostingSelectionFromSelector &&
       !customCostingSelection?.product
     ) {
+      setSelectedUnitForPayload(
+        customCostingSelectionFromSelector?.unit || "mt"
+      );
+      console.log("here", customCostingSelectionFromSelector);
       setCustomCostingSelectionItem(customCostingSelectionFromSelector);
     }
   }, [customCostingSelectionFromSelector, customCostingSelection]);
 
   const constructPage = async () => {
+    await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     await dispatch(fetchPackagingBagsRequest());
     await dispatch(fetchContainersRequest());
-    await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     setPageConstructedForInitialization(true);
   };
 
@@ -312,12 +316,12 @@ function EditCosting() {
           sourceObject: selectedMyCostingFromHistory?.details?.sourceObject,
         },
         brokenPercentage: selectedMyCostingFromHistory?.brokenPercentage || 0,
-        exMillPrice:
-          selectedMyCostingFromHistory?.details?.variantObject?.sourceRates.find(
-            (d) =>
-              d._sourceId ===
-              selectedMyCostingFromHistory?.details?.sourceObject?._id
-          )?.price,
+        exMillPrice: selectedMyCostingFromHistory?.costing?.exmillPrice,
+        // selectedMyCostingFromHistory?.details?.variantObject?.sourceRates.find(
+        //   (d) =>
+        //     d._sourceId ===
+        //     selectedMyCostingFromHistory?.details?.sourceObject?._id
+        // )?.price,
         unit: selectedMyCostingFromHistory?.unit,
         containersCount:
           selectedMyCostingFromHistory?.details?.containerCount || 1,
@@ -367,13 +371,14 @@ function EditCosting() {
     }
 
     await dispatch(saveCostingRequest(payloadBody));
-    await dispatch(resetCustomCostingSelection());
     await dispatch(fetchMyCostingFailure());
     await dispatch(fetchGeneratedCostingFailure());
     await dispatch(saveCostingFailure());
     await dispatch(updateCostingFailure());
-    router.back("/export-costing/costing");
+    await dispatch(resetCustomCostingSelection());
+
     setIsGenerated(false);
+    router.back("/export-costing/costing");
   }
 
   useEffect(() => {
@@ -391,11 +396,12 @@ function EditCosting() {
       let customProductPrice = customCostingSelection?.exMillPrice;
 
       if (customCostingSelection && customProductPrice) {
-        customProductPrice = convertUnits(
-          "kg",
-          customCostingSelection.unit,
-          customCostingSelection?.exMillPrice
-        );
+        customProductPrice = customCostingSelection?.exMillPrice;
+        // convertUnits(
+        //   "kg",
+        //   customCostingSelection.unit,
+        //   customCostingSelection?.exMillPrice
+        // );
       }
 
       let breakUpFormValues = {
@@ -887,7 +893,7 @@ function EditCosting() {
                             name: "containerWeight",
                             hideUSD: true,
                             hideUnit: false,
-                            unit: selectedUnitForPayload,
+                            unit: "mt",
                             placeholder: "",
                             value: values?.containerWeight || "",
                           },
@@ -2067,10 +2073,6 @@ function EditCosting() {
                       givenData.variantCost = parseFloat(values?.costOfRice);
                       givenData.exportDutyValue =
                         parseFloat(values.exportDutyValue) || 0;
-
-                      setSelectedUnitForPayload(
-                        selectedMyCostingFromHistory?.unit || "mt"
-                      );
 
                       givenData.sourceId =
                         givenData?._variantId?.sourceRates?._sourceId ||
