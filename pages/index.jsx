@@ -91,10 +91,10 @@ export default function Home() {
                   active === 0 ? "block" : "hidden"
                 }`}
               >
-                <h2>Costings made easy.</h2>
+                <h2>Costing made easy.</h2>
                 <p className="text-sm font-[400]">
-                  We have simplified generating costings for your export
-                  business, it just takes 2 clicks.
+                  Discover 100+ Indian varieties, elevating your exports with
+                  diverse choices from regions across India.
                 </p>
               </div>
 
@@ -105,8 +105,8 @@ export default function Home() {
               >
                 <h2>Customize as you need.</h2>
                 <p className="text-sm font-[400]">
-                  We have simplified generating costings for your export
-                  business, it just takes 2 clicks.
+                  Take charge of costs, editing expenses from Port of
+                  Destination to custom charges, ensuring profitability.
                 </p>
               </div>
 
@@ -117,33 +117,33 @@ export default function Home() {
               >
                 <h2>Experience designed for you.</h2>
                 <p className="text-sm font-[400]">
-                  We have simplified generating costings for your export
-                  business, it just takes 2 clicks.
+                  Generate costings effortlessly – just 2 clicks away.
+                  Streamline your global business journey.
                 </p>
               </div>
             </div>
-            <div className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg py-[24px]">
-              <div className="duration-700 ease-in-out h-[210px]">
+            <div className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg pt-[24px]">
+              <div className="duration-700 ease-in-out h-auto inlin-flex items-end">
                 <img
                   src="/assets/images/onboarding/one.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
-                    active === 0 ? "block" : "hidden"
+                  className={`h-[320px] w-full transition-all ${
+                    active === 0 ? "block opacity-1" : "hidden opacity-0"
                   }`}
                   alt="onboarding 1 image"
                 />
 
                 <img
                   src="/assets/images/onboarding/two.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
-                    active === 1 ? "block" : "hidden"
+                  className={`h-[320px] w-full transition-all ${
+                    active === 1 ? "block opacity-1" : "hidden opacity-0"
                   }`}
                   alt="onboarding 2 image"
                 />
 
                 <img
                   src="/assets/images/onboarding/three.svg"
-                  className={`absolute block -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 h-[210px] w-full ${
-                    active === 2 ? "block" : "hidden"
+                  className={`h-[320px] w-full transition-all ${
+                    active === 2 ? "block opacity-1" : "hidden opacity-0"
                   }`}
                   alt="onboarding 3 image"
                 />
