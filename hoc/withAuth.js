@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 const withAuth = (WrappedComponent) => {
@@ -10,13 +10,15 @@ const withAuth = (WrappedComponent) => {
     const dispatch = useDispatch();
     const { data: session, status } = useSession();
 
+    const authToken = useSelector((state) => state.auth.token);
+
     useEffect(() => {
-      if (status === "authenticated") {
+      if (status === "authenticated" && !authToken) {
         dispatch(
           handleSettingAuthDataRequest(session.user, session.accessToken)
         );
       }
-    }, [status]);
+    }, [status, authToken]);
 
     if (status === "loading") {
       return (
