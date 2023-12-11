@@ -14,8 +14,8 @@ const persistConfig = {
   storage, // Storage engine
   whitelist: [
     "auth",
-    "products",
-    "locations",
+    // "products",
+    // "locations",
     "costing",
     "bags",
     "myCosting",
