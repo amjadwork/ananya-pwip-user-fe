@@ -33,42 +33,7 @@ export default function Home() {
     beforeChange: function (prev, next) {
       setActiveSlide(next);
     },
-    // customPaging: function (i) {
-    //   return (
-    //     <div
-    //       className={`${
-    //         activeSlide === i ? "w-[18px] bg-[#003559]" : "w-[8px] bg-[#E1E0E0]"
-    //       } h-[8px] rounded-full`}
-    //     >
-    //       {/*  */}
-    //     </div>
-    //   );
-    // },
   };
-
-  // const handleTouchStart = (e) => {
-  //   setTouchStartX(e.touches[0].clientX);
-  // };
-
-  // const handleTouchMove = (e) => {
-  //   setTouchEndX(e.touches[0].clientX);
-  // };
-
-  // const handleTouchEnd = () => {
-  //   const swipeDistance = touchEndX - touchStartX;
-
-  //   if (swipeDistance > 0) {
-  //     console.log("Swiped right");
-  //     window.clearInterval(timeoutId);
-
-  //     // setActive((prevActive) => (prevActive - 1) % onboardingIndex.length);
-  //   } else if (swipeDistance < 0) {
-  //     console.log("Swiped left");
-  //     window.clearInterval(timeoutId);
-
-  //     // setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
-  //   }
-  // };
 
   const handleNavigation = (path) => {
     router.push(path);

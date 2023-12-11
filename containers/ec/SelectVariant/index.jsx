@@ -8,7 +8,10 @@ import {
   fetchDestinationRequest,
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
-import { fetchCategoryRequest } from "@/redux/actions/category.actions";
+import {
+  fetchCategoryRequest,
+  fetchCategoryFailure,
+} from "@/redux/actions/category.actions";
 
 import {
   setCostingSelection,
@@ -392,6 +395,7 @@ const SelectVariantContainer = (props) => {
     if (element) {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
+      dispatch(fetchCategoryFailure());
     }
   }, []);
 
