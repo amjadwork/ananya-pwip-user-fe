@@ -49,43 +49,43 @@ const lineBetweenLocation = (
   </svg>
 );
 
-const popularFilters = [
-  {
-    name: "Basmati",
-    icon: "one.png",
-  },
-  {
-    name: "Paraboiled",
-    icon: "two.png",
-  },
-  {
-    name: "Raw",
-    icon: "three.png",
-  },
-  {
-    name: "Steam",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
+// const popularFilters = [
+//   {
+//     name: "Basmati",
+//     icon: "one.png",
+//   },
+//   {
+//     name: "Paraboiled",
+//     icon: "two.png",
+//   },
+//   {
+//     name: "Raw",
+//     icon: "three.png",
+//   },
+//   {
+//     name: "Steam",
+//     icon: "four.png",
+//   },
+//   {
+//     name: "Steam",
+//     icon: "five.png",
+//   },
+// ];
 
-const units = [
-  {
-    label: "Metric ton",
-    value: "mt",
-  },
-  {
-    label: "Killogram",
-    value: "kg",
-  },
-  {
-    label: "Quintal",
-    value: "qt",
-  },
-];
+// const units = [
+//   {
+//     label: "Metric ton",
+//     value: "mt",
+//   },
+//   {
+//     label: "Killogram",
+//     value: "kg",
+//   },
+//   {
+//     label: "Quintal",
+//     value: "qt",
+//   },
+// ];
 
 function MyCosting() {
   const router = useRouter();

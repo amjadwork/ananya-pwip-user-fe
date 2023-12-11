@@ -6,12 +6,42 @@ import { useDispatch } from "react-redux";
 
 import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
+const onboardingIndex = [0, 1, 2];
+
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
   const dispatch = useDispatch();
 
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
   const [active, setActive] = useState(0);
+
+  let blurOccurred = null;
+
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    const swipeDistance = touchEndX - touchStartX;
+
+    if (swipeDistance > 0) {
+      console.log("Swiped right");
+      window.clearTimeout(blurOccurred);
+
+      setActive((prevActive) => (prevActive - 1) % onboardingIndex.length);
+    } else if (swipeDistance < 0) {
+      console.log("Swiped left");
+      window.clearTimeout(blurOccurred);
+
+      setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
+    }
+  };
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -41,15 +71,13 @@ export default function Home() {
     }
   }, [session]);
 
-  const onboardingIndex = [0, 1, 2];
-
   useEffect(() => {
-    const interval = setInterval(() => {
+    blurOccurred = setInterval(() => {
       setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
     }, 5000);
 
     return () => {
-      clearInterval(interval);
+      clearInterval(blurOccurred);
     };
   }, []);
 
@@ -91,7 +119,7 @@ export default function Home() {
                   active === 0 ? "block" : "hidden"
                 }`}
               >
-                <h2>Costing made easy.</h2>
+                <h2>Multiple varieties to choose.</h2>
                 <p className="text-sm font-[400]">
                   Discover 100+ Indian varieties, elevating your exports with
                   diverse choices from regions across India.
@@ -103,10 +131,10 @@ export default function Home() {
                   active === 1 ? "block" : "hidden"
                 }`}
               >
-                <h2>Customize as you need.</h2>
+                <h2>No limits on shipment.</h2>
                 <p className="text-sm font-[400]">
-                  Take charge of costs, editing expenses from Port of
-                  Destination to custom charges, ensuring profitability.
+                  Select your destination port with ease for seamless and
+                  efficient management of your shipments.
                 </p>
               </div>
 
@@ -115,14 +143,20 @@ export default function Home() {
                   active === 2 ? "block" : "hidden"
                 }`}
               >
-                <h2>Experience designed for you.</h2>
+                <h2>Costing made simple.</h2>
                 <p className="text-sm font-[400]">
                   Generate costings effortlessly – just 2 clicks away.
                   Streamline your global business journey.
                 </p>
               </div>
             </div>
-            <div className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg pt-[24px]">
+            <div
+              id="swipeElement"
+              className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg pt-[24px]"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
               <div className="duration-700 ease-in-out h-auto inlin-flex items-end">
                 <img
                   src="/assets/images/onboarding/one.svg"
@@ -152,7 +186,10 @@ export default function Home() {
             <div className="flex items-center justify-center space-x-[4px] w-full mt-[24px]">
               <button
                 type="button"
-                onClick={() => setActive(0)}
+                onClick={() => {
+                  window.clearTimeout(blurOccurred);
+                  setActive(0);
+                }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
                   active !== 0 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
@@ -160,7 +197,10 @@ export default function Home() {
 
               <button
                 type="button"
-                onClick={() => setActive(1)}
+                onClick={() => {
+                  window.clearTimeout(blurOccurred);
+                  setActive(1);
+                }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
                   active !== 1 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
@@ -168,7 +208,10 @@ export default function Home() {
 
               <button
                 type="button"
-                onClick={() => setActive(2)}
+                onClick={() => {
+                  window.clearTimeout(blurOccurred);
+                  setActive(2);
+                }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
                   active !== 2 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
