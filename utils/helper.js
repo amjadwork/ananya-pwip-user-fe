@@ -190,7 +190,7 @@ export function getStateAbbreviation(stateName) {
     Meghalaya: "ML",
     Mizoram: "MZ",
     Nagaland: "NL",
-    Orissa: "OR",
+    Odisha: "OD",
     Punjab: "PB",
     Rajasthan: "RJ",
     Sikkim: "SK",
@@ -206,6 +206,7 @@ export function getStateAbbreviation(stateName) {
     Delhi: "DL",
     Lakshadweep: "LD",
     Pondicherry: "PY",
+    telangana: "TS",
   };
 
   // Convert the input to title case for better matching
