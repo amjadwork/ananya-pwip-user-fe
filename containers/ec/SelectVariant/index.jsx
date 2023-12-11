@@ -27,18 +27,26 @@ const riceCategory = [
   {
     name: "Basmati",
     color: "#CFECFF",
+    image:
+      "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Basmati.png",
   },
   {
     name: "Parboiled",
     color: "#CFE4C4",
+    image:
+      "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
   },
   {
     name: "Raw",
     color: "#E7D4C9",
+    image:
+      "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
   },
   {
     name: "Steam",
     color: "#F7EDC6",
+    image:
+      "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Steam.png",
   },
 ];
 
@@ -359,7 +367,6 @@ const SelectVariantContainer = (props) => {
   const [filterOptions, setFilterOptions] = React.useState([]);
   const [selectedFilter, setSelectedFilter] = React.useState(null);
 
-  // setFilterOptions
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
 
@@ -446,7 +453,89 @@ const SelectVariantContainer = (props) => {
       if (productList) {
         setListProductsData([...productList]);
 
-        setFilterOptions([...riceCategory]);
+        // let riceCats = riceCategory.filter((f) => {
+        //   if (filterForCategory?.productCategory?.name !== f.name) {
+        //     return f;
+        //   }
+        // });
+
+        let riceCats = [...riceCategory];
+
+        if (
+          filterForCategory?.productCategory?.name.toLowerCase() === "basmati"
+        ) {
+          riceCats = [
+            {
+              name: "Sella",
+              color: "#CFE4C4",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+            },
+            {
+              name: "Raw",
+              color: "#E7D4C9",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+            },
+            {
+              name: "Steam",
+              color: "#F7EDC6",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Steam.png",
+            },
+          ];
+        }
+
+        if (
+          filterForCategory?.productCategory?.name.toLowerCase() === "parboiled"
+        ) {
+          riceCats = [
+            {
+              name: "White",
+              color: "#CFE4C4",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+            },
+            {
+              name: "Gold",
+              color: "#E7D4C9",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+            },
+          ];
+        }
+
+        if (filterForCategory?.productCategory?.name.toLowerCase() === "raw") {
+          riceCats = [
+            {
+              name: "New",
+              color: "#CFE4C4",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+            },
+            {
+              name: "Old",
+              color: "#E7D4C9",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+            },
+          ];
+        }
+
+        if (
+          filterForCategory?.productCategory?.name.toLowerCase() === "steam"
+        ) {
+          riceCats = [
+            {
+              name: "New",
+              color: "#CFE4C4",
+              image:
+                "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+            },
+          ];
+        }
+
+        setFilterOptions([...riceCats]);
       }
     }
   }, [products, popularSourceLocationData, isFromCategory]);
@@ -725,9 +814,89 @@ const SelectVariantContainer = (props) => {
                 }
 
                 if (item?.value === "category") {
-                  const filterOpt = [...riceCategory];
+                  let riceCats = [...riceCategory];
 
-                  setFilterOptions(filterOpt);
+                  if (
+                    filterForCategory?.productCategory?.name.toLowerCase() ===
+                    "basmati"
+                  ) {
+                    riceCats = [
+                      {
+                        name: "Sella",
+                        color: "#CFE4C4",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                      },
+                      {
+                        name: "Raw",
+                        color: "#E7D4C9",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                      },
+                      {
+                        name: "Steam",
+                        color: "#F7EDC6",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Steam.png",
+                      },
+                    ];
+                  }
+
+                  if (
+                    filterForCategory?.productCategory?.name.toLowerCase() ===
+                    "parboiled"
+                  ) {
+                    riceCats = [
+                      {
+                        name: "White",
+                        color: "#CFE4C4",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                      },
+                      {
+                        name: "Gold",
+                        color: "#E7D4C9",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                      },
+                    ];
+                  }
+
+                  if (
+                    filterForCategory?.productCategory?.name.toLowerCase() ===
+                    "raw"
+                  ) {
+                    riceCats = [
+                      {
+                        name: "New",
+                        color: "#CFE4C4",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                      },
+                      {
+                        name: "Old",
+                        color: "#E7D4C9",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                      },
+                    ];
+                  }
+
+                  if (
+                    filterForCategory?.productCategory?.name.toLowerCase() ===
+                    "steam"
+                  ) {
+                    riceCats = [
+                      {
+                        name: "New",
+                        color: "#CFE4C4",
+                        image:
+                          "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                      },
+                    ];
+                  }
+
+                  setFilterOptions([...riceCats]);
                 }
               }
 
@@ -795,7 +964,7 @@ const SelectVariantContainer = (props) => {
                     >
                       <img
                         src={
-                          "assets/images/rice_cat.png"
+                          items?.image
                           // items.images[0] ||
                           // "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
                         }
@@ -974,9 +1143,89 @@ const SelectVariantContainer = (props) => {
                     }
 
                     if (item?.value === "category") {
-                      const filterOpt = [...riceCategory];
+                      let riceCats = [...riceCategory];
 
-                      setFilterOptions(filterOpt);
+                      if (
+                        filterForCategory?.productCategory?.name.toLowerCase() ===
+                        "basmati"
+                      ) {
+                        riceCats = [
+                          {
+                            name: "Sella",
+                            color: "#CFE4C4",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                          },
+                          {
+                            name: "Raw",
+                            color: "#E7D4C9",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                          },
+                          {
+                            name: "Steam",
+                            color: "#F7EDC6",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Steam.png",
+                          },
+                        ];
+                      }
+
+                      if (
+                        filterForCategory?.productCategory?.name.toLowerCase() ===
+                        "parboiled"
+                      ) {
+                        riceCats = [
+                          {
+                            name: "White",
+                            color: "#CFE4C4",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                          },
+                          {
+                            name: "Gold",
+                            color: "#E7D4C9",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                          },
+                        ];
+                      }
+
+                      if (
+                        filterForCategory?.productCategory?.name.toLowerCase() ===
+                        "raw"
+                      ) {
+                        riceCats = [
+                          {
+                            name: "New",
+                            color: "#CFE4C4",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                          },
+                          {
+                            name: "Old",
+                            color: "#E7D4C9",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Raw.png",
+                          },
+                        ];
+                      }
+
+                      if (
+                        filterForCategory?.productCategory?.name.toLowerCase() ===
+                        "steam"
+                      ) {
+                        riceCats = [
+                          {
+                            name: "New",
+                            color: "#CFE4C4",
+                            image:
+                              "https://s3.ap-south-1.amazonaws.com/ec.assets/Category_Images/Category+images+EC/Parboiled.png",
+                          },
+                        ];
+                      }
+
+                      setFilterOptions([...riceCats]);
                     }
                   }
 
