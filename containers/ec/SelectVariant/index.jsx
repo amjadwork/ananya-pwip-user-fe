@@ -19,7 +19,7 @@ import {
   searchScreenRequest,
   searchScreenFailure,
 } from "@/redux/actions/utils.actions.js";
-import { convertUnits } from "@/utils/helper";
+import { convertUnits, getStateAbbreviation } from "@/utils/helper";
 
 // import { fetchMyCostingSuccess } from "@/redux/actions/myCosting.actions.js";
 
@@ -278,16 +278,33 @@ const FilterSection = ({
                 onClick={() => {
                   handleFilterSelect(items);
                 }}
-                className={`inline-block px-[16px] py-[4px] border-[1px] ${
+                className={`inline-block whitespace-nowrap px-[16px] py-[4px] border-[1px] ${
                   isSelected
                     ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
                     : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
                 } rounded-full mr-[12px] transition-all`}
               >
-                <div className="overflow-hidden w-auto h-auto inline-flex items-center">
-                  <span className="text-sm text-pwip-v2-gray-800 font-[400] line-clamp-1">
+                <div className="overflow-hidden text-pwip-v2-gray-800 w-auto h-auto inline-flex items-center space-x-2">
+                  <span className="text-sm font-[400] whitespace-nowrap">
                     {items?.name}
                   </span>
+
+                  {isSelected && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-[18px] h-[18px]"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  )}
                 </div>
               </div>
             );
@@ -1318,7 +1335,10 @@ const SelectVariantContainer = (props) => {
 
                       <div className="inline-flex items-center justify-between w-full">
                         <span className="text-pwip-black-600 text-xs font-[400] font-sans line-clamp-1">
-                          {items.sourceRates.sourceName}
+                          {items.sourceRates.sourceName},{" "}
+                          {getStateAbbreviation(
+                            items.sourceRates.sourceState
+                          ) || ""}
                         </span>
                       </div>
                     </div>
