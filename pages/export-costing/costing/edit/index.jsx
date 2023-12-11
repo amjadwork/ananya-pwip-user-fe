@@ -794,6 +794,8 @@ function EditCosting() {
                             showCurrency: true,
                             unit: selectedUnitForPayload,
                             value: values?.transportation,
+                            showDescription: true,
+                            fieldDescription: `The cost of transport from mill (sourcing) location to the port of loading (origin)`,
                           },
                         ],
                       },
@@ -843,9 +845,9 @@ function EditCosting() {
                             name: "bagSize",
                             showCurrency: false,
                             option:
-                              packagingBags?.bags?.filter(
-                                (f) => f.bag === values?._bagId?.bag
-                              ) || [],
+                              packagingBags?.bags
+                                ?.filter((f) => f.bag === values?._bagId?.bag)
+                                .sort((a, b) => a.weight - b.weight) || [],
                             hideUSD: true,
                             placeholder: "Ex: 15kg",
                             unit: `${values?._bagId?.unit}`,

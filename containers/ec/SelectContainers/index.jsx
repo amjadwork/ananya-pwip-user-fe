@@ -52,7 +52,7 @@ const SelectCargoContainersContainer = (props) => {
           Select container type
         </h2>
         <input
-          placeholder="Ex: PP Woven"
+          placeholder="Ex: Standard Dry"
           className="h-[48px] mt-[10px] w-full rounded-md bg-pwip-primary-100 px-[18px] text-base font-sans"
         />
       </div>

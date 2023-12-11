@@ -54,6 +54,8 @@ const FilterSection = ({
   filterOptions = [],
   handleFilterSelect,
   selectedFilter,
+  isFromCategory,
+  filterForCategory,
 }) => {
   const { openBottomSheet, closeBottomSheet } = useOverlayContext();
 
@@ -78,13 +80,24 @@ const FilterSection = ({
             : "unset",
       }}
     >
-      <h2
-        className={`text-pwip-v2-primary font-sans text-base font-bold ${
-          inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
-        }`}
-      >
-        Choose from {listProductsData?.length || 0} varieties
-      </h2>
+      {isFromCategory ? (
+        <h2
+          className={`text-pwip-v2-primary font-sans text-base font-bold ${
+            inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
+          }`}
+        >
+          Choose from {listProductsData?.length || 0} varieties of{" "}
+          {filterForCategory?.productCategory?.name} rice
+        </h2>
+      ) : (
+        <h2
+          className={`text-pwip-v2-primary font-sans text-base font-bold ${
+            inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
+          }`}
+        >
+          Choose from {listProductsData?.length || 0} varieties
+        </h2>
+      )}
 
       <div
         className={`flex overflow-x-scroll hide-scroll-bar ${
@@ -562,7 +575,7 @@ const SelectVariantContainer = (props) => {
             </svg>
           </button>
           <input
-            placeholder="Search for a variety of rice"
+            placeholder="Search for a rice variety"
             className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
             value={searchStringValue}
             onChange={(event) => {
@@ -625,6 +638,8 @@ const SelectVariantContainer = (props) => {
             listProductsData={listProductsData}
             inFixedBar={true}
             filterOptions={filterOptions}
+            isFromCategory={isFromCategory}
+            filterForCategory={filterForCategory}
             handleFilterSelect={(item) => {
               setSelectedFilter(item);
               if (selectedFilter?.name === item?.name) {
@@ -740,7 +755,7 @@ const SelectVariantContainer = (props) => {
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Search rice by category
+              Choose rice by category
             </h2>
 
             <div className="grid grid-cols-4 gap-4 px-5">
@@ -805,7 +820,7 @@ const SelectVariantContainer = (props) => {
             <h2
               className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Choose by popular sourcing locations
+              Top 5 rice sourcing locations
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
@@ -847,10 +862,8 @@ const SelectVariantContainer = (props) => {
                         <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
                           {/* {items?.totalVariants || 0} {variety} of rice available */}
                           {items?.totalVariants || 0}{" "}
-                          {items?.totalVariants?.length > 1
-                            ? "varieties"
-                            : "variety"}{" "}
-                          of rice available
+                          {items?.totalVariants > 1 ? "varieties" : "variety"}{" "}
+                          available
                         </span>
                       </div>
                     </div>
@@ -873,6 +886,8 @@ const SelectVariantContainer = (props) => {
                 isFixed={isFixed}
                 searchFocus={searchScreenActive}
                 filterOptions={filterOptions}
+                isFromCategor={isFromCategory}
+                filterForCategory={filterForCategory}
                 handleFilterSelect={(item) => {
                   if (selectedFilter?.name === item?.name) {
                     setSelectedFilter(null);

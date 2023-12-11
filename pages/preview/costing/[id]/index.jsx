@@ -612,7 +612,7 @@ function CostingPreview() {
                 value: "FOB",
               },
               {
-                label: "CIF (Cost, insurance, and freight)",
+                label: "CIF (Cost, insurance and freight)",
                 value: "CIF",
               },
             ].map((items, index) => {

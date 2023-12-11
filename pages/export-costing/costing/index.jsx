@@ -231,6 +231,7 @@ function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
 let breakupArr = [
   {
     title: "Rice and bags",
+    description: "Rice, transport, and OFC",
     afterIcon: "/assets/images/costing/road.png",
     rowItems: [
       {
@@ -250,6 +251,7 @@ let breakupArr = [
   },
   {
     title: "Handling and Inspection",
+    description: "",
     afterIcon: "/assets/images/costing/container.png",
     rowItems: [
       {
@@ -320,6 +322,7 @@ let breakupArr = [
   },
   {
     title: "Other chargers",
+    description: "",
     afterIcon: "/assets/images/costing/ocean.png",
     rowItems: [
       {
@@ -611,7 +614,7 @@ function CostingOverview() {
                 value: "FOB",
               },
               {
-                label: "CIF (Cost, insurance, and freight)",
+                label: "CIF (Cost, insurance and freight)",
                 value: "CIF",
               },
             ].map((items, index) => {
@@ -1043,7 +1046,7 @@ function CostingOverview() {
                                 {item.title}
                               </span>
                               <span className="text-pwip-black-600 text-xs font-[400]">
-                                Some note or information for user
+                                {item.description || ""}
                               </span>
                             </div>
                           </div>

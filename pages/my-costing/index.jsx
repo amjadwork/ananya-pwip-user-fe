@@ -217,7 +217,7 @@ function MyCosting() {
                 </svg>
               </button>
               <input
-                placeholder="Search for a variety of rice"
+                placeholder="Search for a rice variety"
                 className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
                 value={searchStringValue}
                 onFocus={() => {

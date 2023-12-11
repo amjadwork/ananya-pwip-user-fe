@@ -176,7 +176,7 @@ const CostingForm = ({
           </label>
           <div className="inline-flex items-center relative">
             <input
-              placeholder="Ex: PP Woven"
+              placeholder="Ex: Standard Dry"
               type="text"
               name="_bagId"
               defaultValue={values?._bagId?.bag || ""}

@@ -17,7 +17,7 @@ const persistConfig = {
     // "products",
     // "locations",
     "costing",
-    "bags",
+    // "bags",
     "myCosting",
     "shipmentTerm",
     "category",

@@ -55,7 +55,7 @@ const FilterSection = ({
           inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
         }`}
       >
-        Choose your {locationType} port
+        Choose the {locationType} port
       </h2>
 
       <div
@@ -505,7 +505,7 @@ const SelectLocationContainer = (props) => {
             </svg>
           </button>
           <input
-            placeholder={`Search for ${locationType} port`}
+            placeholder={`Search for a ${locationType} port`}
             className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
             value={searchStringValue}
             onChange={(event) => {
@@ -616,7 +616,7 @@ const SelectLocationContainer = (props) => {
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Popular destination ports
+              Top 5 popular destination ports
             </h2>
 
             <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
