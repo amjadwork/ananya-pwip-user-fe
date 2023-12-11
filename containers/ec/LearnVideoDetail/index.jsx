@@ -39,50 +39,60 @@ const YouTubePlayer = ({ url }) => {
     };
   }, [videoPlaying, showPlayerCustomControls]);
 
-  function handleOrientationChange() {
-    if (screen.orientation && screen.orientation.lock) {
-      if (
-        document.fullscreenElement ||
-        document.webkitFullscreenElement ||
-        document.mozFullScreenElement ||
-        document.msFullscreenElement
-      ) {
-        // Lock to landscape when entering fullscreen
-        screen.orientation.lock("landscape");
-      } else {
-        // Unlock orientation when exiting fullscreen
-        screen.orientation.unlock();
-      }
-    }
-  }
+  // function handleOrientationChange() {
+  //   if (screen.orientation && screen.orientation.lock) {
+  //     if (
+  //       document.fullscreenElement ||
+  //       document.webkitFullscreenElement ||
+  //       document.mozFullScreenElement ||
+  //       document.msFullscreenElement
+  //     ) {
+  //       // Lock to landscape when entering fullscreen
+  //       screen.orientation.lock("landscape");
+  //     } else {
+  //       // Unlock orientation when exiting fullscreen
+  //       screen.orientation.unlock();
+  //     }
+  //   }
+  // }
 
-  useEffect(() => {
-    // Add event listeners on mount
-    document.addEventListener("fullscreenchange", handleOrientationChange);
-    document.addEventListener("mozfullscreenchange", handleOrientationChange);
-    document.addEventListener(
-      "webkitfullscreenchange",
-      handleOrientationChange
-    );
-    document.addEventListener("msfullscreenchange", handleOrientationChange);
+  // useEffect(() => {
+  //   // Add event listeners on mount
+  //   document.addEventListener("fullscreenchange", handleOrientationChange);
+  //   document.addEventListener("mozfullscreenchange", handleOrientationChange);
+  //   document.addEventListener(
+  //     "webkitfullscreenchange",
+  //     handleOrientationChange
+  //   );
+  //   document.addEventListener("msfullscreenchange", handleOrientationChange);
 
-    // Remove event listeners on unmount
-    return () => {
-      document.removeEventListener("fullscreenchange", handleOrientationChange);
-      document.removeEventListener(
-        "mozfullscreenchange",
-        handleOrientationChange
-      );
-      document.removeEventListener(
-        "webkitfullscreenchange",
-        handleOrientationChange
-      );
-      document.removeEventListener(
-        "msfullscreenchange",
-        handleOrientationChange
-      );
-    };
-  }, []);
+  //   // Remove event listeners on unmount
+  //   return () => {
+  //     document.removeEventListener("fullscreenchange", handleOrientationChange);
+  //     document.removeEventListener(
+  //       "mozfullscreenchange",
+  //       handleOrientationChange
+  //     );
+  //     document.removeEventListener(
+  //       "webkitfullscreenchange",
+  //       handleOrientationChange
+  //     );
+  //     document.removeEventListener(
+  //       "msfullscreenchange",
+  //       handleOrientationChange
+  //     );
+  //   };
+  // }, []);
+
+  // Check if fullscreen is supported
+  const fullscreenSupported =
+    document?.fullscreenEnabled ||
+    document?.mozFullScreenEnabled ||
+    document?.webkitFullscreenEnabled ||
+    document?.msFullscreenEnabled ||
+    undefined;
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   return (
     <div
@@ -199,106 +209,110 @@ const YouTubePlayer = ({ url }) => {
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  setVideoVolume(!videoVolume);
-                }}
-                className="inline-flex items-center justify-center border-none outline-none h-auto w-auto rounded-full"
-              >
-                {videoVolume ? (
-                  <img
-                    src="/assets/images/sound-off.svg"
-                    className="h-[36px] w-[36px]"
-                  />
-                ) : (
-                  <img
-                    src="/assets/images/sound-on.svg"
-                    className="h-[36px] w-[36px]"
-                  />
-                )}
-              </button>
+              {isIOS ? (
+                <button
+                  onClick={() => {
+                    setVideoVolume(!videoVolume);
+                  }}
+                  className="inline-flex items-center justify-center border-none outline-none h-auto w-auto rounded-full"
+                >
+                  {videoVolume ? (
+                    <img
+                      src="/assets/images/sound-off.svg"
+                      className="h-[36px] w-[36px]"
+                    />
+                  ) : (
+                    <img
+                      src="/assets/images/sound-on.svg"
+                      className="h-[36px] w-[36px]"
+                    />
+                  )}
+                </button>
+              ) : null}
 
-              <button
-                onClick={() => {
-                  setIsFullScreen(!isFullScreen);
+              {fullscreenSupported ? (
+                <button
+                  onClick={() => {
+                    setIsFullScreen(!isFullScreen);
 
-                  const videoPlayerEl =
-                    document.getElementById("videoPlayerEl");
+                    const videoPlayerEl =
+                      document.getElementById("videoPlayerEl");
 
-                  if (!isFullScreen) {
-                    // Enter fullscreen
-                    if (videoPlayerEl.requestFullscreen) {
-                      videoPlayerEl.requestFullscreen();
-                    } else if (videoPlayerEl.mozRequestFullScreen) {
-                      // Firefox
-                      videoPlayerEl.mozRequestFullScreen();
-                    } else if (videoPlayerEl.webkitRequestFullscreen) {
-                      // Chrome, Safari and Opera
-                      videoPlayerEl.webkitRequestFullscreen();
-                    } else if (videoPlayerEl.msRequestFullscreen) {
-                      // IE/Edge
-                      videoPlayerEl.msRequestFullscreen();
+                    if (!isFullScreen) {
+                      // Enter fullscreen
+                      if (videoPlayerEl.requestFullscreen) {
+                        videoPlayerEl.requestFullscreen();
+                      } else if (videoPlayerEl.mozRequestFullScreen) {
+                        // Firefox
+                        videoPlayerEl.mozRequestFullScreen();
+                      } else if (videoPlayerEl.webkitRequestFullscreen) {
+                        // Chrome, Safari and Opera
+                        videoPlayerEl.webkitRequestFullscreen();
+                      } else if (videoPlayerEl.msRequestFullscreen) {
+                        // IE/Edge
+                        videoPlayerEl.msRequestFullscreen();
+                      }
+                    } else {
+                      // Exit fullscreen
+                      if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                      } else if (document.mozCancelFullScreen) {
+                        // Firefox
+                        document.mozCancelFullScreen();
+                      } else if (document.webkitExitFullscreen) {
+                        // Chrome, Safari and Opera
+                        document.webkitExitFullscreen();
+                      } else if (document.msExitFullscreen) {
+                        // IE/Edge
+                        document.msExitFullscreen();
+                      }
                     }
-                  } else {
-                    // Exit fullscreen
-                    if (document.exitFullscreen) {
-                      document.exitFullscreen();
-                    } else if (document.mozCancelFullScreen) {
-                      // Firefox
-                      document.mozCancelFullScreen();
-                    } else if (document.webkitExitFullscreen) {
-                      // Chrome, Safari and Opera
-                      document.webkitExitFullscreen();
-                    } else if (document.msExitFullscreen) {
-                      // IE/Edge
-                      document.msExitFullscreen();
-                    }
-                  }
 
-                  // if (videoPlayerEl && !isFullScreen) {
-                  //   if (videoPlayerEl.requestFullscreen) {
-                  //     videoPlayerEl.requestFullscreen();
-                  //   } else if (videoPlayerEl.mozRequestFullScreen) {
-                  //     // Firefox
-                  //     videoPlayerEl.mozRequestFullScreen();
-                  //   } else if (videoPlayerEl.webkitRequestFullscreen) {
-                  //     // Chrome, Safari and Opera
-                  //     videoPlayerEl.webkitRequestFullscreen();
-                  //   } else if (videoPlayerEl.msRequestFullscreen) {
-                  //     // IE/Edge
-                  //     videoPlayerEl.msRequestFullscreen();
-                  //   }
-                  // }
+                    // if (videoPlayerEl && !isFullScreen) {
+                    //   if (videoPlayerEl.requestFullscreen) {
+                    //     videoPlayerEl.requestFullscreen();
+                    //   } else if (videoPlayerEl.mozRequestFullScreen) {
+                    //     // Firefox
+                    //     videoPlayerEl.mozRequestFullScreen();
+                    //   } else if (videoPlayerEl.webkitRequestFullscreen) {
+                    //     // Chrome, Safari and Opera
+                    //     videoPlayerEl.webkitRequestFullscreen();
+                    //   } else if (videoPlayerEl.msRequestFullscreen) {
+                    //     // IE/Edge
+                    //     videoPlayerEl.msRequestFullscreen();
+                    //   }
+                    // }
 
-                  // if (videoPlayerEl && isFullScreen) {
-                  //   if (document.fullscreenElement) {
-                  //     document.exitFullscreen();
-                  //   } else if (document.mozFullScreenElement) {
-                  //     // Firefox
-                  //     document.mozCancelFullScreen();
-                  //   } else if (document.webkitFullscreenElement) {
-                  //     // Chrome, Safari and Opera
-                  //     document.webkitExitFullscreen();
-                  //   } else if (document.msFullscreenElement) {
-                  //     // IE/Edge
-                  //     document.msExitFullscreen();
-                  //   }
-                  // }
-                }}
-                className="inline-flex items-center justify-center border-none outline-none h-auto w-auto rounded-full"
-              >
-                {isFullScreen ? (
-                  <img
-                    src="/assets/images/fullscreen-off.svg"
-                    className="h-[36px] w-[36px]"
-                  />
-                ) : (
-                  <img
-                    src="/assets/images/fullscreen-on.svg"
-                    className="h-[36px] w-[36px]"
-                  />
-                )}
-              </button>
+                    // if (videoPlayerEl && isFullScreen) {
+                    //   if (document.fullscreenElement) {
+                    //     document.exitFullscreen();
+                    //   } else if (document.mozFullScreenElement) {
+                    //     // Firefox
+                    //     document.mozCancelFullScreen();
+                    //   } else if (document.webkitFullscreenElement) {
+                    //     // Chrome, Safari and Opera
+                    //     document.webkitExitFullscreen();
+                    //   } else if (document.msFullscreenElement) {
+                    //     // IE/Edge
+                    //     document.msExitFullscreen();
+                    //   }
+                    // }
+                  }}
+                  className="inline-flex items-center justify-center border-none outline-none h-auto w-auto rounded-full"
+                >
+                  {isFullScreen ? (
+                    <img
+                      src="/assets/images/fullscreen-off.svg"
+                      className="h-[36px] w-[36px]"
+                    />
+                  ) : (
+                    <img
+                      src="/assets/images/fullscreen-on.svg"
+                      className="h-[36px] w-[36px]"
+                    />
+                  )}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -462,13 +476,16 @@ const LearnVideoDetailContainer = (props) => {
           <div className="inline-flex items-center justify-between w-full h-auto mt-2">
             <div className="inline-flex items-center space-x-3">
               <div className="inline-flex items-center space-x-3">
-                {allTagsData.map((tag) => {
+                {allTagsData.map((tag, index) => {
                   if (
                     learnDetailData?.tags?.length > 2 &&
                     learnDetailData?.tags.slice(0, 2)?.includes(tag?._id)
                   ) {
                     return (
-                      <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                      <div
+                        key={tag?._id + index * 27}
+                        className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md"
+                      >
                         <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
                           {tag?.tagName || ""}
                         </span>
@@ -641,7 +658,7 @@ const LearnVideoDetailContainer = (props) => {
 
                 return (
                   <div
-                    key={items._id + index}
+                    key={items._id + "_1_" + index}
                     className="inline-flex items-center w-full py-[5px] space-x-[15px] bg-white transition-all"
                     style={{
                       backgroundColor: "#ffffff",
@@ -660,13 +677,16 @@ const LearnVideoDetailContainer = (props) => {
                       <div className="w-auto h-auto relative">
                         <div className="inline-flex items-center justify-between w-full">
                           <div className="inline-flex items-center space-x-2">
-                            {allTagsData.map((tag) => {
+                            {allTagsData.map((tag, index) => {
                               if (
                                 items?.tags?.length > 2 &&
                                 items?.tags.slice(0, 2)?.includes(tag?._id)
                               ) {
                                 return (
-                                  <div className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md">
+                                  <div
+                                    key={tag?._id + "_" + index}
+                                    className="inline-flex items-center justify-center py-[3px] px-[6px] bg-pwip-v2-gray-100 rounded-md"
+                                  >
                                     <span className="text-[10px] text-center text-pwip-v2-primary-700 font-[400] whitespace-nowrap">
                                       {tag?.tagName || ""}
                                     </span>
