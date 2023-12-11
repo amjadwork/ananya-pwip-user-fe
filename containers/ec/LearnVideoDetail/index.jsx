@@ -94,6 +94,8 @@ const YouTubePlayer = ({ url }) => {
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
+  console.log("here", isIOS);
+
   return (
     <div
       className="relative bg-pwip-black-600"
@@ -209,7 +211,7 @@ const YouTubePlayer = ({ url }) => {
                 </div>
               </div>
 
-              {isIOS ? (
+              {!isIOS ? (
                 <button
                   onClick={() => {
                     setVideoVolume(!videoVolume);
