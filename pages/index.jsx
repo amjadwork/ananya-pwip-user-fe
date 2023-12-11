@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useSession, signIn } from "next-auth/react";
+import { getSession, useSession, signIn } from "next-auth/react";
 import { useDispatch } from "react-redux";
 import Slider from "react-slick";
 
@@ -17,7 +17,7 @@ export default function Home() {
   // const [touchStartX, setTouchStartX] = useState(0);
   // const [touchEndX, setTouchEndX] = useState(0);
   // const [active, setActive] = useState(0);
-  const [activeSlide, setActiveSlide] = React.useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const sliderSettings = {
     dots: false,
@@ -48,30 +48,28 @@ export default function Home() {
     }
   };
 
-  const redirectToApp = async () => {
-    try {
-      handleNavigation("/export-costing");
-    } catch (error) {
-      console.error("Error during login:", error);
-    }
-  };
+  // const redirectToApp = async () => {
+  //   try {
+  //     handleNavigation("/export-costing");
+  //   } catch (error) {
+  //     console.error("Error during login:", error);
+  //   }
+  // };
+
+  // const checkForAuth = async () => {
+  //   const res = await dispatch(
+  //     handleSettingAuthDataRequest(session.user, session.accessToken)
+  //   );
+  //   if (res?.payload?.token) {
+  //     redirectToApp();
+  //   }
+  // };
 
   useEffect(() => {
     if (session && session.accessToken && session.user) {
       dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
-      redirectToApp();
     }
   }, [session]);
-
-  // useEffect(() => {
-  //   timeoutId = setInterval(() => {
-  //     setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
-  //   }, 5000);
-
-  //   return () => {
-  //     clearInterval(timeoutId);
-  //   };
-  // }, []);
 
   return (
     <React.Fragment>
@@ -224,4 +222,27 @@ export default function Home() {
       </div>
     </React.Fragment>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  if (session?.accessToken) {
+    return {
+      redirect: {
+        destination: "/export-costing",
+        permanent: true, // Set to true if /export-costing is a permanent redirect
+      },
+      props: {
+        session: session || null,
+      },
+    };
+  }
+  if (!session?.accessToken) {
+    return {
+      props: {
+        session: null,
+      },
+    };
+  }
 }
