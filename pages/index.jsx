@@ -3,45 +3,72 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signIn } from "next-auth/react";
 import { useDispatch } from "react-redux";
+import Slider from "react-slick";
 
 import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
-const onboardingIndex = [0, 1, 2];
+// const onboardingIndex = [0, 1, 2];
 
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
   const dispatch = useDispatch();
 
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
-  const [active, setActive] = useState(0);
+  // const [touchStartX, setTouchStartX] = useState(0);
+  // const [touchEndX, setTouchEndX] = useState(0);
+  // const [active, setActive] = useState(0);
+  const [activeSlide, setActiveSlide] = React.useState(0);
 
-  let blurOccurred = null;
-
-  const handleTouchStart = (e) => {
-    setTouchStartX(e.touches[0].clientX);
+  const sliderSettings = {
+    dots: false,
+    infinite: true,
+    speed: 600,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+    initialSlide: 0,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    beforeChange: function (prev, next) {
+      setActiveSlide(next);
+    },
+    // customPaging: function (i) {
+    //   return (
+    //     <div
+    //       className={`${
+    //         activeSlide === i ? "w-[18px] bg-[#003559]" : "w-[8px] bg-[#E1E0E0]"
+    //       } h-[8px] rounded-full`}
+    //     >
+    //       {/*  */}
+    //     </div>
+    //   );
+    // },
   };
 
-  const handleTouchMove = (e) => {
-    setTouchEndX(e.touches[0].clientX);
-  };
+  // const handleTouchStart = (e) => {
+  //   setTouchStartX(e.touches[0].clientX);
+  // };
 
-  const handleTouchEnd = () => {
-    const swipeDistance = touchEndX - touchStartX;
+  // const handleTouchMove = (e) => {
+  //   setTouchEndX(e.touches[0].clientX);
+  // };
 
-    if (swipeDistance > 0) {
-      console.log("Swiped right");
-      window.clearTimeout(blurOccurred);
+  // const handleTouchEnd = () => {
+  //   const swipeDistance = touchEndX - touchStartX;
 
-      setActive((prevActive) => (prevActive - 1) % onboardingIndex.length);
-    } else if (swipeDistance < 0) {
-      console.log("Swiped left");
-      window.clearTimeout(blurOccurred);
+  //   if (swipeDistance > 0) {
+  //     console.log("Swiped right");
+  //     window.clearInterval(timeoutId);
 
-      setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
-    }
-  };
+  //     // setActive((prevActive) => (prevActive - 1) % onboardingIndex.length);
+  //   } else if (swipeDistance < 0) {
+  //     console.log("Swiped left");
+  //     window.clearInterval(timeoutId);
+
+  //     // setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
+  //   }
+  // };
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -71,15 +98,15 @@ export default function Home() {
     }
   }, [session]);
 
-  useEffect(() => {
-    blurOccurred = setInterval(() => {
-      setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
-    }, 5000);
+  // useEffect(() => {
+  //   timeoutId = setInterval(() => {
+  //     setActive((prevActive) => (prevActive + 1) % onboardingIndex.length);
+  //   }, 5000);
 
-    return () => {
-      clearInterval(blurOccurred);
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(timeoutId);
+  //   };
+  // }, []);
 
   return (
     <React.Fragment>
@@ -115,8 +142,8 @@ export default function Home() {
           <div className="relative w-full h-full mt-[24px] px-5">
             <div className="inline-flex w-full items-center justify-center">
               <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
-                  active === 0 ? "block" : "hidden"
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
+                  activeSlide === 0 ? "block" : "hidden"
                 }`}
               >
                 <h2>Multiple varieties to choose.</h2>
@@ -127,8 +154,8 @@ export default function Home() {
               </div>
 
               <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
-                  active === 1 ? "block" : "hidden"
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
+                  activeSlide === 1 ? "block" : "hidden"
                 }`}
               >
                 <h2>No limits on shipment.</h2>
@@ -139,8 +166,8 @@ export default function Home() {
               </div>
 
               <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 ${
-                  active === 2 ? "block" : "hidden"
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
+                  activeSlide === 2 ? "block" : "hidden"
                 }`}
               >
                 <h2>Costing made simple.</h2>
@@ -151,69 +178,65 @@ export default function Home() {
               </div>
             </div>
             <div
-              id="swipeElement"
+              // id="swipeElement"
               className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg pt-[24px]"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
+              // onTouchStart={handleTouchStart}
+              // onTouchMove={handleTouchMove}
+              // onTouchEnd={handleTouchEnd}
             >
               <div className="duration-700 ease-in-out h-auto inlin-flex items-end">
-                <img
-                  src="/assets/images/onboarding/one.svg"
-                  className={`h-[320px] w-full transition-all ${
-                    active === 0 ? "block opacity-1" : "hidden opacity-0"
-                  }`}
-                  alt="onboarding 1 image"
-                />
+                <Slider {...sliderSettings}>
+                  <img
+                    src="/assets/images/onboarding/one.svg"
+                    className={`h-[320px] w-full`}
+                    alt="onboarding 1 image"
+                  />
 
-                <img
-                  src="/assets/images/onboarding/two.svg"
-                  className={`h-[320px] w-full transition-all ${
-                    active === 1 ? "block opacity-1" : "hidden opacity-0"
-                  }`}
-                  alt="onboarding 2 image"
-                />
+                  <img
+                    src="/assets/images/onboarding/two.svg"
+                    className={`h-[320px] w-full`}
+                    alt="onboarding 2 image"
+                  />
 
-                <img
-                  src="/assets/images/onboarding/three.svg"
-                  className={`h-[320px] w-full transition-all ${
-                    active === 2 ? "block opacity-1" : "hidden opacity-0"
-                  }`}
-                  alt="onboarding 3 image"
-                />
+                  <img
+                    src="/assets/images/onboarding/three.svg"
+                    className={`h-[320px] w-full`}
+                    alt="onboarding 3 image"
+                  />
+                </Slider>
               </div>
             </div>
             <div className="flex items-center justify-center space-x-[4px] w-full mt-[24px]">
               <button
                 type="button"
                 onClick={() => {
-                  window.clearTimeout(blurOccurred);
-                  setActive(0);
+                  // window.clearInterval(timeoutId);
+                  // setActive(0);
                 }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 0 ? "!bg-pwip-v2-gray-200 !w-2" : ""
+                  activeSlide !== 0 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
               <button
                 type="button"
                 onClick={() => {
-                  window.clearTimeout(blurOccurred);
-                  setActive(1);
+                  // window.clearInterval(timeoutId);
+                  // setActive(1);
                 }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 1 ? "!bg-pwip-v2-gray-200 !w-2" : ""
+                  activeSlide !== 1 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
 
               <button
                 type="button"
                 onClick={() => {
-                  window.clearTimeout(blurOccurred);
-                  setActive(2);
+                  // window.clearInterval(timeoutId);
+                  // setActive(2);
                 }}
                 className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  active !== 2 ? "!bg-pwip-v2-gray-200 !w-2" : ""
+                  activeSlide !== 2 ? "!bg-pwip-v2-gray-200 !w-2" : ""
                 }`}
               ></button>
             </div>
