@@ -206,7 +206,7 @@ export function getStateAbbreviation(stateName) {
     Delhi: "DL",
     Lakshadweep: "LD",
     Pondicherry: "PY",
-    telangana: "TS",
+    Telangana: "TS",
   };
 
   // Convert the input to title case for better matching
