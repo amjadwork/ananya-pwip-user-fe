@@ -18,6 +18,8 @@ const YouTubePlayer = ({ url }) => {
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
   const [videoVolume, setVideoVolume] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
   const [showPlayerCustomControls, setShowPlayerCustomControls] =
     useState(true);
 
@@ -37,10 +39,56 @@ const YouTubePlayer = ({ url }) => {
     };
   }, [videoPlaying, showPlayerCustomControls]);
 
+  function handleOrientationChange() {
+    if (screen.orientation && screen.orientation.lock) {
+      if (
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      ) {
+        // Lock to landscape when entering fullscreen
+        screen.orientation.lock("landscape");
+      } else {
+        // Unlock orientation when exiting fullscreen
+        screen.orientation.unlock();
+      }
+    }
+  }
+
+  useEffect(() => {
+    // Add event listeners on mount
+    document.addEventListener("fullscreenchange", handleOrientationChange);
+    document.addEventListener("mozfullscreenchange", handleOrientationChange);
+    document.addEventListener(
+      "webkitfullscreenchange",
+      handleOrientationChange
+    );
+    document.addEventListener("msfullscreenchange", handleOrientationChange);
+
+    // Remove event listeners on unmount
+    return () => {
+      document.removeEventListener("fullscreenchange", handleOrientationChange);
+      document.removeEventListener(
+        "mozfullscreenchange",
+        handleOrientationChange
+      );
+      document.removeEventListener(
+        "webkitfullscreenchange",
+        handleOrientationChange
+      );
+      document.removeEventListener(
+        "msfullscreenchange",
+        handleOrientationChange
+      );
+    };
+  }, []);
+
   return (
     <div
       className="relative bg-pwip-black-600"
       style={{ paddingBottom: "56.25%" }}
+      id="videoPlayerEl"
     >
       {/* The padding-bottom is set to 56.25% to achieve a 16:9 aspect ratio */}
       <div className="absolute top-0 left-0 w-full h-full">
@@ -165,6 +213,88 @@ const YouTubePlayer = ({ url }) => {
                 ) : (
                   <img
                     src="/assets/images/sound-on.svg"
+                    className="h-[36px] w-[36px]"
+                  />
+                )}
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsFullScreen(!isFullScreen);
+
+                  const videoPlayerEl =
+                    document.getElementById("videoPlayerEl");
+
+                  if (!isFullScreen) {
+                    // Enter fullscreen
+                    if (videoPlayerEl.requestFullscreen) {
+                      videoPlayerEl.requestFullscreen();
+                    } else if (videoPlayerEl.mozRequestFullScreen) {
+                      // Firefox
+                      videoPlayerEl.mozRequestFullScreen();
+                    } else if (videoPlayerEl.webkitRequestFullscreen) {
+                      // Chrome, Safari and Opera
+                      videoPlayerEl.webkitRequestFullscreen();
+                    } else if (videoPlayerEl.msRequestFullscreen) {
+                      // IE/Edge
+                      videoPlayerEl.msRequestFullscreen();
+                    }
+                  } else {
+                    // Exit fullscreen
+                    if (document.exitFullscreen) {
+                      document.exitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                      // Firefox
+                      document.mozCancelFullScreen();
+                    } else if (document.webkitExitFullscreen) {
+                      // Chrome, Safari and Opera
+                      document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                      // IE/Edge
+                      document.msExitFullscreen();
+                    }
+                  }
+
+                  // if (videoPlayerEl && !isFullScreen) {
+                  //   if (videoPlayerEl.requestFullscreen) {
+                  //     videoPlayerEl.requestFullscreen();
+                  //   } else if (videoPlayerEl.mozRequestFullScreen) {
+                  //     // Firefox
+                  //     videoPlayerEl.mozRequestFullScreen();
+                  //   } else if (videoPlayerEl.webkitRequestFullscreen) {
+                  //     // Chrome, Safari and Opera
+                  //     videoPlayerEl.webkitRequestFullscreen();
+                  //   } else if (videoPlayerEl.msRequestFullscreen) {
+                  //     // IE/Edge
+                  //     videoPlayerEl.msRequestFullscreen();
+                  //   }
+                  // }
+
+                  // if (videoPlayerEl && isFullScreen) {
+                  //   if (document.fullscreenElement) {
+                  //     document.exitFullscreen();
+                  //   } else if (document.mozFullScreenElement) {
+                  //     // Firefox
+                  //     document.mozCancelFullScreen();
+                  //   } else if (document.webkitFullscreenElement) {
+                  //     // Chrome, Safari and Opera
+                  //     document.webkitExitFullscreen();
+                  //   } else if (document.msFullscreenElement) {
+                  //     // IE/Edge
+                  //     document.msExitFullscreen();
+                  //   }
+                  // }
+                }}
+                className="inline-flex items-center justify-center border-none outline-none h-auto w-auto rounded-full"
+              >
+                {isFullScreen ? (
+                  <img
+                    src="/assets/images/fullscreen-off.svg"
+                    className="h-[36px] w-[36px]"
+                  />
+                ) : (
+                  <img
+                    src="/assets/images/fullscreen-on.svg"
                     className="h-[36px] w-[36px]"
                   />
                 )}
