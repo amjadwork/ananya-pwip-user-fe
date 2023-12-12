@@ -5,17 +5,21 @@ import { useOverlayContext } from "@/context/OverlayContext";
 import { resetCostingSelection } from "@/redux/actions/costing.actions";
 
 import {
-  chevronDown,
+  // chevronDown,
   arrowLeftBackIcon,
   pencilIcon,
-  editIcon,
+  // editIcon,
 } from "../../theme/icon";
-import {
-  setTermsOfShipmentRequest,
-  // setTermsOfShipmentFailure,
-} from "@/redux/actions/shipmentTerms.actions";
+// import {
+//   setTermsOfShipmentRequest,
+//   // setTermsOfShipmentFailure,
+// } from "@/redux/actions/shipmentTerms.actions";
 import { resetCustomCostingSelection } from "@/redux/actions/costing.actions";
 import { searchScreenFailure } from "@/redux/actions/utils.actions.js";
+import {
+  // fetchCategoryRequest,
+  fetchCategoryFailure,
+} from "@/redux/actions/category.actions";
 
 const atRoutes = [
   "select-pod",
@@ -109,6 +113,10 @@ export function Header(props) {
                 onClick={() => {
                   if (!searchScreenActive) {
                     handleBack();
+                  }
+
+                  if (activeRoute === "category") {
+                    dispatch(fetchCategoryFailure());
                   }
 
                   if (searchScreenActive) {

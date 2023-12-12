@@ -390,12 +390,20 @@ const SelectVariantContainer = (props) => {
   const [popularSourceLocationData, setPopularSourceLocationData] =
     React.useState([]);
 
+  // React.useEffect(() => {
+  //   if (!isFromCategory) {
+  //     console.log("here console");
+  //     dispatch(fetchCategoryFailure());
+  //   }
+  // }, [isFromCategory]);
+
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
     if (element) {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
-      dispatch(fetchCategoryFailure());
+
+      // dispatch(fetchCategoryFailure());
     }
   }, []);
 
