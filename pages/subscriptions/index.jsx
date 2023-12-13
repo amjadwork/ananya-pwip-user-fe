@@ -2,9 +2,12 @@ import React, { useCallback } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import Lottie from "lottie-react";
+
 // import moment from "moment";
 import { Button } from "@/components/Button";
 import useRazorpay from "react-razorpay";
+import { useOverlayContext } from "@/context/OverlayContext";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -23,7 +26,10 @@ import {
 
 // Import Components
 import { Header } from "@/components/Header";
-// import { inrToUsd } from "@/utils/helper";
+import axios from "axios";
+import { apiBaseURL } from "@/utils/helper";
+
+import paymentSuccessful from "../../theme/lottie/payment-success.json";
 
 // Import Containers
 
@@ -57,6 +63,8 @@ function Subscription() {
   const dispatch = useDispatch();
   const [Razorpay] = useRazorpay();
 
+  const { openBottomSheet, openToastMessage } = useOverlayContext();
+
   const myCosting = useSelector((state) => state.myCosting);
   const servicesData = useSelector((state) => state.subscription?.services);
   const plansData = useSelector((state) => state.subscription?.plans);
@@ -64,6 +72,7 @@ function Subscription() {
     (state) => state.subscription?.userSubscription
   );
   const userDetails = useSelector((state) => state.auth?.user);
+  const authToken = useSelector((state) => state.auth?.token);
 
   const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
   const [modulePlansData, setModulePlansData] = React.useState([]);
@@ -73,35 +82,129 @@ function Subscription() {
 
   // const [searchStringValue, setSearchStringValue] = React.useState("");
 
+  const createOrder = async () => {
+    try {
+      const response = await axios.post(
+        "https://api-payment.pwip.co/" + "api" + "/create",
+        {
+          planid: 73,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response?.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const verifyPayment = async (body) => {
+    try {
+      const response = await axios.post(
+        "https://api-payment.pwip.co/" + "api" + "/verifypay",
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response?.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
   const handlePayment = useCallback(
     async (price) => {
-      // const order = await createOrder(params);
-      // const options = {
-      //   key: "rzp_live_SGjcr25rqb3FMM",
-      //   amount: price,
-      //   currency: "INR",
-      //   name: "PWIP Foodtech Pvt Limited",
-      //   description: "Test Transaction",
-      //   image: "https://pwip.co/assets/web/img/web/logo.png",
-      //   order_id: order.id,
-      //   handler: (res) => {
-      //     console.log(res);
-      //   },
-      //   prefill: {
-      //     name: userDetails.name,
-      //     email: userDetails.email,
-      //     contact: userDetails.phone || "",
-      //   },
-      //   notes: {
-      //     address:
-      //       "PWIP FOODTECH PVT LTD WeWork, Vaishnavi Signature.78/9 Outer Ring Road, Bellandur Main Rd, Bengaluru, Karnataka 560103",
-      //   },
-      //   theme: {
-      //     color: "#003559",
-      //   },
-      // };
-      // const rzpay = new Razorpay(options);
-      // rzpay.open();
+      const order = await createOrder();
+      console.log("here", order, price);
+
+      try {
+        if (order?.order_id) {
+          const options = {
+            key: "rzp_live_SGjcr25rqb3FMM",
+            amount: order?.amount,
+            currency: "INR",
+            name: "PWIP Foodtech Pvt Limited",
+            description: "Test Transaction",
+            image: "https://pwip.co/assets/web/img/web/logo.png",
+            order_id: order?.order_id,
+            handler: async (res) => {
+              const responseVerify = await verifyPayment(res);
+
+              if (responseVerify.result === "Payment Success") {
+                const content = (
+                  <div className="w-full h-full relative bg-white px-5 pt-[56px]">
+                    <div className="w-full flex flex-col items-center">
+                      <div className="min-w-[310px] h-auto">
+                        <Lottie animationData={paymentSuccessful} />
+                      </div>
+                      <span className="text-center font-bold text-pwip-green-800 text-lg">
+                        Payment Successful
+                      </span>
+                    </div>
+
+                    <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-bold">
+                          Transaction id
+                        </span>
+                        <span className="text-sky-950 text-sm font-bold">
+                          {res?.razorpay_payment_id}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-medium">
+                          Amount Paid
+                        </span>
+                        <span className="text-zinc-900 text-sm font-medium">
+                          ₹{order?.amount}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+
+                openBottomSheet(content, null, true);
+              } else {
+                openToastMessage({
+                  type: "error",
+                  message: "Payment failed, try again",
+                  // autoHide: false,
+                });
+              }
+            },
+            prefill: {
+              name: userDetails.name,
+              email: userDetails.email,
+              phone: userDetails.phone || "",
+              contact: userDetails.phone || "",
+            },
+            notes: {
+              address:
+                "PWIP FOODTECH PVT LTD WeWork, Vaishnavi Signature.78/9 Outer Ring Road, Bellandur Main Rd, Bengaluru, Karnataka 560103",
+            },
+            theme: {
+              color: "#003559",
+            },
+          };
+          const rzpay = new Razorpay(options);
+          rzpay.open();
+        }
+      } catch (err) {
+        openToastMessage({
+          type: "error",
+          message: "Something went while creating your order, try again",
+          // autoHide: false,
+        });
+      }
     },
     [Razorpay]
   );
@@ -136,11 +239,12 @@ function Subscription() {
         [...moduleServicesData].map((d) => d.id).flat()
       );
       const uniqueServicesId = [...servicesId];
+
       const plans = [
         ...filterArrayByReference(plansData, uniqueServicesId),
-      ].filter((d) => d.active);
+      ].filter((f) => f.show_for_user);
 
-      setModulePlansData([...plans].reverse());
+      setModulePlansData([...plans]);
     }
   }, [plansData, moduleServicesData]);
 
@@ -201,13 +305,11 @@ function Subscription() {
             <div className="px-3 py-5 bg-pwip-v2-gray-100 rounded-lg w-full h-auto mb-[30px]">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-v2-primary text-sm font-[700]">
-                  {usersSubscriptionData
-                    ? modulePlansData.find(
-                        (d) => d.id === usersSubscriptionData?.plan_id
-                      )?.name === "Basic"
-                      ? "Basic"
-                      : "Premium"
-                    : "Free plan"}
+                  {
+                    modulePlansData.find(
+                      (d) => d.id === usersSubscriptionData?.plan_id
+                    )?.name
+                  }
                 </span>
 
                 <div className="inline-flex items-center space-x-[2px]">
@@ -216,13 +318,11 @@ function Subscription() {
                   </span>
                   <span className="text-pwip-black-600 text-sm font-[600]">
                     /
-                    {usersSubscriptionData
-                      ? modulePlansData.find(
-                          (d) => d.id === usersSubscriptionData?.plan_id
-                        )?.name === "Premium"
-                        ? "Unlimited"
-                        : 500
-                      : 10}
+                    {
+                      modulePlansData.find(
+                        (d) => d.id === usersSubscriptionData?.plan_id
+                      )?.usage_cap
+                    }
                   </span>
                 </div>
               </div>
@@ -232,49 +332,27 @@ function Subscription() {
                   style={{
                     background:
                       "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
-                    width:
-                      usersSubscriptionData &&
-                      modulePlansData.find(
-                        (d) => d.id === usersSubscriptionData?.plan_id
-                      )?.name === "Basic"
-                        ? calculatePercentage(
-                            allMyCostingsData.length || 0,
-                            500
-                          )
-                        : usersSubscriptionData &&
+                    width: usersSubscriptionData
+                      ? calculatePercentage(
+                          allMyCostingsData.length || 0,
                           modulePlansData.find(
                             (d) => d.id === usersSubscriptionData?.plan_id
-                          )?.name === "Premiun"
-                        ? 0
-                        : calculatePercentage(
-                            allMyCostingsData.length || 0,
-                            10
-                          ),
+                          )?.usage_cap
+                        )
+                      : 0,
                   }}
                 ></div>
               </div>
               <span className="text-pwip-v2-primary text-sm font-[500]">
-                {allMyCostingsData?.length >= 500 &&
-                usersSubscriptionData &&
+                {usersSubscriptionData &&
                 modulePlansData.find(
                   (d) => d.id === usersSubscriptionData?.plan_id
-                )?.name === "Basic"
-                  ? "Your basic plan has exhausted !!!"
-                  : usersSubscriptionData &&
-                    modulePlansData.find(
-                      (d) => d.id === usersSubscriptionData?.plan_id
-                    )?.name === "Premium"
-                  ? "Enjoy and generate unlimited costings"
-                  : usersSubscriptionData &&
-                    modulePlansData.find(
-                      (d) => d.id === usersSubscriptionData?.plan_id
-                    )?.name !== "Premium" &&
-                    usersSubscriptionData &&
-                    modulePlansData.find(
-                      (d) => d.id === usersSubscriptionData?.plan_id
-                    )?.name !== "Basic" &&
-                    allMyCostingsData?.length >= 10
-                  ? "Your free plan has exhausted !!!"
+                )?.usage_cap <= allMyCostingsData?.length
+                  ? `Your ${
+                      modulePlansData.find(
+                        (d) => d.id === usersSubscriptionData?.plan_id
+                      )?.name
+                    } plan has exhausted !!!`
                   : "Upgrade to premium to get unlimited costings"}
               </span>
             </div>
@@ -282,34 +360,36 @@ function Subscription() {
             <div className="w-full">
               <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
                 <div className="flex flex-nowrap">
-                  {modulePlansData.map((details, index) => {
-                    return (
-                      <div
-                        key={details?.name + "_" + index}
-                        className={`min-w-[320px] inline-block px-[12px] py-[18px]  ${cardBacgroundColors[index]} rounded-lg mr-[12px]`}
-                      >
-                        <div className="overflow-hidden w-auto h-auto inline-flex flex-col items-center space-y-[18px] mb-[30px]">
-                          <span className="text-base text-center text-pwip-v2-black-600 font-[700] line-clamp-1 capitalize">
-                            {details?.name}
-                          </span>
+                  {modulePlansData
+                    .filter((f) => f.price !== 0)
+                    .map((details, index) => {
+                      return (
+                        <div
+                          key={details?.name + "_" + index}
+                          className={`min-w-[320px] inline-block px-[12px] py-[18px]  ${cardBacgroundColors[index]} rounded-lg mr-[12px]`}
+                        >
+                          <div className="overflow-hidden w-full h-auto inline-flex flex-col items-center space-y-[18px] mb-[30px]">
+                            <span className="text-base text-center text-pwip-v2-black-600 font-[700] line-clamp-1 capitalize">
+                              {details?.name}
+                            </span>
 
-                          <span className="text-sm text-pwip-v2-gray-800 font-[400] text-center">
-                            {details?.description}
-                          </span>
+                            <span className="text-sm text-pwip-v2-gray-800 font-[400] text-center">
+                              {details?.description}
+                            </span>
+                          </div>
+
+                          <Button
+                            type={"white"}
+                            label={`₹${details?.price} /mo`}
+                            rounded="!rounded-full"
+                            minHeight="!min-h-[35px]"
+                            onClick={async () => {
+                              handlePayment(details?.price);
+                            }}
+                          />
                         </div>
-
-                        <Button
-                          type={"white"}
-                          label={`₹${details?.price} /mo`}
-                          rounded="!rounded-full"
-                          minHeight="!min-h-[35px]"
-                          onClick={async () => {
-                            handlePayment(details?.price);
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
               </div>
             </div>
