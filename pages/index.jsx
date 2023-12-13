@@ -11,8 +11,8 @@ import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 export default function Home() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const dispatch = useDispatch();
+  // const { data: session } = useSession();
+  // const dispatch = useDispatch();
 
   // const [touchStartX, setTouchStartX] = useState(0);
   // const [touchEndX, setTouchEndX] = useState(0);
@@ -65,11 +65,12 @@ export default function Home() {
   //   }
   // };
 
-  useEffect(() => {
-    if (session && session.accessToken && session.user) {
-      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
-    }
-  }, [session]);
+  // useEffect(() => {
+  //   if (session && session.accessToken && session.user) {
+  //     console.log("here currentPlan", currentPlan);
+  //     dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+  //   }
+  // }, [session]);
 
   return (
     <React.Fragment>

@@ -30,6 +30,7 @@ import axios from "axios";
 import { apiBaseURL } from "@/utils/helper";
 
 import paymentSuccessful from "../../theme/lottie/payment-success.json";
+import moment from "moment";
 
 // Import Containers
 
@@ -82,12 +83,30 @@ function Subscription() {
 
   // const [searchStringValue, setSearchStringValue] = React.useState("");
 
-  const createOrder = async () => {
+  const createSubscription = async (body) => {
+    try {
+      const response = await axios.post(
+        apiBaseURL + "api" + "/subscription",
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response?.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const createOrder = async (planid) => {
     try {
       const response = await axios.post(
         "https://api-payment.pwip.co/" + "api" + "/create",
         {
-          planid: 73,
+          planid: planid,
         },
         {
           headers: {
@@ -121,9 +140,8 @@ function Subscription() {
   };
 
   const handlePayment = useCallback(
-    async (price) => {
-      const order = await createOrder();
-      console.log("here", order, price);
+    async (item) => {
+      const order = await createOrder(item?.id);
 
       try {
         if (order?.order_id) {
@@ -132,13 +150,28 @@ function Subscription() {
             amount: order?.amount,
             currency: "INR",
             name: "PWIP Foodtech Pvt Limited",
-            description: "Test Transaction",
+            description: "Your export partners",
             image: "https://pwip.co/assets/web/img/web/logo.png",
             order_id: order?.order_id,
             handler: async (res) => {
               const responseVerify = await verifyPayment(res);
 
-              if (responseVerify.result === "Payment Success") {
+              if (responseVerify?.result === "Payment Success") {
+                const payload = {
+                  user_id: userDetails?._id,
+                  plan_id: item?.id,
+                  order_id: order?.order_id,
+                  payment_id: res?.razorpay_payment_id,
+                  amount_paid: order?.amount,
+                  amount_paid_date: moment(new Date()).format(
+                    "YYYY-MM-DD HH:mm:ss"
+                  ), //2023-12-13 20:59:27
+                  payment_platform: "",
+                  payment_status: "success",
+                };
+
+                await createSubscription(payload);
+
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
                     <div className="w-full flex flex-col items-center">
@@ -254,6 +287,21 @@ function Subscription() {
     }
   }, [modulePlansData]);
 
+  function getObjectWithLatestDate(dataArray) {
+    if (!Array.isArray(dataArray) || dataArray.length === 0) {
+      // Return null or handle the case where the array is empty or not valid
+      return null;
+    }
+
+    // Sort the array based on the 'amount_paid_date' in descending order
+    const sortedArray = dataArray.sort(
+      (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+    );
+
+    // Return the first (i.e., the latest) object in the sorted array
+    return sortedArray[0];
+  }
+
   React.useEffect(() => {
     if (userDetails && userSubscription?.length && modulePlansData.length) {
       const planIds = modulePlansData.map((d) => d.id);
@@ -263,7 +311,8 @@ function Subscription() {
         .filter((d) => planIds.includes(d.plan_id));
 
       if (subs.length) {
-        setUsersSubscriptionData(subs[0]);
+        const currentPlan = getObjectWithLatestDate(subs);
+        setUsersSubscriptionData(currentPlan);
       }
     }
   }, [userSubscription, userDetails, modulePlansData]);
@@ -305,11 +354,9 @@ function Subscription() {
             <div className="px-3 py-5 bg-pwip-v2-gray-100 rounded-lg w-full h-auto mb-[30px]">
               <div className="inline-flex items-center justify-between w-full">
                 <span className="text-pwip-v2-primary text-sm font-[700]">
-                  {
-                    modulePlansData.find(
-                      (d) => d.id === usersSubscriptionData?.plan_id
-                    )?.name
-                  }
+                  {modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  )?.name || "Free"}
                 </span>
 
                 <div className="inline-flex items-center space-x-[2px]">
@@ -318,11 +365,9 @@ function Subscription() {
                   </span>
                   <span className="text-pwip-black-600 text-sm font-[600]">
                     /
-                    {
-                      modulePlansData.find(
-                        (d) => d.id === usersSubscriptionData?.plan_id
-                      )?.usage_cap
-                    }
+                    {modulePlansData.find(
+                      (d) => d.id === usersSubscriptionData?.plan_id
+                    )?.usage_cap || 10}
                   </span>
                 </div>
               </div>
@@ -380,11 +425,22 @@ function Subscription() {
 
                           <Button
                             type={"white"}
-                            label={`₹${details?.price} /mo`}
+                            label={
+                              usersSubscriptionData?.plan_id === details?.id
+                                ? `Current plan`
+                                : `₹${details?.price} /mo`
+                            }
                             rounded="!rounded-full"
                             minHeight="!min-h-[35px]"
+                            disabled={
+                              usersSubscriptionData?.plan_id === details?.id
+                            }
                             onClick={async () => {
-                              handlePayment(details?.price);
+                              if (
+                                usersSubscriptionData.plan_id !== details?.id
+                              ) {
+                                handlePayment(details);
+                              }
                             }}
                           />
                         </div>
