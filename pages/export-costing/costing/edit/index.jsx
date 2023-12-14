@@ -8,13 +8,14 @@ import {
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
 import { useOverlayContext } from "@/context/OverlayContext";
+import axios from "axios";
 
 import SelectVariantContainer from "@/containers/ec/SelectVariant";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 import SelectBagsContainer from "@/containers/ec/SelectBags";
 import SelectCargoContainersContainer from "@/containers/ec/SelectContainers";
 
-import { api, inrToUsd, convertUnits } from "@/utils/helper";
+import { api, inrToUsd, convertUnits, apiBaseURL } from "@/utils/helper";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -213,6 +214,21 @@ const initialValues = {
   margin: "",
 };
 
+function getObjectWithLatestDate(dataArray) {
+  if (!Array.isArray(dataArray) || dataArray.length === 0) {
+    // Return null or handle the case where the array is empty or not valid
+    return null;
+  }
+
+  // Sort the array based on the 'amount_paid_date' in descending order
+  const sortedArray = dataArray.sort(
+    (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+  );
+
+  // Return the first (i.e., the latest) object in the sorted array
+  return sortedArray[0];
+}
+
 function EditCosting() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -271,6 +287,22 @@ function EditCosting() {
   const myRecentSavedCosting = useSelector(
     (state) => state.myCosting.myRecentSavedCosting
   );
+
+  const checkUserSubscriptionDetails = async () => {
+    try {
+      const response = await axios.get(
+        apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchMyCostingFailure());
@@ -2035,7 +2067,7 @@ function EditCosting() {
                     //     ? true
                     //     : false
                     // }
-                    onClick={() => {
+                    onClick={async () => {
                       if (
                         !values?._variantId ||
                         !values?._originId ||
@@ -2065,6 +2097,26 @@ function EditCosting() {
                           // autoHide: false,
                         });
                         return null;
+                      }
+
+                      const subscriptionResponse =
+                        await checkUserSubscriptionDetails();
+                      const currentPlan =
+                        getObjectWithLatestDate(subscriptionResponse);
+
+                      console.log("here currentPlan", subscriptionResponse);
+
+                      if (
+                        currentPlan?.total_generated_costing >=
+                        currentPlan?.usage_cap
+                      ) {
+                        openToastMessage({
+                          type: "error",
+                          message: "You have exhausted your current plan!!",
+                          // autoHide: false,
+                        });
+
+                        return;
                       }
 
                       let givenData = { ...values };

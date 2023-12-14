@@ -37,10 +37,8 @@ import moment from "moment";
 // Import Layouts
 
 function calculatePercentage(value, total) {
-  if (typeof value !== "number" || typeof total !== "number" || total === 0) {
-    throw new Error(
-      "Invalid input. Please provide valid numeric values, and ensure total is not zero."
-    );
+  if (typeof value !== "number" || typeof total !== "number") {
+    throw new Error("Invalid input. Please provide valid numeric values");
   }
 
   const percentage = (value / total) * 100;
@@ -57,6 +55,21 @@ function filterArrayByReference(originalArray, referenceArray) {
   });
 
   return newArray;
+}
+
+function getObjectWithLatestDate(dataArray) {
+  if (!Array.isArray(dataArray) || dataArray.length === 0) {
+    // Return null or handle the case where the array is empty or not valid
+    return null;
+  }
+
+  // Sort the array based on the 'amount_paid_date' in descending order
+  const sortedArray = dataArray.sort(
+    (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+  );
+
+  // Return the first (i.e., the latest) object in the sorted array
+  return sortedArray[0];
 }
 
 function Subscription() {
@@ -287,21 +300,6 @@ function Subscription() {
     }
   }, [modulePlansData]);
 
-  function getObjectWithLatestDate(dataArray) {
-    if (!Array.isArray(dataArray) || dataArray.length === 0) {
-      // Return null or handle the case where the array is empty or not valid
-      return null;
-    }
-
-    // Sort the array based on the 'amount_paid_date' in descending order
-    const sortedArray = dataArray.sort(
-      (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
-    );
-
-    // Return the first (i.e., the latest) object in the sorted array
-    return sortedArray[0];
-  }
-
   React.useEffect(() => {
     if (userDetails && userSubscription?.length && modulePlansData.length) {
       const planIds = modulePlansData.map((d) => d.id);
@@ -309,7 +307,6 @@ function Subscription() {
       const subs = [...userSubscription]
         .filter((d) => d.user_id === userDetails._id)
         .filter((d) => planIds.includes(d.plan_id));
-
       if (subs.length) {
         const currentPlan = getObjectWithLatestDate(subs);
         setUsersSubscriptionData(currentPlan);
@@ -372,6 +369,24 @@ function Subscription() {
                 </div>
               </div>
               <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
+                {console.log(
+                  "here",
+                  allMyCostingsData.length,
+                  modulePlansData,
+                  usersSubscriptionData,
+                  modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  ),
+                  modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  )?.usage_cap,
+                  calculatePercentage(
+                    allMyCostingsData?.length || 0,
+                    modulePlansData?.find(
+                      (d) => d?.id === usersSubscriptionData?.plan_id
+                    )?.usage_cap || 0
+                  )
+                )}
                 <div
                   className="h-[8px] rounded-full"
                   style={{
@@ -383,7 +398,7 @@ function Subscription() {
                           modulePlansData.find(
                             (d) => d.id === usersSubscriptionData?.plan_id
                           )?.usage_cap
-                        )
+                        ) + "%"
                       : 0,
                   }}
                 ></div>

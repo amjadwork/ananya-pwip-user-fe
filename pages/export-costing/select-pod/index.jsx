@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "@/components/Button";
+import { useOverlayContext } from "@/context/OverlayContext";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -33,11 +34,31 @@ import { Header } from "@/components/Header";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 // Import Layouts
 
-import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+import { apiBaseURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
+
+import axios from "axios";
+
+function getObjectWithLatestDate(dataArray) {
+  if (!Array.isArray(dataArray) || dataArray.length === 0) {
+    // Return null or handle the case where the array is empty or not valid
+    return null;
+  }
+
+  // Sort the array based on the 'amount_paid_date' in descending order
+  const sortedArray = dataArray.sort(
+    (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+  );
+
+  // Return the first (i.e., the latest) object in the sorted array
+  return sortedArray[0];
+}
 
 function SelectPortOfDestination() {
   const router = useRouter();
   const dispatch = useDispatch();
+
+  const { openBottomSheet, openToastMessage } = useOverlayContext();
+
   const selectedProductForCosting = useSelector(
     (state) => state.costing.product
   );
@@ -49,6 +70,7 @@ function SelectPortOfDestination() {
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
+  const authToken = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [isGenerated, setIsGenerated] = React.useState(false);
@@ -66,6 +88,22 @@ function SelectPortOfDestination() {
     setIsGenerated(false);
     router.push("/export-costing/costing");
   }
+
+  const checkUserSubscriptionDetails = async () => {
+    try {
+      const response = await axios.get(
+        apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  };
 
   React.useEffect(() => {
     if (generatedCosting && isGenerated) {
@@ -196,6 +234,21 @@ function SelectPortOfDestination() {
                 : true
             }
             onClick={async () => {
+              const subscriptionResponse = await checkUserSubscriptionDetails();
+              const currentPlan = getObjectWithLatestDate(subscriptionResponse);
+
+              if (
+                currentPlan?.total_generated_costing >= currentPlan?.usage_cap
+              ) {
+                openToastMessage({
+                  type: "error",
+                  message: "You have exhausted your current plan!!",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
               if (
                 selectedCosting?.product &&
                 Object.keys(selectedCosting?.product)?.length > 0 &&

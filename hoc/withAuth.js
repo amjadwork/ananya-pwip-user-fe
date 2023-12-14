@@ -12,6 +12,28 @@ const withAuth = (WrappedComponent) => {
 
     const authToken = useSelector((state) => state.auth.token);
 
+    // const checkUserSubscriptionDetails = async (token) => {
+    //   try {
+    //     const response = await axios.get(
+    //       apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${token}`,
+    //         },
+    //       }
+    //     );
+    //     console.log("here response", response);
+    //   } catch (err) {
+    //     console.log("here err", err);
+    //   }
+    // };
+
+    // useEffect(() => {
+    //   if (authToken && status === "authenticated") {
+    //     checkUserSubscriptionDetails(authToken);
+    //   }
+    // }, [authToken, status]);
+
     useEffect(() => {
       if (status === "authenticated" && !authToken) {
         dispatch(
