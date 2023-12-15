@@ -1756,26 +1756,14 @@ function EditCosting() {
                                                             ) {
                                                               setFieldValue(
                                                                 "costOfRice",
-                                                                convertUnits(
-                                                                  "kg",
-                                                                  selectedUnitForPayload,
-                                                                  parseFloat(
-                                                                    customCostingSelection?.exMillPrice
-                                                                  )
-                                                                )
+                                                                customCostingSelection?.exMillPrice
                                                               );
                                                               const grandTotal =
                                                                 calculateGrandTotal(
                                                                   {
                                                                     ...values,
                                                                     costOfRice:
-                                                                      convertUnits(
-                                                                        "kg",
-                                                                        selectedUnitForPayload,
-                                                                        parseFloat(
-                                                                          customCostingSelection?.exMillPrice
-                                                                        )
-                                                                      ),
+                                                                      customCostingSelection?.exMillPrice,
                                                                   },
                                                                   shipmentTerm
                                                                 );

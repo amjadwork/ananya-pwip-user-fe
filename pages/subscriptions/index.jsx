@@ -175,7 +175,7 @@ function Subscription() {
                   plan_id: item?.id,
                   order_id: order?.order_id,
                   payment_id: res?.razorpay_payment_id,
-                  amount_paid: order?.amount,
+                  amount_paid: order?.amount / 100, //paise to inr
                   amount_paid_date: moment(new Date()).format(
                     "YYYY-MM-DD HH:mm:ss"
                   ), //2023-12-13 20:59:27
@@ -211,7 +211,7 @@ function Subscription() {
                           Amount Paid
                         </span>
                         <span className="text-zinc-900 text-sm font-medium">
-                          ₹{order?.amount}
+                          ₹{Math.ceil(order?.amount / 100)}
                         </span>
                       </div>
                     </div>
