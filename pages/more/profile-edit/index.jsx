@@ -278,22 +278,30 @@ function ProfileEdit() {
             </div>
           </div>
           <div className="bg-red-200 py-4 px-5">
-          <div className="w-[69px]  text-gray-800 text-base font-bold">
-            About
+            <div className="w-[69px]  text-gray-800 text-base font-bold">
+              About
+            </div>
+            <div className="w-full mt-2 text-sky-950 text-sm font-medium leading-snug">
+              Amar Singh is a second-generation rice miller. He inherited his
+              family's rice milling business, which has been operating for over
+              30 years. Amar Singh has been managing the rice mill for the past
+              20 years and has seen significant changes in the industry during
+              this time.
+            </div>
           </div>
-          <div className="w-full mt-2 text-sky-950 text-sm font-medium leading-snug">
-            Amar Singh is a second-generation rice miller. He inherited his
-            family's rice milling business, which has been operating for over 30
-            years. Amar Singh has been managing the rice mill for the past 20
-            years and has seen significant changes in the industry during this
-            time.
+          <h2 className="mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold">
+            I am a/an
+          </h2>
+          <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
+            <div className=" text-sky-950 text-lg font-bold">Company</div>
+            
+            <div className="w-[231px] text-gray-800 text-sm font-normal leading-tight">
+            Mishra Mills & Exports
+            </div>
+            <div className=" text-neutral-700 text-xs font-normal leading-tight">
+              Bangalore, Karnataka
+            </div>
           </div>
-          </div>
-          <h2
-              className="mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold"
-            >
-             I am a/an
-            </h2>
 
           {/* <div className="w-[378px] h-[92px] left-[8px] top-[440px] absolute bg-red-400">
           <div className="w-[378px] h-[92px] left-0 top-0 absolute bg-sky-50" />
