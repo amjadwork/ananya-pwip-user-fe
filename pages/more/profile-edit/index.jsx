@@ -7,7 +7,7 @@ import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
-import { cameraIcon } from "../../../theme/icon";
+import { cameraIcon, pencilIcon } from "../../../theme/icon";
 import {
   personalFields,
   socialFields,
@@ -114,6 +114,7 @@ function ProfileEdit() {
   const token = useSelector((state) => state.auth.token);
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   const professionList = [...professionOptions];
 
@@ -143,50 +144,61 @@ function ProfileEdit() {
     // closeToastMessage,
   } = useOverlayContext();
 
-  const handleProfessionBottomSheet = () => {
+  const handlePersonalDetail = () => {
+    console.log("opened")
+    setIsBottomSheetOpen(true);
     const content = (
       <React.Fragment>
-        <div className="px-5 mb-6 pt-4">
-          <span className="text-base font-sans font-semibold text-pwip-gray-900 text-left">
-            Select Profession
-          </span>
-        </div>
-
-        <div className=" px-5 pb-[4rem] grid grid-cols-2 gap-4">
-          {[...professionList].map((item, index) => {
-            return (
-              <div
-                key={item.value + index}
-                className="h-40 w-40 rounded-md bg-pwip-white inline-flex flex-col space-t"
-                style={{
-                  boxShadow:
-                    "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
-                }}
-                onClick={() => handleProfessionSelect(item.value)}>
-                <div className="w-full pt-3 inline-flex items-center justify-center">
-                  <img src={item.image} />
-                </div>
-                <div className=" flex w-fill flex-col space-y-[3px]">
-                  <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    {item.label}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <div>Helloww</div>
       </React.Fragment>
     );
     openBottomSheet(content);
   };
 
-  const handleProfessionSelect = (value) => {
-    formik.current.setValues({
-      ...formik.current.values,
-      profession: value,
-    });
-    closeBottomSheet();
-  };
+  // const handleProfessionBottomSheet = () => {
+  //   const content = (
+  //     <React.Fragment>
+  //       <div className="px-5 mb-6 pt-4">
+  //         <span className="text-base font-sans font-semibold text-pwip-gray-900 text-left">
+  //           Select Profession
+  //         </span>
+  //       </div>
+
+  //       <div className=" px-5 pb-[4rem] grid grid-cols-2 gap-4">
+  //         {[...professionList].map((item, index) => {
+  //           return (
+  //             <div
+  //               key={item.value + index}
+  //               className="h-40 w-40 rounded-md bg-pwip-white inline-flex flex-col space-t"
+  //               style={{
+  //                 boxShadow:
+  //                   "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
+  //               }}
+  //               onClick={() => handleProfessionSelect(item.value)}>
+  //               <div className="w-full pt-3 inline-flex items-center justify-center">
+  //                 <img src={item.image} />
+  //               </div>
+  //               <div className=" flex w-fill flex-col space-y-[3px]">
+  //                 <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
+  //                   {item.label}
+  //                 </span>
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </div>
+  //     </React.Fragment>
+  //   );
+  //   openBottomSheet(content);
+  // };
+
+  // const handleProfessionSelect = (value) => {
+  //   formik.current.setValues({
+  //     ...formik.current.values,
+  //     profession: value,
+  //   });
+  //   closeBottomSheet();
+  // };
 
   const handleFormSubmit = async () => {
     try {
@@ -255,10 +267,26 @@ function ProfileEdit() {
 
   return (
     <React.Fragment>
-      <div className="w-full h-auto bg-white p-2">
-        <div className="w-full bg-yellow-200 flex flex-col">
-          <div className="w-full h-[92px] p-2 mt-80 mb-5 bg-slate-100">
-            <div className=" text-sky-950 text-lg font-bold">Anurag Mishra</div>
+      <div className="w-full h-auto bg-white">
+        <Header/>
+        <div className="w-full bg-white flex flex-col">
+          <div className="mt-12 h-48 pt-6 pl-4 bg-green-100">
+            <img
+              className="w-[142px] h-[142px] rounded-full border-blue-950"
+              src="https://via.placeholder.com/142x142"
+            />
+          </div>
+          <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
+            <div className=" text-sky-950 text-lg font-bold flex justify-between">
+              Anurag Mishra{" "}
+              <button
+                onClick={() => {
+                  handlePersonalDetail();
+                }}>
+                {pencilIcon}
+              </button>
+            </div>
+
             <div className=" text-neutral-700 text-xs font-normal leading-tight">
               Bengaluru, Karnataka, India
             </div>
@@ -267,8 +295,8 @@ function ProfileEdit() {
             </div>
           </div>
           <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
-            <div className=" text-sky-950 text-lg font-bold">
-              Contact Details
+            <div className=" text-sky-950 text-lg font-bold flex justify-between">
+              Contact Details {pencilIcon}
             </div>
             <div className=" text-neutral-700 text-xs font-normal leading-tight">
               mishra.anurag110@gmail.com
@@ -278,8 +306,8 @@ function ProfileEdit() {
             </div>
           </div>
           <div className="bg-red-200 py-4 px-5">
-            <div className="w-[69px]  text-gray-800 text-base font-bold">
-              About
+            <div className="w-[69px]  text-gray-800 text-base font-bold flex justify-between">
+              About {pencilIcon}
             </div>
             <div className="w-full mt-2 text-sky-950 text-sm font-medium leading-snug">
               Amar Singh is a second-generation rice miller. He inherited his
@@ -292,14 +320,51 @@ function ProfileEdit() {
           <h2 className="mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold">
             I am a/an
           </h2>
-          <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
-            <div className=" text-sky-950 text-lg font-bold">Company</div>
-            
+          <div className="flex overflow-x-scroll hide-scroll-bar">
+            <div className="flex flex-nowrap">
+              {professionOptions.map((items, index) => {
+                return (
+                  <div
+                    key={items.label + (index + 1 * 2)}
+                    className="w-[116px] h-[116px] inline-block px-[15px] py-[18px] bg-blue-100 rounded-lg mr-4"
+                    style={{
+                      boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                      backdropFilter: "blur(8px)",
+                    }}>
+                    <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                      <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
+                        <span className="line-clamp-1">{items?.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="w-full h-[92px] p-2 my-5 bg-slate-100">
+            <div className=" text-sky-950 text-lg font-bold flex justify-between">
+              Company {pencilIcon}
+            </div>
+
             <div className="w-[231px] text-gray-800 text-sm font-normal leading-tight">
-            Mishra Mills & Exports
+              Mishra Mills & Exports
             </div>
             <div className=" text-neutral-700 text-xs font-normal leading-tight">
               Bangalore, Karnataka
+            </div>
+            <div className=" text-neutral-700 text-xs font-normal leading-tight">
+              GST: 83728934823468934
+            </div>
+          </div>
+          <div className="w-full h-[92px] p-2 mt-5 mb-10 bg-red-100">
+            <div className=" text-sky-950 text-lg font-bold">Find me on</div>
+            <div className="w-full flex flex-row justify-between">
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
+              <div className="w-[46px] h-[46px] bg-orange-50 rounded-lg" />
             </div>
           </div>
 
