@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 import { useSelector, useDispatch } from "react-redux";
-import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button } from "@/components/Button";
+
 import withAuth from "@/hoc/withAuth";
 import { useOverlayContext } from "@/context/OverlayContext";
+import ProfileDetailForm from "@/components/ProfileDetailForm";
 import {
   cameraIcon,
   pencilIcon,
@@ -168,135 +168,16 @@ function ProfileEdit() {
     setIsBottomSheetOpen(true);
     const content = (
       <React.Fragment>
-        <Formik
-          innerRef={formik}
-          initialValues={{
-            ...initialValues,
-          }}
-          validationSchema={profileValidationSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              setSubmitting(false);
-            }, 400);
-          }}>
-          {({
-            values,
-            errors,
-            dirty,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-          }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}>
-              <div className="w-full h-24 p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
-                {fieldHeading.heading}
-              </div>
-              <div className="mx-7">
-                <div className="pb-7">
-                  {fields.map((field, index) => (
-                    <div className="relative">
-                      {field.type === "textarea" ? (
-                        <div className="mb-2 mt-2">
-                          <label
-                            htmlFor={field.name}
-                            className="text-sm font-medium text-gray-900">
-                            {field.label}
-                          </label>
-                          <textarea
-                            id={field.name}
-                            name={field.name}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            maxLength={600}
-                            style={{
-                              textAlign: "left",
-                            }}
-                            className={`block w-full h-24 p-1 text-sm text-gray-900 rounded-md border ${
-                              errors[field.name] && touched[field.name]
-                                ? "border-red-300"
-                                : "border-[#006EB4]"
-                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                            placeholder={field.placeholder}
-                          />
-                          {errors[field.name] ? (
-                            <span
-                              className="absolute text-red-400 text-xs"
-                              style={{ top: "100%" }}>
-                              {errors[field.name]}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : (
-                        <div className="mb-2 mt-2  overflow-x-auto">
-                          <label
-                            htmlFor={field.name}
-                            className="block mb-2 text-sm font-medium text-gray-900">
-                            {field.label}
-                          </label>
-                          <input
-                            type={field.type}
-                            id={field.name}
-                            name={field.name}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            style={{
-                              textAlign: "left",
-                            }}
-                            className={`block w-full h-9 p-1  \text-sm text-gray-900 rounded-md border ${
-                              errors[field.name] && touched[field.name]
-                                ? "border-red-300"
-                                : "border-[#006EB4]"
-                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                            placeholder={field.placeholder}
-                          />
-                          {errors[field.name] ? (
-                            <span
-                              className="absolute text-red-400 text-xs"
-                              style={{ top: "100%" }}>
-                              {errors[field.name]}
-                            </span>
-                          ) : null}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                <div className=" bottom-0  w-full bg-white">
-                  <Button
-                    type="primary"
-                    buttonType="submit"
-                    label="Update changes"
-                    disabled={
-                      Object.keys(errors).length || isSubmitting ? true : false
-                    }
-                    onClick={() => {
-                      const changes = getChangedPropertiesFromObject(
-                        {
-                          ...userObject.userData,
-                          ...profileObject.profileData,
-                        },
-                        values
-                      );
-                      if (
-                        !Object.keys(errors).length &&
-                        Object.keys(changes).length
-                      ) {
-                        handleFormSubmit();
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </form>
-          )}
-        </Formik>
+        <ProfileDetailForm
+          initialValues={initialValues}
+          profileValidationSchema={profileValidationSchema}
+          fields={fields}
+          fieldHeading={fieldHeading}
+          userObject={userObject}
+          profileObject={profileObject}
+          handleFormSubmit={handleFormSubmit}
+          openBottomSheet={openBottomSheet}
+        />
       </React.Fragment>
     );
     openBottomSheet(content);
@@ -387,7 +268,7 @@ function ProfileEdit() {
             />
           </div>
           <div className="mx-2 mt-6">
-            <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
+            <div className="w-full h-[92px] p-2 mb-5 bg-[#F4FCFF]">
               <div className=" text-sky-950 text-lg font-bold flex justify-between">
                 Anurag Mishra{" "}
                 <button
@@ -408,7 +289,7 @@ function ProfileEdit() {
                 Managing Director, Mishra Exports
               </div>
             </div>
-            <div className="w-full h-[92px] p-2 mb-5 bg-slate-100">
+            <div className="w-full h-[92px] p-2 mb-5 bg-[#F4FCFF]">
               <div className=" text-sky-950 text-lg font-bold flex justify-between">
                 Contact Details{" "}
                 <button
@@ -456,15 +337,15 @@ function ProfileEdit() {
                     <div>
                       <div
                         key={items.label + (index + 1 * 2)}
-                        className=" w-[116px] h-[116px] inline-block bg-blue-100 rounded-lg mr-4"
+                        className=" w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-4"
                         style={{
                           boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                           backdropFilter: "blur(8px)",
                         }}>
-                        {/* <img
-                          className=""
+                        <img
+                          className="h-full w-full object-contain"
                           src={items.image}
-                        /> */}
+                        />
                         <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
                           <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]"></div>
                         </div>
@@ -501,7 +382,7 @@ function ProfileEdit() {
                 GST: 83728934823468934
               </div>
             </div>
-            <div className="w-full h-[150px] p-2 bg-[url('/assets/images/bg-profile.png')] bg-cover">
+            <div className="w-full h-[150px] p-2 bg-[url('/assets/images/bg-profile.png')] bg-cover bg-opacity-40">
               <div className=" text-sky-950 text-lg font-bold mb-7">
                 Find me on
               </div>
