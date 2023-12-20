@@ -1,15 +1,7 @@
-import {
-  instagram,
-  linkedin,
-  facebook,
-  whatsapp,
-  youtube,
-} from "../theme/icon";
+
 
 export const personalFields = [
-  {
-    heading: "Personal details",
-  },
+ 
   {
     name: "full_name",
     label: "Name",
@@ -19,23 +11,6 @@ export const personalFields = [
     name: "headline",
     label: "Headline",
     type: "text",
-  },
-  {
-    name: "email",
-    label: "Email",
-    type: "email",
-  },
-  {
-    name: "phone",
-    label: "Mobile",
-    type: "number",
-  },
-
-  {
-    name: "bio",
-    label: "Bio",
-    type: "text",
-    placeholder: "Tell us a bit about yourself",
   },
   {
     name: "city",
@@ -61,10 +36,25 @@ export const personalFields = [
     type: "number",
   },
 ];
-export const companyFields = [
+export const personalFieldsHeading =  {
+  heading: "Personal Details",
+}
+export const contactFields = [
   {
-    heading: "Company details",
+    name: "email",
+    label: "Email",
+    type: "email",
   },
+  {
+    name: "phone",
+    label: "Mobile",
+    type: "number",
+  },
+];
+export const contactFieldsHeading =  {
+  heading: "Contact Details",
+}
+export const companyFields = [
   {
     name: "profession",
     label: "Profession",
@@ -85,45 +75,6 @@ export const companyFields = [
     placeholder: "",
   },
 ];
-
-export const socialFields = [
-  {
-    heading: "Social details",
-  },
-  {
-    name: "whatsapp_link",
-    icon: whatsapp,
-    type: "numeric",
-    placeholder: "Type WhatsApp number",
-  },
-  {
-    name: "linkedin_url",
-    icon: linkedin,
-    type: "text",
-    placeholder: "Type Linkedin Id",
-  },
-  {
-    name: "facebook_url",
-    icon: facebook,
-    type: "text",
-    placeholder: "Type Facebook Id",
-  },
-  {
-    name: "website",
-    image: "/assets/images/profession/website.png",
-    type: "text",
-    placeholder: "Type Website Link",
-  },
-  {
-    name: "youtube_url",
-    icon: youtube,
-    type: "text",
-    placeholder: "Type Youtube Id",
-  },
-  {
-    name: "instagram_url",
-    icon: instagram,
-    type: "text",
-    placeholder: "Type Instagram Id",
-  },
-];
+export const companyFieldsHeading =  {
+  heading: "Company Details",
+}
