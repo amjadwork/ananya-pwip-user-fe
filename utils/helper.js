@@ -10,6 +10,11 @@ export function inrToUsd(inrAmount, exchangeRate) {
 
 export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-stage.pwip.co/";
 
+// auth configs
+export const auth0BaseURL = process.env.NEXT_PUBLIC_AUTH0_ISSUER_BASE_URL;
+export const auth0ClientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
+export const auth0ClientSecret = process.env.NEXT_PUBLIC_AUTH0_CLIENT_SECRET;
+
 export let api = axios.create({
   baseURL: apiBaseURL + "api", // Replace with your API base URL
   timeout: 5000,

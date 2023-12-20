@@ -1,22 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { getSession, useSession, signIn } from "next-auth/react";
-import { useDispatch } from "react-redux";
+// import { useRouter } from "next/router";
+import { getSession, signIn } from "next-auth/react";
+// import { useDispatch } from "react-redux";
 import Slider from "react-slick";
 
-import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
-
-// const onboardingIndex = [0, 1, 2];
+// import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 export default function Home() {
-  const router = useRouter();
+  // const router = useRouter();
   // const { data: session } = useSession();
   // const dispatch = useDispatch();
 
-  // const [touchStartX, setTouchStartX] = useState(0);
-  // const [touchEndX, setTouchEndX] = useState(0);
-  // const [active, setActive] = useState(0);
   const [activeSlide, setActiveSlide] = useState(0);
 
   const sliderSettings = {
@@ -35,9 +30,9 @@ export default function Home() {
     },
   };
 
-  const handleNavigation = (path) => {
-    router.push(path);
-  };
+  // const handleNavigation = (path) => {
+  //   router.push(path);
+  // };
 
   const handleLogin = async () => {
     try {
@@ -230,12 +225,12 @@ export async function getServerSideProps(context) {
 
   if (session?.accessToken) {
     return {
+      props: {
+        session: session || null,
+      },
       redirect: {
         destination: "/export-costing",
         permanent: true, // Set to true if /export-costing is a permanent redirect
-      },
-      props: {
-        session: session || null,
       },
     };
   }

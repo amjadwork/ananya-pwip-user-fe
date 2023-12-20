@@ -14,15 +14,13 @@ const persistConfig = {
   storage, // Storage engine
   whitelist: [
     "auth",
-    // "products",
-    // "locations",
     "costing",
-    // "bags",
     "myCosting",
     "shipmentTerm",
     "category",
     "learnList",
     "tags",
+    // "utils",
   ], // List of reducers to persist
 };
 

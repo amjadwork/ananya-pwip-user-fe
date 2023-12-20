@@ -12,28 +12,6 @@ const withAuth = (WrappedComponent) => {
 
     const authToken = useSelector((state) => state.auth.token);
 
-    // const checkUserSubscriptionDetails = async (token) => {
-    //   try {
-    //     const response = await axios.get(
-    //       apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${token}`,
-    //         },
-    //       }
-    //     );
-    //     console.log("here response", response);
-    //   } catch (err) {
-    //     console.log("here err", err);
-    //   }
-    // };
-
-    // useEffect(() => {
-    //   if (authToken && status === "authenticated") {
-    //     checkUserSubscriptionDetails(authToken);
-    //   }
-    // }, [authToken, status]);
-
     useEffect(() => {
       if (status === "authenticated" && !authToken) {
         dispatch(
@@ -42,9 +20,9 @@ const withAuth = (WrappedComponent) => {
       }
     }, [status, authToken]);
 
-    if (status === "loading") {
+    if (status === "loading" && !authToken) {
       return (
-        <div className="w-screen h-screen inline-flex flex-col items-center justify-center text-white bg-pwip-primary">
+        <div className="w-screen h-screen inline-flex flex-col items-center justify-center text-pwip-primary bg-white">
           <span className="text-sm font-sans">Loading...</span>
         </div>
       );
