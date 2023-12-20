@@ -1740,7 +1740,7 @@ function EditCosting() {
                                                             field.name ===
                                                             "brokenPercentage"
                                                           ) {
-                                                            const ricePrice =
+                                                            let ricePrice =
                                                               values?._variantId?.sourceRates.find(
                                                                 (d) =>
                                                                   d?._sourceId ===

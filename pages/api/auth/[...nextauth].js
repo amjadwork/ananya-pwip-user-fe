@@ -10,9 +10,17 @@ export const authOptions = {
       issuer: process.env.AUTH0_ISSUER_BASE_URL,
       audience: process.env.AUTH0_AUDIENCE,
       idToken: true,
+      useRefreshTokens: true,
+      cacheLocation: "localstorage",
+      token: {
+        params: {
+          audience: process.env.AUTH0_AUDIENCE,
+        },
+      },
       authorization: {
         params: {
           audience: encodeURI(process.env.AUTH0_AUDIENCE),
+          scope: "openid email profile offline_access refresh_token",
         },
       },
     }),
@@ -43,8 +51,10 @@ export const authOptions = {
     },
     async jwt({ token, account }) {
       // Persist the OAuth access_token to the token right after signin
-      if (account) {
-        token.accessToken = account.access_token;
+      if (account || token) {
+        token.accessToken = account?.access_token || token?.accessToken || null;
+        token.refreshToken =
+          account?.refresh_token || token?.refreshToken || null; // to include refresh token
       }
 
       return token;

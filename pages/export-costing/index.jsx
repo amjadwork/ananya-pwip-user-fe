@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // import { useOverlayContext } from "@/context/OverlayContext";
 
-import { fetchProductsRequest } from "../../redux/actions/products.actions";
+import { fetchProductsRequest } from "@/redux/actions/products.actions";
 
 import withAuth from "@/hoc/withAuth";
 
