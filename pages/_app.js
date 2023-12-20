@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import Head from "next/head";
 import { SessionProvider } from "next-auth/react";
 import { Provider } from "react-redux";
+import { hotjar } from "react-hotjar";
+
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 
@@ -9,6 +11,10 @@ import "../styles/globals.css";
 import { OverlayProvider } from "@/context/OverlayContext";
 
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
+  useEffect(() => {
+    hotjar.initialize("3801647", 6);
+  }, []);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
