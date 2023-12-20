@@ -55,26 +55,40 @@ export const contactFieldsHeading =  {
   heading: "Contact Details",
 }
 export const companyFields = [
-  {
-    name: "profession",
-    label: "Profession",
-    type: "button",
-    placeholder: "Select your profession",
-  },
+ 
   {
     name: "companyName",
     label: "Company Name",
     type: "text",
     placeholder: "Add your company name",
   },
-
+  {
+    name: "companyAddress",
+    label: "Company Address",
+    type: "text",
+    placeholder: "Add your company address",
+  },
   {
     name: "gstin",
     label: "GST Number",
     type: "text",
-    placeholder: "",
+    placeholder: "Add your GST Number",
   },
 ];
 export const companyFieldsHeading =  {
   heading: "Company Details",
+}
+
+export const aboutFields = [
+ 
+  {
+    name: "about",
+    label: "You can write about your years of experience,industry and skills here",
+    type: "textarea",
+    placeholder: "",
+  },
+];
+
+export const aboutFieldsHeading =  {
+  heading: "About",
 }
