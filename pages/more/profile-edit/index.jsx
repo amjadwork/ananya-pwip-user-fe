@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import Head from "next/head";
-import { useSelector, useDispatch } from "react-redux";
-import * as Yup from "yup";
 
 import withAuth from "@/hoc/withAuth";
+import { useSelector} from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 import {
@@ -31,11 +29,6 @@ import {
 } from "@/redux/actions/userEdit.actions";
 // Import Components
 import { Header } from "@/components/Header";
-
-import {
-  intersectObjects,
-  getChangedPropertiesFromObject,
-} from "@/utils/helper";
 import {
   contactFields,
   personalFields,
@@ -47,81 +40,7 @@ import {
   personalFieldsHeading,
 } from "constants/profileFormFields";
 
-const requiredProfilePayload = {
-  profile_pic: "",
-  city: "",
-  state: "",
-  country: "",
-  zip_code: "",
-  gstin: "",
-  headline: "",
-  bio: "",
-  companyName: "",
-  profession: "",
-  website: "",
-  youtube_url: "",
-  facebook_url: "",
-  instagram_url: "",
-  whatsapp_link: "",
-  linkedin_url: "",
-};
-
-const requiredUserPayload = {
-  first_name: "",
-  last_name: "",
-  middle_name: "",
-  full_name: "",
-  email: "",
-  phone: "",
-};
-
-const initialValues = {
-  full_name: "",
-  headline: "",
-  email: "",
-  phone: "",
-  companyName: "",
-  profession: "",
-  gstin: "",
-  bio: "",
-  city: "",
-  state: "",
-  country: "",
-  zip_code: "",
-  website: "",
-  youtube_url: "",
-  linkedin_url: "",
-  facebook_url: "",
-  whatsapp_link: "",
-  instagram_url: "",
-};
-
-const profileValidationSchema = Yup.object().shape({
-  full_name: Yup.string().required("Please enter your full name"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Invalid mobile number")
-    .required("Required"),
-  email: Yup.string()
-    .email("Invalid email")
-    .test("has-extension", "Invalid email", (value) => {
-      if (value) {
-        return /\.\w{2,}$/.test(value);
-      }
-      return true;
-    })
-    .required("Required"),
-  bio: Yup.string().max(255, "Maximum 255 characters").nullable(),
-  profession: Yup.string().nullable(),
-  website: Yup.string().url().nullable(),
-  facebook_url: Yup.string().nullable(),
-  youtube_url: Yup.string().nullable(),
-  linkedin_url: Yup.string().nullable(),
-  instagram_url: Yup.string().nullable(),
-});
-
 function ProfileEdit() {
-  const formik = useRef();
-  const dispatch = useDispatch();
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
   const token = useSelector((state) => state.auth.token);
@@ -149,25 +68,6 @@ function ProfileEdit() {
     }
   }, [profileObject]);
 
-  useEffect(() => {
-    if (profileObject && userObject && formik && formik.current) {
-      const formikRef = formik.current;
-
-      const updatedFormValues = {
-        ...userObject.userData,
-        ...profileObject.profileData,
-      };
-      formikRef.setValues(updatedFormValues);
-    }
-  }, [profileObject, userObject, formik]);
-
-  useEffect(() => {
-    if (token) {
-      dispatch(fetchProfileRequest());
-      dispatch(fetchUserRequest());
-    }
-  }, [token]);
-
   const {
     openBottomSheet,
     closeBottomSheet,
@@ -180,13 +80,11 @@ function ProfileEdit() {
     const content = (
       <React.Fragment>
         <ProfileDetailForm
-          initialValues={initialValues}
-          profileValidationSchema={profileValidationSchema}
+          token={token}
           fields={fields}
           fieldHeading={fieldHeading}
           userObject={userObject}
           profileObject={profileObject}
-          handleFormSubmit={handleFormSubmit}
           openBottomSheet={openBottomSheet}
         />
       </React.Fragment>
@@ -201,63 +99,6 @@ function ProfileEdit() {
   //   });
   //   closeBottomSheet();
   // };
-
-  const handleFormSubmit = async () => {
-    try {
-      const formValues = {
-        data: {
-          ...formik.current.values,
-        },
-      };
-
-      const userFormValues = intersectObjects(
-        requiredUserPayload,
-        formValues.data
-      );
-      const profileFormValues = intersectObjects(
-        requiredProfilePayload,
-        formValues.data
-      );
-
-      const userPayload = getChangedPropertiesFromObject(
-        userObject.userData,
-        userFormValues
-      );
-      const profilePayload = getChangedPropertiesFromObject(
-        profileObject.profileData,
-        profileFormValues
-      );
-
-      const requestAction = null;
-
-      if (Object.keys(userPayload)?.length) {
-        const payload = {
-          ...userPayload,
-        };
-        requestAction = await dispatch(updateUserRequest(payload));
-      }
-
-      if (Object.keys(profilePayload)?.length) {
-        const payload = {
-          ...profilePayload,
-        };
-        requestAction = await dispatch(updateProfileRequest(payload));
-      }
-
-      if (Object.keys(requestAction?.payload)?.length) {
-        openToastMessage({
-          type: "success",
-          message: "Profile has been updated successfully.",
-        });
-        requestAction = null;
-      }
-    } catch (error) {
-      openToastMessage({
-        type: "error",
-        message: error?.message || "Update failed. Please try again.",
-      });
-    }
-  };
 
   useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -275,7 +116,9 @@ function ProfileEdit() {
           <div className="mt-12 h-56 pt-14 pl-4 bg-[url('/assets/images/bg-profile.png')] bg-cover">
             <img
               className="w-[142px] h-[142px] rounded-full border-blue-950"
-              src="https://via.placeholder.com/142x142"
+              src={
+                userObject?.userData?.picture || "/assets/images/no-profile.png"
+              }
             />
           </div>
           <div className="mx-2 mt-6">

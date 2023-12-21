@@ -1,19 +1,193 @@
-import React from "react";
+import React, {useEffect, useState, useRef} from "react";
 import { Formik } from "formik";
-import { Button} from "@/components/Button";
+import * as Yup from "yup";
+import { useSelector, useDispatch } from "react-redux";
+import { Button } from "@/components/Button";
+
+import {
+  // fetchProfileFailure,
+  updateProfileRequest,
+  fetchProfileRequest,
+  // updateProfileFailure,
+} from "@/redux/actions/profileEdit.actions";
+import {
+  // fetchUserFailure,
+  updateUserRequest,
+  fetchUserRequest,
+  // updateUserFailure,
+} from "@/redux/actions/userEdit.actions";
+import {
+  intersectObjects,
+  getChangedPropertiesFromObject,
+} from "@/utils/helper";
+
+const requiredProfilePayload = {
+  profile_pic: "",
+  city: "",
+  state: "",
+  country: "",
+  zip_code: "",
+  gstin: "",
+  headline: "",
+  bio: "",
+  companyName: "",
+  profession: "",
+  website: "",
+  youtube_url: "",
+  facebook_url: "",
+  instagram_url: "",
+  whatsapp_link: "",
+  linkedin_url: "",
+};
+
+const requiredUserPayload = {
+  first_name: "",
+  last_name: "",
+  middle_name: "",
+  full_name: "",
+  email: "",
+  phone: "",
+};
+
+const initialValues = {
+  full_name: "",
+  headline: "",
+  email: "",
+  phone: "",
+  companyName: "",
+  profession: "",
+  gstin: "",
+  bio: "",
+  city: "",
+  state: "",
+  country: "",
+  zip_code: "",
+  website: "",
+  youtube_url: "",
+  linkedin_url: "",
+  facebook_url: "",
+  whatsapp_link: "",
+  instagram_url: "",
+};
+
+const profileValidationSchema = Yup.object().shape({
+  full_name: Yup.string().required("Please enter your full name"),
+  phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Invalid mobile number")
+    .required("Required"),
+  email: Yup.string()
+    .email("Invalid email")
+    .test("has-extension", "Invalid email", (value) => {
+      if (value) {
+        return /\.\w{2,}$/.test(value);
+      }
+      return true;
+    })
+    .required("Required"),
+  bio: Yup.string().max(255, "Maximum 255 characters").nullable(),
+  profession: Yup.string().nullable(),
+  website: Yup.string().url().nullable(),
+  facebook_url: Yup.string().nullable(),
+  youtube_url: Yup.string().nullable(),
+  linkedin_url: Yup.string().nullable(),
+  instagram_url: Yup.string().nullable(),
+});
 
 const ProfileDetailForm = ({
-  initialValues,
-  profileValidationSchema,
+  token,
   fields,
   fieldHeading,
   userObject,
   profileObject,
-  handleFormSubmit,
   openBottomSheet,
 }) => {
-  const formik = React.useRef(null);
- console.log(fieldHeading, "hello")
+  const formik = useRef();
+  const dispatch = useDispatch();
+
+  console.log("field", fields);
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchProfileRequest());
+      dispatch(fetchUserRequest());
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (profileObject && userObject && formik && formik.current) {
+      const formikRef = formik.current;
+
+      const updatedFormValues = {
+        ...userObject.userData,
+        ...profileObject.profileData,
+      };
+      formikRef.setValues(updatedFormValues);
+      console.log(updatedFormValues, "Up")
+    }
+  }, [profileObject, userObject, formik]);
+
+  console.log(formik, "formik")
+
+
+
+  const handleFormSubmit = async () => {
+    try {
+      const formValues = {
+        data: {
+          ...formik.current.values,
+        },
+      };
+
+      const userFormValues = intersectObjects(
+        requiredUserPayload,
+        formValues.data
+      );
+      const profileFormValues = intersectObjects(
+        requiredProfilePayload,
+        formValues.data
+      );
+
+      const userPayload = getChangedPropertiesFromObject(
+        userObject.userData,
+        userFormValues
+      );
+      const profilePayload = getChangedPropertiesFromObject(
+        profileObject.profileData,
+        profileFormValues
+      );
+
+      const requestAction = null;
+
+      if (Object.keys(userPayload)?.length) {
+        const payload = {
+          ...userPayload,
+        };
+        requestAction = await dispatch(updateUserRequest(payload));
+      }
+
+      if (Object.keys(profilePayload)?.length) {
+        const payload = {
+          ...profilePayload,
+        };
+        requestAction = await dispatch(updateProfileRequest(payload));
+      }
+
+      if (Object.keys(requestAction?.payload)?.length) {
+        openToastMessage({
+          type: "success",
+          message: "Profile has been updated successfully.",
+        });
+        requestAction = null;
+      }
+    } catch (error) {
+      openToastMessage({
+        type: "error",
+        message: error?.message || "Update failed. Please try again.",
+      });
+    }
+  };
+
+  console.log(initialValues, "initial");
   return (
     <React.Fragment>
       <Formik
@@ -89,6 +263,7 @@ const ProfileDetailForm = ({
                           type={field.type}
                           id={field.name}
                           name={field.name}
+                          value={formik?.current?.values[field.name]}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           style={{
