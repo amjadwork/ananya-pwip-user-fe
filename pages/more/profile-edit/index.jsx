@@ -128,7 +128,10 @@ function ProfileEdit() {
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
+  const [isProfessionSelected, setIsProfessionSelected] = useState(false);
+  const [profession, setProfession] = useState("");
+  console.log(userObject, "user");
+  console.log(profileObject, "profile");
   const professionList = [...professionOptions];
   const socialMediaIcons = [
     facebookIcon,
@@ -138,6 +141,14 @@ function ProfileEdit() {
     linkedin,
     youtube,
   ];
+
+  useEffect(() => {
+    if (profileObject?.profileData?.profession) {
+      setProfession(profileObject?.profileData?.profession);
+      setIsProfessionSelected(true);
+    }
+  }, [profileObject]);
+
   useEffect(() => {
     if (profileObject && userObject && formik && formik.current) {
       const formikRef = formik.current;
@@ -255,7 +266,7 @@ function ProfileEdit() {
       setMainContainerHeight(height);
     }
   }, []);
-
+  console.log("profession", profession);
   return (
     <React.Fragment>
       <div className="w-full h-auto bg-white">
@@ -270,7 +281,7 @@ function ProfileEdit() {
           <div className="mx-2 mt-6">
             <div className="w-full h-[92px] p-2 mb-5 bg-[#F4FCFF]">
               <div className=" text-sky-950 text-lg font-bold flex justify-between">
-                Anurag Mishra{" "}
+                {userObject?.userData?.full_name}
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(
@@ -283,10 +294,12 @@ function ProfileEdit() {
               </div>
 
               <div className=" text-neutral-700 text-xs font-normal leading-tight">
-                Bengaluru, Karnataka, India
+                {profileObject?.profileData?.city},{" "}
+                {profileObject?.profileData?.state},{" "}
+                {profileObject?.profileData?.country}
               </div>
               <div className="w-[231px] text-gray-800 text-sm font-normal leading-tight">
-                Managing Director, Mishra Exports
+                {profileObject?.profileData?.headline}
               </div>
             </div>
             <div className="w-full h-[92px] p-2 mb-5 bg-[#F4FCFF]">
@@ -303,10 +316,10 @@ function ProfileEdit() {
                 </button>
               </div>
               <div className=" text-neutral-700 text-xs font-normal leading-tight">
-                mishra.anurag110@gmail.com
+                {userObject?.userData?.email}
               </div>
               <div className="w-[231px] text-gray-800 text-sm font-normal leading-tight">
-                6371569477
+                {userObject?.userData?.phone}
               </div>
             </div>
             <div className="bg-white py-4 px-2">
@@ -320,6 +333,7 @@ function ProfileEdit() {
                 </button>
               </div>
               <div className="w-full mt-2 text-sky-950 text-sm font-medium leading-snug">
+                {profileObject?.profileData?.about}
                 Amar Singh is a second-generation rice miller. He inherited his
                 family's rice milling business, which has been operating for
                 over 30 years. Amar Singh has been managing the rice mill for
@@ -333,11 +347,16 @@ function ProfileEdit() {
             <div className="flex overflow-x-scroll hide-scroll-bar px-2">
               <div className="flex flex-between">
                 {professionOptions.map((items, index) => {
+                  const profession = profileObject?.profileData?.profession;
                   return (
                     <div>
                       <div
                         key={items.label + (index + 1 * 2)}
-                        className=" w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-4"
+                        className={`w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-4 ${
+                          isProfessionSelected && profession === items.value
+                            ? "opacity-100"
+                            : "opacity-25"
+                        }`}
                         style={{
                           boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                           backdropFilter: "blur(8px)",
@@ -350,7 +369,12 @@ function ProfileEdit() {
                           <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]"></div>
                         </div>
                       </div>
-                      <div className="mt-1 text-center text-sm font-semibold">
+                      <div
+                        className={`mt-1 text-center text-sm font-semibold ${
+                          isProfessionSelected && profession === items.value
+                            ? "text-pwip-v2-primary"
+                            : "text-gray-400"
+                        }`}>
                         {items?.label}
                       </div>
                     </div>
@@ -360,7 +384,7 @@ function ProfileEdit() {
             </div>
             <div className="w-full h-[92px] p-2 my-5 bg-white">
               <div className=" text-sky-950 text-lg font-bold flex justify-between">
-                Company
+                Company Details
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(
@@ -373,13 +397,13 @@ function ProfileEdit() {
               </div>
 
               <div className="w-[231px] text-gray-800 text-sm font-normal leading-tight">
-                Mishra Mills & Exports
+                {profileObject?.profileData?.companyName}
               </div>
               <div className=" text-neutral-700 text-xs font-normal leading-tight">
-                Bangalore, Karnataka
+                {profileObject?.profileData?.companyAddress}
               </div>
               <div className=" text-neutral-700 text-xs font-normal leading-tight">
-                GST: 83728934823468934
+                GST: {profileObject?.profileData?.gstin}
               </div>
             </div>
             <div className="w-full h-[150px] p-2 bg-[url('/assets/images/bg-profile.png')] bg-cover bg-opacity-40">
