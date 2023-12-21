@@ -33,6 +33,8 @@ import {
   personalFields,
   companyFields,
   aboutFields,
+  socialFields,
+  socialFieldsHeading,
   aboutFieldsHeading,
   contactFieldsHeading,
   companyFieldsHeading,
@@ -45,6 +47,7 @@ function ProfileEdit() {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
+  console.log(profileObject, "profile");
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isProfessionSelected, setIsProfessionSelected] = useState(false);
@@ -282,15 +285,30 @@ function ProfileEdit() {
               </div>
             </div>
             <div className="w-full h-[150px] p-2 bg-[url('/assets/images/bg-profile.png')] bg-cover bg-opacity-40">
-              <div className=" text-sky-950 text-lg font-bold mb-7">
+              <div className=" text-sky-950 text-lg font-bold mb-7 flex justify-between">
                 Find me on
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      socialFields,
+                      socialFieldsHeading
+                    );
+                  }}>
+                  {pencilIcon}
+                </button>
               </div>
 
               <div className="w-full flex flex-row justify-between">
                 {socialMediaIcons.map((icon, index) => (
                   <div
                     key={index}
-                    className="w-[46px] h-[46px] bg-orange-50 rounded-lg p-3">
+                    className="w-[46px] h-[46px] bg-orange-50 rounded-lg p-3"
+                    onClick={() => {
+                      handleFormFieldBottomSheet(
+                        socialFields,
+                        socialFieldsHeading
+                      );
+                    }}>
                     {icon}
                   </div>
                 ))}
