@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import withAuth from "@/hoc/withAuth";
-import { useSelector} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 import {
@@ -17,13 +17,11 @@ import {
 import { professionOptions } from "@/constants/professionOptions";
 import {
   // fetchProfileFailure,
-  updateProfileRequest,
   fetchProfileRequest,
   // updateProfileFailure,
 } from "@/redux/actions/profileEdit.actions";
 import {
   // fetchUserFailure,
-  updateUserRequest,
   fetchUserRequest,
   // updateUserFailure,
 } from "@/redux/actions/userEdit.actions";
@@ -44,13 +42,13 @@ function ProfileEdit() {
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
   const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isProfessionSelected, setIsProfessionSelected] = useState(false);
   const [profession, setProfession] = useState("");
-  console.log(userObject, "user");
-  console.log(profileObject, "profile");
+
   const professionList = [...professionOptions];
   const socialMediaIcons = [
     facebookIcon,
@@ -60,6 +58,13 @@ function ProfileEdit() {
     linkedin,
     youtube,
   ];
+
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchProfileRequest());
+      dispatch(fetchUserRequest());
+    }
+  }, [token]);
 
   useEffect(() => {
     if (profileObject?.profileData?.profession) {
@@ -91,14 +96,6 @@ function ProfileEdit() {
     );
     openBottomSheet(content);
   };
-
-  // const handleProfessionSelect = (value) => {
-  //   formik.current.setValues({
-  //     ...formik.current.values,
-  //     profession: value,
-  //   });
-  //   closeBottomSheet();
-  // };
 
   useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -177,11 +174,6 @@ function ProfileEdit() {
               </div>
               <div className="w-full mt-2 text-sky-950 text-sm font-medium leading-snug">
                 {profileObject?.profileData?.about}
-                Amar Singh is a second-generation rice miller. He inherited his
-                family's rice milling business, which has been operating for
-                over 30 years. Amar Singh has been managing the rice mill for
-                the past 20 years and has seen significant changes in the
-                industry during this time.
               </div>
             </div>
             <h2 className="mt-4 mb-5 px-2 text-pwip-v2-primary font-sans text-base font-bold">
