@@ -241,7 +241,7 @@ const ProfileDetailForm = ({
                             textAlign: "left",
                           }}
                           value={formik?.current?.values[field.name]}
-                          className={`block w-full h-64 p-1 text-sm text-gray-900 rounded-md border ${
+                          className={`block w-full h-60 p-1 mt-4 text-sm text-gray-900 rounded-md border ${
                             errors[field.name] && touched[field.name]
                               ? "border-red-300"
                               : "border-[#006EB4]"

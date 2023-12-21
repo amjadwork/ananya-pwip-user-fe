@@ -79,7 +79,7 @@ export const aboutFields = [
   {
     name: "bio",
     label:
-      "You can write about your years of experience,industry and skills here",
+      "You can write about your years of experience, skills and industry here",
     type: "textarea",
     placeholder: "",
   },
