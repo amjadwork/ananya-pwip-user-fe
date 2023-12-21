@@ -1,8 +1,9 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/Button";
+import { useOverlayContext } from "@/context/OverlayContext";
 
 import {
   // fetchProfileFailure,
@@ -104,14 +105,19 @@ const ProfileDetailForm = ({
   const formik = useRef();
   const dispatch = useDispatch();
 
-  console.log("field", fields);
-
   useEffect(() => {
     if (token) {
       dispatch(fetchProfileRequest());
       dispatch(fetchUserRequest());
     }
   }, [token]);
+
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    // closeToastMessage,
+  } = useOverlayContext();
 
   useEffect(() => {
     if (profileObject && userObject && formik && formik.current) {
@@ -122,13 +128,11 @@ const ProfileDetailForm = ({
         ...profileObject.profileData,
       };
       formikRef.setValues(updatedFormValues);
-      console.log(updatedFormValues, "Up")
+      console.log(updatedFormValues, "Up");
     }
   }, [profileObject, userObject, formik]);
 
-  console.log(formik, "formik")
-
-
+  console.log(formik, "formik");
 
   const handleFormSubmit = async () => {
     try {
@@ -185,9 +189,10 @@ const ProfileDetailForm = ({
         message: error?.message || "Update failed. Please try again.",
       });
     }
+    closeBottomSheet(true)
   };
 
-  console.log(initialValues, "initial");
+ 
   return (
     <React.Fragment>
       <Formik
