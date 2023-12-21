@@ -100,7 +100,6 @@ const ProfileDetailForm = ({
   fieldHeading,
   userObject,
   profileObject,
-  openBottomSheet,
 }) => {
   const formik = useRef();
   const dispatch = useDispatch();
@@ -189,10 +188,9 @@ const ProfileDetailForm = ({
         message: error?.message || "Update failed. Please try again.",
       });
     }
-    closeBottomSheet(true)
+    closeBottomSheet(true);
   };
 
- 
   return (
     <React.Fragment>
       <Formik
@@ -225,14 +223,14 @@ const ProfileDetailForm = ({
             <div className="mx-7">
               <div className="pb-7">
                 {fields.map((field, index) => (
-                  <div className="relative">
+                  <div className="relative mb-2 mt-2">
+                    <label
+                      htmlFor={field.name}
+                      className="w-full text-sm font-medium text-gray-900 mb-1">
+                      {field.label}
+                    </label>
                     {field.type === "textarea" ? (
-                      <div className="mb-2 mt-2">
-                        <label
-                          htmlFor={field.name}
-                          className="text-sm font-medium text-gray-900">
-                          {field.label}
-                        </label>
+                      <div>
                         <textarea
                           id={field.name}
                           name={field.name}
@@ -242,7 +240,8 @@ const ProfileDetailForm = ({
                           style={{
                             textAlign: "left",
                           }}
-                          className={`block w-full h-24 p-1 text-sm text-gray-900 rounded-md border ${
+                          value={formik?.current?.values[field.name]}
+                          className={`block w-full h-64 p-1 text-sm text-gray-900 rounded-md border ${
                             errors[field.name] && touched[field.name]
                               ? "border-red-300"
                               : "border-[#006EB4]"
@@ -258,12 +257,7 @@ const ProfileDetailForm = ({
                         ) : null}
                       </div>
                     ) : (
-                      <div className="mb-2 mt-2  overflow-x-auto">
-                        <label
-                          htmlFor={field.name}
-                          className="block mb-2 text-sm font-medium text-gray-900">
-                          {field.label}
-                        </label>
+                      <div className="overflow-x-auto">
                         <input
                           type={field.type}
                           id={field.name}

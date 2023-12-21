@@ -82,7 +82,7 @@ export const companyFieldsHeading =  {
 export const aboutFields = [
  
   {
-    name: "about",
+    name: "bio",
     label: "You can write about your years of experience,industry and skills here",
     type: "textarea",
     placeholder: "",
