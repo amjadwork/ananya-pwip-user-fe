@@ -13,6 +13,7 @@ export const personalFields = [
     name: "profession",
     label: "Profession",
     type: "select",
+    placeholder: "Select a Profession",
   },
   {
     name: "city",

@@ -128,11 +128,8 @@ const ProfileDetailForm = ({
         ...profileObject.profileData,
       };
       formikRef.setValues(updatedFormValues);
-      console.log(updatedFormValues, "Up");
     }
   }, [profileObject, userObject, formik]);
-
-  console.log(formik, "formik");
 
   const handleFormSubmit = async () => {
     try {
