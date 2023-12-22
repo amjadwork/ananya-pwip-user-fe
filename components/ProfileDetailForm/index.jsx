@@ -98,6 +98,7 @@ const ProfileDetailForm = ({
   token,
   fields,
   fieldHeading,
+  professionOptions,
   userObject,
   profileObject,
 }) => {
@@ -256,6 +257,36 @@ const ProfileDetailForm = ({
                           </span>
                         ) : null}
                       </div>
+                    ) : field.type === "select" ? (
+                      <div>
+                        <select
+                          id={field.name}
+                          name={field.name}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={formik?.current?.values[field.name]}
+                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
+                            errors[field.name] && touched[field.name]
+                              ? "border-red-300"
+                              : "border-[#006EB4]"
+                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}>
+                          <option value="" disabled>
+                            {field.placeholder}
+                          </option>
+                          {professionOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                        {errors[field.name] ? (
+                          <span
+                            className="absolute text-red-400 text-xs"
+                            style={{ top: "100%" }}>
+                            {errors[field.name]}
+                          </span>
+                        ) : null}
+                      </div>
                     ) : (
                       <div className="overflow-x-auto">
                         <input
@@ -268,7 +299,7 @@ const ProfileDetailForm = ({
                           style={{
                             textAlign: "left",
                           }}
-                          className={`block w-full h-9 p-1  \text-sm text-gray-900 rounded-md border ${
+                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
                             errors[field.name] && touched[field.name]
                               ? "border-red-300"
                               : "border-[#006EB4]"

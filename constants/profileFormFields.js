@@ -10,6 +10,11 @@ export const personalFields = [
     type: "text",
   },
   {
+    name: "profession",
+    label: "Profession",
+    type: "select",
+  },
+  {
     name: "city",
     label: "City",
     type: "text",
