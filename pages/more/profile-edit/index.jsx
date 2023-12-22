@@ -87,6 +87,7 @@ function ProfileEdit() {
           token={token}
           fields={fields}
           fieldHeading={fieldHeading}
+          professionOptions={professionOptions}
           userObject={userObject}
           profileObject={profileObject}
         />
