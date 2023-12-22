@@ -78,6 +78,10 @@ function ProfileEdit() {
     }
   }, [profileObject]);
 
+  const handlePictureChange = () => {
+    console.log("clicked");
+  };
+
   const handleFormFieldBottomSheet = (fields, fieldHeading) => {
     setIsBottomSheetOpen(true);
     const content = (
@@ -109,13 +113,31 @@ function ProfileEdit() {
         <Header />
         <div className="w-full bg-white flex flex-col">
           <div className="mt-12 h-56 pt-14 pl-4 bg-[url('/assets/images/bg-profile.png')] bg-cover">
+            {/* The hidden file input */}
+            <input
+              type="file"
+              onChange={() => {
+                handlePictureChange();
+              }}
+              id="fileInput"
+              className="hidden"
+            />
+            <div
+              className="absolute flex justify-center hover:cursor-pointer"
+              onClick={() => {
+                document.getElementById("fileInput").click();
+              }}>
+              {cameraIcon}
+            </div>
             <img
-              className="w-[142px] h-[142px] rounded-full border-blue-950"
+              className="w-[142px] h-[142px] rounded-full object-cover border-blue-800"
               src={
-                userObject?.userData?.picture || "/assets/images/no-profile.png"
+                profileObject?.profileData?.profile_pic ||
+                "/assets/images/no-profile.png"
               }
             />
           </div>
+
           <div className="mx-2 mt-6">
             {/* Personal Details Section*/}
             <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF]">
