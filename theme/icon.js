@@ -1965,8 +1965,8 @@ export const shareIcon = (
 
 export const cameraIcon = (
   <svg
-    width="124"
-    height="124"
+    width="142"
+    height="142"
     viewBox="0 0 124 124"
     fill="none"
     xmlns="http://www.w3.org/2000/svg">
