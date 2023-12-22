@@ -47,7 +47,6 @@ function ProfileEdit() {
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
 
-  console.log(profileObject, "profile");
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [isProfessionSelected, setIsProfessionSelected] = useState(false);
@@ -103,7 +102,7 @@ function ProfileEdit() {
       setMainContainerHeight(height);
     }
   }, []);
-  console.log("profession", profession);
+
   return (
     <React.Fragment>
       <div className="w-full h-auto bg-white">
@@ -145,7 +144,6 @@ function ProfileEdit() {
                 {profileObject?.profileData?.country}
               </div>
             </div>
-
             {/* Contact Details Section*/}
             <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF]">
               <div className=" text-[#263238] text-base font-bold flex justify-between mb-2">
@@ -171,7 +169,6 @@ function ProfileEdit() {
                 )}
               </div>
             </div>
-
             {/* About Section*/}
             <div className="bg-white p-3 mb-6">
               <div
@@ -196,19 +193,23 @@ function ProfileEdit() {
               </div>
             </div>
 
-            {/* Profession Section*/}
+            {/* Profession Details Section*/}
             <div className="px-3 mb-6">
               <div className="mb-3.5 text-[#263238] font-sans text-base font-bold">
                 I am a/an
               </div>
               <div className="flex overflow-x-scroll hide-scroll-bar">
                 <div className="flex flex-between">
-                  {professionOptions.map((items, index) => {
-                    const profession = profileObject?.profileData?.profession;
-                    return (
-                      <div>
+                  {professionOptions
+                    .sort((a, b) => {
+                      const profession = profileObject?.profileData?.profession;
+                      if (profession === a.value) return -1;
+                      if (profession === b.value) return 1;
+                      return 0;
+                    })
+                    .map((items, index) => (
+                      <div key={items.label + (index + 1 * 2)}>
                         <div
-                          key={items.label + (index + 1 * 2)}
                           className={`w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-5 ${
                             isProfessionSelected && profession === items.value
                               ? "opacity-100"
@@ -235,8 +236,7 @@ function ProfileEdit() {
                           </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
                 </div>
               </div>
             </div>
