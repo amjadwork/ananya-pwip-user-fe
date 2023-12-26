@@ -22,16 +22,21 @@ function* fetchDestinationLocation(payload) {
         state?.costing?.customCostingSelection?.product?.sourceRates?._sourceId
     );
 
-    const response = yield call(
-      makeApiCall,
+    let url =
       "/location/destination" +
-        `?filterBy=source&sourceId=${
-          payload.sourceId ||
-          selectedSourceIdFromCustomCosting ||
-          selectedSourceId
-        }`,
-      "get"
-    );
+      `?filterBy=source&sourceId=${
+        payload.sourceId ||
+        selectedSourceIdFromCustomCosting ||
+        selectedSourceId
+      }`;
+
+    if (payload.originId) {
+      url =
+        "/location/destination" +
+        `?filterBy=origin&originId=${payload.originId}`;
+    }
+
+    const response = yield call(makeApiCall, url, "get");
 
     yield put(fetchDestinationSuccess(response.data.destination));
   } catch (error) {

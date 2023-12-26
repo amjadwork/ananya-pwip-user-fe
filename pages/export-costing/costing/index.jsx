@@ -433,7 +433,6 @@ function CostingOverview() {
     const costingCardDiv = costingCardRef?.current?.getBoundingClientRect();
     if (costingCardDiv) {
       const startY = costingCardDiv.bottom;
-      console.log("here", window.scrollY > startY);
       setIsFixed(window.scrollY > startY);
     }
   }, 20); // Adjust the delay as needed

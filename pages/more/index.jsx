@@ -10,6 +10,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import { Header } from "@/components/Header";
 import { chevronRight } from "theme/icon";
 import { moreSettingOptions } from "@/constants/moreSettingOptions";
+import Cookies from "js-cookie";
 
 // Import Containers
 
@@ -145,6 +146,8 @@ function More() {
           <div
             onClick={() => {
               localStorage.removeItem("persist:root");
+              Cookies.set("lastVisitedPage", "/export-costing", { expires: 7 }); // Set expiry as needed
+
               signOut();
             }}
             className="inline-flex items-center justify-between pb-6 cursor-pointer"

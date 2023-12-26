@@ -8,9 +8,10 @@ import {
 } from "./types/location.types";
 
 // Destination
-export const fetchDestinationRequest = (sourceId) => ({
+export const fetchDestinationRequest = (sourceId, originId) => ({
   type: FETCH_LOCATION_DESTINATION_REQUEST,
   sourceId: sourceId || null,
+  originId: originId || null,
 });
 
 export const fetchDestinationSuccess = (destinations) => ({

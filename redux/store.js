@@ -20,7 +20,7 @@ const persistConfig = {
     "category",
     "learnList",
     "tags",
-    // "utils",
+    "utils",
   ], // List of reducers to persist
 };
 

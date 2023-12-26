@@ -4,6 +4,7 @@ import Head from "next/head";
 import { getSession, signIn } from "next-auth/react";
 // import { useDispatch } from "react-redux";
 import Slider from "react-slick";
+import { parse } from "cookie";
 
 // import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
@@ -222,6 +223,8 @@ export default function Home() {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
+  const cookies = parse(context.req.headers.cookie || "");
+  const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
 
   if (session?.accessToken) {
     return {
@@ -229,8 +232,7 @@ export async function getServerSideProps(context) {
         session: session || null,
       },
       redirect: {
-        destination: "/export-costing",
-        permanent: true, // Set to true if /export-costing is a permanent redirect
+        destination: lastVisitedPage,
       },
     };
   }

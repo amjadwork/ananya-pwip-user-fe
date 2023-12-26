@@ -7,6 +7,7 @@ import {
   fetchDestinationRequest,
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
+import { fetchProductsRequest } from "@/redux/actions/products.actions";
 import { useOverlayContext } from "@/context/OverlayContext";
 import axios from "axios";
 
@@ -70,18 +71,92 @@ import {
   arrowLeftBackIcon,
 } from "../../../../theme/icon";
 
-function getUniqueBagsWeight(inputArray) {
-  const uniqueBagsWeightMap = new Map();
+// function getUniqueBagsWeight(inputArray) {
+//   const uniqueBagsWeightMap = new Map();
 
-  // Iterate through the array and store each object in the Map with the "bag" as the key
-  inputArray.forEach((item) => {
-    uniqueBagsWeightMap.set(item.weight, item);
-  });
+//   // Iterate through the array and store each object in the Map with the "bag" as the key
+//   inputArray.forEach((item) => {
+//     uniqueBagsWeightMap.set(item.weight, item);
+//   });
 
-  // Convert the Map values back to an array
-  const uniqueBagsArray = Array.from(uniqueBagsWeightMap.values());
+//   // Convert the Map values back to an array
+//   const uniqueBagsArray = Array.from(uniqueBagsWeightMap.values());
 
-  return uniqueBagsArray;
+//   return uniqueBagsArray;
+// }
+
+function compareObjects(values, customCostingSelection) {
+  const mapping = {
+    _variantId: "product",
+    brokenPercentage: "brokenPercentage",
+    _bagId: "bags",
+    bagSize: "bags.weight",
+    _originId: "portOfOrigin",
+    _destinationId: "portOfDestination",
+    _containerId: "containers",
+    containersCount: "containersCount",
+    // containerWeight: "containersWeight",
+    costOfRice: "exMillPrice",
+    bagPrice: "bagCost",
+    transportation: "transportation",
+    cfsHandling: "chaCost",
+    shl: "shlCost",
+    ofc: "ofcCost",
+    inspectionCost: "constants.inspectionCharge",
+    financeCost: "constants.financeCost",
+    overheads: "constants.overHeadCharge",
+    margin: "constants.margin",
+    exportDuty: "constants.exportDutyCharge",
+    exportDutyValue: "constants.exportDutyCharge",
+  };
+
+  for (const valuesKey in mapping) {
+    let valuesKeyValue = getNestedValue(values, valuesKey);
+    let customKey = getNestedValue(customCostingSelection, mapping[valuesKey]);
+
+    if (valuesKey === "exportDuty" && valuesKeyValue === false) {
+      customKey = 0;
+      valuesKeyValue = 0;
+    }
+
+    if (
+      valuesKey === "ofc" &&
+      customCostingSelection.constants.exportDutyCharge === 0
+    ) {
+      customKey = 0;
+      valuesKeyValue = 0;
+    }
+
+    if (isObject(valuesKeyValue) && isObject(customKey)) {
+      // Check the _id key for objects
+      if (valuesKeyValue._id !== customKey._id) {
+        return false;
+      }
+    } else if (valuesKeyValue !== customKey) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function isObject(obj) {
+  return obj !== null && typeof obj === "object";
+}
+
+function getNestedValue(obj, path) {
+  const keys = path.split(".");
+  let value = obj;
+
+  for (const key of keys) {
+    if (value && value.hasOwnProperty(key)) {
+      value = value[key];
+    } else {
+      return undefined;
+    }
+  }
+
+  return value;
 }
 
 const calculateGrandTotal = (formValues, shipmentTerm) => {
@@ -304,6 +379,20 @@ function EditCosting() {
     }
   };
 
+  async function getProductList() {
+    try {
+      dispatch(fetchProductsRequest());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  React.useEffect(() => {
+    if (authToken) {
+      getProductList();
+    }
+  }, [authToken]);
+
   useEffect(() => {
     dispatch(fetchMyCostingFailure());
   }, []);
@@ -316,7 +405,6 @@ function EditCosting() {
       setSelectedUnitForPayload(
         customCostingSelectionFromSelector?.unit || "mt"
       );
-      console.log("here", customCostingSelectionFromSelector);
       setCustomCostingSelectionItem(customCostingSelectionFromSelector);
     }
   }, [customCostingSelectionFromSelector, customCostingSelection]);
@@ -579,7 +667,8 @@ function EditCosting() {
       );
       dispatch(
         fetchDestinationRequest(
-          selectedMyCostingFromHistory?.details?.sourceObject?._id
+          null,
+          selectedMyCostingFromHistory?.details?.originPortObject?._id
         )
       );
     }
@@ -1396,6 +1485,25 @@ function EditCosting() {
 
                                                               if (
                                                                 field?.name ===
+                                                                "costOfRice"
+                                                              ) {
+                                                                setFieldValue(
+                                                                  "updatedBaseCostOfRice",
+                                                                  convertUnits(
+                                                                    selectedUnitForPayload,
+                                                                    "kg",
+                                                                    e.target
+                                                                      .value
+                                                                  )
+                                                                );
+                                                                setFieldValue(
+                                                                  "updatedBaseBrokenPercentage",
+                                                                  values?.brokenPercentage
+                                                                );
+                                                              }
+
+                                                              if (
+                                                                field?.name ===
                                                                 "containersCount"
                                                               ) {
                                                                 if (
@@ -1458,15 +1566,15 @@ function EditCosting() {
 
                                                                   setFieldValue(
                                                                     "cfsHandling",
-                                                                    Math.floor(
-                                                                      totalCHA
+                                                                    totalCHA.toFixed(
+                                                                      2
                                                                     )
                                                                   );
 
                                                                   setFieldValue(
                                                                     "shl",
-                                                                    Math.floor(
-                                                                      totalSHL
+                                                                    totalSHL.toFixed(
+                                                                      2
                                                                     )
                                                                   );
                                                                 }
@@ -1553,11 +1661,11 @@ function EditCosting() {
                                                                   );
 
                                                                 bottomSheetInputRef.current.value =
-                                                                  Math.ceil(
+                                                                  (
                                                                     e.target
                                                                       .value /
-                                                                      26
-                                                                  );
+                                                                    26
+                                                                  ).toFixed(2);
 
                                                                 const primaryBottomSheetUSDValue =
                                                                   document.getElementById(
@@ -1737,6 +1845,13 @@ function EditCosting() {
                                                         }
                                                         onClick={() => {
                                                           if (
+                                                            opt ===
+                                                            values[field.name]
+                                                          ) {
+                                                            return null;
+                                                          }
+
+                                                          if (
                                                             field.name ===
                                                             "brokenPercentage"
                                                           ) {
@@ -1750,27 +1865,130 @@ function EditCosting() {
                                                                     ?._id
                                                               )?.price;
 
+                                                            const valueCostOfRice =
+                                                              values?.updatedBaseCostOfRice;
+
                                                             if (
-                                                              opt ===
-                                                              customCostingSelection?.brokenPercentage
+                                                              valueCostOfRice
                                                             ) {
-                                                              setFieldValue(
-                                                                "costOfRice",
-                                                                customCostingSelection?.exMillPrice
-                                                              );
-                                                              const grandTotal =
-                                                                calculateGrandTotal(
-                                                                  {
-                                                                    ...values,
-                                                                    costOfRice:
-                                                                      customCostingSelection?.exMillPrice,
-                                                                  },
-                                                                  shipmentTerm
+                                                              ricePrice =
+                                                                valueCostOfRice;
+                                                            }
+
+                                                            if (
+                                                              values?.updatedBaseCostOfRice ||
+                                                              opt ===
+                                                                customCostingSelection?.brokenPercentage
+                                                            ) {
+                                                              // const valueCostOfRice =
+                                                              //   convertUnits(
+                                                              //     selectedUnitForPayload,
+                                                              //     "kg",
+                                                              //     values?.costOfRice
+                                                              //   );
+
+                                                              if (
+                                                                values?.updatedBaseCostOfRice &&
+                                                                values?.updatedBaseBrokenPercentage.toString() !==
+                                                                  opt.toString()
+                                                              ) {
+                                                                setFieldValue(
+                                                                  "costOfRice",
+                                                                  convertUnits(
+                                                                    "kg",
+                                                                    selectedUnitForPayload,
+                                                                    parseFloat(
+                                                                      calculateCurrentRicePrice(
+                                                                        // valueCostOfRice ||
+                                                                        values?.updatedBaseCostOfRice,
+                                                                        opt
+                                                                      )
+                                                                    )
+                                                                  )
+                                                                );
+                                                                const grandTotal =
+                                                                  calculateGrandTotal(
+                                                                    {
+                                                                      ...values,
+                                                                      costOfRice:
+                                                                        convertUnits(
+                                                                          "kg",
+                                                                          selectedUnitForPayload,
+                                                                          parseFloat(
+                                                                            calculateCurrentRicePrice(
+                                                                              // valueCostOfRice ||
+                                                                              values?.updatedBaseCostOfRice,
+                                                                              opt
+                                                                            )
+                                                                          )
+                                                                        ),
+                                                                    },
+                                                                    shipmentTerm
+                                                                  );
+
+                                                                setGrandTotal(
+                                                                  grandTotal
+                                                                );
+                                                              } else if (
+                                                                values?.updatedBaseCostOfRice &&
+                                                                values?.updatedBaseBrokenPercentage.toString() ===
+                                                                  opt.toString()
+                                                              ) {
+                                                                setFieldValue(
+                                                                  "costOfRice",
+                                                                  convertUnits(
+                                                                    "kg",
+                                                                    selectedUnitForPayload,
+                                                                    parseFloat(
+                                                                      values?.updatedBaseCostOfRice
+                                                                    )
+                                                                  )
+                                                                  // valueCostOfRice ||
                                                                 );
 
-                                                              setGrandTotal(
-                                                                grandTotal
-                                                              );
+                                                                const grandTotal =
+                                                                  calculateGrandTotal(
+                                                                    {
+                                                                      ...values,
+                                                                      costOfRice:
+                                                                        convertUnits(
+                                                                          "kg",
+                                                                          selectedUnitForPayload,
+                                                                          parseFloat(
+                                                                            values?.updatedBaseCostOfRice
+                                                                          )
+                                                                        ),
+                                                                      // valueCostOfRice ||
+                                                                      // values?.updatedBaseCostOfRice,
+                                                                    },
+                                                                    shipmentTerm
+                                                                  );
+
+                                                                setGrandTotal(
+                                                                  grandTotal
+                                                                );
+                                                              } else {
+                                                                setFieldValue(
+                                                                  "costOfRice",
+                                                                  // valueCostOfRice ||
+                                                                  customCostingSelection?.exMillPrice
+                                                                );
+
+                                                                const grandTotal =
+                                                                  calculateGrandTotal(
+                                                                    {
+                                                                      ...values,
+                                                                      costOfRice:
+                                                                        // valueCostOfRice ||
+                                                                        customCostingSelection?.exMillPrice,
+                                                                    },
+                                                                    shipmentTerm
+                                                                  );
+
+                                                                setGrandTotal(
+                                                                  grandTotal
+                                                                );
+                                                              }
                                                             } else {
                                                               setFieldValue(
                                                                 "costOfRice",
@@ -1779,6 +1997,7 @@ function EditCosting() {
                                                                   selectedUnitForPayload,
                                                                   parseFloat(
                                                                     calculateCurrentRicePrice(
+                                                                      // valueCostOfRice ||
                                                                       ricePrice,
                                                                       opt
                                                                     )
@@ -1796,6 +2015,7 @@ function EditCosting() {
                                                                         selectedUnitForPayload,
                                                                         parseFloat(
                                                                           calculateCurrentRicePrice(
+                                                                            // valueCostOfRice ||
                                                                             ricePrice,
                                                                             opt
                                                                           )
@@ -2025,6 +2245,7 @@ function EditCosting() {
                   </div> */}
                   <Button
                     type={
+                      compareObjects(values, customCostingSelection) ||
                       isSubmitting ||
                       !values?._variantId ||
                       (values?._variantId &&
@@ -2092,8 +2313,6 @@ function EditCosting() {
                       const currentPlan =
                         getObjectWithLatestDate(subscriptionResponse);
 
-                      console.log("here currentPlan", subscriptionResponse);
-
                       if (
                         currentPlan?.total_generated_costing >=
                         currentPlan?.usage_cap
@@ -2124,10 +2343,25 @@ function EditCosting() {
                         givenData?._variantId?.sourceRates?._sourceId ||
                         givenData?._variantId?.sourceObject?._id;
 
-                      const payload =
-                        generatePayloadForCustomCosting(givenData);
-                      dispatch(generateCustomCostingRequest(payload));
-                      setIsGenerated(true);
+                      if (compareObjects(values, customCostingSelection)) {
+                        openToastMessage({
+                          type: "info",
+                          message:
+                            "No changes made, go back or make changes to save",
+                          // autoHide: false,
+                        });
+                        return;
+                      } else {
+                        const payload =
+                          generatePayloadForCustomCosting(givenData);
+                        dispatch(generateCustomCostingRequest(payload));
+                        setIsGenerated(true);
+                      }
+
+                      // const payload =
+                      //   generatePayloadForCustomCosting(givenData);
+                      // dispatch(generateCustomCostingRequest(payload));
+                      // setIsGenerated(true);
                     }}
                   />
                 </div>

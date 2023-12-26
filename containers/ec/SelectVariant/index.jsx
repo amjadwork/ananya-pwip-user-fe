@@ -360,16 +360,17 @@ const SelectVariantContainer = (props) => {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products); // Use api reducer slice
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
-  // const selectedMyCostingFromHistory = useSelector((state) => {
-  //   if (
-  //     state.myCosting &&
-  //     state.myCosting.currentCostingFromHistory &&
-  //     state.myCosting.currentCostingFromHistory.length
-  //   ) {
-  //     return state.myCosting.currentCostingFromHistory[0];
-  //   }
-  //   return null;
-  // });
+  const originPortObject = useSelector((state) => {
+    if (
+      state.myCosting &&
+      state.myCosting.currentCostingFromHistory &&
+      state.myCosting.currentCostingFromHistory.length
+    ) {
+      return state.myCosting.currentCostingFromHistory[0]?.details
+        ?.originPortObject;
+    }
+    return null;
+  });
   const filterForCategory = useSelector((state) => state.category.category);
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
@@ -1298,9 +1299,18 @@ const SelectVariantContainer = (props) => {
                         dispatch(
                           fetchOriginRequest(items?.sourceRates?._sourceId)
                         );
-                        dispatch(
-                          fetchDestinationRequest(items?.sourceRates?._sourceId)
-                        );
+                        if (isFromEdit && originPortObject) {
+                          dispatch(
+                            fetchDestinationRequest(null, originPortObject?._id)
+                          );
+                        } else {
+                          dispatch(
+                            fetchDestinationRequest(
+                              items?.sourceRates?._sourceId
+                            )
+                          );
+                        }
+
                         closeBottomSheet();
                       } else {
                         dispatch(
@@ -1320,7 +1330,7 @@ const SelectVariantContainer = (props) => {
                           items.images[0] ||
                           "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
                         }
-                        className="bg-cover h-[110px] w-[112px] rounded-lg"
+                        className="bg-cover h-[110px] w-[112px] rounded-lg object-cover"
                       />
                       <div
                         className="min-h-[110px] min-w-[112px] rounded-lg absolute top-0 left-0 inline-flex items-end justify-end px-[10px] py-[12px]"

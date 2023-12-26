@@ -156,6 +156,8 @@ function Subscription() {
     async (item) => {
       const order = await createOrder(item?.id);
 
+      console.log("userDetails", userDetails);
+
       try {
         if (order?.order_id) {
           const options = {

@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import Cookies from "js-cookie";
 
 const withAuth = (WrappedComponent) => {
   return function WithAuth(props) {
@@ -19,6 +20,13 @@ const withAuth = (WrappedComponent) => {
         );
       }
     }, [status, authToken]);
+
+    useEffect(() => {
+      if (status === "authenticated") {
+        Cookies.set("lastVisitedPage", router.pathname, { expires: 7 }); // Set expiry as needed
+      }
+      // Store the last visited page in local storage
+    }, [router.pathname, status]);
 
     if (status === "loading" && !authToken) {
       return (
