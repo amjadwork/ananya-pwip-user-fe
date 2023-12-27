@@ -34,11 +34,13 @@ import {
   companyFields,
   aboutFields,
   socialFields,
+  professionField,
   socialFieldsHeading,
   aboutFieldsHeading,
   contactFieldsHeading,
   companyFieldsHeading,
   personalFieldsHeading,
+  professionFieldHeading,
 } from "constants/profileFormFields";
 import axios from "axios";
 import { apiBaseURL } from "@/utils/helper";
@@ -159,8 +161,7 @@ function ProfileEdit() {
               className="absolute flex justify-center hover:cursor-pointer"
               onClick={() => {
                 document.getElementById("fileInput").click();
-              }}
-            >
+              }}>
               {cameraIcon}
             </div>
             <img
@@ -183,8 +184,7 @@ function ProfileEdit() {
                       personalFields,
                       personalFieldsHeading
                     );
-                  }}
-                >
+                  }}>
                   {pencilIcon}
                 </button>
               </div>
@@ -211,8 +211,7 @@ function ProfileEdit() {
                       contactFields,
                       contactFieldsHeading
                     );
-                  }}
-                >
+                  }}>
                   {pencilIcon}
                 </button>
               </div>
@@ -231,21 +230,18 @@ function ProfileEdit() {
             <div className="bg-white p-3 mb-6">
               <div
                 className="w-full  text-[#263238]
-              text-base font-bold flex justify-between mb-2"
-              >
+              text-base font-bold flex justify-between mb-2">
                 <span>About</span>
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(aboutFields, aboutFieldsHeading);
-                  }}
-                >
+                  }}>
                   {pencilIcon}
                 </button>
               </div>
               <div
                 className="w-full text-[#003559]
-              text-sm font-medium leading-snug"
-              >
+              text-sm font-medium leading-snug">
                 {profileObject?.profileData?.bio ? (
                   profileObject.profileData.bio
                 ) : (
@@ -256,8 +252,17 @@ function ProfileEdit() {
 
             {/* Profession Details Section*/}
             <div className="px-3 mb-6">
-              <div className="mb-3.5 text-[#263238] font-sans text-base font-bold">
+              <div className="mb-3.5 text-[#263238] font-sans text-base font-bold flex justify-between">
                 I am a/an
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      professionField,
+                      professionFieldHeading,
+                    );
+                  }}>
+                  {pencilIcon}
+                </button>
               </div>
               <div className="flex overflow-x-scroll hide-scroll-bar">
                 <div className="flex flex-between">
@@ -283,8 +288,7 @@ function ProfileEdit() {
                               isProfessionSelected && profession === items.value
                                 ? "unset"
                                 : "grayscale(100%)",
-                          }}
-                        >
+                          }}>
                           <img
                             className="h-full w-full object-contain"
                             src={items.image}
@@ -296,8 +300,7 @@ function ProfileEdit() {
                                 profession === items.value
                                   ? "text-pwip-v2-primary"
                                   : "text-gray-400"
-                              }`}
-                            >
+                              }`}>
                               {items?.label}
                             </div>
                           </div>
@@ -318,8 +321,7 @@ function ProfileEdit() {
                       companyFields,
                       companyFieldsHeading
                     );
-                  }}
-                >
+                  }}>
                   {pencilIcon}
                 </button>
               </div>
@@ -362,8 +364,7 @@ function ProfileEdit() {
                       socialFields,
                       socialFieldsHeading
                     );
-                  }}
-                >
+                  }}>
                   {pencilIcon}
                 </button>
               </div>
@@ -427,8 +428,7 @@ function ProfileEdit() {
                                 ?.label.toLowerCase(),
                           });
                         }
-                      }}
-                    >
+                      }}>
                       {iconItem.icon}
                     </div>
                   );
