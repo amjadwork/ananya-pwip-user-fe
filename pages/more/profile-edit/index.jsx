@@ -27,7 +27,7 @@ import {
   fetchUserRequest,
   // updateUserFailure,
 } from "@/redux/actions/userEdit.actions";
-import { handleSettingAuthDataRequest } from "@/redux/actions/auth.actions";
+import { handleSettingAuthDataSuccess } from "@/redux/actions/auth.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -61,7 +61,7 @@ function ProfileEdit() {
         ...profileObject?.profileData,
         ...userObject?.userData,
       };
-      dispatch(handleSettingAuthDataRequest(userPayload, token));
+      dispatch(handleSettingAuthDataSuccess(userPayload, token));
     }
   }, [profileObject?.profileData, userObject?.userData]);
 

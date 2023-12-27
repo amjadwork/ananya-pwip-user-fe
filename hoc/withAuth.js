@@ -2,7 +2,12 @@ import React, { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import {
+  handleSettingAuthDataRequest,
+  handleSettingAuthDataSuccess,
+} from "redux/actions/auth.actions";
+import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
+import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
 import Cookies from "js-cookie";
 
 const withAuth = (WrappedComponent) => {
@@ -11,7 +16,10 @@ const withAuth = (WrappedComponent) => {
     const dispatch = useDispatch();
     const { data: session, status } = useSession();
 
+    const profileObject = useSelector((state) => state.profile);
+    const userObject = useSelector((state) => state.user);
     const authToken = useSelector((state) => state.auth.token);
+    const authUser = useSelector((state) => state.auth.user);
 
     useEffect(() => {
       if (status === "authenticated" && !authToken) {
@@ -20,6 +28,28 @@ const withAuth = (WrappedComponent) => {
         );
       }
     }, [status, authToken]);
+
+    async function getUserProfileDetails() {
+      await dispatch(fetchUserRequest());
+      await dispatch(fetchProfileRequest());
+    }
+
+    useEffect(() => {
+      if (authUser && !profileObject?.profileData && !userObject?.userData) {
+        getUserProfileDetails();
+      }
+    }, [authUser, fetchProfileRequest, fetchUserRequest]);
+
+    useEffect(() => {
+      if (profileObject?.profileData && userObject?.userData && authToken) {
+        const userPayload = {
+          ...authUser,
+          ...profileObject?.profileData,
+          ...userObject?.userData,
+        };
+        dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
+      }
+    }, [authToken, profileObject?.profileData, userObject?.userData]);
 
     useEffect(() => {
       if (status === "authenticated") {
