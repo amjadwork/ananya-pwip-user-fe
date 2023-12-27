@@ -40,6 +40,8 @@ import {
   companyFieldsHeading,
   personalFieldsHeading,
 } from "constants/profileFormFields";
+import axios from "axios";
+import { apiBaseURL } from "@/utils/helper";
 
 function ProfileEdit() {
   const profileObject = useSelector((state) => state.profile);
@@ -78,8 +80,40 @@ function ProfileEdit() {
     }
   }, [profileObject]);
 
-  const handlePictureChange = () => {
-    // console.log("clicked");
+  const handleImagePickerChange = (e, fileName, ext) => {
+    const file = e.target.files;
+
+    axios
+      .get(
+        apiBaseURL +
+          `api/generate-signed-url?fileName=${fileName}&extension=${ext}&mediaType=image`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        console.log("here signed", res);
+        if (res.status === 200) {
+          const uri = res.data;
+
+          axios.put(`${uri}`, file[0]).then((res) => {
+            console.log("here uploaded res", res);
+          });
+        }
+      });
+  };
+
+  const handlePictureChange = (e) => {
+    console.log("here", e);
+
+    const extString = e.target.files[0].type;
+    const extStringArr = extString.split("/");
+    const ext = extStringArr[1];
+    const name = `${Math.floor(Date.now() / 1000)}.${ext}`;
+
+    handleImagePickerChange(e, name, ext);
   };
 
   const handleFormFieldBottomSheet = (fields, fieldHeading) => {
@@ -116,8 +150,8 @@ function ProfileEdit() {
             {/* The hidden file input */}
             <input
               type="file"
-              onChange={() => {
-                handlePictureChange();
+              onChange={(e) => {
+                handlePictureChange(e);
               }}
               id="fileInput"
               className="hidden"
