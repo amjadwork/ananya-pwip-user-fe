@@ -156,8 +156,6 @@ function Subscription() {
     async (item) => {
       const order = await createOrder(item?.id);
 
-      console.log("userDetails", userDetails);
-
       try {
         if (order?.order_id) {
           const options = {
@@ -371,24 +369,6 @@ function Subscription() {
                 </div>
               </div>
               <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
-                {console.log(
-                  "here",
-                  allMyCostingsData.length,
-                  modulePlansData,
-                  usersSubscriptionData,
-                  modulePlansData.find(
-                    (d) => d.id === usersSubscriptionData?.plan_id
-                  ),
-                  modulePlansData.find(
-                    (d) => d.id === usersSubscriptionData?.plan_id
-                  )?.usage_cap,
-                  calculatePercentage(
-                    allMyCostingsData?.length || 0,
-                    modulePlansData?.find(
-                      (d) => d?.id === usersSubscriptionData?.plan_id
-                    )?.usage_cap || 0
-                  )
-                )}
                 <div
                   className="h-[8px] rounded-full"
                   style={{

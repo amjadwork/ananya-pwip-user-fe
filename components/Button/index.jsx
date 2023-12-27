@@ -55,7 +55,7 @@ export function Button(props) {
   return (
     <button
       type={buttonType}
-      className={`inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalclassName}`}
+      className={`inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalclassName} transition-all`}
       onClick={onClick}
       disabled={disabled}
     >

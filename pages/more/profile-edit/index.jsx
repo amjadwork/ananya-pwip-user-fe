@@ -94,7 +94,6 @@ function ProfileEdit() {
         }
       )
       .then((res) => {
-        console.log("here signed", res);
         if (res.status === 200) {
           const uri = res.data;
 
