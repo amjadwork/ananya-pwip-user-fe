@@ -450,7 +450,7 @@ function CostingOverview() {
     return () => {
       window.removeEventListener("scroll", checkY);
     };
-  }, [checkY]);
+  }, [checkY, scrollDirection]);
 
   // Debounce function to limit the rate of execution
   const directionDebounce = (func, delay) => {

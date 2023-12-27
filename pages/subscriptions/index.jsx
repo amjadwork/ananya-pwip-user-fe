@@ -114,12 +114,13 @@ function Subscription() {
     }
   };
 
-  const createOrder = async (planid) => {
+  const createOrder = async (planid, userid) => {
     try {
       const response = await axios.post(
         "https://api-payment.pwip.co/" + "api" + "/create",
         {
-          planid: planid,
+          planId: planid,
+          userId: userid,
         },
         {
           headers: {
@@ -154,12 +155,12 @@ function Subscription() {
 
   const handlePayment = useCallback(
     async (item) => {
-      const order = await createOrder(item?.id);
+      const order = await createOrder(item?.id, userDetails?._id);
 
       try {
         if (order?.order_id) {
           const options = {
-            key: "rzp_live_SGjcr25rqb3FMM",
+            key: "rzp_test_aw3ZNIR1FCxuQl", //"rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
             amount: order?.amount,
             currency: "INR",
             name: "PWIP Foodtech Pvt Limited",
@@ -167,23 +168,28 @@ function Subscription() {
             image: "https://pwip.co/assets/web/img/web/logo.png",
             order_id: order?.order_id,
             handler: async (res) => {
-              const responseVerify = await verifyPayment(res);
+              const paymentVerifyPayload = {
+                ...res,
+                planId: item?.id,
+                userId: userDetails?._id,
+              };
+              const responseVerify = await verifyPayment(paymentVerifyPayload);
 
               if (responseVerify?.result === "Payment Success") {
-                const payload = {
-                  user_id: userDetails?._id,
-                  plan_id: item?.id,
-                  order_id: order?.order_id,
-                  payment_id: res?.razorpay_payment_id,
-                  amount_paid: order?.amount / 100, //paise to inr
-                  amount_paid_date: moment(new Date()).format(
-                    "YYYY-MM-DD HH:mm:ss"
-                  ), //2023-12-13 20:59:27
-                  payment_platform: "",
-                  payment_status: "success",
-                };
+                // const payload = {
+                //   user_id: userDetails?._id,
+                //   plan_id: item?.id,
+                //   order_id: order?.order_id,
+                //   payment_id: res?.razorpay_payment_id,
+                //   amount_paid: order?.amount / 100, //paise to inr
+                //   amount_paid_date: moment(new Date()).format(
+                //     "YYYY-MM-DD HH:mm:ss"
+                //   ), //2023-12-13 20:59:27
+                //   payment_platform: "",
+                //   payment_status: "success",
+                // };
 
-                await createSubscription(payload);
+                // await createSubscription(payload);
 
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
