@@ -27,6 +27,8 @@ import {
   fetchUserRequest,
   // updateUserFailure,
 } from "@/redux/actions/userEdit.actions";
+import { handleSettingAuthDataRequest } from "@/redux/actions/auth.actions";
+
 // Import Components
 import { Header } from "@/components/Header";
 import {
@@ -50,6 +52,19 @@ function ProfileEdit() {
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
   const token = useSelector((state) => state.auth.token);
+  const authUser = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (profileObject?.profileData && userObject?.userData) {
+      const userPayload = {
+        ...authUser,
+        ...profileObject?.profileData,
+        ...userObject?.userData,
+      };
+      dispatch(handleSettingAuthDataRequest(userPayload, token));
+    }
+  }, [profileObject?.profileData, userObject?.userData]);
+
   const dispatch = useDispatch();
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);

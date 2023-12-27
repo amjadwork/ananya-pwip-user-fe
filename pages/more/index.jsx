@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
+import { useSelector } from "react-redux";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -18,7 +19,9 @@ import Cookies from "js-cookie";
 
 function More() {
   const router = useRouter();
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+
+  const userDetails = useSelector((state) => state.auth.user);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [userData, setUserData] = React.useState(null);
@@ -32,10 +35,11 @@ function More() {
   }, []);
 
   React.useEffect(() => {
-    if (session) {
-      setUserData(session?.user);
+    if (userDetails) {
+      console.log("here userDetails", userDetails);
+      setUserData(userDetails);
     }
-  }, [session]);
+  }, [userDetails]);
 
   return (
     <React.Fragment>
@@ -69,13 +73,20 @@ function More() {
           <div className="inline-flex items-center space-x-5">
             <div className="h-[5.125rem] w-[5.125rem] rounded-full ring-1 ring-white p-[1.5px]">
               <img
-                src={userData?.picture || "/assets/images/no-profile.png"}
+                src={
+                  userData?.profile_pic ||
+                  userData?.picture ||
+                  "/assets/images/no-profile.png"
+                }
                 className="h-full w-full rounded-full object-cover"
               />
             </div>
             <div className="inline-flex flex-col space-y-1 text-pwip-v2-primary">
               <span className="text-base font-medium">
-                {userData?.name || ""}
+                {userData?.first_name ||
+                  userData?.full_name ||
+                  userData?.name ||
+                  ""}
               </span>
               <span className="text-sm font-normal">
                 {userData?.email || ""}
