@@ -106,31 +106,31 @@ export const socialFields = [
     name: "website",
     label: "Website",
     type: "text",
-    placeholder: "Add your Website",
+    placeholder: "Add your website URL with https",
   },
   {
     name: "facebook_url",
     label: "Facebook",
     type: "text",
-    placeholder: "Add your Facebook Profile",
+    placeholder: "Add your Facebook profile URL with https",
   },
   {
     name: "instagram_url",
     label: "Instagram",
     type: "text",
-    placeholder: "Add your Instagram Profile",
+    placeholder: "Add your Instagram profile URL with https",
   },
   {
     name: "linkedin_url",
     label: "LinkedIn",
     type: "text",
-    placeholder: "Add your LinkedIn Profile",
+    placeholder: "Add your LinkedIn profile URL with https",
   },
   {
     name: "youtube_url",
     label: "Youtube",
     type: "text",
-    placeholder: "Add your Youtube Profile",
+    placeholder: "Add your Youtube channel URL with https",
   },
 ];
 

@@ -141,7 +141,7 @@ function ProfileEdit() {
 
           <div className="mx-2 mt-6">
             {/* Personal Details Section*/}
-            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF]">
+            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF] space-y-1">
               <div className="text-[#003559] text-lg font-bold flex justify-between mb-2">
                 {userObject?.userData?.full_name}
                 <button
@@ -163,13 +163,13 @@ function ProfileEdit() {
                 )}
               </div>
               <div className=" text-[#3B4241] text-xs font-normal leading-tight">
-                {profileObject?.profileData?.city},{""}
-                {profileObject?.profileData?.state},{""}
+                {profileObject?.profileData?.city},{" "}
+                {profileObject?.profileData?.state},{" "}
                 {profileObject?.profileData?.country}
               </div>
             </div>
             {/* Contact Details Section*/}
-            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF]">
+            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF] space-y-1">
               <div className=" text-[#263238] text-base font-bold flex justify-between mb-2">
                 Contact Details{" "}
                 <button
@@ -291,7 +291,7 @@ function ProfileEdit() {
                   {building}
                 </div>
 
-                <div className="ml-3">
+                <div className="ml-3 space-y-2">
                   <div className="text-gray-800 text-sm font-normal leading-tight mb-1.5">
                     {profileObject?.profileData?.companyName ? (
                       profileObject.profileData.companyName
@@ -308,7 +308,7 @@ function ProfileEdit() {
                   </div>
                   <div className="text-neutral-700 text-xs font-normal leading-tight">
                     {profileObject?.profileData?.gstin ? (
-                      profileObject.profileData.gstin
+                      `GST: ${profileObject.profileData.gstin}`
                     ) : (
                       <div>Add GST Number</div>
                     )}
