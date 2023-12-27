@@ -131,6 +131,13 @@ const ProfileDetailForm = ({
     }
   }, [profileObject, userObject, formik]);
 
+  const handleProfessionSelect = (value) => {
+    formik.current.setValues({
+      ...formik.current.values,
+      profession: value,
+    });
+  };
+
   const handleFormSubmit = async () => {
     try {
       const formValues = {
@@ -199,8 +206,7 @@ const ProfileDetailForm = ({
           setTimeout(() => {
             setSubmitting(false);
           }, 400);
-        }}
-      >
+        }}>
         {({
           values,
           errors,
@@ -215,8 +221,7 @@ const ProfileDetailForm = ({
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-            }}
-          >
+            }}>
             <div className="w-full h-24 p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
               {fieldHeading.heading}
             </div>
@@ -226,8 +231,7 @@ const ProfileDetailForm = ({
                   <div className="relative mb-2 mt-2">
                     <label
                       htmlFor={field.name}
-                      className="w-full text-sm font-medium text-gray-900 mb-1"
-                    >
+                      className="w-full text-sm font-medium text-gray-900 mb-1">
                       {field.label}
                     </label>
                     {field.type === "textarea" ? (
@@ -252,40 +256,35 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
+                            style={{ top: "100%" }}>
                             {errors[field.name]}
                           </span>
                         ) : null}
                       </div>
                     ) : field.type === "select" ? (
                       <div>
-                        <select
-                          id={field.name}
-                          name={field.name}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          value={formik?.current?.values[field.name]}
-                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
-                            errors[field.name] && touched[field.name]
-                              ? "border-red-300"
-                              : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                        >
-                          <option value="" disabled>
-                            {field.placeholder}
-                          </option>
-                          {professionOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                          {professionOptions.map((item, index) => (
+                            <div
+                              key={item.value + index}
+                              className={`p-2 border  border-[#006EB4] rounded-md text-center transition-all ${
+                                formik?.current?.values[field.name] ===
+                                item.value
+                                  ? "bg-sky-100"
+                                  : "hover:bg-gray-200"
+                              }`}
+                              onClick={() =>
+                                handleProfessionSelect(item.value)
+                              }>
+                              <p>{item.label}</p>
+                            </div>
                           ))}
-                        </select>
+                        </div>
+
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
+                            style={{ top: "100%" }}>
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -312,8 +311,7 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
+                            style={{ top: "100%" }}>
                             {errors[field.name]}
                           </span>
                         ) : null}

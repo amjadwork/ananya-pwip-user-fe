@@ -10,12 +10,6 @@ export const personalFields = [
     type: "text",
   },
   {
-    name: "profession",
-    label: "Profession",
-    type: "select",
-    placeholder: "Select a Profession",
-  },
-  {
     name: "city",
     label: "City",
     type: "text",
@@ -65,7 +59,7 @@ export const companyFields = [
     placeholder: "Add your company name",
   },
   {
-    name: "companyAddress",
+    name: "address",
     label: "Company Address",
     type: "text",
     placeholder: "Add your company address",
@@ -137,3 +131,15 @@ export const socialFields = [
 export const socialFieldsHeading = {
   heading: "Social Details",
 };
+
+export const professionFieldHeading = {
+  heading: "Select your Profession",
+};
+export const professionField = [
+  {
+    name: "profession",
+    label: "",
+    type: "select",
+    placeholder: "",
+  },
+];
