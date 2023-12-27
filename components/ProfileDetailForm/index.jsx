@@ -199,7 +199,8 @@ const ProfileDetailForm = ({
           setTimeout(() => {
             setSubmitting(false);
           }, 400);
-        }}>
+        }}
+      >
         {({
           values,
           errors,
@@ -214,7 +215,8 @@ const ProfileDetailForm = ({
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-            }}>
+            }}
+          >
             <div className="w-full h-24 p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
               {fieldHeading.heading}
             </div>
@@ -224,7 +226,8 @@ const ProfileDetailForm = ({
                   <div className="relative mb-2 mt-2">
                     <label
                       htmlFor={field.name}
-                      className="w-full text-sm font-medium text-gray-900 mb-1">
+                      className="w-full text-sm font-medium text-gray-900 mb-1"
+                    >
                       {field.label}
                     </label>
                     {field.type === "textarea" ? (
@@ -249,7 +252,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -266,7 +270,8 @@ const ProfileDetailForm = ({
                             errors[field.name] && touched[field.name]
                               ? "border-red-300"
                               : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}>
+                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                        >
                           <option value="" disabled>
                             {field.placeholder}
                           </option>
@@ -279,7 +284,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -306,7 +312,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}

@@ -13,7 +13,7 @@ import {
   whatsapp,
   youtube,
   facebookIcon,
-  profileBg,
+  websiteIcon,
 } from "../../../theme/icon";
 import { professionOptions } from "@/constants/professionOptions";
 import {
@@ -54,15 +54,15 @@ function ProfileEdit() {
 
   const professionList = [...professionOptions];
   const socialMediaIcons = [
-    facebookIcon,
-    facebookIcon,
-    whatsapp,
-    instagram,
-    linkedin,
-    youtube,
+    { key: "website", icon: websiteIcon },
+    { key: "facebook_url", icon: facebookIcon },
+    { key: "whatsapp_link", icon: whatsapp },
+    { key: "instagram_url", icon: instagram },
+    { key: "linkedin_url", icon: linkedin },
+    { key: "youtube_url", icon: youtube },
   ];
 
-  const { openBottomSheet } = useOverlayContext();
+  const { openBottomSheet, openToastMessage } = useOverlayContext();
 
   useEffect(() => {
     if (token) {
@@ -79,7 +79,7 @@ function ProfileEdit() {
   }, [profileObject]);
 
   const handlePictureChange = () => {
-    console.log("clicked");
+    // console.log("clicked");
   };
 
   const handleFormFieldBottomSheet = (fields, fieldHeading) => {
@@ -126,7 +126,8 @@ function ProfileEdit() {
               className="absolute flex justify-center hover:cursor-pointer"
               onClick={() => {
                 document.getElementById("fileInput").click();
-              }}>
+              }}
+            >
               {cameraIcon}
             </div>
             <img
@@ -149,7 +150,8 @@ function ProfileEdit() {
                       personalFields,
                       personalFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -176,7 +178,8 @@ function ProfileEdit() {
                       contactFields,
                       contactFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -195,18 +198,21 @@ function ProfileEdit() {
             <div className="bg-white p-3 mb-6">
               <div
                 className="w-full  text-[#263238]
-              text-base font-bold flex justify-between mb-2">
+              text-base font-bold flex justify-between mb-2"
+              >
                 <span>About</span>
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(aboutFields, aboutFieldsHeading);
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
               <div
                 className="w-full text-[#003559]
-              text-sm font-medium leading-snug">
+              text-sm font-medium leading-snug"
+              >
                 {profileObject?.profileData?.bio ? (
                   profileObject.profileData.bio
                 ) : (
@@ -240,7 +246,8 @@ function ProfileEdit() {
                           style={{
                             boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                             backdropFilter: "blur(8px)",
-                          }}>
+                          }}
+                        >
                           <img
                             className="h-full w-full object-contain"
                             src={items.image}
@@ -252,7 +259,8 @@ function ProfileEdit() {
                                 profession === items.value
                                   ? "text-pwip-v2-primary"
                                   : "text-gray-400"
-                              }`}>
+                              }`}
+                            >
                               {items?.label}
                             </div>
                           </div>
@@ -273,7 +281,8 @@ function ProfileEdit() {
                       companyFields,
                       companyFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -316,25 +325,77 @@ function ProfileEdit() {
                       socialFields,
                       socialFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
 
               <div className="w-full flex flex-row justify-between">
-                {socialMediaIcons.map((icon, index) => (
-                  <div
-                    key={index}
-                    className="w-[46px] h-[46px] bg-orange-50 rounded-lg p-3"
-                    onClick={() => {
-                      handleFormFieldBottomSheet(
-                        socialFields,
-                        socialFieldsHeading
-                      );
-                    }}>
-                    {icon}
-                  </div>
-                ))}
+                {socialMediaIcons.map((iconItem, index) => {
+                  return (
+                    <div
+                      key={iconItem.key + "_" + index}
+                      className="w-[46px] h-[46px] bg-orange-50 rounded-lg p-3"
+                      style={{
+                        opacity:
+                          profileObject?.profileData &&
+                          profileObject.profileData[iconItem?.key]
+                            ? 1
+                            : 0.65,
+                        filter:
+                          profileObject?.profileData &&
+                          profileObject.profileData[iconItem?.key]
+                            ? "unset"
+                            : `grayscale(90%)`,
+                      }}
+                      onClick={() => {
+                        const socialFieldsWithLinks = socialFields.map(
+                          (field) => {
+                            if (profileObject?.profileData[field?.name]) {
+                              return {
+                                ...field,
+                                uri:
+                                  field?.name === "whatsapp_link"
+                                    ? "https://api.whatsapp.com/send?phone=" +
+                                      profileObject?.profileData[field?.name] //https://api.whatsapp.com/send?phone=91******
+                                    : profileObject?.profileData[field?.name],
+                              };
+                            }
+
+                            return {
+                              ...field,
+                            };
+                          }
+                        );
+
+                        if (
+                          socialFieldsWithLinks.find(
+                            (link) => iconItem.key === link.name
+                          )?.uri
+                        ) {
+                          window.open(
+                            socialFieldsWithLinks.find(
+                              (link) => iconItem.key === link.name
+                            )?.uri,
+                            "_blank"
+                          );
+                        } else {
+                          openToastMessage({
+                            type: "info",
+                            message:
+                              "No account has been set for " +
+                              socialFieldsWithLinks
+                                ?.find((link) => iconItem.key === link.name)
+                                ?.label.toLowerCase(),
+                          });
+                        }
+                      }}
+                    >
+                      {iconItem.icon}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
