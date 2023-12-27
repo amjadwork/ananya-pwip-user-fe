@@ -241,11 +241,15 @@ function ProfileEdit() {
                           className={`w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-5 ${
                             isProfessionSelected && profession === items.value
                               ? "opacity-100"
-                              : "opacity-25"
+                              : "opacity-50"
                           }`}
                           style={{
                             boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                             backdropFilter: "blur(8px)",
+                            filter:
+                              isProfessionSelected && profession === items.value
+                                ? "unset"
+                                : "grayscale(100%)",
                           }}
                         >
                           <img
