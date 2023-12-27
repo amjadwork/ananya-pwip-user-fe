@@ -15,11 +15,12 @@ import {
   facebookIcon,
   websiteIcon,
 } from "../../../theme/icon";
+
 import { professionOptions } from "@/constants/professionOptions";
 import {
   // fetchProfileFailure,
   fetchProfileRequest,
-  // updateProfileFailure,
+  updateProfileRequest,
 } from "@/redux/actions/profileEdit.actions";
 import {
   // fetchUserFailure,
@@ -97,18 +98,21 @@ function ProfileEdit() {
       )
       .then((res) => {
         if (res.status === 200) {
-          const uri = res.data;
+          const uri = res.data.url;
+          const publicURI = res.data.publicUrl;
 
           axios.put(`${uri}`, file[0]).then((res) => {
             console.log("here uploaded res", res);
+            const payload = {
+              profile_pic: publicURI,
+            };
+            dispatch(updateProfileRequest(payload));
           });
         }
       });
   };
 
   const handlePictureChange = (e) => {
-    console.log("here", e);
-
     const extString = e.target.files[0].type;
     const extStringArr = extString.split("/");
     const ext = extStringArr[1];
@@ -161,7 +165,8 @@ function ProfileEdit() {
               className="absolute flex justify-center hover:cursor-pointer"
               onClick={() => {
                 document.getElementById("fileInput").click();
-              }}>
+              }}
+            >
               {cameraIcon}
             </div>
             <img
@@ -184,7 +189,8 @@ function ProfileEdit() {
                       personalFields,
                       personalFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -211,7 +217,8 @@ function ProfileEdit() {
                       contactFields,
                       contactFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -230,18 +237,21 @@ function ProfileEdit() {
             <div className="bg-white p-3 mb-6">
               <div
                 className="w-full  text-[#263238]
-              text-base font-bold flex justify-between mb-2">
+              text-base font-bold flex justify-between mb-2"
+              >
                 <span>About</span>
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(aboutFields, aboutFieldsHeading);
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
               <div
                 className="w-full text-[#003559]
-              text-sm font-medium leading-snug">
+              text-sm font-medium leading-snug"
+              >
                 {profileObject?.profileData?.bio ? (
                   profileObject.profileData.bio
                 ) : (
@@ -258,9 +268,10 @@ function ProfileEdit() {
                   onClick={() => {
                     handleFormFieldBottomSheet(
                       professionField,
-                      professionFieldHeading,
+                      professionFieldHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -288,7 +299,8 @@ function ProfileEdit() {
                               isProfessionSelected && profession === items.value
                                 ? "unset"
                                 : "grayscale(100%)",
-                          }}>
+                          }}
+                        >
                           <img
                             className="h-full w-full object-contain"
                             src={items.image}
@@ -300,7 +312,8 @@ function ProfileEdit() {
                                 profession === items.value
                                   ? "text-pwip-v2-primary"
                                   : "text-gray-400"
-                              }`}>
+                              }`}
+                            >
                               {items?.label}
                             </div>
                           </div>
@@ -321,7 +334,8 @@ function ProfileEdit() {
                       companyFields,
                       companyFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -364,7 +378,8 @@ function ProfileEdit() {
                       socialFields,
                       socialFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -428,7 +443,8 @@ function ProfileEdit() {
                                 ?.label.toLowerCase(),
                           });
                         }
-                      }}>
+                      }}
+                    >
                       {iconItem.icon}
                     </div>
                   );
