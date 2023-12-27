@@ -36,7 +36,6 @@ function More() {
 
   React.useEffect(() => {
     if (userDetails) {
-      console.log("here userDetails", userDetails);
       setUserData(userDetails);
     }
   }, [userDetails]);
@@ -86,7 +85,7 @@ function More() {
                 {userData?.first_name ||
                   userData?.full_name ||
                   userData?.name ||
-                  ""}
+                  "User"}
               </span>
               <span className="text-sm font-normal">
                 {userData?.email || ""}

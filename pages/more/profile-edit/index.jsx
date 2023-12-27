@@ -116,8 +116,7 @@ function ProfileEdit() {
           const uri = res.data.url;
           const publicURI = res.data.publicUrl;
 
-          axios.put(`${uri}`, file[0]).then((res) => {
-            console.log("here uploaded res", res);
+          axios.put(`${uri}`, file[0]).then(() => {
             const payload = {
               profile_pic: publicURI,
             };
