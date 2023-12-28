@@ -201,7 +201,8 @@ function ProfileEdit() {
               className="absolute flex justify-center hover:cursor-pointer"
               onClick={() => {
                 document.getElementById("fileInput").click();
-              }}>
+              }}
+            >
               {cameraIcon}
             </div>
             <img
@@ -224,7 +225,8 @@ function ProfileEdit() {
                       personalFields,
                       personalFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -244,14 +246,14 @@ function ProfileEdit() {
                     <span>Add city,</span>
                   )}
                 </div>
-                <div className="font-medium leading-snug ml-1">
+                <div className="font-medium leading-snug">
                   {profileObject?.profileData?.state ? (
                     <span>, {profileObject.profileData.state}</span>
                   ) : (
                     <span>Add state,</span>
                   )}
                 </div>
-                <div className=" font-medium leading-snug ml-1">
+                <div className=" font-medium leading-snug">
                   {profileObject?.profileData?.country ? (
                     <span>, {profileObject.profileData.country}</span>
                   ) : (
@@ -271,7 +273,8 @@ function ProfileEdit() {
                       contactFields,
                       contactFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -290,18 +293,21 @@ function ProfileEdit() {
             <div className="bg-white p-3 mb-6">
               <div
                 className="w-full  text-[#263238]
-              text-base font-bold flex justify-between mb-2">
+              text-base font-bold flex justify-between mb-2"
+              >
                 <span>About</span>
                 <button
                   onClick={() => {
                     handleFormFieldBottomSheet(aboutFields, aboutFieldsHeading);
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
               <div
                 className="w-full text-[#003559]
-              text-sm font-medium leading-snug">
+              text-sm font-medium leading-snug"
+              >
                 {profileObject?.profileData?.bio ? (
                   profileObject.profileData.bio
                 ) : (
@@ -320,7 +326,8 @@ function ProfileEdit() {
                       professionField,
                       professionFieldHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -348,7 +355,8 @@ function ProfileEdit() {
                               isProfessionSelected && profession === items.value
                                 ? "unset"
                                 : "grayscale(100%)",
-                          }}>
+                          }}
+                        >
                           <img
                             className="h-full w-full object-contain"
                             src={items.image}
@@ -360,7 +368,8 @@ function ProfileEdit() {
                                 profession === items.value
                                   ? "text-pwip-v2-primary"
                                   : "text-gray-400"
-                              }`}>
+                              }`}
+                            >
                               {items?.label}
                             </div>
                           </div>
@@ -381,7 +390,8 @@ function ProfileEdit() {
                       companyFields,
                       companyFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -424,7 +434,8 @@ function ProfileEdit() {
                       socialFields,
                       socialFieldsHeading
                     );
-                  }}>
+                  }}
+                >
                   {pencilIcon}
                 </button>
               </div>
@@ -488,7 +499,8 @@ function ProfileEdit() {
                                 ?.label.toLowerCase(),
                           });
                         }
-                      }}>
+                      }}
+                    >
                       {iconItem.icon}
                     </div>
                   );
