@@ -160,7 +160,7 @@ function Subscription() {
       try {
         if (order?.order_id) {
           const options = {
-            key: "rzp_test_aw3ZNIR1FCxuQl", //"rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
+            key: "rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
             amount: order?.amount,
             currency: "INR",
             name: "PWIP Foodtech Pvt Limited",
