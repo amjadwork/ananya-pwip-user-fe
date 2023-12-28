@@ -10,22 +10,22 @@ export const personalFields = [
     type: "text",
   },
   {
-    name: "city",
-    label: "City",
-    type: "text",
-    placeholder: "eg. Bengaluru",
+    name: "country",
+    label: "Country",
+    type: "select",
+    placeholder: "eg. India",
   },
   {
     name: "state",
     label: "State",
-    type: "text",
+    type: "select",
     placeholder: "eg. Karnataka",
   },
   {
-    name: "country",
-    label: "Country",
-    type: "text",
-    placeholder: "eg. India",
+    name: "city",
+    label: "City",
+    type: "select",
+    placeholder: "eg. Bengaluru",
   },
   {
     name: "zip_code",
@@ -139,7 +139,7 @@ export const professionField = [
   {
     name: "profession",
     label: "",
-    type: "select",
+    type: "grid",
     placeholder: "",
   },
 ];

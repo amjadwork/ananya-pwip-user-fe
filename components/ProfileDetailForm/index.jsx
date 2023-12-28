@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Formik } from "formik";
+import { Country, State, City } from "country-state-city";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/Button";
@@ -119,6 +120,36 @@ const ProfileDetailForm = ({
     // closeToastMessage,
   } = useOverlayContext();
 
+  // Get countries list from 'country-state-city' library
+  const countries = Country.getAllCountries();
+  console.log("countries", countries)
+
+  // Get states list based on the selected country
+  const states = State.getStatesOfCountry(formik?.current?.values.country);
+
+  // Get cities list based on the selected state
+  const cities = City.getCitiesOfState(
+    formik?.current?.values.country,
+    formik?.current?.values.state
+  );
+
+  const handleCountryChange = (value) => {
+    formik.current.setValues({
+      ...formik.current.values,
+      country: value,
+      state: "",
+      city: "",
+    });
+  };
+
+  const handleStateChange = (value) => {
+    formik.current.setValues({
+      ...formik.current.values,
+      state: value,
+      city: "",
+    });
+  };
+
   useEffect(() => {
     if (profileObject && userObject && formik && formik.current) {
       const formikRef = formik.current;
@@ -131,6 +162,7 @@ const ProfileDetailForm = ({
     }
   }, [profileObject, userObject, formik]);
 
+  console.log(Country.getAllCountries(), "here");
   const handleProfessionSelect = (value) => {
     formik.current.setValues({
       ...formik.current.values,
@@ -261,7 +293,7 @@ const ProfileDetailForm = ({
                           </span>
                         ) : null}
                       </div>
-                    ) : field.type === "select" ? (
+                    ) : field.type === "grid" ? (
                       <div>
                         <div className="grid grid-cols-2 gap-4 mt-4">
                           {professionOptions.map((item, index) => (
@@ -281,6 +313,49 @@ const ProfileDetailForm = ({
                           ))}
                         </div>
 
+                        {errors[field.name] ? (
+                          <span
+                            className="absolute text-red-400 text-xs"
+                            style={{ top: "100%" }}>
+                            {errors[field.name]}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : field.type === "select" ? (
+                      <div>
+                        <select
+                          id={field.name}
+                          name={field.name}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          value={formik?.current?.values[field.name]}
+                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
+                            errors[field.name] && touched[field.name]
+                              ? "border-red-300"
+                              : "border-[#006EB4]"
+                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}>
+                          <option value="" label={`Select ${field.label}`} />
+                          {field.name === "country" &&
+                            countries.map((country) => (
+                              <option
+                                key={country.isoCode}
+                                value={country.isoCode}>
+                                {country.name}
+                              </option>
+                            ))}
+                          {field.name === "state" &&
+                            states.map((state) => (
+                              <option key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </option>
+                            ))}
+                          {field.name === "city" &&
+                            cities.map((state) => (
+                              <option key={state.isoCode} value={state.isoCode}>
+                                {state.name}
+                              </option>
+                            ))}
+                        </select>
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
