@@ -235,12 +235,32 @@ function ProfileEdit() {
                   <div>Add Headline</div>
                 )}
               </div>
-              <div className=" text-[#3B4241] text-xs font-normal leading-tight">
-                {profileObject?.profileData?.city},{" "}
-                {profileObject?.profileData?.state},{" "}
-                {profileObject?.profileData?.country}
+
+              <div className="flex  text-[#003559] text-xs font-normal">
+                <div className="font-medium leading-snug">
+                  {profileObject?.profileData?.city ? (
+                    profileObject.profileData.city
+                  ) : (
+                    <span>Add city,</span>
+                  )}
+                </div>
+                <div className="font-medium leading-snug ml-1">
+                  {profileObject?.profileData?.state ? (
+                    <span>, {profileObject.profileData.state}</span>
+                  ) : (
+                    <span>Add state,</span>
+                  )}
+                </div>
+                <div className=" font-medium leading-snug ml-1">
+                  {profileObject?.profileData?.country ? (
+                    <span>, {profileObject.profileData.country}</span>
+                  ) : (
+                    <span>Add country</span>
+                  )}
+                </div>
               </div>
             </div>
+
             {/* Contact Details Section*/}
             <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF] space-y-1">
               <div className=" text-[#263238] text-base font-bold flex justify-between mb-2">
