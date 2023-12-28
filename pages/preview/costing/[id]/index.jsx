@@ -18,7 +18,7 @@ import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
   generateCustomCostingRequest,
-  resetCostingSelection,
+  // resetCostingSelection,
 } from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
@@ -45,14 +45,14 @@ import {
   cfsCostIcon,
   costOfRiceIcon,
   bagTypeIcon,
-  handlingAndInspectionIcon,
-  otherChargesIcon,
+  // handlingAndInspectionIcon,
+  // otherChargesIcon,
   pencilIcon,
-  downloadIcon,
-  shareIcon,
+  // downloadIcon,
+  // shareIcon,
 } from "../../../../theme/icon";
 import { useSession } from "next-auth/react";
-import axios from "axios";
+// import axios from "axios";
 
 const lineBetweenLocation = (
   <svg
@@ -231,6 +231,7 @@ function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
 let breakupArr = [
   {
     title: "Rice and bags",
+    description: "Rice, transport, and OFC",
     afterIcon: "/assets/images/costing/road.png",
     rowItems: [
       {
@@ -250,6 +251,7 @@ let breakupArr = [
   },
   {
     title: "Handling and Inspection",
+    description: "",
     afterIcon: "/assets/images/costing/container.png",
     rowItems: [
       {
@@ -320,6 +322,7 @@ let breakupArr = [
   },
   {
     title: "Other chargers",
+    description: "",
     afterIcon: "/assets/images/costing/ocean.png",
     rowItems: [
       {
@@ -365,7 +368,7 @@ function CostingPreview() {
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
-  const selectedCosting = useSelector((state) => state.costing);
+  // const selectedCosting = useSelector((state) => state.costing);
 
   const myRecentSavedCosting = useSelector(
     (state) => state.myCosting.myRecentSavedCosting
@@ -386,7 +389,7 @@ function CostingPreview() {
     openBottomSheet,
     closeBottomSheet,
     openToastMessage,
-    closeToastMessage,
+    // closeToastMessage,
     openModal,
   } = useOverlayContext();
 
@@ -400,24 +403,96 @@ function CostingPreview() {
   const [generatedCostingData, setGeneratedCostingData] = useState(null);
   const [componentShipmentTerm, setComponentShipmentTerm] = useState(null);
   const [isFixed, setIsFixed] = useState(false);
+  const [lastScrollTop, setLastScrollTop] = React.useState(0);
+  const [scrollDirection, setScrollDirection] = React.useState("down");
 
-  const checkY = () => {
-    const costingCardDiv = costingCardRef.current.getBoundingClientRect();
-    const startY = costingCardDiv.bottom;
-
-    if (window.scrollY > startY) {
-      setIsFixed(true);
-    } else {
-      setIsFixed(false);
-    }
+  // Debounce function to limit the rate of execution
+  const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
   };
 
+  // const checkY = () => {
+  //   const costingCardDiv = costingCardRef.current.getBoundingClientRect();
+  //   const startY = costingCardDiv.bottom;
+
+  //   if (window.scrollY > startY) {
+  //     setIsFixed(true);
+  //   } else {
+  //     setIsFixed(false);
+  //   }
+  // };
+
+  // Function to handle scroll events with debounce
+  const checkY = debounce(() => {
+    const costingCardDiv = costingCardRef?.current?.getBoundingClientRect();
+    if (costingCardDiv) {
+      if (scrollDirection === "up") {
+        setIsFixed(false);
+        return;
+      }
+
+      const startY = costingCardDiv.bottom;
+      setIsFixed(window.scrollY > startY);
+    }
+  }, 20); // Adjust the delay as needed
+
   useEffect(() => {
-    window.addEventListener("scroll", checkY);
+    if (checkY) window.addEventListener("scroll", checkY);
+
     return () => {
       window.removeEventListener("scroll", checkY);
     };
-  }, []);
+  }, [checkY, scrollDirection]);
+
+  // Debounce function to limit the rate of execution
+  const directionDebounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        func(...args);
+      }, delay);
+    };
+  };
+
+  // Function to handle the scroll event with debounce
+  const handleScroll = directionDebounce(() => {
+    // Get the current scroll position
+    const currentScrollTop =
+      window.scrollY || document.documentElement.scrollTop;
+
+    // Compare with the previous scroll position
+    if (currentScrollTop > lastScrollTop) {
+      if (scrollDirection !== "down") {
+        setScrollDirection("down");
+      }
+    } else if (currentScrollTop < lastScrollTop) {
+      if (scrollDirection !== "up") {
+        setScrollDirection("up");
+      }
+    }
+
+    // Update the last scroll position
+    setLastScrollTop(currentScrollTop);
+  }, 10); // Adjust the delay as needed // Adjust the delay as needed
+
+  React.useEffect(() => {
+    // Attach the debounced scroll event listener
+    if (handleScroll) window.addEventListener("scroll", handleScroll);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll, lastScrollTop]); // Dependency array to ensure the effect runs only when lastScrollTop changes
+
+  // scroll events end here
 
   useEffect(() => {
     setComponentShipmentTerm(shipmentTerm);
@@ -686,9 +761,21 @@ function CostingPreview() {
                   key={items.label + index * 19}
                   onClick={async () => {
                     const body = {
-                      destinationPortId: selectedCosting.portOfDestination._id,
-                      sourceId: selectedCosting.product.sourceRates._sourceId,
-                      sourceRateId: selectedCosting.product.sourceRates._id,
+                      // destinationPortId: selectedCosting.portOfDestination._id,
+                      // sourceId: selectedCosting.product.sourceRates._sourceId,
+                      // sourceRateId: selectedCosting.product.sourceRates._id,
+                      // shipmentTermType: shipmentTerm || "FOB",
+                      // unit: items?.value || "mt",
+                      destinationPortId:
+                        generatedCostingData?.details?.destinationObject?._id,
+                      sourceId:
+                        generatedCostingData?.details?.sourceObject?._id,
+                      sourceRateId:
+                        generatedCostingData?.details?.variantObject?.sourceRates?.find(
+                          (s) =>
+                            s._sourceId ===
+                            generatedCostingData?.details?.sourceObject?._id
+                        )?._id,
                       shipmentTermType: shipmentTerm || "FOB",
                       unit: items?.value || "mt",
                     };
@@ -813,7 +900,7 @@ function CostingPreview() {
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
         /> */}
 
-        <title>Export Costing by pwip</title>
+        <title>Costing preview | PWIP</title>
 
         <meta name="Reciplay" content="Reciplay" />
         <meta name="description" content="Generated by create next app" />

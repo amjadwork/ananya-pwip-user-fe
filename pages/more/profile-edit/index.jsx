@@ -1,133 +1,89 @@
 import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
-import { useSelector, useDispatch } from "react-redux";
-import { Formik } from "formik";
-import * as Yup from "yup";
-import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
+import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
-import { cameraIcon } from "../../../theme/icon";
+import ProfileDetailForm from "@/components/ProfileDetailForm";
 import {
-  personalFields,
-  socialFields,
-  companyFields,
-} from "@/constants/profileFormFields";
+  cameraIcon,
+  building,
+  pencilIcon,
+  instagram,
+  linkedin,
+  whatsapp,
+  youtube,
+  facebookIcon,
+  websiteIcon,
+} from "../../../theme/icon";
+
 import { professionOptions } from "@/constants/professionOptions";
 import {
   // fetchProfileFailure,
-  updateProfileRequest,
   fetchProfileRequest,
-  // updateProfileFailure,
+  updateProfileRequest,
 } from "@/redux/actions/profileEdit.actions";
 import {
   // fetchUserFailure,
-  updateUserRequest,
   fetchUserRequest,
   // updateUserFailure,
 } from "@/redux/actions/userEdit.actions";
+import { handleSettingAuthDataSuccess } from "@/redux/actions/auth.actions";
+
 // Import Components
 import { Header } from "@/components/Header";
-
 import {
-  intersectObjects,
-  getChangedPropertiesFromObject,
-} from "@/utils/helper";
-
-const requiredProfilePayload = {
-  profile_pic: "",
-  city: "",
-  state: "",
-  country: "",
-  zip_code: "",
-  gstin: "",
-  headline: "",
-  bio: "",
-  companyName: "",
-  profession: "",
-  website: "",
-  youtube_url: "",
-  facebook_url: "",
-  instagram_url: "",
-  whatsapp_link: "",
-  linkedin_url: "",
-};
-
-const requiredUserPayload = {
-  first_name: "",
-  last_name: "",
-  middle_name: "",
-  full_name: "",
-  email: "",
-  phone: "",
-};
-
-const initialValues = {
-  full_name: "",
-  headline: "",
-  email: "",
-  phone: "",
-  companyName: "",
-  profession: "",
-  gstin: "",
-  bio: "",
-  city: "",
-  state: "",
-  country: "",
-  zip_code: "",
-  website: "",
-  youtube_url: "",
-  linkedin_url: "",
-  facebook_url: "",
-  whatsapp_link: "",
-  instagram_url: "",
-};
-
-const profileValidationSchema = Yup.object().shape({
-  full_name: Yup.string().required("Please enter your full name"),
-  phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Invalid mobile number")
-    .required("Required"),
-  email: Yup.string()
-    .email("Invalid email")
-    .test("has-extension", "Invalid email", (value) => {
-      if (value) {
-        return /\.\w{2,}$/.test(value);
-      }
-      return true;
-    })
-    .required("Required"),
-  bio: Yup.string().max(255, "Maximum 255 characters").nullable(),
-  profession: Yup.string().nullable(),
-  website: Yup.string().url().nullable(),
-  facebook_url: Yup.string().nullable(),
-  youtube_url: Yup.string().nullable(),
-  linkedin_url: Yup.string().nullable(),
-  instagram_url: Yup.string().nullable(),
-});
+  contactFields,
+  personalFields,
+  companyFields,
+  aboutFields,
+  socialFields,
+  professionField,
+  socialFieldsHeading,
+  aboutFieldsHeading,
+  contactFieldsHeading,
+  companyFieldsHeading,
+  personalFieldsHeading,
+  professionFieldHeading,
+} from "constants/profileFormFields";
+import axios from "axios";
+import { apiBaseURL } from "@/utils/helper";
 
 function ProfileEdit() {
-  const formik = useRef();
-  const dispatch = useDispatch();
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
   const token = useSelector((state) => state.auth.token);
-
-  const [mainContainerHeight, setMainContainerHeight] = useState(0);
-
-  const professionList = [...professionOptions];
+  const authUser = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (profileObject && userObject && formik && formik.current) {
-      const formikRef = formik.current;
-
-      const updatedFormValues = {
-        ...userObject.userData,
-        ...profileObject.profileData,
+    if (profileObject?.profileData && userObject?.userData) {
+      const userPayload = {
+        ...authUser,
+        ...profileObject?.profileData,
+        ...userObject?.userData,
       };
-      formikRef.setValues(updatedFormValues);
+      dispatch(handleSettingAuthDataSuccess(userPayload, token));
     }
-  }, [profileObject, userObject, formik]);
+  }, [profileObject?.profileData, userObject?.userData]);
+
+  const dispatch = useDispatch();
+
+  const [mainContainerHeight, setMainContainerHeight] = useState(0);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isProfessionSelected, setIsProfessionSelected] = useState(false);
+  const [profession, setProfession] = useState("");
+
+  const professionList = [...professionOptions];
+  const socialMediaIcons = [
+    { key: "website", icon: websiteIcon },
+    { key: "facebook_url", icon: facebookIcon },
+    { key: "whatsapp_link", icon: whatsapp },
+    { key: "instagram_url", icon: instagram },
+    { key: "linkedin_url", icon: linkedin },
+    { key: "youtube_url", icon: youtube },
+  ];
+
+  const { openBottomSheet, openToastMessage } = useOverlayContext();
 
   useEffect(() => {
     if (token) {
@@ -136,114 +92,65 @@ function ProfileEdit() {
     }
   }, [token]);
 
-  const {
-    openBottomSheet,
-    closeBottomSheet,
-    openToastMessage,
-    // closeToastMessage,
-  } = useOverlayContext();
+  useEffect(() => {
+    if (profileObject?.profileData?.profession) {
+      setProfession(profileObject?.profileData?.profession);
+      setIsProfessionSelected(true);
+    }
+  }, [profileObject]);
 
-  const handleProfessionBottomSheet = () => {
+  const handleImagePickerChange = (e, fileName, ext) => {
+    const file = e.target.files;
+
+    axios
+      .get(
+        apiBaseURL +
+          `api/generate-signed-url?fileName=${fileName}&extension=${ext}&mediaType=image`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((res) => {
+        if (res.status === 200) {
+          const uri = res.data.url;
+          const publicURI = res.data.publicUrl;
+
+          axios.put(`${uri}`, file[0]).then(() => {
+            const payload = {
+              profile_pic: publicURI,
+            };
+            dispatch(updateProfileRequest(payload));
+          });
+        }
+      });
+  };
+
+  const handlePictureChange = (e) => {
+    const extString = e.target.files[0].type;
+    const extStringArr = extString.split("/");
+    const ext = extStringArr[1];
+    const name = `${Math.floor(Date.now() / 1000)}.${ext}`;
+
+    handleImagePickerChange(e, name, ext);
+  };
+
+  const handleFormFieldBottomSheet = (fields, fieldHeading) => {
+    setIsBottomSheetOpen(true);
     const content = (
       <React.Fragment>
-        <div className="px-5 mb-6 pt-4">
-          <span className="text-base font-sans font-semibold text-pwip-gray-900 text-left">
-            Select Profession
-          </span>
-        </div>
-
-        <div className=" px-5 pb-[4rem] grid grid-cols-2 gap-4">
-          {[...professionList].map((item, index) => {
-            return (
-              <div
-                key={item.value + index}
-                className="h-40 w-40 rounded-md bg-pwip-white inline-flex flex-col space-t"
-                style={{
-                  boxShadow:
-                    "0px 3px 6px -4px rgba(0, 0, 0, 0.12), 0px 6px 16px 0px rgba(0, 0, 0, 0.08), 0px 9px 28px 8px rgba(0, 0, 0, 0.05)",
-                }}
-                onClick={() => handleProfessionSelect(item.value)}
-              >
-                <div className="w-full pt-3 inline-flex items-center justify-center">
-                  <img src={item.image} />
-                </div>
-                <div className=" flex w-fill flex-col space-y-[3px]">
-                  <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
-                    {item.label}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <ProfileDetailForm
+          token={token}
+          fields={fields}
+          fieldHeading={fieldHeading}
+          professionOptions={professionOptions}
+          userObject={userObject}
+          profileObject={profileObject}
+        />
       </React.Fragment>
     );
     openBottomSheet(content);
-  };
-
-  const handleProfessionSelect = (value) => {
-    formik.current.setValues({
-      ...formik.current.values,
-      profession: value,
-    });
-    closeBottomSheet();
-  };
-
-  const handleFormSubmit = async () => {
-    try {
-      const formValues = {
-        data: {
-          ...formik.current.values,
-        },
-      };
-
-      const userFormValues = intersectObjects(
-        requiredUserPayload,
-        formValues.data
-      );
-      const profileFormValues = intersectObjects(
-        requiredProfilePayload,
-        formValues.data
-      );
-
-      const userPayload = getChangedPropertiesFromObject(
-        userObject.userData,
-        userFormValues
-      );
-      const profilePayload = getChangedPropertiesFromObject(
-        profileObject.profileData,
-        profileFormValues
-      );
-
-      const requestAction = null;
-
-      if (Object.keys(userPayload)?.length) {
-        const payload = {
-          ...userPayload,
-        };
-        requestAction = await dispatch(updateUserRequest(payload));
-      }
-
-      if (Object.keys(profilePayload)?.length) {
-        const payload = {
-          ...profilePayload,
-        };
-        requestAction = await dispatch(updateProfileRequest(payload));
-      }
-
-      if (Object.keys(requestAction?.payload)?.length) {
-        openToastMessage({
-          type: "success",
-          message: "Profile has been updated successfully.",
-        });
-        requestAction = null;
-      }
-    } catch (error) {
-      openToastMessage({
-        type: "error",
-        message: error?.message || "Update failed. Please try again.",
-      });
-    }
   };
 
   useEffect(() => {
@@ -259,7 +166,7 @@ function ProfileEdit() {
       <Head>
         <meta charSet="utf-8" />
 
-        <title>Export Costing by pwip</title>
+        <title>Profile | PWIP</title>
 
         <meta name="Reciplay" content="Reciplay" />
         <meta name="description" content="Generated by create next app" />
@@ -276,166 +183,332 @@ function ProfileEdit() {
         {/* <link rel="manifest" href="/manifest.json" /> */}
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
-      <Header />
-      <div
-        id="fixedMenuSection"
-        className={`h-[auto] fixed mt-[68px] w-full bg-pwip-primary z-10 px-5`}
-      >
-        <div className="inline-flex items-center space-x-5">
-          <div className="h-[134px] w-[134px] rounded-full ring-1 ring-white ml-[7rem] p-[2px] relative top-2 z-20">
-            <div className="absolute inset-0 flex items-center justify-center">
+
+      <div className="w-full h-auto bg-white">
+        <Header />
+        <div className="w-full bg-white flex flex-col">
+          <div className="mt-12 h-56 pt-14 pl-4 bg-[url('/assets/images/bg-profile.png')] bg-cover">
+            {/* The hidden file input */}
+            <input
+              type="file"
+              onChange={(e) => {
+                handlePictureChange(e);
+              }}
+              id="fileInput"
+              className="hidden"
+            />
+            <div
+              className="absolute flex justify-center hover:cursor-pointer"
+              onClick={() => {
+                document.getElementById("fileInput").click();
+              }}
+            >
               {cameraIcon}
             </div>
             <img
+              className="w-[142px] h-[142px] rounded-full object-cover border-blue-800"
               src={
                 profileObject?.profileData?.profile_pic ||
                 "/assets/images/no-profile.png"
               }
-              className="h-full w-full rounded-full object-cover"
             />
           </div>
-        </div>
-        <div className="absolute bottom-[-16px] left-0 bg-pwip-white-100 h-[5rem] w-full rounded-t-2xl z-10" />
-      </div>
-      <div
-        className={`min-h-screen inline-flex flex-col w-full bg-pwip-white-100 overflow-auto px-5 hide-scroll-bar relative`}
-        style={{
-          paddingTop: mainContainerHeight * 1.7 + "px",
-          paddingBottom: mainContainerHeight - 52 + "px",
-        }}
-      >
-        <Formik
-          innerRef={formik}
-          initialValues={{
-            ...initialValues,
-          }}
-          validationSchema={profileValidationSchema}
-          onSubmit={(values, { setSubmitting }) => {
-            setTimeout(() => {
-              setSubmitting(false);
-            }, 400);
-          }}
-        >
-          {({
-            values,
-            errors,
-            dirty,
-            touched,
-            // isValid,
-            // setFieldValue,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-          }) => (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-            >
-              {/* <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left">
-                Personal details
-              </span> */}
-              {[...personalFields, ...companyFields, ...socialFields].map(
-                (field) => (
-                  <div key={field.name} className="relative mb-4">
-                    {field.heading && (
-                      <span className="text-pwip-gray-100 w-full font-sans font-normal text-lg text-left pb-10">
-                        {field.heading}
-                      </span>
-                    )}
-                    {!field.heading && (
-                      <>
-                        <div className="absolute top-3 left-2">
-                          <img src={field.image} />
-                          {field.icon}
-                        </div>
-                        <input
-                          type={field.type}
-                          pattern={
-                            field.type === "number" ? "[0-9]*" : undefined
-                          }
-                          inputMode={
-                            field.type === "numeric" ? "numeric" : undefined
-                          }
-                          id={field.name}
-                          name={field.name}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          maxLength={
-                            field.name === "phone" ||
-                            field.name === "whatsapp_link"
-                              ? 10
-                              : undefined
-                          }
-                          disabled={field.name === "email" ? true : false}
-                          defaultValue={values[field.name] || ""}
+
+          <div className="mx-2 mt-6">
+            {/* Personal Details Section*/}
+            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF] space-y-1">
+              <div className="text-[#003559] text-lg font-bold flex justify-between mb-2">
+                {userObject?.userData?.full_name}
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      personalFields,
+                      personalFieldsHeading
+                    );
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+              <div className="text-[#263238] text-sm font-normal leading-tight">
+                {profileObject?.profileData?.headline ? (
+                  profileObject.profileData.headline
+                ) : (
+                  <div>Add Headline</div>
+                )}
+              </div>
+
+              <div className="flex  text-[#003559] text-xs font-normal">
+                <div className="font-medium leading-snug">
+                  {profileObject?.profileData?.city ? (
+                    profileObject.profileData.city
+                  ) : (
+                    <span>Add city,</span>
+                  )}
+                </div>
+                <div className="font-medium leading-snug">
+                  {profileObject?.profileData?.state ? (
+                    <span>, {profileObject.profileData.state}</span>
+                  ) : (
+                    <span>Add state,</span>
+                  )}
+                </div>
+                <div className=" font-medium leading-snug">
+                  {profileObject?.profileData?.country ? (
+                    <span>, {profileObject.profileData.country}</span>
+                  ) : (
+                    <span>Add country</span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Details Section*/}
+            <div className="w-full h-[92px] p-3 mb-6 bg-[#F4FCFF] space-y-1">
+              <div className=" text-[#263238] text-base font-bold flex justify-between mb-2">
+                Contact Details{" "}
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      contactFields,
+                      contactFieldsHeading
+                    );
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+              <div className=" text-[#3B4241] text-xs font-normal leading-tight">
+                {userObject?.userData?.email}
+              </div>
+              <div className="text-[#3B4241] text-xs font-normal leading-tight">
+                {userObject?.userData?.phone ? (
+                  userObject.userData.phone
+                ) : (
+                  <div>Add Phone Number</div>
+                )}
+              </div>
+            </div>
+            {/* About Section*/}
+            <div className="bg-white p-3 mb-6">
+              <div
+                className="w-full  text-[#263238]
+              text-base font-bold flex justify-between mb-2"
+              >
+                <span>About</span>
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(aboutFields, aboutFieldsHeading);
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+              <div
+                className="w-full text-[#003559]
+              text-sm font-medium leading-snug"
+              >
+                {profileObject?.profileData?.bio ? (
+                  profileObject.profileData.bio
+                ) : (
+                  <span>Tell us more about yourself.</span>
+                )}
+              </div>
+            </div>
+
+            {/* Profession Details Section*/}
+            <div className="px-3 mb-6">
+              <div className="mb-3.5 text-[#263238] font-sans text-base font-bold flex justify-between">
+                I am a/an
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      professionField,
+                      professionFieldHeading
+                    );
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+              <div className="flex overflow-x-scroll hide-scroll-bar">
+                <div className="flex flex-between">
+                  {professionOptions
+                    .sort((a, b) => {
+                      const profession = profileObject?.profileData?.profession;
+                      if (profession === a.value) return -1;
+                      if (profession === b.value) return 1;
+                      return 0;
+                    })
+                    .map((items, index) => (
+                      <div key={items.label + (index + 1 * 2)}>
+                        <div
+                          className={`w-[116px] h-[116px] inline-block bg-[#C9EEFF] rounded-lg mr-5 ${
+                            isProfessionSelected && profession === items.value
+                              ? "opacity-100"
+                              : "opacity-50"
+                          }`}
                           style={{
-                            textAlign: "left",
-                            paddingLeft: `calc(${
-                              field.icon || field.image ? "36px" : "0"
-                            })`,
+                            boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
+                            backdropFilter: "blur(8px)",
+                            filter:
+                              isProfessionSelected && profession === items.value
+                                ? "unset"
+                                : "grayscale(100%)",
                           }}
-                          className={`block px-2.5 pb-3 pt-3 my-6 w-full text-sm text-gray-900 rounded-sm border ${
-                            errors[field.name] && touched[field.name]
-                              ? "border-red-300"
-                              : "border-pwip-gray-300"
-                          } appearance-none focus:outline-none focus:ring-0 focus:border-pwip-primary peer`}
-                          placeholder={field.placeholder}
-                          onClick={() => {
-                            if (field.name === "profession") {
-                              handleProfessionBottomSheet();
-                            }
-                          }}
-                        />
-                        {errors[field.name] ? (
-                          <span
-                            className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
-                            {errors[field.name]}
-                          </span>
-                        ) : null}
-                        <label
-                          htmlFor={field.name}
-                          className="absolute text-sm text-pwip-gray-600 -top-2 left-3 bg-pwip-white-100 focus:text-pwip-primary px-2 font font-thin"
                         >
-                          {field.label}
-                        </label>
-                      </>
+                          <img
+                            className="h-full w-full object-contain"
+                            src={items.image}
+                          />
+                          <div className="overflow-hidden h-auto flex-col">
+                            <div
+                              className={`mt-2 text-center text-black text-xs font-semibold ${
+                                isProfessionSelected &&
+                                profession === items.value
+                                  ? "text-pwip-v2-primary"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {items?.label}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Company Details Section*/}
+            <div className="w-full h-[100px] p-3 mb-6 bg-white">
+              <div className=" text-[#263238] text-base font-bold flex justify-between mb-2">
+                Company Details
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      companyFields,
+                      companyFieldsHeading
+                    );
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+              <div className="flex">
+                <div className="text-gray-800 text-sm font-normal leading-tight mb-2">
+                  {building}
+                </div>
+
+                <div className="ml-3 space-y-2">
+                  <div className="text-gray-800 text-sm font-normal leading-tight mb-1.5">
+                    {profileObject?.profileData?.companyName ? (
+                      profileObject.profileData.companyName
+                    ) : (
+                      <div>Add Company Name</div>
                     )}
                   </div>
-                )
-              )}
-              <div className="fixed bottom-0 left-0 w-full p-3 bg-pwip-white-100">
-                <Button
-                  type="primary"
-                  buttonType="submit"
-                  label="Update changes"
-                  disabled={
-                    Object.keys(errors).length || isSubmitting ? true : false
-                  }
-                  onClick={() => {
-                    const changes = getChangedPropertiesFromObject(
-                      {
-                        ...userObject.userData,
-                        ...profileObject.profileData,
-                      },
-                      values
-                    );
-                    if (
-                      !Object.keys(errors).length &&
-                      Object.keys(changes).length
-                    ) {
-                      handleFormSubmit();
-                    }
-                  }}
-                />
+                  <div className="text-neutral-700 text-xs font-normal leading-tight mb-px">
+                    {profileObject?.profileData?.address ? (
+                      profileObject.profileData.address
+                    ) : (
+                      <div>Add Company Address</div>
+                    )}
+                  </div>
+                  <div className="text-neutral-700 text-xs font-normal leading-tight">
+                    {profileObject?.profileData?.gstin ? (
+                      `GST: ${profileObject.profileData.gstin}`
+                    ) : (
+                      <div>Add GST Number</div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </form>
-          )}
-        </Formik>
+            </div>
+            <div className="w-full h-[150px] p-2 bg-[url('/assets/images/bg-profile.png')] bg-cover bg-opacity-40">
+              <div className=" text-sky-950 text-lg font-bold mb-7 flex justify-between">
+                Find me on
+                <button
+                  onClick={() => {
+                    handleFormFieldBottomSheet(
+                      socialFields,
+                      socialFieldsHeading
+                    );
+                  }}
+                >
+                  {pencilIcon}
+                </button>
+              </div>
+
+              <div className="w-full flex flex-row justify-between">
+                {socialMediaIcons.map((iconItem, index) => {
+                  return (
+                    <div
+                      key={iconItem.key + "_" + index}
+                      className="w-[46px] h-[46px] bg-orange-50 rounded-lg p-3"
+                      style={{
+                        opacity:
+                          profileObject?.profileData &&
+                          profileObject.profileData[iconItem?.key]
+                            ? 1
+                            : 0.65,
+                        filter:
+                          profileObject?.profileData &&
+                          profileObject.profileData[iconItem?.key]
+                            ? "unset"
+                            : `grayscale(90%)`,
+                      }}
+                      onClick={() => {
+                        const socialFieldsWithLinks = socialFields.map(
+                          (field) => {
+                            if (profileObject?.profileData[field?.name]) {
+                              return {
+                                ...field,
+                                uri:
+                                  field?.name === "whatsapp_link"
+                                    ? "https://api.whatsapp.com/send?phone=" +
+                                      profileObject?.profileData[field?.name] //https://api.whatsapp.com/send?phone=91******
+                                    : profileObject?.profileData[field?.name],
+                              };
+                            }
+
+                            return {
+                              ...field,
+                            };
+                          }
+                        );
+
+                        if (
+                          socialFieldsWithLinks.find(
+                            (link) => iconItem.key === link.name
+                          )?.uri
+                        ) {
+                          window.open(
+                            socialFieldsWithLinks.find(
+                              (link) => iconItem.key === link.name
+                            )?.uri,
+                            "_blank"
+                          );
+                        } else {
+                          openToastMessage({
+                            type: "info",
+                            message:
+                              "No account has been set for " +
+                              socialFieldsWithLinks
+                                ?.find((link) => iconItem.key === link.name)
+                                ?.label.toLowerCase(),
+                          });
+                        }
+                      }}
+                    >
+                      {iconItem.icon}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </React.Fragment>
   );
