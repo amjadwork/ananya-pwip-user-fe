@@ -1,15 +1,4 @@
-import {
-  instagram,
-  linkedin,
-  facebook,
-  whatsapp,
-  youtube,
-} from "../theme/icon";
-
 export const personalFields = [
-  {
-    heading: "Personal details",
-  },
   {
     name: "full_name",
     label: "Name",
@@ -21,6 +10,35 @@ export const personalFields = [
     type: "text",
   },
   {
+    name: "country",
+    label: "Country",
+    type: "select",
+    placeholder: "eg. India",
+    defaultValue: "IN",
+  },
+  {
+    name: "state",
+    label: "State",
+    type: "select",
+    placeholder: "eg. Karnataka",
+  },
+  {
+    name: "city",
+    label: "City",
+    type: "select",
+    placeholder: "eg. Bengaluru",
+  },
+  {
+    name: "zip_code",
+    label: "Zip Code",
+    type: "number",
+  },
+];
+export const personalFieldsHeading = {
+  heading: "Personal Details",
+};
+export const contactFields = [
+  {
     name: "email",
     label: "Email",
     type: "email",
@@ -30,100 +48,99 @@ export const personalFields = [
     label: "Mobile",
     type: "number",
   },
-
-  {
-    name: "bio",
-    label: "Bio",
-    type: "text",
-    placeholder: "Tell us a bit about yourself",
-  },
-  {
-    name: "city",
-    label: "City",
-    type: "text",
-    placeholder: "eg. Bengaluru",
-  },
-  {
-    name: "state",
-    label: "State",
-    type: "text",
-    placeholder: "eg. Karnataka",
-  },
-  {
-    name: "country",
-    label: "Country",
-    type: "text",
-    placeholder: "eg. India",
-  },
-  {
-    name: "zip_code",
-    label: "Zip Code",
-    type: "number",
-  },
 ];
+export const contactFieldsHeading = {
+  heading: "Contact Details",
+};
 export const companyFields = [
-  {
-    heading: "Company details",
-  },
-  {
-    name: "profession",
-    label: "Profession",
-    type: "button",
-    placeholder: "Select your profession",
-  },
   {
     name: "companyName",
     label: "Company Name",
     type: "text",
     placeholder: "Add your company name",
   },
-
+  {
+    name: "address",
+    label: "Company Address",
+    type: "text",
+    placeholder: "Add your company address",
+  },
   {
     name: "gstin",
     label: "GST Number",
     type: "text",
+    placeholder: "Add your GST Number",
+  },
+];
+export const companyFieldsHeading = {
+  heading: "Company Details",
+};
+
+export const aboutFields = [
+  {
+    name: "bio",
+    label:
+      "You can write about your years of experience, skills and industry here",
+    type: "textarea",
     placeholder: "",
   },
 ];
 
+export const aboutFieldsHeading = {
+  heading: "About",
+};
+
 export const socialFields = [
   {
-    heading: "Social details",
-  },
-  {
     name: "whatsapp_link",
-    icon: whatsapp,
-    type: "numeric",
-    placeholder: "Type WhatsApp number",
-  },
-  {
-    name: "linkedin_url",
-    icon: linkedin,
+    label: "Whatsapp",
     type: "text",
-    placeholder: "Type Linkedin Id",
-  },
-  {
-    name: "facebook_url",
-    icon: facebook,
-    type: "text",
-    placeholder: "Type Facebook Id",
+    placeholder: "Add your Whatsapp Number",
   },
   {
     name: "website",
-    image: "/assets/images/profession/website.png",
+    label: "Website",
     type: "text",
-    placeholder: "Type Website Link",
+    placeholder: "Add your website URL with https",
   },
   {
-    name: "youtube_url",
-    icon: youtube,
+    name: "facebook_url",
+    label: "Facebook",
     type: "text",
-    placeholder: "Type Youtube Id",
+    placeholder: "Add your Facebook profile URL with https",
   },
   {
     name: "instagram_url",
-    icon: instagram,
+    label: "Instagram",
     type: "text",
-    placeholder: "Type Instagram Id",
+    placeholder: "Add your Instagram profile URL with https",
+  },
+  {
+    name: "linkedin_url",
+    label: "LinkedIn",
+    type: "text",
+    placeholder: "Add your LinkedIn profile URL with https",
+  },
+  {
+    name: "youtube_url",
+    label: "Youtube",
+    type: "text",
+    placeholder: "Add your Youtube channel URL with https",
+  },
+];
+
+export const socialFieldsHeading = {
+  heading: "Social Details",
+};
+
+export const professionFieldHeading = {
+  heading: "Select your Profession",
+};
+export const professionField = [
+  {
+    name: "profession",
+    label: "",
+    type: "grid",
+    placeholder: "",
   },
 ];

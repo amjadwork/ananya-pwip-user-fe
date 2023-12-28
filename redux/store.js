@@ -21,6 +21,8 @@ const persistConfig = {
     "learnList",
     "tags",
     "utils",
+    "profile",
+    "user",
   ], // List of reducers to persist
 };
 
