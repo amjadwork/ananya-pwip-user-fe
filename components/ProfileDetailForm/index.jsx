@@ -33,6 +33,7 @@ const requiredProfilePayload = {
   headline: "",
   bio: "",
   companyName: "",
+  address: "",
   profession: "",
   website: "",
   youtube_url: "",
@@ -57,6 +58,7 @@ const initialValues = {
   email: "",
   phone: "",
   companyName: "",
+  address: "",
   profession: "",
   gstin: "",
   bio: "",
@@ -375,6 +377,7 @@ const ProfileDetailForm = ({
                           id={field.name}
                           name={field.name}
                           value={formik?.current?.values[field.name]}
+                          disabled={field.name === "email"}
                           onChange={handleChange}
                           onBlur={handleBlur}
                           style={{

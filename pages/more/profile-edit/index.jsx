@@ -379,8 +379,8 @@ function ProfileEdit() {
                     )}
                   </div>
                   <div className="text-neutral-700 text-xs font-normal leading-tight mb-px">
-                    {profileObject?.profileData?.companyAddress ? (
-                      profileObject.profileData.companyAddress
+                    {profileObject?.profileData?.address ? (
+                      profileObject.profileData.address
                     ) : (
                       <div>Add Company Address</div>
                     )}
