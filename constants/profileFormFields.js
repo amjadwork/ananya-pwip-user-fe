@@ -12,19 +12,19 @@ export const personalFields = [
   {
     name: "country",
     label: "Country",
-    type: "select",
+    type: "text",
     placeholder: "eg. India",
   },
   {
     name: "state",
     label: "State",
-    type: "select",
+    type: "text",
     placeholder: "eg. Karnataka",
   },
   {
     name: "city",
     label: "City",
-    type: "select",
+    type: "text",
     placeholder: "eg. Bengaluru",
   },
   {

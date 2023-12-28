@@ -17,7 +17,7 @@ export const professionOptions = [
   {
     label: "Broker/Agent",
     value: "broker",
-    image: "/assets/images/profession/broker:agent.png",
+    image: "/assets/images/profession/agent.jpg",
   },
   {
     label: "Trader",
