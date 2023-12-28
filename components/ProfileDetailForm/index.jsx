@@ -108,6 +108,9 @@ const ProfileDetailForm = ({
   const formik = useRef();
   const dispatch = useDispatch();
 
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+
   useEffect(() => {
     if (token) {
       dispatch(fetchProfileRequest());
@@ -124,16 +127,22 @@ const ProfileDetailForm = ({
 
   // Get countries list from 'country-state-city' library
   const countries = Country.getAllCountries();
-  console.log("countries", countries);
 
   // Get states list based on the selected country
-  const states = State.getStatesOfCountry(formik?.current?.values.country);
+
+  // useEffect(() => {
+  //   console.log("formik", formik?.current?.values.country);
+
+  //   if (formik?.current?.values.country) {
+  //     const statesList = State.getStatesOfCountry(
+  //       formik?.current?.values.country
+  //     );
+  //     console.log("statesList", statesList);
+  //     setStates([...statesList]);
+  //   }
+  // }, [formik?.current?.values?.country]);
 
   // Get cities list based on the selected state
-  const cities = City.getCitiesOfState(
-    formik?.current?.values.country,
-    formik?.current?.values.state
-  );
 
   const handleCountryChange = (value) => {
     formik.current.setValues({
@@ -153,18 +162,38 @@ const ProfileDetailForm = ({
   };
 
   useEffect(() => {
-    if (profileObject && userObject && formik && formik.current) {
+    if (
+      profileObject &&
+      userObject &&
+      formik &&
+      formik.current &&
+      !states.length
+    ) {
       const formikRef = formik.current;
 
       const updatedFormValues = {
         ...userObject.userData,
         ...profileObject.profileData,
       };
+
+      const statesList = State.getStatesOfCountry("IN");
+      setStates([...statesList]);
+
+      if (updatedFormValues?.state) {
+        const stateISOCode = statesList.find(
+          (s) =>
+            s.name.toLowerCase() === updatedFormValues?.state?.toLowerCase()
+        )?.isoCode;
+
+        const citiesList = City.getCitiesOfState("IN", stateISOCode);
+
+        setCities(citiesList);
+      }
+
       formikRef.setValues(updatedFormValues);
     }
   }, [profileObject, userObject, formik]);
 
-  console.log(Country.getAllCountries(), "here");
   const handleProfessionSelect = (value) => {
     formik.current.setValues({
       ...formik.current.values,
@@ -240,7 +269,8 @@ const ProfileDetailForm = ({
           setTimeout(() => {
             setSubmitting(false);
           }, 400);
-        }}>
+        }}
+      >
         {({
           values,
           errors,
@@ -255,7 +285,8 @@ const ProfileDetailForm = ({
             onSubmit={(e) => {
               e.preventDefault();
               handleSubmit();
-            }}>
+            }}
+          >
             <div className="w-full h-24 p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
               {fieldHeading.heading}
             </div>
@@ -265,7 +296,8 @@ const ProfileDetailForm = ({
                   <div className="relative mb-2 mt-2">
                     <label
                       htmlFor={field.name}
-                      className="w-full text-sm font-medium text-gray-900 mb-1">
+                      className="w-full text-sm font-medium text-gray-900 mb-1"
+                    >
                       {field.label}
                     </label>
                     {field.type === "textarea" ? (
@@ -290,7 +322,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -301,15 +334,14 @@ const ProfileDetailForm = ({
                           {professionOptions.map((item, index) => (
                             <div
                               key={item.value + index}
-                              className={`w-[110px] h-[110px] mb-8 ml-6 bg-[#C9EEFF] border border-[#006EB4] rounded-md text-center  opacity-100 transition-all ${
+                              className={`w-[110px] h-[110px] mb-8 ml-6 bg-[#C9EEFF] rounded-md text-center  opacity-100 transition-all ${
                                 formik?.current?.values[field.name] ===
                                 item.value
-                                  ? "opacity-100"
-                                  : "opacity-50"
+                                  ? "opacity-100 border border-[#006EB4]"
+                                  : "opacity-[0.45] grayscale-[50%]"
                               }`}
-                              onClick={() =>
-                                handleProfessionSelect(item.value)
-                              }>
+                              onClick={() => handleProfessionSelect(item.value)}
+                            >
                               <img
                                 className="h-full w-full object-contain"
                                 src={item.image}
@@ -322,7 +354,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -332,40 +365,60 @@ const ProfileDetailForm = ({
                         <select
                           id={field.name}
                           name={field.name}
-                          onChange={handleChange}
+                          onChange={(e) => {
+                            handleChange(e);
+
+                            if (field.name === "state") {
+                              const stateISOCode = states.find(
+                                (s) => s.name === e.target.value
+                              )?.isoCode;
+
+                              const citiesList = City.getCitiesOfState(
+                                "IN",
+                                stateISOCode
+                              );
+
+                              setCities(citiesList);
+                            }
+                          }}
                           onBlur={handleBlur}
+                          disabled={field.name === "country" ? true : false}
                           value={formik?.current?.values[field.name]}
                           className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
                             errors[field.name] && touched[field.name]
                               ? "border-red-300"
                               : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}>
+                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                        >
                           <option value="" label={`Select ${field.label}`} />
+
                           {field.name === "country" &&
                             countries.map((country) => (
                               <option
                                 key={country.isoCode}
-                                value={country.isoCode}>
+                                value={country.name}
+                              >
                                 {country.name}
                               </option>
                             ))}
                           {field.name === "state" &&
                             states.map((state) => (
-                              <option key={state.isoCode} value={state.isoCode}>
+                              <option key={state.isoCode} value={state.name}>
                                 {state.name}
                               </option>
                             ))}
                           {field.name === "city" &&
-                            cities.map((state) => (
-                              <option key={state.isoCode} value={state.isoCode}>
-                                {state.name}
+                            cities.map((city) => (
+                              <option key={city.isoCode} value={city.name}>
+                                {city.name}
                               </option>
                             ))}
                         </select>
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
@@ -393,7 +446,8 @@ const ProfileDetailForm = ({
                         {errors[field.name] ? (
                           <span
                             className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}>
+                            style={{ top: "100%" }}
+                          >
                             {errors[field.name]}
                           </span>
                         ) : null}
