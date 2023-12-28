@@ -122,7 +122,7 @@ const ProfileDetailForm = ({
 
   // Get countries list from 'country-state-city' library
   const countries = Country.getAllCountries();
-  console.log("countries", countries)
+  console.log("countries", countries);
 
   // Get states list based on the selected country
   const states = State.getStatesOfCountry(formik?.current?.values.country);
@@ -295,20 +295,24 @@ const ProfileDetailForm = ({
                       </div>
                     ) : field.type === "grid" ? (
                       <div>
-                        <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div className="grid grid-cols-2 gap-1 mt-4">
                           {professionOptions.map((item, index) => (
                             <div
                               key={item.value + index}
-                              className={`p-2 border  border-[#006EB4] rounded-md text-center transition-all ${
+                              className={`w-[110px] h-[110px] mb-8 ml-6 bg-[#C9EEFF] border border-[#006EB4] rounded-md text-center  opacity-100 transition-all ${
                                 formik?.current?.values[field.name] ===
                                 item.value
-                                  ? "bg-sky-100"
-                                  : "hover:bg-gray-200"
+                                  ? "opacity-100"
+                                  : "opacity-50"
                               }`}
                               onClick={() =>
                                 handleProfessionSelect(item.value)
                               }>
-                              <p>{item.label}</p>
+                              <img
+                                className="h-full w-full object-contain"
+                                src={item.image}
+                              />
+                              <h4>{item.label}</h4>
                             </div>
                           ))}
                         </div>
