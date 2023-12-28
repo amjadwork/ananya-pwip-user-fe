@@ -128,22 +128,6 @@ const ProfileDetailForm = ({
   // Get countries list from 'country-state-city' library
   const countries = Country.getAllCountries();
 
-  // Get states list based on the selected country
-
-  // useEffect(() => {
-  //   console.log("formik", formik?.current?.values.country);
-
-  //   if (formik?.current?.values.country) {
-  //     const statesList = State.getStatesOfCountry(
-  //       formik?.current?.values.country
-  //     );
-  //     console.log("statesList", statesList);
-  //     setStates([...statesList]);
-  //   }
-  // }, [formik?.current?.values?.country]);
-
-  // Get cities list based on the selected state
-
   const handleCountryChange = (value) => {
     formik.current.setValues({
       ...formik.current.values,

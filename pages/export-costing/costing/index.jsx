@@ -434,13 +434,17 @@ function CostingOverview() {
   const checkY = debounce(() => {
     const costingCardDiv = costingCardRef?.current?.getBoundingClientRect();
     if (costingCardDiv) {
-      if (scrollDirection === "up") {
+      const isPageEnd =
+        window.innerHeight + window.scrollY >= document.body.offsetHeight;
+
+      if (scrollDirection === "up" && !isPageEnd) {
         setIsFixed(false);
         return;
       }
 
       const startY = costingCardDiv.bottom;
-      setIsFixed(window.scrollY > startY);
+
+      setIsFixed(window.scrollY > startY || isPageEnd);
     }
   }, 20); // Adjust the delay as needed
 
