@@ -9,8 +9,8 @@ import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 import {
   fetchDestinationRequest,
-  fetchOriginRequest,
-  fetchDestinationFailure,
+  // fetchOriginRequest,
+  // fetchDestinationFailure,
 } from "@/redux/actions/location.actions";
 
 import {
@@ -46,7 +46,7 @@ function getObjectWithLatestDate(dataArray) {
 
   // Sort the array based on the 'amount_paid_date' in descending order
   const sortedArray = dataArray.sort(
-    (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+    (a, b) => new Date(b?.amount_paid_date) - new Date(a?.amount_paid_date)
   );
 
   // Return the first (i.e., the latest) object in the sorted array
@@ -57,7 +57,7 @@ function SelectPortOfDestination() {
   const router = useRouter();
   const dispatch = useDispatch();
 
-  const { openBottomSheet, openToastMessage } = useOverlayContext();
+  const { openToastMessage } = useOverlayContext();
 
   const selectedProductForCosting = useSelector(
     (state) => state.costing.product
@@ -72,7 +72,7 @@ function SelectPortOfDestination() {
   );
   const authToken = useSelector((state) => state.auth.token);
 
-  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+  // const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [isGenerated, setIsGenerated] = React.useState(false);
 
   async function handleSaveCosting() {
@@ -122,13 +122,13 @@ function SelectPortOfDestination() {
     }
   }, [selectedProductForCosting]);
 
-  React.useEffect(() => {
-    const element = document.getElementById("fixedMenuSection");
-    if (element) {
-      const height = element.offsetHeight;
-      setMainContainerHeight(height);
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const element = document.getElementById("fixedMenuSection");
+  //   if (element) {
+  //     const height = element.offsetHeight;
+  //     setMainContainerHeight(height);
+  //   }
+  // }, []);
 
   return (
     <React.Fragment>
@@ -235,7 +235,19 @@ function SelectPortOfDestination() {
             }
             onClick={async () => {
               const subscriptionResponse = await checkUserSubscriptionDetails();
-              const currentPlan = getObjectWithLatestDate(subscriptionResponse);
+              let currentPlan = null;
+              if (subscriptionResponse) {
+                currentPlan = getObjectWithLatestDate(subscriptionResponse);
+              }
+
+              if (!currentPlan) {
+                openToastMessage({
+                  type: "error",
+                  message:
+                    "Something went wrong while checking subscription details",
+                  // autoHide: false,
+                });
+              }
 
               if (
                 currentPlan?.total_generated_costing >= currentPlan?.usage_cap
