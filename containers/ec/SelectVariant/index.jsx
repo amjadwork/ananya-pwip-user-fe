@@ -31,25 +31,24 @@ const riceCategory = [
     name: "Basmati",
     color: "#CFECFF",
     image:
-      "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Basmati.png",
+      "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983415823",
   },
   {
     name: "Parboiled",
     color: "#CFE4C4",
     image:
-      "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+      "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
   },
   {
     name: "Raw",
     color: "#E7D4C9",
-    image:
-      "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+    image: "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
   },
   {
     name: "Steam",
     color: "#F7EDC6",
     image:
-      "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Steam.png",
+      "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
   },
 ];
 
@@ -499,19 +498,19 @@ const SelectVariantContainer = (props) => {
               name: "Sella",
               color: "#CFE4C4",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
             },
             {
               name: "Raw",
               color: "#E7D4C9",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
             },
             {
               name: "Steam",
               color: "#F7EDC6",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Steam.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
             },
           ];
         }
@@ -524,13 +523,13 @@ const SelectVariantContainer = (props) => {
               name: "White",
               color: "#CFE4C4",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
             },
             {
               name: "Gold",
               color: "#E7D4C9",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
             },
           ];
         }
@@ -541,13 +540,13 @@ const SelectVariantContainer = (props) => {
               name: "New",
               color: "#CFE4C4",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
             },
             {
               name: "Old",
               color: "#E7D4C9",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
             },
           ];
         }
@@ -560,7 +559,7 @@ const SelectVariantContainer = (props) => {
               name: "New",
               color: "#CFE4C4",
               image:
-                "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
             },
           ];
         }
@@ -855,19 +854,19 @@ const SelectVariantContainer = (props) => {
                         name: "Sella",
                         color: "#CFE4C4",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                       },
                       {
                         name: "Raw",
                         color: "#E7D4C9",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                       },
                       {
                         name: "Steam",
                         color: "#F7EDC6",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Steam.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
                       },
                     ];
                   }
@@ -881,13 +880,13 @@ const SelectVariantContainer = (props) => {
                         name: "White",
                         color: "#CFE4C4",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                       },
                       {
                         name: "Gold",
                         color: "#E7D4C9",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                       },
                     ];
                   }
@@ -901,13 +900,13 @@ const SelectVariantContainer = (props) => {
                         name: "New",
                         color: "#CFE4C4",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                       },
                       {
                         name: "Old",
                         color: "#E7D4C9",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                       },
                     ];
                   }
@@ -921,7 +920,7 @@ const SelectVariantContainer = (props) => {
                         name: "New",
                         color: "#CFE4C4",
                         image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                       },
                     ];
                   }
@@ -1184,19 +1183,19 @@ const SelectVariantContainer = (props) => {
                             name: "Sella",
                             color: "#CFE4C4",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                           },
                           {
                             name: "Raw",
                             color: "#E7D4C9",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                           },
                           {
                             name: "Steam",
                             color: "#F7EDC6",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Steam.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
                           },
                         ];
                       }
@@ -1210,13 +1209,13 @@ const SelectVariantContainer = (props) => {
                             name: "White",
                             color: "#CFE4C4",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                           },
                           {
                             name: "Gold",
                             color: "#E7D4C9",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                           },
                         ];
                       }
@@ -1230,13 +1229,13 @@ const SelectVariantContainer = (props) => {
                             name: "New",
                             color: "#CFE4C4",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                           },
                           {
                             name: "Old",
                             color: "#E7D4C9",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Raw.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
                           },
                         ];
                       }
@@ -1250,7 +1249,7 @@ const SelectVariantContainer = (props) => {
                             name: "New",
                             color: "#CFE4C4",
                             image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Category_Images/Category%20images%20EC/Parboiled.png",
+                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
                           },
                         ];
                       }
