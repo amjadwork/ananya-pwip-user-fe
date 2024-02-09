@@ -31,6 +31,7 @@ import { apiBaseURL } from "@/utils/helper";
 
 import paymentSuccessful from "../../theme/lottie/payment-success.json";
 import moment from "moment";
+import { apiStagePaymentBeUrl, exportCostingServiceId } from "utils/helper";
 
 // Import Containers
 
@@ -51,7 +52,7 @@ function filterArrayByReference(originalArray, referenceArray) {
   // Filter the array based on the condition
   const newArray = originalArray.filter((item) => {
     // Check if any ID in the applicable_services array is present in the reference array
-    return item.applicable_services.some((id) => referenceArray.includes(id));
+    return item.applicable_services?.some((id) => referenceArray.includes(id));
   });
 
   return newArray;
@@ -94,6 +95,8 @@ function Subscription() {
   const [usersSubscriptionData, setUsersSubscriptionData] =
     React.useState(null);
 
+  const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl
+  const SERVICE_ID = Number(exportCostingServiceId) // should be Number
   // const [searchStringValue, setSearchStringValue] = React.useState("");
 
   const createSubscription = async (body) => {
@@ -117,10 +120,11 @@ function Subscription() {
   const createOrder = async (planid, userid) => {
     try {
       const response = await axios.post(
-        "https://api-payment.pwip.co/" + "api" + "/create",
+        // "https://api-payment.pwip.co/" + "api" + "/create",
+        API_STAGE_PAYMENT_BE + "api" + "/create-order",
         {
-          planId: planid,
-          userId: userid,
+          plan_id: planid,
+          service_id:SERVICE_ID
         },
         {
           headers: {
@@ -138,7 +142,9 @@ function Subscription() {
   const verifyPayment = async (body) => {
     try {
       const response = await axios.post(
-        "https://api-payment.pwip.co/" + "api" + "/verifypay",
+        // "https://api-payment.pwip.co/" + "api" + "/verifypay",
+        API_STAGE_PAYMENT_BE
+         + "api" + "/verify-pay",
         body,
         {
           headers: {
@@ -155,23 +161,23 @@ function Subscription() {
 
   const handlePayment = useCallback(
     async (item) => {
-      const order = await createOrder(item?.id, userDetails?._id);
+      const orderResponse = await createOrder(item?.id, userDetails?._id);
 
       try {
-        if (order?.order_id) {
+        if (orderResponse.rz_order?.order_id) {
           const options = {
-            key: "rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
-            amount: order?.amount,
+            //key: "rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
+            key: "rzp_test_aw3ZNIR1FCxuQl",
             currency: "INR",
             name: "PWIP Foodtech Pvt Limited",
             description: "Your export partners",
             image: "https://pwip.co/assets/web/img/web/logo.png",
-            order_id: order?.order_id,
+            order_id: orderResponse.rz_order?.order_id,
             handler: async (res) => {
               const paymentVerifyPayload = {
                 ...res,
                 planId: item?.id,
-                userId: userDetails?._id,
+                serviceId:SERVICE_ID
               };
               const responseVerify = await verifyPayment(paymentVerifyPayload);
 
@@ -191,40 +197,40 @@ function Subscription() {
 
                 // await createSubscription(payload);
 
-                const content = (
-                  <div className="w-full h-full relative bg-white px-5 pt-[56px]">
-                    <div className="w-full flex flex-col items-center">
-                      <div className="min-w-[310px] h-auto">
-                        <Lottie animationData={paymentSuccessful} />
-                      </div>
-                      <span className="text-center font-bold text-pwip-green-800 text-lg">
-                        Payment Successful
-                      </span>
-                    </div>
+                // const content = (
+                //   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
+                //     <div className="w-full flex flex-col items-center">
+                //       <div className="min-w-[310px] h-auto">
+                //         <Lottie animationData={paymentSuccessful} />
+                //       </div>
+                //       <span className="text-center font-bold text-pwip-green-800 text-lg">
+                //         Payment Successful
+                //       </span>
+                //     </div>
 
-                    <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
-                      <div className="flex justify-between py-2">
-                        <span className="text-sky-950 text-sm font-bold">
-                          Transaction id
-                        </span>
-                        <span className="text-sky-950 text-sm font-bold">
-                          {res?.razorpay_payment_id}
-                        </span>
-                      </div>
+                //     <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
+                //       <div className="flex justify-between py-2">
+                //         <span className="text-sky-950 text-sm font-bold">
+                //           Transaction id
+                //         </span>
+                //         <span className="text-sky-950 text-sm font-bold">
+                //           {res?.razorpay_payment_id}
+                //         </span>
+                //       </div>
 
-                      <div className="flex justify-between py-2">
-                        <span className="text-sky-950 text-sm font-medium">
-                          Amount Paid
-                        </span>
-                        <span className="text-zinc-900 text-sm font-medium">
-                          ₹{Math.ceil(order?.amount / 100)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
+                //       <div className="flex justify-between py-2">
+                //         <span className="text-sky-950 text-sm font-medium">
+                //           Amount Paid
+                //         </span>
+                //         <span className="text-zinc-900 text-sm font-medium">
+                //           ₹{Math.ceil(order?.amount / 100)}
+                //         </span>
+                //       </div>
+                //     </div>
+                //   </div>
+                // );
 
-                openBottomSheet(content, null, true);
+                // openBottomSheet(content, null, true);
               } else {
                 openToastMessage({
                   type: "error",
@@ -256,6 +262,7 @@ function Subscription() {
           message: "Something went while creating your order, try again",
           // autoHide: false,
         });
+        console.log(err)
       }
     },
     [Razorpay]
@@ -382,25 +389,24 @@ function Subscription() {
                       "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
                     width: usersSubscriptionData
                       ? calculatePercentage(
-                          allMyCostingsData.length || 0,
-                          modulePlansData.find(
-                            (d) => d.id === usersSubscriptionData?.plan_id
-                          )?.usage_cap
-                        ) + "%"
+                        allMyCostingsData.length || 0,
+                        modulePlansData.find(
+                          (d) => d.id === usersSubscriptionData?.plan_id
+                        )?.usage_cap
+                      ) + "%"
                       : 0,
                   }}
                 ></div>
               </div>
               <span className="text-pwip-v2-primary text-sm font-[500]">
                 {usersSubscriptionData &&
-                modulePlansData.find(
-                  (d) => d.id === usersSubscriptionData?.plan_id
-                )?.usage_cap <= allMyCostingsData?.length
-                  ? `Your ${
-                      modulePlansData.find(
-                        (d) => d.id === usersSubscriptionData?.plan_id
-                      )?.name
-                    } plan has exhausted !!!`
+                  modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  )?.usage_cap <= allMyCostingsData?.length
+                  ? `Your ${modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  )?.name
+                  } plan has exhausted !!!`
                   : "Upgrade to premium to get unlimited costings"}
               </span>
             </div>
