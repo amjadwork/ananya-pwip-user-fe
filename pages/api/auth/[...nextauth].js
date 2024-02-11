@@ -21,6 +21,7 @@ export const authOptions = {
         params: {
           audience: encodeURI(process.env.AUTH0_AUDIENCE),
           scope: "openid email profile offline_access refresh_token",
+          // scope: "openid email profile",
         },
       },
     }),

@@ -75,7 +75,7 @@ const initialValues = {
 };
 
 const profileValidationSchema = Yup.object().shape({
-  full_name: Yup.string().required("Please enter your full name"),
+  // full_name: Yup.string().required("Please enter your full name"),
   phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Invalid mobile number")
     .required("Required"),
@@ -413,7 +413,7 @@ const ProfileDetailForm = ({
                           type={field.type}
                           id={field.name}
                           name={field.name}
-                          value={formik?.current?.values[field.name]}
+                          value={values[field.name]}
                           disabled={field.name === "email"}
                           onChange={handleChange}
                           onBlur={handleBlur}
@@ -441,15 +441,16 @@ const ProfileDetailForm = ({
                 ))}
               </div>
 
-              <div className=" bottom-0  w-full bg-white">
+              <div className=" bottom-0 w-full bg-white">
                 <Button
                   type="primary"
                   buttonType="submit"
                   label="Update changes"
-                  disabled={
-                    Object.keys(errors).length || isSubmitting ? true : false
-                  }
+                  // disabled={
+                  //   Object.keys(errors).length || isSubmitting ? false : true
+                  // }
                   onClick={() => {
+                    console.log("here", errors);
                     const changes = getChangedPropertiesFromObject(
                       {
                         ...userObject.userData,

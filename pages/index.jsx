@@ -1,4 +1,9 @@
 import React, { useEffect, useState } from "react";
+// import {
+//   showLoaderSuccess,
+//   hideLoaderFailure,
+// } from "@/redux/actions/utils.actions";
+
 import Head from "next/head";
 // import { useRouter } from "next/router";
 import { getSession, signIn } from "next-auth/react";
@@ -37,6 +42,7 @@ export default function Home() {
 
   const handleLogin = async () => {
     try {
+      // showLoaderSuccess();
       const callbackUrl = process.env.AUTH0_ISSUER_BASE_URL; //"dev-342qasi42nz80wtj.us.auth0.com";
       await signIn("auth0", { callbackUrl });
     } catch (error) {
@@ -52,19 +58,10 @@ export default function Home() {
   //   }
   // };
 
-  // const checkForAuth = async () => {
-  //   const res = await dispatch(
-  //     handleSettingAuthDataRequest(session.user, session.accessToken)
-  //   );
-  //   if (res?.payload?.token) {
-  //     redirectToApp();
-  //   }
-  // };
-
   // useEffect(() => {
   //   if (session && session.accessToken && session.user) {
-  //     console.log("here currentPlan", currentPlan);
-  //     dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+  //     // hideLoaderFailure();
+  //     redirectToApp();
   //   }
   // }, [session]);
 
@@ -223,8 +220,9 @@ export default function Home() {
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
-  const cookies = parse(context.req.headers.cookie || "");
-  const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
+
+  // const cookies = parse(context.req.headers.cookie || "");
+  // const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
 
   if (session?.accessToken) {
     return {
@@ -232,7 +230,7 @@ export async function getServerSideProps(context) {
         session: session || null,
       },
       redirect: {
-        destination: lastVisitedPage,
+        destination: "/export-costing",
       },
     };
   }

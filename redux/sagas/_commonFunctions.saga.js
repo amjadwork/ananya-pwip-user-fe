@@ -100,7 +100,20 @@ export function* makeApiCall(
 
     return response;
   } catch (error) {
-    const status = [401, 403];
+    const status = [403];
+
+    if (error.response && error.response.status === 401) {
+      yield put(handleSettingAuthDataFailure());
+      yield put(
+        showToastNotificationSuccess({
+          type: "error",
+          message: "Unauthorized access",
+        })
+      );
+      yield put(hideLoaderFailure());
+
+      return;
+    }
 
     if (error.response && status.includes(error.response.status)) {
       // Attempt to refresh the token

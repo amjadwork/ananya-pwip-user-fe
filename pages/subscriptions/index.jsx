@@ -99,23 +99,23 @@ function Subscription() {
   const SERVICE_ID = Number(exportCostingServiceId); // should be Number
   // const [searchStringValue, setSearchStringValue] = React.useState("");
 
-  const createSubscription = async (body) => {
-    try {
-      const response = await axios.post(
-        apiBaseURL + "api" + "/subscription",
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+  // const createSubscription = async (body) => {
+  //   try {
+  //     const response = await axios.post(
+  //       apiBaseURL + "api" + "/subscription",
+  //       body,
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${authToken}`,
+  //         },
+  //       }
+  //     );
 
-      return response?.data;
-    } catch (err) {
-      return err;
-    }
-  };
+  //     return response?.data;
+  //   } catch (err) {
+  //     return err;
+  //   }
+  // };
 
   const createOrder = async (planid, userid) => {
     try {

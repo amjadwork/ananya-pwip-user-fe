@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +21,7 @@ const withAuth = (WrappedComponent) => {
     const authToken = useSelector((state) => state.auth.token);
     const authUser = useSelector((state) => state.auth.user);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (status === "authenticated" && !authToken) {
         dispatch(
           handleSettingAuthDataRequest(session.user, session.accessToken)
@@ -34,13 +34,13 @@ const withAuth = (WrappedComponent) => {
       await dispatch(fetchProfileRequest());
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (authUser && !profileObject?.profileData && !userObject?.userData) {
         getUserProfileDetails();
       }
     }, [authUser, fetchProfileRequest, fetchUserRequest]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (profileObject?.profileData && userObject?.userData && authToken) {
         const userPayload = {
           ...authUser,
@@ -51,12 +51,12 @@ const withAuth = (WrappedComponent) => {
       }
     }, [authToken, profileObject?.profileData, userObject?.userData]);
 
-    useEffect(() => {
-      if (status === "authenticated") {
-        Cookies.set("lastVisitedPage", router.pathname, { expires: 7 }); // Set expiry as needed
-      }
-      // Store the last visited page in local storage
-    }, [router.pathname, status]);
+    // useEffect(() => {
+    //   if (status === "authenticated") {
+    //     Cookies.set("lastVisitedPage", router.pathname, { expires: 7 }); // Set expiry as needed
+    //   }
+    //   // Store the last visited page in local storage
+    // }, [router.pathname, status]);
 
     if (status === "loading" && !authToken) {
       return (
