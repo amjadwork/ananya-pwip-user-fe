@@ -379,7 +379,6 @@ const SelectLocationContainer = (props) => {
 
     // Iterate through the array of variants
     for (const variant of dataToFilter) {
-      console.log("variant", variant);
       // Convert the variant name to lowercase for comparison
       const variantNameLower = variant.portName.toLowerCase();
 
