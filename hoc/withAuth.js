@@ -8,7 +8,6 @@ import {
 } from "redux/actions/auth.actions";
 import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
 import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
-import Cookies from "js-cookie";
 
 const withAuth = (WrappedComponent) => {
   return function WithAuth(props) {
@@ -51,13 +50,6 @@ const withAuth = (WrappedComponent) => {
       }
     }, [authToken, profileObject?.profileData, userObject?.userData]);
 
-    // useEffect(() => {
-    //   if (status === "authenticated") {
-    //     Cookies.set("lastVisitedPage", router.pathname, { expires: 7 }); // Set expiry as needed
-    //   }
-    //   // Store the last visited page in local storage
-    // }, [router.pathname, status]);
-
     if (status === "loading" && !authToken) {
       return (
         <div className="w-screen h-screen inline-flex flex-col items-center justify-center text-pwip-primary bg-white">
@@ -66,7 +58,7 @@ const withAuth = (WrappedComponent) => {
       );
     }
 
-    if (!session) {
+    if (!authToken && !session) {
       router.replace("/");
       return null;
     }

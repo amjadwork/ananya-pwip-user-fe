@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { useDispatch } from "react-redux";
 import { Button } from "@/components/Button";
 import { useOverlayContext } from "@/context/OverlayContext";
+import { useRouter } from "next/router";
 
 import {
   // fetchProfileFailure,
@@ -104,9 +105,11 @@ const ProfileDetailForm = ({
   professionOptions,
   userObject,
   profileObject,
+  isStandalone,
 }) => {
   const formik = useRef();
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
@@ -118,32 +121,27 @@ const ProfileDetailForm = ({
     }
   }, [token]);
 
-  const {
-    openBottomSheet,
-    closeBottomSheet,
-    openToastMessage,
-    // closeToastMessage,
-  } = useOverlayContext();
+  const { closeBottomSheet, openToastMessage } = useOverlayContext();
 
   // Get countries list from 'country-state-city' library
   const countries = Country.getAllCountries();
 
-  const handleCountryChange = (value) => {
-    formik.current.setValues({
-      ...formik.current.values,
-      country: value,
-      state: "",
-      city: "",
-    });
-  };
+  // const handleCountryChange = (value) => {
+  //   formik.current.setValues({
+  //     ...formik.current.values,
+  //     country: value,
+  //     state: "",
+  //     city: "",
+  //   });
+  // };
 
-  const handleStateChange = (value) => {
-    formik.current.setValues({
-      ...formik.current.values,
-      state: value,
-      city: "",
-    });
-  };
+  // const handleStateChange = (value) => {
+  //   formik.current.setValues({
+  //     ...formik.current.values,
+  //     state: value,
+  //     city: "",
+  //   });
+  // };
 
   useEffect(() => {
     if (
@@ -155,8 +153,9 @@ const ProfileDetailForm = ({
     ) {
       const formikRef = formik.current;
 
-      const updatedFormValues = {
+      let updatedFormValues = {
         ...userObject.userData,
+        phone: userObject.userData.phone || "",
         ...profileObject.profileData,
       };
 
@@ -232,6 +231,9 @@ const ProfileDetailForm = ({
           type: "success",
           message: "Profile has been updated successfully.",
         });
+        if (isStandalone) {
+          router.push("/export-costing");
+        }
         requestAction = null;
       }
     } catch (error) {
@@ -271,172 +273,176 @@ const ProfileDetailForm = ({
               handleSubmit();
             }}
           >
-            <div className="w-full h-24 p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
+            <div className="w-full h-auto p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
               {fieldHeading.heading}
             </div>
-            <div className="mx-7">
+            <div className="mx-7 py-4">
               <div className="pb-7">
                 {fields.map((field, index) => (
                   <div className="relative mb-2 mt-2">
                     <label
                       htmlFor={field.name}
-                      className="w-full text-sm font-medium text-gray-900 mb-1"
+                      className="w-full text-sm font-medium text-gray-900"
                     >
                       {field.label}
                     </label>
-                    {field.type === "textarea" ? (
-                      <div>
-                        <textarea
-                          id={field.name}
-                          name={field.name}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          maxLength={600}
-                          style={{
-                            textAlign: "left",
-                          }}
-                          value={formik?.current?.values[field.name]}
-                          className={`block w-full h-60 p-1 mt-4 text-sm text-gray-900 rounded-md border ${
-                            errors[field.name] && touched[field.name]
-                              ? "border-red-300"
-                              : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                          placeholder={field.placeholder}
-                        />
-                        {errors[field.name] ? (
-                          <span
-                            className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
-                            {errors[field.name]}
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : field.type === "grid" ? (
-                      <div>
-                        <div className="grid grid-cols-2 gap-1 mt-4">
-                          {professionOptions.map((item, index) => (
-                            <div
-                              key={item.value + index}
-                              className={`w-[110px] h-[110px] mb-8 ml-6 bg-[#C9EEFF] rounded-md text-center  opacity-100 transition-all ${
-                                formik?.current?.values[field.name] ===
-                                item.value
-                                  ? "opacity-100 border border-[#006EB4]"
-                                  : "opacity-[0.45] grayscale-[50%]"
-                              }`}
-                              onClick={() => handleProfessionSelect(item.value)}
+                    <div className="mt-1">
+                      {field.type === "textarea" ? (
+                        <div>
+                          <textarea
+                            id={field.name}
+                            name={field.name}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            maxLength={600}
+                            style={{
+                              textAlign: "left",
+                            }}
+                            value={formik?.current?.values[field.name]}
+                            className={`block w-full h-60 p-1 mt-4 text-sm text-gray-900 rounded-md border ${
+                              errors[field.name] && touched[field.name]
+                                ? "border-red-300"
+                                : "border-[#006EB4]"
+                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                            placeholder={field.placeholder}
+                          />
+                          {errors[field.name] ? (
+                            <span
+                              className="absolute text-red-400 text-xs"
+                              style={{ top: "100%" }}
                             >
-                              <img
-                                className="h-full w-full object-contain"
-                                src={item.image}
-                              />
-                              <h4>{item.label}</h4>
-                            </div>
-                          ))}
+                              {errors[field.name]}
+                            </span>
+                          ) : null}
                         </div>
-
-                        {errors[field.name] ? (
-                          <span
-                            className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
-                            {errors[field.name]}
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : field.type === "select" ? (
-                      <div>
-                        <select
-                          id={field.name}
-                          name={field.name}
-                          onChange={(e) => {
-                            handleChange(e);
-
-                            if (field.name === "state") {
-                              const stateISOCode = states.find(
-                                (s) => s.name === e.target.value
-                              )?.isoCode;
-
-                              const citiesList = City.getCitiesOfState(
-                                "IN",
-                                stateISOCode
-                              );
-
-                              setCities(citiesList);
-                            }
-                          }}
-                          onBlur={handleBlur}
-                          disabled={field.name === "country" ? true : false}
-                          value={formik?.current?.values[field.name]}
-                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
-                            errors[field.name] && touched[field.name]
-                              ? "border-red-300"
-                              : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                        >
-                          <option value="" label={`Select ${field.label}`} />
-
-                          {field.name === "country" &&
-                            countries.map((country) => (
-                              <option
-                                key={country.isoCode}
-                                value={country.name}
+                      ) : field.type === "grid" ? (
+                        <div>
+                          <div className="grid grid-cols-2 gap-1 mt-4">
+                            {professionOptions.map((item, index) => (
+                              <div
+                                key={item.value + index}
+                                className={`w-[110px] h-[110px] mb-8 ml-6 bg-[#C9EEFF] rounded-md text-center  opacity-100 transition-all ${
+                                  formik?.current?.values[field.name] ===
+                                  item.value
+                                    ? "opacity-100 border border-[#006EB4]"
+                                    : "opacity-[0.45] grayscale-[50%]"
+                                }`}
+                                onClick={() =>
+                                  handleProfessionSelect(item.value)
+                                }
                               >
-                                {country.name}
-                              </option>
+                                <img
+                                  className="h-full w-full object-contain"
+                                  src={item.image}
+                                />
+                                <h4>{item.label}</h4>
+                              </div>
                             ))}
-                          {field.name === "state" &&
-                            states.map((state) => (
-                              <option key={state.isoCode} value={state.name}>
-                                {state.name}
-                              </option>
-                            ))}
-                          {field.name === "city" &&
-                            cities.map((city) => (
-                              <option key={city.isoCode} value={city.name}>
-                                {city.name}
-                              </option>
-                            ))}
-                        </select>
-                        {errors[field.name] ? (
-                          <span
-                            className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
+                          </div>
+
+                          {errors[field.name] ? (
+                            <span
+                              className="absolute text-red-400 text-xs"
+                              style={{ top: "100%" }}
+                            >
+                              {errors[field.name]}
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : field.type === "select" ? (
+                        <div>
+                          <select
+                            id={field.name}
+                            name={field.name}
+                            onChange={(e) => {
+                              handleChange(e);
+
+                              if (field.name === "state") {
+                                const stateISOCode = states.find(
+                                  (s) => s.name === e.target.value
+                                )?.isoCode;
+
+                                const citiesList = City.getCitiesOfState(
+                                  "IN",
+                                  stateISOCode
+                                );
+
+                                setCities(citiesList);
+                              }
+                            }}
+                            onBlur={handleBlur}
+                            disabled={field.name === "country" ? true : false}
+                            value={formik?.current?.values[field.name]}
+                            className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
+                              errors[field.name] && touched[field.name]
+                                ? "border-red-300"
+                                : "border-[#006EB4]"
+                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
                           >
-                            {errors[field.name]}
-                          </span>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <input
-                          type={field.type}
-                          id={field.name}
-                          name={field.name}
-                          value={values[field.name]}
-                          disabled={field.name === "email"}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          style={{
-                            textAlign: "left",
-                          }}
-                          className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
-                            errors[field.name] && touched[field.name]
-                              ? "border-red-300"
-                              : "border-[#006EB4]"
-                          } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                          placeholder={field.placeholder}
-                        />
-                        {errors[field.name] ? (
-                          <span
-                            className="absolute text-red-400 text-xs"
-                            style={{ top: "100%" }}
-                          >
-                            {errors[field.name]}
-                          </span>
-                        ) : null}
-                      </div>
-                    )}
+                            <option value="" label={`Select ${field.label}`} />
+
+                            {field.name === "country" &&
+                              countries.map((country) => (
+                                <option
+                                  key={country.isoCode}
+                                  value={country.name}
+                                >
+                                  {country.name}
+                                </option>
+                              ))}
+                            {field.name === "state" &&
+                              states.map((state) => (
+                                <option key={state.isoCode} value={state.name}>
+                                  {state.name}
+                                </option>
+                              ))}
+                            {field.name === "city" &&
+                              cities.map((city) => (
+                                <option key={city.isoCode} value={city.name}>
+                                  {city.name}
+                                </option>
+                              ))}
+                          </select>
+                          {errors[field.name] ? (
+                            <span
+                              className="absolute text-red-400 text-xs"
+                              style={{ top: "100%" }}
+                            >
+                              {errors[field.name]}
+                            </span>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <input
+                            type={field.type}
+                            id={field.name}
+                            name={field.name}
+                            value={values[field.name]}
+                            disabled={field.name === "email" || field.disable}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            style={{
+                              textAlign: "left",
+                            }}
+                            className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
+                              errors[field.name] && touched[field.name]
+                                ? "border-red-300"
+                                : "border-[#006EB4]"
+                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                            placeholder={field.placeholder}
+                          />
+                          {errors[field.name] ? (
+                            <span
+                              className="absolute text-red-400 text-xs mt-1"
+                              style={{ top: "100%" }}
+                            >
+                              {errors[field.name]}
+                            </span>
+                          ) : null}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -445,7 +451,7 @@ const ProfileDetailForm = ({
                 <Button
                   type="primary"
                   buttonType="submit"
-                  label="Update changes"
+                  label={isStandalone ? "Save & continue" : "Update changes"}
                   // disabled={
                   //   Object.keys(errors).length || isSubmitting ? false : true
                   // }

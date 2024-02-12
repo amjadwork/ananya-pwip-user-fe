@@ -27,6 +27,8 @@ export function OverlayProvider({ children }) {
   const [usdValue, setUSDValue] = useState(0);
   const [usdInputValue, setUSDInputValue] = useState(0);
   const [initialFocusRef, setInitialFocusRef] = useState(false);
+  const [isDataCaptureEventAction, setIsDataCaptureEventAction] =
+    useState(false);
 
   const openModal = (usdValue) => {
     if (usdValue) {
@@ -36,7 +38,12 @@ export function OverlayProvider({ children }) {
   };
   const closeModal = () => setIsModalOpen(false);
 
-  const openBottomSheet = async (content, handler, initialFocus) => {
+  const openBottomSheet = async (
+    content,
+    handler,
+    initialFocus,
+    isEventAction
+  ) => {
     setIsBottomSheetOpen(true);
 
     await setBottomSheetChildren(content);
@@ -45,6 +52,12 @@ export function OverlayProvider({ children }) {
       setInitialFocusRef(true);
     } else {
       setInitialFocusRef(false);
+    }
+
+    if (isEventAction) {
+      setIsDataCaptureEventAction(true);
+    } else {
+      setIsDataCaptureEventAction(false);
     }
 
     if (handler) {
@@ -100,7 +113,11 @@ export function OverlayProvider({ children }) {
     <div className="inline-flex items-center justify-center fixed top-0 left-0 h-screen w-screen z-0">
       <BottomSheet
         open={isBottomSheetOpen}
-        onDismiss={closeBottomSheet}
+        onDismiss={() => {
+          if (!isDataCaptureEventAction) {
+            closeBottomSheet();
+          }
+        }}
         snapPoints={({ minHeight, maxHeight }) => [minHeight, maxHeight - 72]}
         defaultSnap={({ lastSnap, snapPoints }) => {
           if (initialFocusRef) {

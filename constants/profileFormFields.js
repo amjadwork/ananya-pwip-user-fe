@@ -42,11 +42,13 @@ export const contactFields = [
     name: "email",
     label: "Email",
     type: "email",
+    disable: true,
   },
   {
     name: "phone",
     label: "Mobile",
     type: "number",
+    placeholder: "891******9",
   },
 ];
 export const contactFieldsHeading = {

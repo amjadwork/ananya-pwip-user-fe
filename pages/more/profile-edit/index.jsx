@@ -150,7 +150,7 @@ function ProfileEdit() {
         />
       </React.Fragment>
     );
-    openBottomSheet(content);
+    openBottomSheet(content, () => null, true);
   };
 
   useEffect(() => {

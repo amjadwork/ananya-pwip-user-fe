@@ -1,24 +1,31 @@
 import React, { useEffect, useState } from "react";
-// import {
-//   showLoaderSuccess,
-//   hideLoaderFailure,
-// } from "@/redux/actions/utils.actions";
+import {
+  contactFields,
+  contactFieldsHeading,
+} from "@/constants/profileFormFields";
 
 import Head from "next/head";
-// import { useRouter } from "next/router";
-import { getSession, signIn } from "next-auth/react";
-// import { useDispatch } from "react-redux";
+import { useOverlayContext } from "@/context/OverlayContext";
+import { useSession, signIn } from "next-auth/react";
+import { useSelector, useDispatch } from "react-redux";
 import Slider from "react-slick";
-import { parse } from "cookie";
+import { useRouter } from "next/router";
 
-// import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+
+import ProfileDetailForm from "@/components/ProfileDetailForm";
 
 export default function Home() {
-  // const router = useRouter();
-  // const { data: session } = useSession();
-  // const dispatch = useDispatch();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const dispatch = useDispatch();
+
+  const userDetails = useSelector((state) => state.auth?.user);
+
+  const { openBottomSheet, startLoading, stopLoading } = useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
+  const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
   const sliderSettings = {
     dots: false,
@@ -36,13 +43,31 @@ export default function Home() {
     },
   };
 
-  // const handleNavigation = (path) => {
-  //   router.push(path);
-  // };
+  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+    const content = (
+      <React.Fragment>
+        <ProfileDetailForm
+          token={token}
+          fields={fields}
+          fieldHeading={{
+            heading: fieldHeading,
+          }}
+          professionOptions={[]}
+          userObject={{ userData: userDetails }}
+          profileObject={{}}
+          isStandalone={true}
+        />
+      </React.Fragment>
+    );
+    openBottomSheet(content, () => null, true, true);
+  };
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
 
   const handleLogin = async () => {
     try {
-      // showLoaderSuccess();
       const callbackUrl = process.env.AUTH0_ISSUER_BASE_URL; //"dev-342qasi42nz80wtj.us.auth0.com";
       await signIn("auth0", { callbackUrl });
     } catch (error) {
@@ -50,20 +75,51 @@ export default function Home() {
     }
   };
 
-  // const redirectToApp = async () => {
-  //   try {
-  //     handleNavigation("/export-costing");
-  //   } catch (error) {
-  //     console.error("Error during login:", error);
-  //   }
-  // };
+  const redirectToApp = async () => {
+    try {
+      stopLoading();
+      handleNavigation("/export-costing");
+    } catch (error) {
+      stopLoading();
+      console.error("Error during login:", error);
+    }
+  };
 
-  // useEffect(() => {
-  //   if (session && session.accessToken && session.user) {
-  //     // hideLoaderFailure();
-  //     redirectToApp();
-  //   }
-  // }, [session]);
+  useEffect(() => {
+    if (session) {
+      startLoading();
+      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+    }
+  }, [session]);
+
+  useEffect(() => {
+    if (
+      (userDetails && !userDetails?.phone) ||
+      (userDetails && !userDetails?.email)
+    ) {
+      stopLoading();
+
+      let fields = [...contactFields];
+
+      if (!userDetails?.email) {
+        fields = [...contactFields].filter((f) => f.type !== "phone");
+      }
+
+      if (!userDetails?.phone) {
+        fields = [...contactFields].filter((f) => f.type !== "email");
+      }
+
+      handleFormFieldBottomSheet(
+        fields,
+        "We need a few details",
+        session?.accessToken
+      );
+    }
+
+    if (userDetails?.phone && userDetails?.email) {
+      redirectToApp();
+    }
+  }, [userDetails]);
 
   return (
     <React.Fragment>
@@ -202,7 +258,10 @@ export default function Home() {
 
         <div className="px-5 w-full inline-flex flex-col items-center justify-center space-y-[24px] mt-[42px] bg-white">
           <button
-            onClick={() => handleLogin()}
+            onClick={() => {
+              startLoading();
+              handleLogin();
+            }}
             className="w-full rounded-md py-3 px-4 bg-pwip-v2-primary-600 text-pwip-white-100 text-center text-sm font-bold"
           >
             Get started
@@ -218,27 +277,27 @@ export default function Home() {
   );
 }
 
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
+// export async function getServerSideProps(context) {
+//   const session = await getSession(context);
 
-  // const cookies = parse(context.req.headers.cookie || "");
-  // const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
+//   // const cookies = parse(context.req.headers.cookie || "");
+//   // const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
 
-  if (session?.accessToken) {
-    return {
-      props: {
-        session: session || null,
-      },
-      redirect: {
-        destination: "/export-costing",
-      },
-    };
-  }
-  if (!session?.accessToken) {
-    return {
-      props: {
-        session: null,
-      },
-    };
-  }
-}
+//   if (session?.accessToken) {
+//     return {
+//       props: {
+//         session: session || null,
+//       },
+//       redirect: {
+//         destination: "/export-costing",
+//       },
+//     };
+//   }
+//   if (!session?.accessToken) {
+//     return {
+//       props: {
+//         session: null,
+//       },
+//     };
+//   }
+// }
