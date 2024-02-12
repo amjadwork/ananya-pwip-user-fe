@@ -379,11 +379,19 @@ const SelectLocationContainer = (props) => {
 
     // Iterate through the array of variants
     for (const variant of dataToFilter) {
+      console.log("variant", variant);
       // Convert the variant name to lowercase for comparison
       const variantNameLower = variant.portName.toLowerCase();
 
+      const countryNameLower = variant.country.toLowerCase();
+      const portCodeLower = variant.portCode.toLowerCase();
+
       // Check if the variant name contains the search string
-      if (variantNameLower.includes(searchLower)) {
+      if (
+        variantNameLower.includes(searchLower) ||
+        countryNameLower.includes(searchLower) ||
+        portCodeLower.includes(searchLower)
+      ) {
         // If it does, add the variant to the matchingVariants array
         matchingVariants.push(variant);
       }
