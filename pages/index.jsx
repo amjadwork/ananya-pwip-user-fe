@@ -22,7 +22,8 @@ export default function Home() {
 
   const userDetails = useSelector((state) => state.auth?.user);
 
-  const { openBottomSheet, startLoading, stopLoading } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet, startLoading, stopLoading } =
+    useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
   const [showUserDetailForm, setShowUserDetailForm] = useState(false);
@@ -93,9 +94,14 @@ export default function Home() {
   }, [session]);
 
   useEffect(() => {
+    if (userDetails?.phone && userDetails?.email) {
+      closeBottomSheet();
+      redirectToApp();
+    }
+
     if (
-      (userDetails && !userDetails?.phone) ||
-      (userDetails && !userDetails?.email)
+      (userDetails && !userDetails.phone) ||
+      (userDetails && !userDetails.email)
     ) {
       stopLoading();
 
@@ -114,10 +120,6 @@ export default function Home() {
         "We need a few details",
         session?.accessToken
       );
-    }
-
-    if (userDetails?.phone && userDetails?.email) {
-      redirectToApp();
     }
   }, [userDetails]);
 
