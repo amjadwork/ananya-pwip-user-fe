@@ -15,7 +15,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import {
   getServicesRequest,
   getPlansRequest,
-  getSubscriptionRequest,
+  // getSubscriptionRequest,
 } from "@/redux/actions/subscription.action";
 
 import {
@@ -39,7 +39,7 @@ import { apiStagePaymentBeUrl, exportCostingServiceId } from "utils/helper";
 
 function calculatePercentage(value, total) {
   if (typeof value !== "number" || typeof total !== "number") {
-    throw new Error("Invalid input. Please provide valid numeric values");
+    console.error("Invalid input. Please provide valid numeric values");
   }
 
   const percentage = (value / total) * 100;
@@ -117,10 +117,9 @@ function Subscription() {
   //   }
   // };
 
-  const createOrder = async (planid, userid) => {
+  const createOrder = async (planid) => {
     try {
       const response = await axios.post(
-        // "https://api-payment.pwip.co/" + "api" + "/create",
         API_STAGE_PAYMENT_BE + "api" + "/create-order",
         {
           plan_id: planid,
@@ -142,7 +141,6 @@ function Subscription() {
   const verifyPayment = async (body) => {
     try {
       const response = await axios.post(
-        // "https://api-payment.pwip.co/" + "api" + "/verifypay",
         API_STAGE_PAYMENT_BE + "api" + "/verify-pay",
         body,
         {
@@ -194,37 +192,37 @@ function Subscription() {
                 //   payment_status: "success",
                 // };
                 // await createSubscription(payload);
-                // const content = (
-                //   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
-                //     <div className="w-full flex flex-col items-center">
-                //       <div className="min-w-[310px] h-auto">
-                //         <Lottie animationData={paymentSuccessful} />
-                //       </div>
-                //       <span className="text-center font-bold text-pwip-green-800 text-lg">
-                //         Payment Successful
-                //       </span>
-                //     </div>
-                //     <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
-                //       <div className="flex justify-between py-2">
-                //         <span className="text-sky-950 text-sm font-bold">
-                //           Transaction id
-                //         </span>
-                //         <span className="text-sky-950 text-sm font-bold">
-                //           {res?.razorpay_payment_id}
-                //         </span>
-                //       </div>
-                //       <div className="flex justify-between py-2">
-                //         <span className="text-sky-950 text-sm font-medium">
-                //           Amount Paid
-                //         </span>
-                //         <span className="text-zinc-900 text-sm font-medium">
-                //           ₹{Math.ceil(order?.amount / 100)}
-                //         </span>
-                //       </div>
-                //     </div>
-                //   </div>
-                // );
-                // openBottomSheet(content, null, true);
+                const content = (
+                  <div className="w-full h-full relative bg-white px-5 pt-[56px]">
+                    <div className="w-full flex flex-col items-center">
+                      <div className="min-w-[310px] h-auto">
+                        <Lottie animationData={paymentSuccessful} />
+                      </div>
+                      <span className="text-center font-bold text-pwip-green-800 text-lg">
+                        Payment Successful
+                      </span>
+                    </div>
+                    <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-bold">
+                          Transaction id
+                        </span>
+                        <span className="text-sky-950 text-sm font-bold">
+                          {res?.razorpay_payment_id}
+                        </span>
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-medium">
+                          Amount Paid
+                        </span>
+                        <span className="text-zinc-900 text-sm font-medium">
+                          ₹{Math.ceil(order?.amount / 100)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+                openBottomSheet(content, null, true);
               } else {
                 openToastMessage({
                   type: "error",
@@ -301,25 +299,78 @@ function Subscription() {
     }
   }, [plansData, moduleServicesData]);
 
+  const checkUserSubscriptionDetails = async () => {
+    try {
+      const response = await axios.get(
+        API_STAGE_PAYMENT_BE +
+          "api" +
+          "/user-subscription?serviceId=" +
+          SERVICE_ID,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const startFreeTrialForUser = async () => {
+    try {
+      const response = await axios.post(
+        API_STAGE_PAYMENT_BE +
+          "api" +
+          "/start-free-trial?serviceId=" +
+          SERVICE_ID,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
   React.useEffect(() => {
     if (modulePlansData.length) {
-      dispatch(getSubscriptionRequest());
+      const getUsersSubscriptionDetails = async () => {
+        const response = await checkUserSubscriptionDetails();
+
+        if (typeof response === "object") {
+          setUsersSubscriptionData(response);
+        }
+
+        if (response?.length) {
+          setUsersSubscriptionData(response[0]);
+        }
+
+        return response;
+      };
+
+      getUsersSubscriptionDetails();
     }
   }, [modulePlansData]);
 
-  React.useEffect(() => {
-    if (userDetails && userSubscription?.length && modulePlansData.length) {
-      const planIds = modulePlansData.map((d) => d.id);
+  // React.useEffect(() => {
+  //   if (userDetails && userSubscription?.length && modulePlansData.length) {
+  //     const planIds = modulePlansData.map((d) => d.id);
 
-      const subs = [...userSubscription]
-        .filter((d) => d.user_id === userDetails._id)
-        .filter((d) => planIds.includes(d.plan_id));
-      if (subs.length) {
-        const currentPlan = getObjectWithLatestDate(subs);
-        setUsersSubscriptionData(currentPlan);
-      }
-    }
-  }, [userSubscription, userDetails, modulePlansData]);
+  //     const subs = [...userSubscription]
+  //       .filter((d) => d.user_id === userDetails._id)
+  //       .filter((d) => planIds.includes(d.plan_id));
+  //     if (subs.length) {
+  //       const currentPlan = getObjectWithLatestDate(subs);
+  //       setUsersSubscriptionData(currentPlan);
+  //     }
+  //   }
+  // }, [userSubscription, userDetails, modulePlansData]);
 
   return (
     <React.Fragment>
@@ -356,54 +407,105 @@ function Subscription() {
             </div>
 
             <div className="px-3 py-5 bg-pwip-v2-gray-100 rounded-lg w-full h-auto mb-[30px]">
-              <div className="inline-flex items-center justify-between w-full">
-                <span className="text-pwip-v2-primary text-sm font-[700]">
-                  {modulePlansData.find(
-                    (d) => d.id === usersSubscriptionData?.plan_id
-                  )?.name || "Free"}
-                </span>
-
-                <div className="inline-flex items-center space-x-[2px]">
-                  <span className="text-pwip-v2-primary-700 text-sm font-[600]">
-                    {allMyCostingsData?.length}
-                  </span>
-                  <span className="text-pwip-black-600 text-sm font-[600]">
-                    /
+              {userSubscription?.activeSubscription &&
+              userSubscription?.userSubscriptionHistory?.length ? (
+                <div className="inline-flex items-center justify-between w-full">
+                  <span className="text-pwip-v2-primary text-sm font-[700]">
                     {modulePlansData.find(
-                      (d) => d.id === usersSubscriptionData?.plan_id
-                    )?.usage_cap || 10}
+                      (d) =>
+                        d.is_free &&
+                        d?.applicable_services?.includes(SERVICE_ID)
+                    )?.name || "Free"}
                   </span>
+
+                  <div className="inline-flex items-center space-x-[2px]">
+                    <span className="text-pwip-v2-primary-700 text-sm font-[600]">
+                      {0}
+                    </span>
+                    <span className="text-pwip-black-600 text-sm font-[600]">
+                      /
+                      {
+                        modulePlansData.find(
+                          (d) =>
+                            d.is_free &&
+                            d?.applicable_services?.includes(SERVICE_ID)
+                        )?.usage_cap
+                      }
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
-                <div
-                  className="h-[8px] rounded-full"
-                  style={{
-                    background:
-                      "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
-                    width: usersSubscriptionData
-                      ? calculatePercentage(
-                          allMyCostingsData.length || 0,
-                          modulePlansData.find(
-                            (d) => d.id === usersSubscriptionData?.plan_id
-                          )?.usage_cap
-                        ) + "%"
-                      : 0,
-                  }}
-                ></div>
-              </div>
-              <span className="text-pwip-v2-primary text-sm font-[500]">
-                {usersSubscriptionData &&
-                modulePlansData.find(
-                  (d) => d.id === usersSubscriptionData?.plan_id
-                )?.usage_cap <= allMyCostingsData?.length
-                  ? `Your ${
-                      modulePlansData.find(
-                        (d) => d.id === usersSubscriptionData?.plan_id
-                      )?.name
-                    } plan has exhausted !!!`
-                  : "Upgrade to premium to get unlimited costings"}
-              </span>
+              ) : null}
+
+              {userSubscription?.activeSubscription &&
+              userSubscription?.userSubscriptionHistory?.length ? (
+                <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
+                  <div
+                    className="h-[8px] rounded-full"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
+                      width: usersSubscriptionData
+                        ? calculatePercentage(
+                            allMyCostingsData.length || 0,
+                            modulePlansData.find(
+                              (d) => d.id === usersSubscriptionData?.plan_id
+                            )?.usage_cap
+                          ) + "%"
+                        : 0,
+                    }}
+                  ></div>
+                </div>
+              ) : null}
+
+              {userSubscription?.activeSubscription &&
+              userSubscription?.userSubscriptionHistory?.length ? (
+                <span className="text-pwip-v2-primary text-sm font-[500]">
+                  {usersSubscriptionData &&
+                  modulePlansData.find(
+                    (d) => d.id === usersSubscriptionData?.plan_id
+                  )?.usage_cap <= allMyCostingsData?.length
+                    ? `Your ${
+                        modulePlansData.find(
+                          (d) => d.id === usersSubscriptionData?.plan_id
+                        )?.name
+                      } plan has exhausted !!!`
+                    : "Upgrade to premium to get unlimited costings"}
+                </span>
+              ) : null}
+
+              {!userSubscription?.activeSubscription &&
+              !userSubscription?.userSubscriptionHistory?.length ? (
+                <div className="inline-flex items-center justify-between w-full">
+                  <div className="inline-flex flex-col w-full">
+                    <span className="text-pwip-v2-primary text-base font-[700]">
+                      Free trial
+                    </span>
+                    <span className="text-pwip-v2-primary text-sm font-[500] mt-1">
+                      Try the tool for free, you can generate upto{" "}
+                      {
+                        modulePlansData.find(
+                          (d) =>
+                            d.is_free &&
+                            d?.applicable_services?.includes(SERVICE_ID)
+                        )?.usage_cap
+                      }{" "}
+                      costings under free trial.
+                    </span>
+
+                    <div className="w-[50%] mt-4">
+                      <Button
+                        type="primary"
+                        label="Start free trial"
+                        rounded="!rounded-lg"
+                        minHeight="!min-h-[32px]"
+                        onClick={async () => {
+                          startFreeTrialForUser();
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             <div className="w-full">
