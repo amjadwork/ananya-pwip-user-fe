@@ -34,7 +34,12 @@ import { Header } from "@/components/Header";
 import SelectLocationContainer from "@/containers/ec/SelectLocation";
 // Import Layouts
 
-import { apiBaseURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
+import {
+  apiBaseURL,
+  exportCostingServiceId,
+  apiStagePaymentBeUrl,
+  getCostingToSaveHistoryPayload,
+} from "@/utils/helper";
 
 import axios from "axios";
 
@@ -92,7 +97,10 @@ function SelectPortOfDestination() {
   const checkUserSubscriptionDetails = async () => {
     try {
       const response = await axios.get(
-        apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
+        apiStagePaymentBeUrl +
+          "api" +
+          "/user-subscription?serviceId=" +
+          exportCostingServiceId, //+ userDetails.user._id,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -236,8 +244,13 @@ function SelectPortOfDestination() {
             onClick={async () => {
               const subscriptionResponse = await checkUserSubscriptionDetails();
               let currentPlan = null;
-              if (subscriptionResponse) {
-                currentPlan = getObjectWithLatestDate(subscriptionResponse);
+
+              if (subscriptionResponse?.length) {
+                currentPlan = subscriptionResponse[0];
+              }
+
+              if (typeof subscriptionResponse === "object") {
+                currentPlan = subscriptionResponse;
               }
 
               if (!currentPlan) {
@@ -247,19 +260,33 @@ function SelectPortOfDestination() {
                     "Something went wrong while checking subscription details",
                   // autoHide: false,
                 });
+
+                return;
               }
 
-              if (
-                currentPlan?.total_generated_costing >= currentPlan?.usage_cap
-              ) {
+              if (!currentPlan?.activeSubscription) {
                 openToastMessage({
                   type: "error",
-                  message: "You have exhausted your current plan!!",
+                  message:
+                    currentPlan?.message || "You have no active subscription",
                   // autoHide: false,
                 });
 
                 return;
               }
+
+              if (currentPlan?.isSubscriptionExpired) {
+                openToastMessage({
+                  type: "error",
+                  message: "Your subscription is expired",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
+              //     type: "error",
+              //     message: "You have exhausted your current plan!!",
 
               if (
                 selectedCosting?.product &&
