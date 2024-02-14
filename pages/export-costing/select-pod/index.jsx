@@ -245,13 +245,15 @@ function SelectPortOfDestination() {
               const subscriptionResponse = await checkUserSubscriptionDetails();
               let currentPlan = null;
 
+              if (typeof subscriptionResponse === "object") {
+                currentPlan = subscriptionResponse;
+              }
+
               if (subscriptionResponse?.length) {
                 currentPlan = subscriptionResponse[0];
               }
 
-              if (typeof subscriptionResponse === "object") {
-                currentPlan = subscriptionResponse;
-              }
+              console.log("currentPlan", currentPlan);
 
               if (!currentPlan) {
                 openToastMessage({
@@ -264,7 +266,10 @@ function SelectPortOfDestination() {
                 return;
               }
 
-              if (!currentPlan?.activeSubscription) {
+              if (
+                !currentPlan?.activeSubscription &&
+                !currentPlan?.userSubscriptionHistory?.length
+              ) {
                 openToastMessage({
                   type: "error",
                   message:

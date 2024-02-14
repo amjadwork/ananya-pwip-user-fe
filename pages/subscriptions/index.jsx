@@ -83,9 +83,7 @@ function Subscription() {
   const myCosting = useSelector((state) => state.myCosting);
   const servicesData = useSelector((state) => state.subscription?.services);
   const plansData = useSelector((state) => state.subscription?.plans);
-  const userSubscription = useSelector(
-    (state) => state.subscription?.userSubscription
-  );
+
   const userDetails = useSelector((state) => state.auth?.user);
   const authToken = useSelector((state) => state.auth?.token);
 
@@ -342,7 +340,6 @@ function Subscription() {
     if (modulePlansData.length) {
       const getUsersSubscriptionDetails = async () => {
         const response = await checkUserSubscriptionDetails();
-
         if (typeof response === "object") {
           setUsersSubscriptionData(response);
         }
@@ -350,27 +347,11 @@ function Subscription() {
         if (response?.length) {
           setUsersSubscriptionData(response[0]);
         }
-
-        return response;
       };
 
       getUsersSubscriptionDetails();
     }
   }, [modulePlansData]);
-
-  // React.useEffect(() => {
-  //   if (userDetails && userSubscription?.length && modulePlansData.length) {
-  //     const planIds = modulePlansData.map((d) => d.id);
-
-  //     const subs = [...userSubscription]
-  //       .filter((d) => d.user_id === userDetails._id)
-  //       .filter((d) => planIds.includes(d.plan_id));
-  //     if (subs.length) {
-  //       const currentPlan = getObjectWithLatestDate(subs);
-  //       setUsersSubscriptionData(currentPlan);
-  //     }
-  //   }
-  // }, [userSubscription, userDetails, modulePlansData]);
 
   return (
     <React.Fragment>
@@ -407,8 +388,8 @@ function Subscription() {
             </div>
 
             <div className="px-3 py-5 bg-pwip-v2-gray-100 rounded-lg w-full h-auto mb-[30px]">
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <span className="text-pwip-v2-primary text-sm font-[700]">
                     {modulePlansData.find(
@@ -436,8 +417,8 @@ function Subscription() {
                 </div>
               ) : null}
 
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
                   <div
                     className="h-[8px] rounded-full"
@@ -446,10 +427,9 @@ function Subscription() {
                         "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
                       width: usersSubscriptionData
                         ? calculatePercentage(
-                            allMyCostingsData.length || 0,
-                            modulePlansData.find(
-                              (d) => d.id === usersSubscriptionData?.plan_id
-                            )?.usage_cap
+                            usersSubscriptionData?.activeSubscriptionObject
+                              ?.total_generated_costing || 0,
+                            usersSubscriptionData?.plansDetails?.usage_cap
                           ) + "%"
                         : 0,
                     }}
@@ -457,8 +437,8 @@ function Subscription() {
                 </div>
               ) : null}
 
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <span className="text-pwip-v2-primary text-sm font-[500]">
                   {usersSubscriptionData &&
                   modulePlansData.find(
@@ -472,9 +452,8 @@ function Subscription() {
                     : "Upgrade to premium to get unlimited costings"}
                 </span>
               ) : null}
-
-              {!userSubscription?.activeSubscription &&
-              !userSubscription?.userSubscriptionHistory?.length ? (
+              {!usersSubscriptionData?.activeSubscription &&
+              !usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <div className="inline-flex flex-col w-full">
                     <span className="text-pwip-v2-primary text-base font-[700]">
