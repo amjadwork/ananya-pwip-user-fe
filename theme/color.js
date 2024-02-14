@@ -8,6 +8,7 @@ export const color = {
   "pwip-v2-primary-500": "#2072AB",
   "pwip-v2-primary-200": "#CFECFF",
   "pwip-v2-primary-100": "#F9FBFC",
+  "pwip-v2-primary-50": "#B1CEE2",
 
   "pwip-primary": "#14517B",
   "pwip-primary-400": "#24A3D0",

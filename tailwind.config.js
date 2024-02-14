@@ -150,8 +150,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Gilroy", "arial"],
-        sans: ["DM-sans", "sans-serif"],
+        // serif: ["Gilroy", "arial"],
+        // sans: ["DM-sans", "sans-serif"],
       },
 
       colors: {
