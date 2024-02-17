@@ -2,6 +2,9 @@ import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+// import { Chart } from "react-charts";
+
+import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -21,6 +24,18 @@ import { Header } from "@/components/Header";
 // Import Containers
 
 // Import Layouts
+
+const data = [
+  {
+    label: "React Charts",
+    data: [
+      {
+        date: new Date(),
+        stars: 23467238,
+      },
+    ],
+  },
+];
 
 function Home() {
   const router = useRouter();
@@ -46,6 +61,23 @@ function Home() {
   };
 
   let blurOccurred = null;
+
+  const primaryAxis = React.useMemo(
+    () => ({
+      getValue: (datum) => datum.date,
+    }),
+    []
+  );
+
+  const secondaryAxes = React.useMemo(
+    () => [
+      {
+        getValue: (datum) => datum.stars,
+        elementType: "bar",
+      },
+    ],
+    []
+  );
 
   return (
     <React.Fragment>
@@ -74,11 +106,10 @@ function Home() {
         <Header />
 
         <div
-          className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0 py-6`}
+          className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0`}
         >
           <div
-            id="fixedMenuSection"
-            className={`fixed left-0 top-[56px] h-[auto] w-full bg-white z-0 pt-3 pb-6 px-5`}
+            className={`relative left-0 h-[auto] w-full bg-white z-0 py-6 px-5`}
           >
             <div
               style={{
@@ -151,11 +182,11 @@ function Home() {
             </div>
           </div>
           <div
-            className={`min-h-[calc(100vh-140px)] inline-flex flex-col h-full w-full px-5 bg-white pb-0 overflow-auto hide-scroll-bar`}
-            style={{
-              paddingTop: mainContainerHeight + "px",
-              paddingBottom: mainContainerHeight + 20 + "px",
-            }}
+            className={`inline-flex flex-col h-full w-full px-5 bg-white pb-0 overflow-auto hide-scroll-bar space-y-8`}
+            // style={{
+            //   paddingTop: mainContainerHeight + "px",
+            //   paddingBottom: mainContainerHeight + 20 + "px",
+            // }}
           >
             <div className="w-full grid grid-cols-3 gap-x-5 gap-y-8">
               {[
@@ -202,7 +233,7 @@ function Home() {
 
                       router.push(item?.url);
                     }}
-                    className="inline-flex flex-col w-full items-center space-y-2"
+                    className="inline-flex flex-col w-full items-center space-y-2 cursor-pointer"
                   >
                     <div className="w-full h-[78px] rounded-lg border-[1px] border-pwip-v2-primary-50 inline-flex items-center justify-center">
                       {item.icon}
@@ -214,6 +245,52 @@ function Home() {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="inline-flex w-full h-auto py-4 px-5 bg-pwip-v2-green-200 rounded-lg relative">
+              <div className="inline-flex flex-col space-y-6 h-full w-full max-w-[55%]">
+                <div className="inline-flex flex-col space-y-1">
+                  <span className="text-sm font-bold text-pwip-black-600 text-left">
+                    Become an exporter
+                  </span>
+                  <span className="text-xs font-normal text-pwip-black-500 text-left">
+                    Documentation, onboarding, and everything
+                  </span>
+                </div>
+
+                <div className="relative w-full">
+                  <Button
+                    type="white"
+                    label="Know more"
+                    rounded="!rounded-md"
+                    maxHeight="!max-h-[22px]"
+                    minHeight="!min-h-[22px]"
+                    fontSize="!text-xs"
+                    maxWidth="max-w-[65%]"
+                    onClick={async () => {
+                      //
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="h-full">
+                <img
+                  src="/assets/images/home_main/container.svg"
+                  alt="container"
+                  className="absolute top-0 right-0 h-full"
+                />
+              </div>
+            </div>
+
+            <div className="w-full h-auto px-5 py-4">
+              {/* <Chart
+                options={{
+                  data,
+                  primaryAxis,
+                  secondaryAxes,
+                }}
+              /> */}
             </div>
           </div>
         </div>

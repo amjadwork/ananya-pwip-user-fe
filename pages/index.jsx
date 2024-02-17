@@ -95,6 +95,7 @@ export default function Home() {
 
   useEffect(() => {
     if (userDetails?.phone && userDetails?.email) {
+      startLoading();
       closeBottomSheet();
       redirectToApp();
     }

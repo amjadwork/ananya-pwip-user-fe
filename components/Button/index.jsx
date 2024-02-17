@@ -12,6 +12,9 @@ export function Button(props) {
   const labelAsIcon = props.labelAsIcon || false;
   const rounded = props.rounded || null;
   const minHeight = props.minHeight || null;
+  const maxHeight = props.maxHeight || null;
+  const fontSize = props.fontSize || null;
+  const maxWidth = props.maxWidth || null;
 
   let additionalclassName = "";
 
@@ -52,14 +55,26 @@ export function Button(props) {
     additionalclassName = additionalclassName + " " + minHeight;
   }
 
+  if (maxHeight) {
+    additionalclassName = additionalclassName + " " + maxHeight;
+  }
+
+  if (fontSize) {
+    additionalclassName = additionalclassName + " " + fontSize;
+  }
+
+  if (maxWidth) {
+    additionalclassName = additionalclassName + " " + maxWidth;
+  }
+
   return (
     <button
       type={buttonType}
-      className={`inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalclassName} transition-all`}
+      className={`text-sm inline-flex items-center justify-center w-full px-3 py-2 rounded-lg min-h-[50px] ${additionalclassName} transition-all`}
       onClick={onClick}
       disabled={disabled}
     >
-      <span className="text-sm font-sans text-center font-[400]">{label}</span>
+      <span className="font-sans text-center font-[400]">{label}</span>
     </button>
   );
 }

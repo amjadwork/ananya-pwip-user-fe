@@ -53,10 +53,12 @@ export const color = {
   "pwip-orange-900": "#FD9A27",
 
   "pwip-black-600": "#1B1B1B",
+  "pwip-black-500": "#231F20",
 
   "pwip-v2-yellow-100": "#FFF8E9",
 
   "pwip-v2-green-800": "#45D9D0",
   "pwip-v2-green-700": "#65FDF4",
   "pwip-v2-green-300": "#CFE4C4",
+  "pwip-v2-green-200": "#CBF0E2",
 };
