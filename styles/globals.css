@@ -138,3 +138,19 @@ body::-webkit-scrollbar {
   border-radius: 8px;
 } */
 /* slider ends */
+
+/* react-charts start */
+.ReactChart .tickLabel {
+  font-size: 12px !important;
+}
+
+.ReactChart .domainAndTicks .tick line {
+  display: none !important;
+  visibility: hidden !important;
+  stroke-width: 0 !important;
+}
+
+.ReactChart .domainAndTicks line {
+  stroke: #f4f4f4 !important;
+}
+/* react-charts end */

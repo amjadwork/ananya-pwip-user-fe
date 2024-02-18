@@ -6492,3 +6492,66 @@ export const communityProductIcon = (
     />
   </svg>
 );
+
+export const infoIcon = (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="8" cy="8" r="8" fill="currentColor" />
+    <rect
+      x="6.74655"
+      y="5.92578"
+      width="2.80309"
+      height="6.51825"
+      rx="1.40154"
+      fill="white"
+    />
+    <rect
+      x="6.74655"
+      y="2.66406"
+      width="2.80309"
+      height="2.8"
+      rx="1.4"
+      fill="white"
+    />
+  </svg>
+);
+
+export const arrowLongRightIcon = (
+  <svg
+    width="20"
+    height="10"
+    viewBox="0 0 20 10"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M15.25 1.25L19 5M19 5L15.25 8.75M19 5H1"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const searchIcon = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke-width="1.5"
+    stroke="currentColor"
+    class="w-5 h-5"
+  >
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+    />
+  </svg>
+);

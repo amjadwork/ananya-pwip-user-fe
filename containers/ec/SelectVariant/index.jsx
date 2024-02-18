@@ -480,6 +480,7 @@ const SelectVariantContainer = (props) => {
       }
 
       if (productList) {
+        console.log("productList", productList);
         setListProductsData([...productList]);
 
         // let riceCats = riceCategory.filter((f) => {

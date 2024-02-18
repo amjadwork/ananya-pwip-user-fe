@@ -19,10 +19,11 @@ export const color = {
   // 434B53
   "pwip-v2-gray-800": "#434B53",
   "pwip-v2-gray-500": "#818383",
+  "pwip-v2-gray-400": "#828282",
+  "pwip-v2-gray-350": "#DEDEDE",
   "pwip-v2-gray-300": "#E6E7E7",
   "pwip-v2-gray-250": "#E6EFF4",
   "pwip-v2-gray-200": "#E2E2E7",
-  "pwip-v2-gray-300": "#DEDEDE",
   "pwip-v2-gray-100": "#F3F7F9",
   "pwip-v2-gray-50": "#FAFAFA",
 
@@ -47,6 +48,9 @@ export const color = {
   "pwip-v2-gray-500": "#878D96",
 
   "pwip-green-800": "#00B58F",
+  "pwip-green-600": "#00A78C",
+
+  "pwip-red-700": "#D90000",
 
   "pwip-teal-900": "#008B94",
 
