@@ -401,7 +401,8 @@ function Subscription() {
 
                   <div className="inline-flex items-center space-x-[2px]">
                     <span className="text-pwip-v2-primary-700 text-sm font-[600]">
-                      {0}
+                      {usersSubscriptionData?.activeSubscriptionObject
+                        ?.total_generated_costing || 0}
                     </span>
                     <span className="text-pwip-black-600 text-sm font-[600]">
                       /

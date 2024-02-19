@@ -280,10 +280,31 @@ function SelectPortOfDestination() {
                 return;
               }
 
+              if (!currentPlan?.activeSubscription) {
+                openToastMessage({
+                  type: "error",
+                  message:
+                    currentPlan?.message || "You have no active subscription",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
               if (currentPlan?.isSubscriptionExpired) {
                 openToastMessage({
                   type: "error",
                   message: "Your subscription is expired",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
+              if (currentPlan?.isSubscriptionExhausted) {
+                openToastMessage({
+                  type: "error",
+                  message: "You have exhausted your current subscription",
                   // autoHide: false,
                 });
 
