@@ -26,6 +26,7 @@ export const color = {
   "pwip-v2-gray-200": "#E2E2E7",
   "pwip-v2-gray-100": "#F3F7F9",
   "pwip-v2-gray-50": "#FAFAFA",
+  "pwip-v2-gray-40": "#FBFBFB",
 
   "pwip-gray-1100": "#1D2624",
   "pwip-gray-1000": "#3D4544",

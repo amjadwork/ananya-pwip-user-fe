@@ -6555,3 +6555,40 @@ export const searchIcon = (
     />
   </svg>
 );
+
+export const bookmarkOutlineIcon = (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.7287 2.21566C12.462 2.30099 13 2.9336 13 3.67221V14L8 11.5002L3 14V3.67221C3 2.9336 3.53733 2.30099 4.27133 2.21566C6.74879 1.92811 9.25121 1.92811 11.7287 2.21566Z"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const bookmarkFilledIcon = (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.7287 2.21566C12.462 2.30099 13 2.9336 13 3.67221V14L8 11.5002L3 14V3.67221C3 2.9336 3.53733 2.30099 4.27133 2.21566C6.74879 1.92811 9.25121 1.92811 11.7287 2.21566Z"
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);

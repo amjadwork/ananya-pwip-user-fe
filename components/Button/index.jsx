@@ -36,6 +36,10 @@ export function Button(props) {
       "bg-pwip-gray-650 border-[1px] border-pwip-gray-650 text-pwip-v2-primary-500";
   }
 
+  if (type === "subtle-light") {
+    additionalclassName = "bg-pwip-v2-gray-100 text-pwip-v2-gray-800";
+  }
+
   if (type === "white") {
     additionalclassName = "bg-white text-pwip-black-600";
   }

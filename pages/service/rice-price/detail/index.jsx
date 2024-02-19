@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
-import { searchIcon, bookmarkOutlineIcon } from "../../../theme/icon";
+import { searchIcon, bookmarkOutlineIcon } from "../../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -96,6 +96,10 @@ const productStateList = [
       name: "Tamil Nadu",
       imageUrl: "/assets/images/services/odisha.png",
     },
+    {
+      name: "Rajasthan",
+      imageUrl: "/assets/images/services/odisha.png",
+    },
   ],
 ];
 
@@ -170,7 +174,7 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
   );
 };
 
-function RicePrice() {
+function RicePriceDetail() {
   //   const router = useRouter();
   //   const dispatch = useDispatch();
 
@@ -462,6 +466,6 @@ function RicePrice() {
   );
 }
 
-// export default withAuth(RicePrice);
+// export default withAuth(RicePriceDetail);
 
-export default RicePrice;
+export default RicePriceDetail;

@@ -470,7 +470,7 @@ function Home() {
                     {
                       label: "Popular destination ports",
                       description: "SINGAPORE",
-                      imageSrc: "/assets/images/home_main/rice_cat.png",
+                      imageSrc: "/assets/images/home_main/port_cat.png",
                     },
                   ].map((item, index) => {
                     return (
