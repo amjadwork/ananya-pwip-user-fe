@@ -158,6 +158,8 @@ function Subscription() {
     async (item) => {
       const orderResponse = await createOrder(item?.id, userDetails?._id);
 
+      console.log("orderResponse", orderResponse);
+
       try {
         if (orderResponse.rz_order?.order_id) {
           const options = {
@@ -214,7 +216,7 @@ function Subscription() {
                           Amount Paid
                         </span>
                         <span className="text-zinc-900 text-sm font-medium">
-                          ₹{Math.ceil(order?.amount / 100)}
+                          ₹{Math.ceil(orderResponse?.rz_order?.amount / 100)}
                         </span>
                       </div>
                     </div>
@@ -392,11 +394,7 @@ function Subscription() {
               usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <span className="text-pwip-v2-primary text-sm font-[700]">
-                    {modulePlansData.find(
-                      (d) =>
-                        d.is_free &&
-                        d?.applicable_services?.includes(SERVICE_ID)
-                    )?.name || "Free"}
+                    {usersSubscriptionData?.plansDetails?.name || "Free"}
                   </span>
 
                   <div className="inline-flex items-center space-x-[2px]">
@@ -407,11 +405,8 @@ function Subscription() {
                     <span className="text-pwip-black-600 text-sm font-[600]">
                       /
                       {
-                        modulePlansData.find(
-                          (d) =>
-                            d.is_free &&
-                            d?.applicable_services?.includes(SERVICE_ID)
-                        )?.usage_cap
+                        usersSubscriptionData?.activeSubscriptionObject
+                          ?.usage_cap
                       }
                     </span>
                   </div>
@@ -441,10 +436,7 @@ function Subscription() {
               {usersSubscriptionData?.activeSubscription &&
               usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <span className="text-pwip-v2-primary text-sm font-[500]">
-                  {usersSubscriptionData &&
-                  modulePlansData.find(
-                    (d) => d.id === usersSubscriptionData?.plan_id
-                  )?.usage_cap <= allMyCostingsData?.length
+                  {usersSubscriptionData?.isSubscriptionExhausted
                     ? `Your ${
                         modulePlansData.find(
                           (d) => d.id === usersSubscriptionData?.plan_id
@@ -463,7 +455,7 @@ function Subscription() {
                     <span className="text-pwip-v2-primary text-sm font-[500] mt-1">
                       Try the tool for free, you can generate upto{" "}
                       {
-                        modulePlansData.find(
+                        usersSubscriptionData?.activeSubscriptionObject?.find(
                           (d) =>
                             d.is_free &&
                             d?.applicable_services?.includes(SERVICE_ID)
@@ -492,7 +484,7 @@ function Subscription() {
               <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
                 <div className="flex flex-nowrap">
                   {modulePlansData
-                    .filter((f) => f.price !== 0)
+                    .filter((f) => !f.is_free)
                     .map((details, index) => {
                       return (
                         <div
@@ -512,18 +504,21 @@ function Subscription() {
                           <Button
                             type={"white"}
                             label={
-                              usersSubscriptionData?.plan_id === details?.id
+                              usersSubscriptionData?.activeSubscriptionObject
+                                ?.plan_id === details?.id
                                 ? `Current plan`
                                 : `₹${details?.price} /mo`
                             }
                             rounded="!rounded-full"
                             minHeight="!min-h-[35px]"
                             disabled={
-                              usersSubscriptionData?.plan_id === details?.id
+                              usersSubscriptionData?.activeSubscriptionObject
+                                ?.plan_id === details?.id
                             }
                             onClick={async () => {
                               if (
-                                usersSubscriptionData?.plan_id !== details?.id
+                                usersSubscriptionData?.activeSubscriptionObject
+                                  ?.plan_id !== details?.id
                               ) {
                                 handlePayment(details);
                               }

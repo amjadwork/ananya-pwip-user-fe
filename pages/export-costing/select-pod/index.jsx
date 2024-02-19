@@ -253,8 +253,6 @@ function SelectPortOfDestination() {
                 currentPlan = subscriptionResponse[0];
               }
 
-              console.log("currentPlan", currentPlan);
-
               if (!currentPlan) {
                 openToastMessage({
                   type: "error",
