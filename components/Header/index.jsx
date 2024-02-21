@@ -173,7 +173,7 @@ export function Header(props) {
             </div>
           )}
 
-          {!["subscriptions", "profile-edit", "more", "costing"].includes(
+          {!["subscriptions", "subscription-details", "profile-edit", "more", "costing"].includes(
             activeRoute
           ) &&
             !router?.query?.id && (
