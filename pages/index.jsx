@@ -22,8 +22,13 @@ export default function Home() {
 
   const userDetails = useSelector((state) => state.auth?.user);
 
-  const { openBottomSheet, closeBottomSheet, startLoading, stopLoading } =
-    useOverlayContext();
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    isLoading,
+  } = useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
   // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
@@ -94,7 +99,7 @@ export default function Home() {
   }, [session]);
 
   useEffect(() => {
-    if (session) {
+    if (session && !isLoading) {
       if (userDetails?.phone && userDetails?.email) {
         closeBottomSheet();
         redirectToApp();
