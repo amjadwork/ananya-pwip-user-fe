@@ -1,13 +1,17 @@
 /** @format */
 
 import React from "react";
-import { inSubscription, crownIcon } from "../../theme/icon";
+import { inSubscription } from "../../theme/icon";
 
 const SubscriptionCard = ({
   subscriptionName,
   subscriptionType,
   subscriptionValidity,
 }) => {
+  const isPremium = subscriptionType === "Premium";
+
+  console.log(isPremium, "here");
+
   return (
     <div className="w-full p-4 border-b border-solid border-[#ccc]">
       <div className="flex item-center">
@@ -15,7 +19,17 @@ const SubscriptionCard = ({
         <div className="w-full">
           <div className="flex justify-between">
             <h2 className="text-sm font-semibold ml-2">{subscriptionName}</h2>
-            <p className="text-[#1B1B1B] text-xs bg-[#F6F6F6] px-4 pt-0.5 rounded-md mb-0.5 justify-end">
+            <p className="text-[rgb(27,27,27)] text-xs bg-[#F6F6F6] px-3 pt-0.5 rounded-md mb-0.5 flex">
+              {isPremium && (
+                <div className=" flex items-center mr-0.5">
+                  <img
+                    src="/assets/images/crown.png"
+                    alt="Premium"
+                    width={10}
+                    height={10}
+                  />
+                </div>
+              )}
               {subscriptionType}
             </p>
           </div>
