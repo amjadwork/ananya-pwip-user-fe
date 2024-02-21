@@ -15,7 +15,6 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import {
   getServicesRequest,
   getPlansRequest,
-  // getSubscriptionRequest,
 } from "@/redux/actions/subscription.action";
 
 import {
@@ -192,6 +191,8 @@ function Subscription() {
                 //   payment_status: "success",
                 // };
                 // await createSubscription(payload);
+                getUsersSubscriptionDetails();
+
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
                     <div className="w-full flex flex-col items-center">
@@ -338,19 +339,19 @@ function Subscription() {
     }
   };
 
+  const getUsersSubscriptionDetails = async () => {
+    const response = await checkUserSubscriptionDetails();
+    if (typeof response === "object") {
+      setUsersSubscriptionData(response);
+    }
+
+    if (response?.length) {
+      setUsersSubscriptionData(response[0]);
+    }
+  };
+
   React.useEffect(() => {
     if (modulePlansData.length) {
-      const getUsersSubscriptionDetails = async () => {
-        const response = await checkUserSubscriptionDetails();
-        if (typeof response === "object") {
-          setUsersSubscriptionData(response);
-        }
-
-        if (response?.length) {
-          setUsersSubscriptionData(response[0]);
-        }
-      };
-
       getUsersSubscriptionDetails();
     }
   }, [modulePlansData]);
@@ -437,16 +438,18 @@ function Subscription() {
               usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <span className="text-pwip-v2-primary text-sm font-[500]">
                   {usersSubscriptionData?.isSubscriptionExhausted
-                    ? `Your ${
-                        modulePlansData.find(
-                          (d) => d.id === usersSubscriptionData?.plan_id
-                        )?.name
-                      } plan has exhausted !!!`
+                    ? `Your ${usersSubscriptionData?.plansDetails?.name} plan has exhausted !!!`
                     : "Upgrade to premium to get unlimited costings"}
                 </span>
               ) : null}
-              {!usersSubscriptionData?.activeSubscription &&
-              !usersSubscriptionData?.userSubscriptionHistory?.length ? (
+
+              {usersSubscriptionData === null ? (
+                <div className="min-h-[72px]" />
+              ) : null}
+
+              {usersSubscriptionData !== null &&
+              !usersSubscriptionData.activeSubscription &&
+              !usersSubscriptionData.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <div className="inline-flex flex-col w-full">
                     <span className="text-pwip-v2-primary text-base font-[700]">
@@ -471,7 +474,11 @@ function Subscription() {
                         rounded="!rounded-lg"
                         minHeight="!min-h-[32px]"
                         onClick={async () => {
-                          startFreeTrialForUser();
+                          const res = await startFreeTrialForUser();
+
+                          if (res) {
+                            getUsersSubscriptionDetails();
+                          }
                         }}
                       />
                     </div>

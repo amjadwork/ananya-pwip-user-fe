@@ -26,7 +26,7 @@ export default function Home() {
     useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
-  const [showUserDetailForm, setShowUserDetailForm] = useState(false);
+  // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
   const sliderSettings = {
     dots: false,
@@ -94,34 +94,36 @@ export default function Home() {
   }, [session]);
 
   useEffect(() => {
-    if (userDetails?.phone && userDetails?.email) {
-      closeBottomSheet();
-      redirectToApp();
-    }
-
-    if (
-      (userDetails && !userDetails.phone) ||
-      (userDetails && !userDetails.email)
-    ) {
-      stopLoading();
-
-      let fields = [...contactFields];
-
-      if (!userDetails?.email) {
-        fields = [...contactFields].filter((f) => f.type !== "phone");
+    if (session) {
+      if (userDetails?.phone && userDetails?.email) {
+        closeBottomSheet();
+        redirectToApp();
       }
 
-      if (!userDetails?.phone) {
-        fields = [...contactFields].filter((f) => f.type !== "email");
-      }
+      if (
+        (userDetails && !userDetails.phone) ||
+        (userDetails && !userDetails.email)
+      ) {
+        stopLoading();
 
-      handleFormFieldBottomSheet(
-        fields,
-        "We need a few details",
-        session?.accessToken
-      );
+        let fields = [...contactFields];
+
+        if (!userDetails?.email) {
+          fields = [...contactFields].filter((f) => f.type !== "phone");
+        }
+
+        if (!userDetails?.phone) {
+          fields = [...contactFields].filter((f) => f.type !== "email");
+        }
+
+        handleFormFieldBottomSheet(
+          fields,
+          "We need a few details",
+          session?.accessToken
+        );
+      }
     }
-  }, [userDetails]);
+  }, [userDetails, session]);
 
   return (
     <React.Fragment>
