@@ -9,9 +9,7 @@ const SubscriptionCard = ({
   subscriptionValidity,
 }) => {
   const isPremium = subscriptionType === "Premium";
-
-  console.log(isPremium, "here");
-
+  
   return (
     <div className="w-full p-4 border-b border-solid border-[#ccc]">
       <div className="flex item-center">
