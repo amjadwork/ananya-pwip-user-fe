@@ -99,12 +99,7 @@ export default function Home() {
   }, [session]);
 
   useEffect(() => {
-    if (session && !isLoading) {
-      if (userDetails?.phone && userDetails?.email) {
-        closeBottomSheet();
-        redirectToApp();
-      }
-
+    if (session) {
       if (
         (userDetails && !userDetails.phone) ||
         (userDetails && !userDetails.email)
@@ -127,8 +122,13 @@ export default function Home() {
           session?.accessToken
         );
       }
+
+      if (userDetails?.phone && userDetails?.email) {
+        closeBottomSheet();
+        redirectToApp();
+      }
     }
-  }, [userDetails, session]);
+  }, [userDetails]);
 
   return (
     <React.Fragment>
