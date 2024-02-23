@@ -104,7 +104,11 @@ function* handleAuthSuccessAndFailure(action) {
       if (response?.data) {
         yield put(
           handleSettingAuthDataSuccess(
-            { ...user, ...response.data.data },
+            {
+              ...user,
+              ...response.data.data,
+              apiMessage: response.data.message,
+            },
             token
           )
         );

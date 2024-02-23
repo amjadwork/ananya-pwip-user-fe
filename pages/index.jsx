@@ -94,41 +94,45 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       startLoading();
-      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+      redirectToApp();
+      // const res = dispatch(
+      //   handleSettingAuthDataRequest(session.user, session.accessToken)
+      // );
+      // console.log(res);
     }
   }, [session]);
 
-  useEffect(() => {
-    if (session) {
-      if (
-        (userDetails && !userDetails.phone) ||
-        (userDetails && !userDetails.email)
-      ) {
-        stopLoading();
+  // useEffect(() => {
+  //   if (session) {
+  //     if (
+  //       (userDetails && !userDetails.phone) ||
+  //       (userDetails && !userDetails.email)
+  //     ) {
+  //       stopLoading();
 
-        let fields = [...contactFields];
+  //       let fields = [...contactFields];
 
-        if (!userDetails?.email) {
-          fields = [...contactFields].filter((f) => f.type !== "phone");
-        }
+  //       if (!userDetails?.email) {
+  //         fields = [...contactFields].filter((f) => f.type !== "phone");
+  //       }
 
-        if (!userDetails?.phone) {
-          fields = [...contactFields].filter((f) => f.type !== "email");
-        }
+  //       if (!userDetails?.phone) {
+  //         fields = [...contactFields].filter((f) => f.type !== "email");
+  //       }
 
-        handleFormFieldBottomSheet(
-          fields,
-          "We need a few details",
-          session?.accessToken
-        );
-      }
+  //       handleFormFieldBottomSheet(
+  //         fields,
+  //         "We need a few details",
+  //         session?.accessToken
+  //       );
+  //     }
 
-      if (userDetails?.phone && userDetails?.email) {
-        closeBottomSheet();
-        redirectToApp();
-      }
-    }
-  }, [userDetails]);
+  //     if (userDetails?.phone && userDetails?.email) {
+  //       closeBottomSheet();
+  //       redirectToApp();
+  //     }
+  //   }
+  // }, [userDetails]);
 
   return (
     <React.Fragment>

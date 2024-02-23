@@ -35,7 +35,9 @@ const withAuth = (WrappedComponent) => {
 
     useLayoutEffect(() => {
       if (authUser && !profileObject?.profileData && !userObject?.userData) {
-        getUserProfileDetails();
+        if (authUser?.apiMessage) {
+          getUserProfileDetails();
+        }
       }
     }, [authUser, fetchProfileRequest, fetchUserRequest]);
 
