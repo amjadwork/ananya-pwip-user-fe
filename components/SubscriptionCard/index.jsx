@@ -1,5 +1,3 @@
-/** @format */
-
 import React from "react";
 import { useRouter } from "next/router";
 import { inSubscription } from "../../theme/icon";
@@ -37,14 +35,9 @@ const SubscriptionCard = ({
             <h2 className="text-[#808080] font-normal text-xs ml-2">
               {subscriptionValidity}
             </h2>
-            <p
-              onClick={() => {
+            <p onClick={() => {
                 router.push("/subscription-details");
-              }}
-              className="text-[#2072AB] text-xs"
-            >
-              View details
-            </p>
+              }}className="text-[#2072AB] text-xs">View details</p>
           </div>
         </div>
       </div>
