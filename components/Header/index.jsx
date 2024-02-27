@@ -27,7 +27,7 @@ const atRoutes = [
   "select-pod",
   "costing",
   "edit",
-  // "my-costing",
+  "detail",
   "subscriptions",
   "profile-edit",
   "category",

@@ -17,29 +17,6 @@ import { setTagsRequest } from "@/redux/actions/tags.actions.js";
 
 import { secondsToMinutes } from "@/utils/helper.js";
 
-const popularFilters = [
-  {
-    name: "All",
-    icon: "one.png",
-  },
-  {
-    name: "Rice",
-    icon: "two.png",
-  },
-  {
-    name: "Exports",
-    icon: "three.png",
-  },
-  {
-    name: "Founder's fun network",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
-
 const FilterSection = ({
   inFixedBar,
   fixedDivRef,
