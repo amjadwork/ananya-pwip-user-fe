@@ -245,12 +245,12 @@ function SelectPortOfDestination() {
               const subscriptionResponse = await checkUserSubscriptionDetails();
               let currentPlan = null;
 
-              if (subscriptionResponse?.length) {
-                currentPlan = subscriptionResponse[0];
-              }
-
               if (typeof subscriptionResponse === "object") {
                 currentPlan = subscriptionResponse;
+              }
+
+              if (subscriptionResponse?.length) {
+                currentPlan = subscriptionResponse[0];
               }
 
               if (!currentPlan) {
@@ -258,6 +258,20 @@ function SelectPortOfDestination() {
                   type: "error",
                   message:
                     "Something went wrong while checking subscription details",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
+              if (
+                !currentPlan?.activeSubscription &&
+                !currentPlan?.userSubscriptionHistory?.length
+              ) {
+                openToastMessage({
+                  type: "error",
+                  message:
+                    currentPlan?.message || "You have no active subscription",
                   // autoHide: false,
                 });
 
@@ -279,6 +293,16 @@ function SelectPortOfDestination() {
                 openToastMessage({
                   type: "error",
                   message: "Your subscription is expired",
+                  // autoHide: false,
+                });
+
+                return;
+              }
+
+              if (currentPlan?.isSubscriptionExhausted) {
+                openToastMessage({
+                  type: "error",
+                  message: "You have exhausted your current subscription",
                   // autoHide: false,
                 });
 

@@ -7,53 +7,80 @@ import { SET_AUTH_DATA_REQUEST } from "../actions/types/auth.types";
 
 import { makeApiCall } from "./_commonFunctions.saga";
 import axios from "axios";
-import { apiBaseURL } from "@/utils/helper";
+import {
+  // apiBaseURL,
+  apiStagePaymentBeUrl,
+  exportCostingServiceId,
+} from "@/utils/helper";
 
-function generateRandomId(prefixText) {
-  const prefix = prefixText;
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  const randomId = `${prefix}${randomPart}`;
-  return randomId;
-}
+// const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
+// const SERVICE_ID = Number(exportCostingServiceId); // should be Number
 
-const createSubscription = async (body, authToken) => {
+// function generateRandomId(prefixText) {
+//   const prefix = prefixText;
+//   const randomPart = Math.random().toString(36).substring(2, 15);
+//   const randomId = `${prefix}${randomPart}`;
+//   return randomId;
+// }
+
+const startFreeTrialForUser = async (authToken) => {
   try {
     const response = await axios.post(
-      apiBaseURL + "api" + "/subscription",
-      body,
+      apiStagePaymentBeUrl +
+        "api" +
+        "/start-free-trial?serviceId=" +
+        Number(exportCostingServiceId),
+      null,
       {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       }
     );
-
-    return response?.data;
+    return response.data;
   } catch (err) {
     return err;
   }
 };
 
-const createOrder = async (planid, userDetails, authToken) => {
-  try {
-    const planId = planid;
+// const createSubscription = async (body, authToken) => {
+//   try {
+//     const response = await axios.post(
+//       apiBaseURL + "api" + "/subscription",
+//       body,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authToken}`,
+//         },
+//       }
+//     );
 
-    const subsPayload = {
-      user_id: userDetails?._id,
-      plan_id: planId,
-      order_id: generateRandomId("free_order_"),
-      payment_id: generateRandomId("free_pay_"),
-      amount_paid: 0,
-      amount_paid_date: new Date().toISOString(),
-      payment_platform: "",
-      payment_status: "success",
-    };
+//     return response?.data;
+//   } catch (err) {
+//     return err;
+//   }
+// };
 
-    await createSubscription(subsPayload, authToken);
-  } catch (err) {
-    return err;
-  }
-};
+// const createOrder = async (planid, userDetails, authToken) => {
+//   try {
+//     const planId = planid;
+
+//     const subsPayload = {
+//       user_id: userDetails?._id,
+//       plan_id: planId,
+//       order_id: generateRandomId("free_order_"),
+//       payment_id: generateRandomId("free_pay_"),
+//       amount_paid: 0,
+//       amount_paid_date: new Date().toISOString(),
+//       payment_platform: "",
+//       payment_status: "success",
+//     };
+
+//     await createSubscription(subsPayload, authToken);
+//   } catch (err) {
+//     return err;
+//   }
+// };
 
 function* handleAuthSuccessAndFailure(action) {
   const { user, token } = action.payload;
@@ -77,15 +104,17 @@ function* handleAuthSuccessAndFailure(action) {
       if (response?.data) {
         yield put(
           handleSettingAuthDataSuccess(
-            { ...user, ...response.data.data },
+            {
+              ...user,
+              ...response.data.data,
+              apiMessage: response.data.message,
+            },
             token
           )
         );
 
         if (response?.data?.newUser) {
-          const planId = 72; // default free plan
-
-          createOrder(planId, response?.data?.data, token);
+          startFreeTrialForUser(token);
         }
       }
     }

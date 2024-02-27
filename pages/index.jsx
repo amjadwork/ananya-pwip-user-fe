@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {
-  contactFields,
-  contactFieldsHeading,
-} from "@/constants/profileFormFields";
+// import {
+//   contactFields,
+//   contactFieldsHeading,
+// } from "@/constants/profileFormFields";
 
 import Head from "next/head";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -11,9 +11,9 @@ import { useSelector, useDispatch } from "react-redux";
 import Slider from "react-slick";
 import { useRouter } from "next/router";
 
-import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+// import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
-import ProfileDetailForm from "@/components/ProfileDetailForm";
+// import ProfileDetailForm from "@/components/ProfileDetailForm";
 
 export default function Home() {
   const router = useRouter();
@@ -22,11 +22,16 @@ export default function Home() {
 
   const userDetails = useSelector((state) => state.auth?.user);
 
-  const { openBottomSheet, closeBottomSheet, startLoading, stopLoading } =
-    useOverlayContext();
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    isLoading,
+  } = useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
-  const [showUserDetailForm, setShowUserDetailForm] = useState(false);
+  // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
   const sliderSettings = {
     dots: false,
@@ -44,24 +49,24 @@ export default function Home() {
     },
   };
 
-  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
-    const content = (
-      <React.Fragment>
-        <ProfileDetailForm
-          token={token}
-          fields={fields}
-          fieldHeading={{
-            heading: fieldHeading,
-          }}
-          professionOptions={[]}
-          userObject={{ userData: userDetails }}
-          profileObject={{}}
-          isStandalone={true}
-        />
-      </React.Fragment>
-    );
-    openBottomSheet(content, () => null, true, true);
-  };
+  // const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+  //   const content = (
+  //     <React.Fragment>
+  //       <ProfileDetailForm
+  //         token={token}
+  //         fields={fields}
+  //         fieldHeading={{
+  //           heading: fieldHeading,
+  //         }}
+  //         professionOptions={[]}
+  //         userObject={{ userData: userDetails }}
+  //         profileObject={{}}
+  //         isStandalone={true}
+  //       />
+  //     </React.Fragment>
+  //   );
+  //   openBottomSheet(content, () => null, true, true);
+  // };
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -89,40 +94,45 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       startLoading();
-      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+      redirectToApp();
+      // const res = dispatch(
+      //   handleSettingAuthDataRequest(session.user, session.accessToken)
+      // );
+      // console.log(res);
     }
   }, [session]);
 
-  useEffect(() => {
-    if (userDetails?.phone && userDetails?.email) {
-      startLoading();
-      closeBottomSheet();
-      redirectToApp();
-    }
+  // useEffect(() => {
+  //   if (session) {
+  //     if (
+  //       (userDetails && !userDetails.phone) ||
+  //       (userDetails && !userDetails.email)
+  //     ) {
+  //       stopLoading();
 
-    if (
-      (userDetails && !userDetails.phone) ||
-      (userDetails && !userDetails.email)
-    ) {
-      stopLoading();
+  //       let fields = [...contactFields];
 
-      let fields = [...contactFields];
+  //       if (!userDetails?.email) {
+  //         fields = [...contactFields].filter((f) => f.type !== "phone");
+  //       }
 
-      if (!userDetails?.email) {
-        fields = [...contactFields].filter((f) => f.type !== "phone");
-      }
+  //       if (!userDetails?.phone) {
+  //         fields = [...contactFields].filter((f) => f.type !== "email");
+  //       }
 
-      if (!userDetails?.phone) {
-        fields = [...contactFields].filter((f) => f.type !== "email");
-      }
+  //       handleFormFieldBottomSheet(
+  //         fields,
+  //         "We need a few details",
+  //         session?.accessToken
+  //       );
+  //     }
 
-      handleFormFieldBottomSheet(
-        fields,
-        "We need a few details",
-        session?.accessToken
-      );
-    }
-  }, [userDetails]);
+  //     if (userDetails?.phone && userDetails?.email) {
+  //       closeBottomSheet();
+  //       redirectToApp();
+  //     }
+  //   }
+  // }, [userDetails]);
 
   return (
     <React.Fragment>

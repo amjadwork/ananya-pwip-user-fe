@@ -15,7 +15,6 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import {
   getServicesRequest,
   getPlansRequest,
-  // getSubscriptionRequest,
 } from "@/redux/actions/subscription.action";
 
 import {
@@ -83,9 +82,7 @@ function Subscription() {
   const myCosting = useSelector((state) => state.myCosting);
   const servicesData = useSelector((state) => state.subscription?.services);
   const plansData = useSelector((state) => state.subscription?.plans);
-  const userSubscription = useSelector(
-    (state) => state.subscription?.userSubscription
-  );
+
   const userDetails = useSelector((state) => state.auth?.user);
   const authToken = useSelector((state) => state.auth?.token);
 
@@ -160,6 +157,8 @@ function Subscription() {
     async (item) => {
       const orderResponse = await createOrder(item?.id, userDetails?._id);
 
+      console.log("orderResponse", orderResponse);
+
       try {
         if (orderResponse.rz_order?.order_id) {
           const options = {
@@ -192,6 +191,8 @@ function Subscription() {
                 //   payment_status: "success",
                 // };
                 // await createSubscription(payload);
+                getUsersSubscriptionDetails();
+
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
                     <div className="w-full flex flex-col items-center">
@@ -216,7 +217,7 @@ function Subscription() {
                           Amount Paid
                         </span>
                         <span className="text-zinc-900 text-sm font-medium">
-                          ₹{Math.ceil(order?.amount / 100)}
+                          ₹{Math.ceil(orderResponse?.rz_order?.amount / 100)}
                         </span>
                       </div>
                     </div>
@@ -338,39 +339,22 @@ function Subscription() {
     }
   };
 
+  const getUsersSubscriptionDetails = async () => {
+    const response = await checkUserSubscriptionDetails();
+    if (typeof response === "object") {
+      setUsersSubscriptionData(response);
+    }
+
+    if (response?.length) {
+      setUsersSubscriptionData(response[0]);
+    }
+  };
+
   React.useEffect(() => {
     if (modulePlansData.length) {
-      const getUsersSubscriptionDetails = async () => {
-        const response = await checkUserSubscriptionDetails();
-
-        if (typeof response === "object") {
-          setUsersSubscriptionData(response);
-        }
-
-        if (response?.length) {
-          setUsersSubscriptionData(response[0]);
-        }
-
-        return response;
-      };
-
       getUsersSubscriptionDetails();
     }
   }, [modulePlansData]);
-
-  // React.useEffect(() => {
-  //   if (userDetails && userSubscription?.length && modulePlansData.length) {
-  //     const planIds = modulePlansData.map((d) => d.id);
-
-  //     const subs = [...userSubscription]
-  //       .filter((d) => d.user_id === userDetails._id)
-  //       .filter((d) => planIds.includes(d.plan_id));
-  //     if (subs.length) {
-  //       const currentPlan = getObjectWithLatestDate(subs);
-  //       setUsersSubscriptionData(currentPlan);
-  //     }
-  //   }
-  // }, [userSubscription, userDetails, modulePlansData]);
 
   return (
     <React.Fragment>
@@ -407,37 +391,31 @@ function Subscription() {
             </div>
 
             <div className="px-3 py-5 bg-pwip-v2-gray-100 rounded-lg w-full h-auto mb-[30px]">
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <span className="text-pwip-v2-primary text-sm font-[700]">
-                    {modulePlansData.find(
-                      (d) =>
-                        d.is_free &&
-                        d?.applicable_services?.includes(SERVICE_ID)
-                    )?.name || "Free"}
+                    {usersSubscriptionData?.plansDetails?.name || "Free"}
                   </span>
 
                   <div className="inline-flex items-center space-x-[2px]">
                     <span className="text-pwip-v2-primary-700 text-sm font-[600]">
-                      {0}
+                      {usersSubscriptionData?.activeSubscriptionObject
+                        ?.total_generated_costing || 0}
                     </span>
                     <span className="text-pwip-black-600 text-sm font-[600]">
                       /
                       {
-                        modulePlansData.find(
-                          (d) =>
-                            d.is_free &&
-                            d?.applicable_services?.includes(SERVICE_ID)
-                        )?.usage_cap
+                        usersSubscriptionData?.activeSubscriptionObject
+                          ?.usage_cap
                       }
                     </span>
                   </div>
                 </div>
               ) : null}
 
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <div className="w-full bg-pwip-v2-gray-300 rounded-full h-[8px] mb-[10px] mt-[6px] overflow-hidden">
                   <div
                     className="h-[8px] rounded-full"
@@ -446,10 +424,9 @@ function Subscription() {
                         "linear-gradient(90deg, #006EB4 4.17%, #003559 104.92%)",
                       width: usersSubscriptionData
                         ? calculatePercentage(
-                            allMyCostingsData.length || 0,
-                            modulePlansData.find(
-                              (d) => d.id === usersSubscriptionData?.plan_id
-                            )?.usage_cap
+                            usersSubscriptionData?.activeSubscriptionObject
+                              ?.total_generated_costing || 0,
+                            usersSubscriptionData?.plansDetails?.usage_cap
                           ) + "%"
                         : 0,
                     }}
@@ -457,24 +434,22 @@ function Subscription() {
                 </div>
               ) : null}
 
-              {userSubscription?.activeSubscription &&
-              userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData?.activeSubscription &&
+              usersSubscriptionData?.userSubscriptionHistory?.length ? (
                 <span className="text-pwip-v2-primary text-sm font-[500]">
-                  {usersSubscriptionData &&
-                  modulePlansData.find(
-                    (d) => d.id === usersSubscriptionData?.plan_id
-                  )?.usage_cap <= allMyCostingsData?.length
-                    ? `Your ${
-                        modulePlansData.find(
-                          (d) => d.id === usersSubscriptionData?.plan_id
-                        )?.name
-                      } plan has exhausted !!!`
+                  {usersSubscriptionData?.isSubscriptionExhausted
+                    ? `Your ${usersSubscriptionData?.plansDetails?.name} plan has exhausted !!!`
                     : "Upgrade to premium to get unlimited costings"}
                 </span>
               ) : null}
 
-              {!userSubscription?.activeSubscription &&
-              !userSubscription?.userSubscriptionHistory?.length ? (
+              {usersSubscriptionData === null ? (
+                <div className="min-h-[72px]" />
+              ) : null}
+
+              {usersSubscriptionData !== null &&
+              !usersSubscriptionData.activeSubscription &&
+              !usersSubscriptionData.userSubscriptionHistory?.length ? (
                 <div className="inline-flex items-center justify-between w-full">
                   <div className="inline-flex flex-col w-full">
                     <span className="text-pwip-v2-primary text-base font-[700]">
@@ -483,7 +458,7 @@ function Subscription() {
                     <span className="text-pwip-v2-primary text-sm font-[500] mt-1">
                       Try the tool for free, you can generate upto{" "}
                       {
-                        modulePlansData.find(
+                        usersSubscriptionData?.activeSubscriptionObject?.find(
                           (d) =>
                             d.is_free &&
                             d?.applicable_services?.includes(SERVICE_ID)
@@ -499,7 +474,11 @@ function Subscription() {
                         rounded="!rounded-lg"
                         minHeight="!min-h-[32px]"
                         onClick={async () => {
-                          startFreeTrialForUser();
+                          const res = await startFreeTrialForUser();
+
+                          if (res) {
+                            getUsersSubscriptionDetails();
+                          }
                         }}
                       />
                     </div>
@@ -512,7 +491,7 @@ function Subscription() {
               <div className="flex overflow-x-scroll hide-scroll-bar mb-[28px]">
                 <div className="flex flex-nowrap">
                   {modulePlansData
-                    .filter((f) => f.price !== 0)
+                    .filter((f) => !f.is_free)
                     .map((details, index) => {
                       return (
                         <div
@@ -532,18 +511,21 @@ function Subscription() {
                           <Button
                             type={"white"}
                             label={
-                              usersSubscriptionData?.plan_id === details?.id
+                              usersSubscriptionData?.activeSubscriptionObject
+                                ?.plan_id === details?.id
                                 ? `Current plan`
                                 : `₹${details?.price} /mo`
                             }
                             rounded="!rounded-full"
                             minHeight="!min-h-[35px]"
                             disabled={
-                              usersSubscriptionData?.plan_id === details?.id
+                              usersSubscriptionData?.activeSubscriptionObject
+                                ?.plan_id === details?.id
                             }
                             onClick={async () => {
                               if (
-                                usersSubscriptionData?.plan_id !== details?.id
+                                usersSubscriptionData?.activeSubscriptionObject
+                                  ?.plan_id !== details?.id
                               ) {
                                 handlePayment(details);
                               }
