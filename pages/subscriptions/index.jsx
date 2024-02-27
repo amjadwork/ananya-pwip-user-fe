@@ -100,7 +100,6 @@ function Subscription() {
 
   const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
   const SERVICE_ID = Number(exportCostingServiceId); // should be Number
- 
 
   React.useEffect(() => {
     dispatch(fetchAllMyCostingsRequest());
@@ -125,7 +124,6 @@ function Subscription() {
       dispatch(getPlansRequest());
     }
   }, [servicesData]);
-
 
   const checkUserSubscriptionDetails = async () => {
     try {
@@ -210,17 +208,25 @@ function Subscription() {
               {subscriptionDetails.map((subscription, index) => {
                 const { name, type, validity, expiry } = subscription;
                 let subscriptionValidity;
+
                 if (validity === "Lifetime Access") {
                   subscriptionValidity = validity;
                 } else {
                   const daysLeft = calculateDaysLeft(expiry);
-                  subscriptionValidity =
-                    daysLeft <= 10 ? (
-                      <span className="text-red-500">{`Expires in ${daysLeft} days`}</span>
-                    ) : (
-                      `Expires on ${expiry}`
+                  if (daysLeft <= 0) {
+                    subscriptionValidity = (
+                      <span className="text-red-500">Expired</span>
                     );
+                  } else {
+                    subscriptionValidity =
+                      daysLeft <= 10 ? (
+                        <span className="text-red-500">{`Expires in ${daysLeft} days`}</span>
+                      ) : (
+                        `Expires on ${expiry}`
+                      );
+                  }
                 }
+
                 return (
                   <div key={index}>
                     <SubscriptionCard
