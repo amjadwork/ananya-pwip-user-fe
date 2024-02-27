@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -96,17 +98,26 @@ export function Header(props) {
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
-          {((!hideLogo &&
-            !atRoutes.includes(activeRoute) &&
-            !searchScreenActive) ||
+          {((!hideLogo && activeRoute == "subscriptions") ||
+            (!atRoutes.includes(activeRoute) && !searchScreenActive) ||
             showLogoForPreview) && (
+            // <a href="/export-costing" className="">
+            //   <img
+            //     src="/assets/images/logo-blue.png"
+            //     className="h-full w-[40px]"
+            //     alt="Logo"
+            //   />
+            // </a>
             <img
               src="/assets/images/logo-blue.png"
               className="h-full w-[40px]"
+              alt="Logo"
             />
           )}
 
-          {(atRoutes.includes(activeRoute) || searchScreenActive) &&
+          {((activeRoute !== "subscriptions" &&
+            atRoutes.includes(activeRoute)) ||
+            searchScreenActive) &&
             !hideBack && (
               <div
                 className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
@@ -162,7 +173,9 @@ export function Header(props) {
             </div>
           )}
 
-          {!["profile-edit", "more", "costing"].includes(activeRoute) &&
+          {!["subscriptions", "subscription-details", "profile-edit", "more", "costing"].includes(
+            activeRoute
+          ) &&
             !router?.query?.id && (
               <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
                 <button
