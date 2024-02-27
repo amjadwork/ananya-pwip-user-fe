@@ -1,7 +1,6 @@
 /** @format */
 import React from "react";
 import { inSubscription } from "../../theme/icon";
-import { Button } from "components/Button";
 
 const SubscriptionDetailCard = ({}) => {
   return (
@@ -18,12 +17,14 @@ const SubscriptionDetailCard = ({}) => {
           </div>
         </div>
       </div>
-      <div className="w-full flex justify-between text-sm font-semibold mt-3">
-        <div>Basic Plan</div>
-        <div>299/mo</div>
+      <div className="w-full flex justify-between text-sm mt-3">
+        <div className="font-semibold">Basic Plan</div>
+        <div className="font-semibold">
+          &#8377;299<span className="font-normal">/mo</span>
+        </div>
       </div>
       <div className=" w-full flex text-xs mt-1">
-        <div className="text-[#808080]">Validity: 30 days</div>
+        <div className="text-[#808080]">Validity: 30 days</div>{" "}
         <div className="text-[#B5B5B5]">(27 April - 27 May, 2024)</div>
       </div>
       <hr className="w-full mt-3"></hr>
