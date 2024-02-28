@@ -31,6 +31,7 @@ const atRoutes = [
   "subscriptions",
   "profile-edit",
   "category",
+  "subscription-details",
 ];
 
 export function Header(props) {
@@ -173,9 +174,13 @@ export function Header(props) {
             </div>
           )}
 
-          {!["subscriptions", "subscription-details", "profile-edit", "more", "costing"].includes(
-            activeRoute
-          ) &&
+          {![
+            "subscriptions",
+            "subscription-details",
+            "profile-edit",
+            "more",
+            "costing",
+          ].includes(activeRoute) &&
             !router?.query?.id && (
               <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
                 <button
