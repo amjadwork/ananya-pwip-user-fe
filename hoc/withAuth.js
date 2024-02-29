@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +8,6 @@ import {
 } from "redux/actions/auth.actions";
 import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
 import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
-import Cookies from "js-cookie";
 
 const withAuth = (WrappedComponent) => {
   return function WithAuth(props) {
@@ -21,7 +20,7 @@ const withAuth = (WrappedComponent) => {
     const authToken = useSelector((state) => state.auth.token);
     const authUser = useSelector((state) => state.auth.user);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (status === "authenticated" && !authToken) {
         dispatch(
           handleSettingAuthDataRequest(session.user, session.accessToken)
@@ -34,13 +33,15 @@ const withAuth = (WrappedComponent) => {
       await dispatch(fetchProfileRequest());
     }
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (authUser && !profileObject?.profileData && !userObject?.userData) {
-        getUserProfileDetails();
+        if (authUser?.apiMessage) {
+          getUserProfileDetails();
+        }
       }
     }, [authUser, fetchProfileRequest, fetchUserRequest]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (profileObject?.profileData && userObject?.userData && authToken) {
         const userPayload = {
           ...authUser,
@@ -51,13 +52,6 @@ const withAuth = (WrappedComponent) => {
       }
     }, [authToken, profileObject?.profileData, userObject?.userData]);
 
-    useEffect(() => {
-      if (status === "authenticated") {
-        Cookies.set("lastVisitedPage", router.pathname, { expires: 7 }); // Set expiry as needed
-      }
-      // Store the last visited page in local storage
-    }, [router.pathname, status]);
-
     if (status === "loading" && !authToken) {
       return (
         <div className="w-screen h-screen inline-flex flex-col items-center justify-center text-pwip-primary bg-white">
@@ -66,7 +60,7 @@ const withAuth = (WrappedComponent) => {
       );
     }
 
-    if (!session) {
+    if (!authToken && !session) {
       router.replace("/");
       return null;
     }

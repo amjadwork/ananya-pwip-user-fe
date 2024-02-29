@@ -1,19 +1,37 @@
 import React, { useEffect, useState } from "react";
-import Head from "next/head";
-// import { useRouter } from "next/router";
-import { getSession, signIn } from "next-auth/react";
-// import { useDispatch } from "react-redux";
-import Slider from "react-slick";
-import { parse } from "cookie";
+import {
+  contactFields,
+  contactFieldsHeading,
+} from "@/constants/profileFormFields";
 
-// import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import Head from "next/head";
+import { useOverlayContext } from "@/context/OverlayContext";
+import { useSession, signIn } from "next-auth/react";
+import { useSelector, useDispatch } from "react-redux";
+import Slider from "react-slick";
+import { useRouter } from "next/router";
+
+import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+
+import ProfileDetailForm from "@/components/ProfileDetailForm";
 
 export default function Home() {
-  // const router = useRouter();
-  // const { data: session } = useSession();
-  // const dispatch = useDispatch();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const dispatch = useDispatch();
+
+  const userDetails = useSelector((state) => state.auth?.user);
+
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    isLoading,
+  } = useOverlayContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
+  // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
   const sliderSettings = {
     dots: false,
@@ -31,9 +49,28 @@ export default function Home() {
     },
   };
 
-  // const handleNavigation = (path) => {
-  //   router.push(path);
-  // };
+  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+    const content = (
+      <React.Fragment>
+        <ProfileDetailForm
+          token={token}
+          fields={fields}
+          fieldHeading={{
+            heading: fieldHeading,
+          }}
+          professionOptions={[]}
+          userObject={{ userData: userDetails }}
+          profileObject={{}}
+          isStandalone={true}
+        />
+      </React.Fragment>
+    );
+    openBottomSheet(content, () => null, true, true);
+  };
+
+  const handleNavigation = (path) => {
+    router.push(path);
+  };
 
   const handleLogin = async () => {
     try {
@@ -44,29 +81,58 @@ export default function Home() {
     }
   };
 
-  // const redirectToApp = async () => {
-  //   try {
-  //     handleNavigation("/export-costing");
-  //   } catch (error) {
-  //     console.error("Error during login:", error);
-  //   }
-  // };
+  const redirectToApp = async () => {
+    try {
+      stopLoading();
+      handleNavigation("/export-costing");
+    } catch (error) {
+      stopLoading();
+      console.error("Error during login:", error);
+    }
+  };
 
-  // const checkForAuth = async () => {
-  //   const res = await dispatch(
-  //     handleSettingAuthDataRequest(session.user, session.accessToken)
-  //   );
-  //   if (res?.payload?.token) {
-  //     redirectToApp();
-  //   }
-  // };
+  useEffect(() => {
+    if (session) {
+      startLoading();
+      redirectToApp();
+      // const res = dispatch(
+      //   handleSettingAuthDataRequest(session.user, session.accessToken)
+      // );
+      // console.log(res);
+    }
+  }, [session]);
 
   // useEffect(() => {
-  //   if (session && session.accessToken && session.user) {
-  //     console.log("here currentPlan", currentPlan);
-  //     dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
+  //   if (session) {
+  //     if (
+  //       (userDetails && !userDetails.phone) ||
+  //       (userDetails && !userDetails.email)
+  //     ) {
+  //       stopLoading();
+
+  //       let fields = [...contactFields];
+
+  //       if (!userDetails?.email) {
+  //         fields = [...contactFields].filter((f) => f.type !== "phone");
+  //       }
+
+  //       if (!userDetails?.phone) {
+  //         fields = [...contactFields].filter((f) => f.type !== "email");
+  //       }
+
+  //       handleFormFieldBottomSheet(
+  //         fields,
+  //         "We need a few details",
+  //         session?.accessToken
+  //       );
+  //     }
+
+  //     if (userDetails?.phone && userDetails?.email) {
+  //       closeBottomSheet();
+  //       redirectToApp();
+  //     }
   //   }
-  // }, [session]);
+  // }, [userDetails]);
 
   return (
     <React.Fragment>
@@ -205,7 +271,10 @@ export default function Home() {
 
         <div className="px-5 w-full inline-flex flex-col items-center justify-center space-y-[24px] mt-[42px] bg-white">
           <button
-            onClick={() => handleLogin()}
+            onClick={() => {
+              startLoading();
+              handleLogin();
+            }}
             className="w-full rounded-md py-3 px-4 bg-pwip-v2-primary-600 text-pwip-white-100 text-center text-sm font-bold"
           >
             Get started
@@ -221,26 +290,27 @@ export default function Home() {
   );
 }
 
-export async function getServerSideProps(context) {
-  const session = await getSession(context);
-  const cookies = parse(context.req.headers.cookie || "");
-  const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
+// export async function getServerSideProps(context) {
+//   const session = await getSession(context);
 
-  if (session?.accessToken) {
-    return {
-      props: {
-        session: session || null,
-      },
-      redirect: {
-        destination: lastVisitedPage,
-      },
-    };
-  }
-  if (!session?.accessToken) {
-    return {
-      props: {
-        session: null,
-      },
-    };
-  }
-}
+//   // const cookies = parse(context.req.headers.cookie || "");
+//   // const lastVisitedPage = cookies?.lastVisitedPage || "/export-costing";
+
+//   if (session?.accessToken) {
+//     return {
+//       props: {
+//         session: session || null,
+//       },
+//       redirect: {
+//         destination: "/export-costing",
+//       },
+//     };
+//   }
+//   if (!session?.accessToken) {
+//     return {
+//       props: {
+//         session: null,
+//       },
+//     };
+//   }
+// }

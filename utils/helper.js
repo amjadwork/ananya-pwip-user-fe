@@ -9,6 +9,13 @@ export function inrToUsd(inrAmount, exchangeRate) {
 }
 
 export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-stage.pwip.co/";
+export const apiStagePaymentBeUrl =
+  process.env.NEXT_PUBLIC_API_STAGE_PAYMENT_BE_URL;
+export const exportCostingServiceId =
+  process.env.NEXT_PUBLIC_API_EXPORT_COSTING_SERVICE_ID;
+
+// Razorpay configs
+export const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
 
 // auth configs
 export const auth0BaseURL = process.env.NEXT_PUBLIC_AUTH0_ISSUER_BASE_URL;

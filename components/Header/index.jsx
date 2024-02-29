@@ -157,7 +157,7 @@ export function Header(props) {
                 }
               }}
             >
-              <span>Edit</span>
+              <span>Edit{activeRoute === "more" ? " profile" : ""}</span>
               {pencilIcon}
             </div>
           )}
