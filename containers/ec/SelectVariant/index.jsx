@@ -582,9 +582,15 @@ const SelectVariantContainer = (props) => {
     for (const variant of dataToFilter) {
       // Convert the variant name to lowercase for comparison
       const variantNameLower = variant.variantName.toLowerCase();
+      const sourceNameLower = variant.sourceRates.sourceName.toLowerCase();
+      const sourceStateLower = variant.sourceRates.sourceState.toLowerCase();
 
       // Check if the variant name contains the search string
-      if (variantNameLower.includes(searchLower)) {
+      if (
+        variantNameLower.includes(searchLower) ||
+        sourceNameLower.includes(searchLower) ||
+        sourceStateLower.includes(searchLower)
+      ) {
         // If it does, add the variant to the matchingVariants array
         matchingVariants.push(variant);
       }
