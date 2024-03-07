@@ -1,3 +1,5 @@
+/** @format */
+
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -127,8 +129,16 @@ function More() {
             );
           })}
 
+          {/* deleting this later */}
+          <div
+            className="bg-blue-300 p-2 w-fit"
+            onClick={() => {
+              router.push("/service/rice-price/lp");
+            }}
+          >
+            CLICK HERE FOR RICE LP
+          </div>
           <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
-
           <div
             onClick={() => {
               window.open("https://pwip.co", "_blank");
@@ -168,7 +178,6 @@ function More() {
               </span>
             </div>
           </div>
-
           <div className="inline-flex flex-col w-full items-center justify-center pb-6 cursor-pointer mt-[60px]">
             <img src="/assets/images/logo-blue.png" className="h-[55px]" />
             <span className="text-sm font-sans font-normal text-pwip-gray-1000">
