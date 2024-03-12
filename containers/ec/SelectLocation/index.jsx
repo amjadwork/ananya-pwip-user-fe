@@ -386,6 +386,9 @@ const SelectLocationContainer = (props) => {
         variant?.country?.toLowerCase() || variant?.state?.toLowerCase();
       const portCodeLower = variant?.portCode?.toLowerCase();
 
+      // const countryNameLower = variant.country.toLowerCase();
+      // const portCodeLower = variant.portCode.toLowerCase();
+
       // Check if the variant name contains the search string
       if (
         variantNameLower.includes(searchLower) ||

@@ -15,6 +15,8 @@ import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
 
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 
+// import ProfileDetailForm from "@/components/ProfileDetailForm";
+
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -71,6 +73,10 @@ export default function Home() {
   const handleNavigation = (path) => {
     router.push(path);
   };
+
+  // const handleNavigation = (path) => {
+  //   router.push(path);
+  // };
 
   const handleLogin = async () => {
     try {
