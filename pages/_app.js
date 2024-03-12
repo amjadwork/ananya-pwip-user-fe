@@ -12,7 +12,16 @@ import { OverlayProvider } from "@/context/OverlayContext";
 
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
   useEffect(() => {
-    hotjar.initialize("3801647", 6);
+    if (
+      (typeof window !== "undefined" &&
+        window?.location?.origin === "https://app.pwip.co/") ||
+      (typeof window !== "undefined" &&
+        window?.location?.origin === "https://app.pwip.co")
+    ) {
+      console.log("here", window.location.origin);
+
+      hotjar.initialize("3801647", 6);
+    }
   }, []);
 
   return (
