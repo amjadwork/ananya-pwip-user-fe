@@ -636,6 +636,8 @@ const SelectLocationContainer = (props) => {
         style={{
           paddingTop: isFromEdit
             ? mainContainerHeight + 120 + "px"
+            : window.innerWidth >= 1280
+            ? "136px"
             : mainContainerHeight + 32 + "px",
         }}
       >

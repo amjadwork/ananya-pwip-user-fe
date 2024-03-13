@@ -944,10 +944,12 @@ const SelectVariantContainer = (props) => {
       </div>
 
       <div
-        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
+        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar max-xl:pt-[96px]`}
         style={{
           paddingTop: isFromEdit
             ? mainContainerHeight + 110 + "px"
+            : window.innerWidth >= 1280
+            ? "136px"
             : mainContainerHeight + 32 + "px",
         }}
       >
