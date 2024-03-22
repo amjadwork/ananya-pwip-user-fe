@@ -270,7 +270,8 @@ function MyCosting() {
               !allMyCostingsData.length ? "bg-white" : "bg-pwip-v2-gray-100"
             } pb-0 overflow-auto hide-scroll-bar`}
             style={{
-              paddingTop: mainContainerHeight + "px",
+              paddingTop:
+                window.innerWidth >= 1280 ? "96px" : mainContainerHeight + "px",
               paddingBottom: mainContainerHeight + 20 + "px",
             }}
           >

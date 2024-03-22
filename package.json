@@ -6,13 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:css": "postcss ./node_modules/tailwindcss/tailwind.css --output ./styles/tailwind.css"
+  },
+  "engines": {
+    "node": "18.19.1"
   },
   "engines": {
     "node": "18.19.1"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.1.0",
+    "@sentry/nextjs": "^7.106.1",
     "axios": "^1.4.0",
     "cookie": "^0.6.0",
     "country-emoji": "^1.5.6",
@@ -23,11 +28,13 @@
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
     "moment": "^2.29.4",
-    "next": "12.1.6",
+    "next": "12.2.5",
     "next-pwa": "^5.6.0",
+    "postcss-cli": "^11.0.0",
     "react": "^18.2.0",
     "react-charts": "^3.0.0-beta.57",
     "react-dom": "^18.2.0",
+    "react-frame-component": "^5.2.6",
     "react-hotjar": "^6.2.0",
     "react-player": "^2.13.0",
     "react-razorpay": "^2.0.1",
