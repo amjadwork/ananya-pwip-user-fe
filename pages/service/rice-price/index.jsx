@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -12,12 +12,18 @@ import { searchIcon, bookmarkOutlineIcon } from "../../../theme/icon";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { getStateAbbreviation } from "@/utils/helper";
+import {
+  getStateAbbreviation,
+  checkSubscription,
+  ricePriceServiceId,
+} from "@/utils/helper";
 import listProductsData from "@/constants/removeMe";
 
 // Import Containers
 
 // Import Layouts
+
+const SERVICE_ID = ricePriceServiceId;
 
 const productStateList = [
   [
@@ -171,10 +177,29 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
 };
 
 function RicePrice() {
-  //   const router = useRouter();
-  //   const dispatch = useDispatch();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const authToken = useSelector((state) => state.auth?.token);
 
   //   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+
+  async function initPage() {
+    const details = await checkSubscription(SERVICE_ID, authToken);
+
+    if (!details?.activeSubscription) {
+      router.replace("/service/rice-price/lp");
+
+      return;
+    }
+
+    return;
+  }
+
+  useLayoutEffect(() => {
+    if (authToken) {
+      initPage();
+    }
+  }, [authToken]);
 
   return (
     <React.Fragment>
@@ -462,6 +487,4 @@ function RicePrice() {
   );
 }
 
-// export default withAuth(RicePrice);
-
-export default RicePrice;
+export default withAuth(RicePrice);

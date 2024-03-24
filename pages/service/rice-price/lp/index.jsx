@@ -1,9 +1,10 @@
 /** @format */
 
-import React, { useCallback } from "react";
+import React, { useEffect, useCallback, useLayoutEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import Lottie from "lottie-react";
 
 // import moment from "moment";
 import useRazorpay from "react-razorpay";
@@ -17,50 +18,58 @@ import {
   getPlansRequest,
 } from "@/redux/actions/subscription.action";
 
-// import { fetchAllMyCostingsRequest } from "@/redux/actions/myCosting.actions";
-
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 import axios from "axios";
-import { apiBaseURL, razorpayKey } from "@/utils/helper";
+import {
+  apiBaseURL,
+  razorpayKey,
+  checkSubscription,
+  ricePriceServiceId,
+} from "@/utils/helper";
 
-import { apiStagePaymentBeUrl, ricePriceServiceId } from "utils/helper";
-import { riceLpContent } from "constants/riceLpContent";
+import { apiStagePaymentBeUrl } from "@/utils/helper";
+import { riceLpContent } from "@/constants/riceLpContent";
 
-function calculatePercentage(value, total) {
-  if (typeof value !== "number" || typeof total !== "number") {
-    console.error("Invalid input. Please provide valid numeric values");
-  }
+import paymentSuccessful from "../../../../theme/lottie/payment-success.json";
 
-  const percentage = (value / total) * 100;
-  return percentage;
-}
+// function calculatePercentage(value, total) {
+//   if (typeof value !== "number" || typeof total !== "number") {
+//     console.error("Invalid input. Please provide valid numeric values");
+//   }
 
-function filterArrayByReference(originalArray, referenceArray) {
-  // Filter the array based on the condition
-  const newArray = originalArray.filter((item) => {
-    // Check if any ID in the applicable_services array is present in the reference array
-    return item.applicable_services?.some((id) => referenceArray.includes(id));
-  });
+//   const percentage = (value / total) * 100;
+//   return percentage;
+// }
 
-  return newArray;
-}
+// function filterArrayByReference(originalArray, referenceArray) {
+//   // Filter the array based on the condition
+//   const newArray = originalArray.filter((item) => {
+//     // Check if any ID in the applicable_services array is present in the reference array
+//     return item.applicable_services?.some((id) => referenceArray.includes(id));
+//   });
 
-function getObjectWithLatestDate(dataArray) {
-  if (!Array.isArray(dataArray) || dataArray.length === 0) {
-    // Return null or handle the case where the array is empty or not valid
-    return null;
-  }
+//   return newArray;
+// }
 
-  // Sort the array based on the 'amount_paid_date' in descending order
-  const sortedArray = dataArray.sort(
-    (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
-  );
+// function getObjectWithLatestDate(dataArray) {
+//   if (!Array.isArray(dataArray) || dataArray.length === 0) {
+//     // Return null or handle the case where the array is empty or not valid
+//     return null;
+//   }
 
-  // Return the first (i.e., the latest) object in the sorted array
-  return sortedArray[0];
-}
+//   // Sort the array based on the 'amount_paid_date' in descending order
+//   const sortedArray = dataArray.sort(
+//     (a, b) => new Date(b.amount_paid_date) - new Date(a.amount_paid_date)
+//   );
+
+//   // Return the first (i.e., the latest) object in the sorted array
+//   return sortedArray[0];
+// }
+
+const SERVICE_ID = Number(ricePriceServiceId);
+const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
 
 function lp() {
   const router = useRouter();
@@ -69,22 +78,11 @@ function lp() {
 
   const { openBottomSheet, openToastMessage } = useOverlayContext();
 
-  // const myCosting = useSelector((state) => state.myCosting);
-  // const servicesData = useSelector((state) => state.subscription?.services);
   const plansData = useSelector((state) => state.subscription?.plans);
 
   const userDetails = useSelector((state) => state.auth?.user);
   const authToken = useSelector((state) => state.auth?.token);
-
-  // const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
-  // const [modulePlansData, setModulePlansData] = React.useState([]);
-  // const [moduleServicesData, setModuleServicesData] = React.useState([]);
-  const [usersSubscriptionData, setUsersSubscriptionData] =
-    React.useState(null);
   const [plansCardContent, setPlansCardContent] = React.useState([]);
-
-  const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
-  const SERVICE_ID = Number(ricePriceServiceId);
 
   const createOrder = async (planid) => {
     try {
@@ -147,9 +145,13 @@ function lp() {
               };
               const responseVerify = await verifyPayment(paymentVerifyPayload);
 
-              if (responseVerify?.result === "Payment Success") {
-                await getUsersSubscriptionDetails();
+              const details = await checkSubscription(SERVICE_ID, authToken);
 
+              if (details?.activeSubscription) {
+                router.replace("/service/rice-price");
+              }
+
+              if (responseVerify?.result === "Payment Success") {
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
                     <div className="w-full flex flex-col items-center">
@@ -218,36 +220,37 @@ function lp() {
     [Razorpay]
   );
 
-  React.useLayoutEffect(() => {
-    getUsersSubscriptionDetails();
-    dispatch(getServicesRequest());
-    dispatch(getPlansRequest());
-  }, []);
+  async function initPage() {
+    const details = await checkSubscription(SERVICE_ID, authToken);
 
-  // React.useEffect(() => {
-  //   if (servicesData && servicesData.length) {
-  //     // setModuleServicesData([...servicesData]);
-  //   }
-  // }, [servicesData]);
+    await dispatch(getServicesRequest());
+    await dispatch(getPlansRequest());
 
-  const checkUserSubscriptionDetails = async () => {
-    try {
-      const response = await axios.get(
-        API_STAGE_PAYMENT_BE +
-          "api" +
-          "/user-subscription?serviceId=" +
-          SERVICE_ID,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (err) {
-      return err;
+    if (details?.activeSubscription) {
+      router.replace("/service/rice-price");
+      return;
     }
-  };
+
+    return;
+  }
+
+  useLayoutEffect(() => {
+    if (authToken) {
+      initPage();
+    }
+  }, [authToken]);
+
+  useEffect(() => {
+    if (plansData) {
+      // Sort plansData array so that Premium plan comes first
+      const sortedPlansData = [...plansData].sort((a, b) => {
+        if (a.name.toLowerCase() === "premium") return -1;
+        if (b.name.toLowerCase() === "premium") return 1;
+        return 0;
+      });
+      setPlansCardContent(sortedPlansData);
+    }
+  }, [plansData]);
 
   const startFreeTrialForUser = async () => {
     try {
@@ -268,29 +271,6 @@ function lp() {
       return err;
     }
   };
-
-  const getUsersSubscriptionDetails = async () => {
-    const response = await checkUserSubscriptionDetails();
-    if (typeof response === "object") {
-      setUsersSubscriptionData(response);
-    }
-
-    if (response?.length) {
-      setUsersSubscriptionData(response[0]);
-    }
-  };
-
-  React.useEffect(() => {
-    if (plansData) {
-      // Sort plansData array so that Premium plan comes first
-      const sortedPlansData = [...plansData].sort((a, b) => {
-        if (a.name.toLowerCase() === "premium") return -1;
-        if (b.name.toLowerCase() === "premium") return 1;
-        return 0;
-      });
-      setPlansCardContent(sortedPlansData);
-    }
-  }, [plansData]);
 
   return (
     <React.Fragment>
@@ -352,7 +332,15 @@ function lp() {
                           const res = await startFreeTrialForUser();
 
                           if (res) {
-                            getUsersSubscriptionDetails();
+                            const details = await checkSubscription(
+                              SERVICE_ID,
+                              authToken
+                            );
+
+                            if (details?.activeSubscription) {
+                              router.replace("/service/rice-price");
+                              return;
+                            }
                           }
                         }}
                       >
@@ -415,12 +403,7 @@ function lp() {
                         <div
                           className="bg-white h-[28px] w-[98px] text-[#384F90] text-center p-1 text-[12px] font-semibold rounded-sm"
                           onClick={async () => {
-                            if (
-                              usersSubscriptionData?.activeSubscriptionObject
-                                ?.plan_id !== plan?.id
-                            ) {
-                              handlePayment(plan);
-                            }
+                            handlePayment(plan);
                           }}
                         >
                           Start now
@@ -465,7 +448,15 @@ function lp() {
                   const res = await startFreeTrialForUser();
 
                   if (res) {
-                    getUsersSubscriptionDetails();
+                    const details = await checkSubscription(
+                      SERVICE_ID,
+                      authToken
+                    );
+
+                    if (details?.activeSubscription) {
+                      router.replace("/service/rice-price");
+                      return;
+                    }
                   }
                 }}
               >

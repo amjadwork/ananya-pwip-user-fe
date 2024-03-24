@@ -4,6 +4,18 @@ require("dotenv").config();
 // import { useDispatch } from "react-redux";
 // import { useRouter } from "next/router";
 
+export async function checkSubscription(serviceId, token) {
+  try {
+    const response = await fetch(
+      `/api/check-subscription?serviceId=${serviceId}&authToken=${token}`
+    );
+    return await response.json();
+  } catch (err) {
+    console.error(err);
+    // Handle error
+  }
+}
+
 export function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);
 }

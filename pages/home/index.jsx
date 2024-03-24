@@ -11,6 +11,11 @@ import { Button } from "@/components/Button";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
+import {
+  ricePriceServiceId,
+  exportCostingServiceId,
+  checkSubscription,
+} from "@/utils/helper";
 
 import {
   exportCostingIcon,
@@ -29,7 +34,6 @@ import { Header } from "@/components/Header";
 // Import Containers
 
 // Import Layouts
-
 const data = [
   {
     label: "RNR Parboiled",
@@ -201,6 +205,7 @@ const data = [
 function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const authToken = useSelector((state) => state.auth?.token);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [searchStringValue, setSearchStringValue] = React.useState("");
@@ -362,11 +367,14 @@ function Home() {
                   name: "Export Costing",
                   icon: exportCostingIcon,
                   url: "/export-costing",
+                  serviceId: Number(exportCostingServiceId),
                 },
                 {
                   name: "Rice prices",
                   icon: ricePriceServiceIcon,
-                  url: "/service/rice-price",
+                  url: "/service/rice-price/lp",
+                  subscribedUrl: "/service/rice-price",
+                  serviceId: Number(ricePriceServiceId),
                 },
                 {
                   name: "Export orders",
@@ -392,14 +400,31 @@ function Home() {
                 return (
                   <div
                     key={item?.name + "_" + index}
-                    onClick={() => {
+                    onClick={async () => {
                       if (item.name.toLowerCase() === "community") {
                         window.open(item.url, "_blank");
 
                         return;
                       }
 
-                      router.push(item?.url);
+                      if (item?.serviceId) {
+                        const subsRes = await checkSubscription(
+                          item?.serviceId,
+                          authToken
+                        );
+
+                        if (!subsRes?.activeSubscription) {
+                          router.push(item?.url);
+
+                          return;
+                        }
+
+                        if (subsRes?.activeSubscription) {
+                          router.push(item?.subscribedUrl);
+
+                          return;
+                        }
+                      }
                     }}
                     className="inline-flex flex-col w-full items-center space-y-2 cursor-pointer"
                   >
@@ -574,6 +599,4 @@ function Home() {
   );
 }
 
-// export default withAuth(Home);
-
-export default Home;
+export default withAuth(Home);
