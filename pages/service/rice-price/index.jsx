@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -17,90 +17,105 @@ import {
   checkSubscription,
   ricePriceServiceId,
 } from "@/utils/helper";
-import listProductsData from "@/constants/removeMe";
+
+import { fetchVariantPriceRequest } from "@/redux/actions/variant-prices.actions";
 
 // Import Containers
 
 // Import Layouts
-
 const SERVICE_ID = ricePriceServiceId;
 
 const productStateList = [
   [
     {
       name: "Haryana",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/haryana.png?updatedAt=1711323994568",
     },
     {
       name: "Odisha",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/odisha.png?updatedAt=1711323994651",
     },
   ],
   [
     {
       name: "Punjab",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/punjab.png?updatedAt=1711323998032",
     },
     {
       name: "Uttar Pradesh",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/uttar-pradesh.png?updatedAt=1711323997805",
     },
   ],
   [
     {
       name: "Bihar",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/bihar.png?updatedAt=1711323994658",
     },
     {
       name: "Gujrat",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/gujrat.png?updatedAt=1711323994488",
     },
   ],
   [
     {
       name: "Madhya Pradesh",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/madhya-pradesh.png?updatedAt=1711323994654",
     },
     {
       name: "West Bengal",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/west-bengal.png?updatedAt=1711323994646",
     },
   ],
   [
     {
       name: "Chattisgarh",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/chattisgarh.png?updatedAt=1711323994048",
     },
     {
       name: "Maharashtra",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/maharastra.png?updatedAt=1711323994208",
     },
   ],
   [
     {
       name: "Telangana",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/telengana.png?updatedAt=1711323998233",
     },
 
     {
       name: "Andhra Pradesh",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/andhra-pradesh.png?updatedAt=1711323998318",
     },
   ],
   [
     {
       name: "Karnataka",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/karnataka.png?updatedAt=1711323997816",
     },
     {
       name: "Kerala",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/kerala.png?updatedAt=1711323994348",
     },
   ],
   [
     {
       name: "Tamil Nadu",
-      imageUrl: "/assets/images/services/odisha.png",
+      imageUrl:
+        "https://ik.imagekit.io/qeoc0zl3c/states/tamil-nadu.png?updatedAt=1711323994643",
     },
   ],
 ];
@@ -180,7 +195,12 @@ function RicePrice() {
   const router = useRouter();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
+  const variantPriceList =
+    useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
 
+  useEffect(() => {
+    console.log("variantPriceList", variantPriceList);
+  }, [variantPriceList.length]);
   //   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
 
   async function initPage() {
@@ -192,14 +212,14 @@ function RicePrice() {
       return;
     }
 
+    await dispatch(fetchVariantPriceRequest());
+
     return;
   }
 
   useLayoutEffect(() => {
-    if (authToken) {
-      initPage();
-    }
-  }, [authToken]);
+    initPage();
+  }, []);
 
   return (
     <React.Fragment>
@@ -315,9 +335,9 @@ function RicePrice() {
               <span className="text-pwip-v2-primary text-base font-bold">
                 Search rice by states
               </span>
-              <span className="text-pwip-v2-gray-500 text-xs">
+              {/* <span className="text-pwip-v2-gray-500 text-xs">
                 {searchIcon}
-              </span>
+              </span> */}
             </div>
 
             <div
@@ -394,38 +414,43 @@ function RicePrice() {
               <div
                 className={`w-full h-full space-y-4 px-5 pb-[72px] overflow-y-auto hide-scroll-bar transition-all`}
               >
-                {listProductsData.map((items, index) => {
+                {variantPriceList.map((item, index) => {
                   return (
                     <div
-                      key={items._id + index}
+                      key={item.source._id + index}
                       onClick={() => {
                         // router.push("/service/rice-price/details");
                       }}
                       className="inline-flex flex-col w-full space-y-5 bg-white rounded-lg px-3 py-4"
                     >
                       <div className="inline-flex w-full justify-between">
-                        <div className="relative inline-flex space-x-3 w-full">
+                        <div
+                          onClick={() => {
+                            router.push("/service/rice-price/detail");
+                          }}
+                          className="relative inline-flex space-x-3 w-full"
+                        >
                           <img
                             src={
-                              items.images[0] ||
-                              "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
+                              item?.images?.length
+                                ? item?.images[0]
+                                : "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
                             }
                             className="bg-cover h-[42px] w-[44px] border-[1px] border-pwip-v2-gray-100 rounded-lg object-cover"
                           />
 
                           <div className="inline-flex flex-col items-start justify-between w-full">
                             <span className="text-pwip-black-600 text-sm font-[700] font-sans line-clamp-1">
-                              {items.variantName}
+                              {item?.name}
                             </span>
 
                             <span className="text-pwip-gray-800 text-xs font-[400] font-sans line-clamp-1 mt-[6px]">
                               <span className="text-pwip-black-600">
-                                {items.sourceRates.sourceName},{" "}
-                                {getStateAbbreviation(
-                                  items.sourceRates.sourceState
-                                ) || ""}
+                                {item?.source?.region},{" "}
+                                {getStateAbbreviation(item?.source?.state) ||
+                                  ""}
                               </span>{" "}
-                              {items.brokenPercentage || 0}% Broken
+                              {item?.brokenPercentage || 0}% Broken
                             </span>
                           </div>
                         </div>
@@ -434,15 +459,26 @@ function RicePrice() {
                           {bookmarkOutlineIcon}
                         </div>
                       </div>
-                      <div className="w-full inline-flex justify-between">
+                      <div
+                        onClick={() => {
+                          router.push("/service/rice-price/detail");
+                        }}
+                        className="w-full inline-flex justify-between"
+                      >
                         <div className="inline-flex items-end space-x-3">
                           <span className="text-pwip-black-600 text-sm font-bold">
-                            ₹{items.sourceRates.price}/{items.sourceRates.unit}
+                            ₹{item?.source?.price}/{item?.source?.unit}
                           </span>
 
-                          <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
-                            +0.50
-                          </span>
+                          {item?.source?.changeDir === "-" ? (
+                            <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
+                              ₹{item?.source?.changeInPrice || 0}
+                            </span>
+                          ) : (
+                            <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
+                              ₹{item?.source?.changeInPrice || 0}
+                            </span>
+                          )}
                         </div>
 
                         <div>
@@ -454,7 +490,7 @@ function RicePrice() {
                             minHeight="!min-h-[20px]"
                             fontSize="!text-[11px]"
                             onClick={async () => {
-                              //
+                              router.push("/service/rice-price/detail");
                             }}
                           />
                         </div>
@@ -463,7 +499,7 @@ function RicePrice() {
                   );
                 })}
 
-                {!listProductsData?.length ? (
+                {!variantPriceList?.length ? (
                   <div className="inline-flex flex-col justify-center items-center w-full h-full">
                     <img
                       className="w-auto h-[260px]"

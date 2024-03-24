@@ -13,8 +13,8 @@ import { searchIcon, bookmarkOutlineIcon } from "../../../../theme/icon";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 import { getStateAbbreviation } from "@/utils/helper";
-import listProductsData from "@/constants/removeMe";
 
+const listProductsData = [];
 // Import Containers
 
 // Import Layouts
