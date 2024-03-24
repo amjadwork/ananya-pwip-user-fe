@@ -129,15 +129,6 @@ function More() {
             );
           })}
 
-          {/* deleting this later */}
-          <div
-            className="bg-blue-300 p-2 w-fit"
-            onClick={() => {
-              router.push("/service/rice-price/lp");
-            }}
-          >
-            CLICK HERE FOR RICE LP
-          </div>
           <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
           <div
             onClick={() => {
