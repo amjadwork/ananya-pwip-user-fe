@@ -146,6 +146,10 @@ module.exports = {
     "bg-yellow-800",
     "bg-pwip-v2-gray-200",
     "z-[1000]",
+    "from-[#2F3F74]",
+    "to-[#537FE7]",
+    "from-[#533D75]",
+    "to-[#A97AE6]",
   ],
   theme: {
     extend: {

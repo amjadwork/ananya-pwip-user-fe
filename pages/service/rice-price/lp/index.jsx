@@ -17,7 +17,7 @@ import {
   getPlansRequest,
 } from "@/redux/actions/subscription.action";
 
-import { fetchAllMyCostingsRequest } from "@/redux/actions/myCosting.actions";
+// import { fetchAllMyCostingsRequest } from "@/redux/actions/myCosting.actions";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -25,7 +25,7 @@ import { Button } from "@/components/Button";
 import axios from "axios";
 import { apiBaseURL, razorpayKey } from "@/utils/helper";
 
-import { apiStagePaymentBeUrl, exportCostingServiceId } from "utils/helper";
+import { apiStagePaymentBeUrl, ricePriceServiceId } from "utils/helper";
 import { riceLpContent } from "constants/riceLpContent";
 
 function calculatePercentage(value, total) {
@@ -69,22 +69,22 @@ function lp() {
 
   const { openBottomSheet, openToastMessage } = useOverlayContext();
 
-  const myCosting = useSelector((state) => state.myCosting);
-  const servicesData = useSelector((state) => state.subscription?.services);
+  // const myCosting = useSelector((state) => state.myCosting);
+  // const servicesData = useSelector((state) => state.subscription?.services);
   const plansData = useSelector((state) => state.subscription?.plans);
 
   const userDetails = useSelector((state) => state.auth?.user);
   const authToken = useSelector((state) => state.auth?.token);
 
-  const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
-  const [modulePlansData, setModulePlansData] = React.useState([]);
-  const [moduleServicesData, setModuleServicesData] = React.useState([]);
+  // const [allMyCostingsData, setAllMyCostingsData] = React.useState([]);
+  // const [modulePlansData, setModulePlansData] = React.useState([]);
+  // const [moduleServicesData, setModuleServicesData] = React.useState([]);
   const [usersSubscriptionData, setUsersSubscriptionData] =
     React.useState(null);
   const [plansCardContent, setPlansCardContent] = React.useState([]);
 
   const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
-  const SERVICE_ID = Number(exportCostingServiceId);
+  const SERVICE_ID = Number(ricePriceServiceId);
 
   const createOrder = async (planid) => {
     try {
@@ -148,20 +148,7 @@ function lp() {
               const responseVerify = await verifyPayment(paymentVerifyPayload);
 
               if (responseVerify?.result === "Payment Success") {
-                // const payload = {
-                //   user_id: userDetails?._id,
-                //   plan_id: item?.id,
-                //   order_id: order?.order_id,
-                //   payment_id: res?.razorpay_payment_id,
-                //   amount_paid: order?.amount / 100, //paise to inr
-                //   amount_paid_date: moment(new Date()).format(
-                //     "YYYY-MM-DD HH:mm:ss"
-                //   ), //2023-12-13 20:59:27
-                //   payment_platform: "",
-                //   payment_status: "success",
-                // };
-                // await createSubscription(payload);
-                getUsersSubscriptionDetails();
+                await getUsersSubscriptionDetails();
 
                 const content = (
                   <div className="w-full h-full relative bg-white px-5 pt-[56px]">
@@ -231,51 +218,17 @@ function lp() {
     [Razorpay]
   );
 
-  React.useEffect(() => {
-    dispatch(fetchAllMyCostingsRequest());
-  }, []);
-
-  React.useEffect(() => {
-    if (
-      myCosting?.allMyCostingsFromHistory &&
-      myCosting?.allMyCostingsFromHistory?.length
-    ) {
-      setAllMyCostingsData([...myCosting.allMyCostingsFromHistory]);
-    }
-  }, [myCosting]);
-
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
+    getUsersSubscriptionDetails();
     dispatch(getServicesRequest());
+    dispatch(getPlansRequest());
   }, []);
 
-  React.useEffect(() => {
-    if (servicesData && servicesData.length) {
-      setModuleServicesData([...servicesData]);
-      dispatch(getPlansRequest());
-    }
-  }, [servicesData]);
-
-  React.useEffect(() => {
-    if (servicesData && servicesData.length) {
-      setModuleServicesData([...servicesData]);
-      dispatch(getPlansRequest());
-    }
-  }, [servicesData]);
-
-  React.useEffect(() => {
-    if (plansData && moduleServicesData.length) {
-      const servicesId = new Set(
-        [...moduleServicesData].map((d) => d.id).flat()
-      );
-      const uniqueServicesId = [...servicesId];
-
-      const plans = [
-        ...filterArrayByReference(plansData, uniqueServicesId),
-      ].filter((f) => f.show_for_user);
-
-      setModulePlansData([...plans]);
-    }
-  }, [plansData, moduleServicesData]);
+  // React.useEffect(() => {
+  //   if (servicesData && servicesData.length) {
+  //     // setModuleServicesData([...servicesData]);
+  //   }
+  // }, [servicesData]);
 
   const checkUserSubscriptionDetails = async () => {
     try {
@@ -328,27 +281,6 @@ function lp() {
   };
 
   React.useEffect(() => {
-    if (modulePlansData.length) {
-      getUsersSubscriptionDetails();
-    }
-  }, [modulePlansData]);
-
-  React.useEffect(() => {
-    if (plansData && moduleServicesData.length) {
-      const servicesId = new Set(
-        [...moduleServicesData].map((d) => d.id).flat()
-      );
-      const uniqueServicesId = [...servicesId];
-
-      const plans = [
-        ...filterArrayByReference(plansData, uniqueServicesId),
-      ].filter((f) => f.show_for_user);
-
-      setModulePlansData([...plans]);
-    }
-  }, [plansData, moduleServicesData]);
-
-  React.useEffect(() => {
     if (plansData) {
       // Sort plansData array so that Premium plan comes first
       const sortedPlansData = [...plansData].sort((a, b) => {
@@ -396,25 +328,40 @@ function lp() {
                 <div className="bg-[#F7F7F7] h-[80px] w-[180px] rounded-md"></div>
               </div>
 
-              <div className="bg-[#FFF8E9] p-5 rounded-lg">
-                <div className="font-semibold text-[14px]">Free Trial</div>
-                <div className="text-[12px] font-normal mt-2">
-                  We update rice price every 2 weeks, see prices for 120+
-                  variety of rice{" "}
-                </div>
-                <div
-                  className="font-normal text-sm text-[12px] text-[#2072AB] mt-3.5"
-                  onClick={async () => {
-                    const res = await startFreeTrialForUser();
+              {plansCardContent
+                .filter(
+                  (plan) =>
+                    plan.is_free &&
+                    plan.applicable_services.includes(SERVICE_ID)
+                )
+                .map((plan, planIndex) => {
+                  return (
+                    <div
+                      key={plan?.id + "_" + planIndex * 99}
+                      className="bg-[#FFF8E9] p-5 rounded-lg"
+                    >
+                      <div className="font-semibold text-[14px]">
+                        Free Trial
+                      </div>
+                      <div className="text-[12px] font-normal mt-2">
+                        {plan?.description}
+                      </div>
+                      <div
+                        className="font-normal text-sm text-[12px] text-[#2072AB] mt-3.5"
+                        onClick={async () => {
+                          const res = await startFreeTrialForUser();
 
-                    if (res) {
-                      getUsersSubscriptionDetails();
-                    }
-                  }}
-                >
-                  Start now{" "}
-                </div>
-              </div>
+                          if (res) {
+                            getUsersSubscriptionDetails();
+                          }
+                        }}
+                      >
+                        Start now{" "}
+                      </div>
+                    </div>
+                  );
+                })}
+
               <div className="font-semibold text-[14px] mt-6">
                 Pick your Plan
               </div>
@@ -423,10 +370,14 @@ function lp() {
               </p>
               <div>
                 {plansCardContent
-                  .filter((plan) => plan.name !== "Free Trial") // Exclude the Free Trial plan
+                  .filter(
+                    (plan) =>
+                      !plan.is_free &&
+                      plan.applicable_services.includes(SERVICE_ID)
+                  ) // Exclude the Free Trial plan
                   .map((plan, index) => (
                     <div
-                      key={index}
+                      key={plan?.id + index * 73}
                       className={`py-7 px-5 text-white mt-${
                         index === 0 ? "6" : "4"
                       } rounded-lg mb-3.5`}
@@ -484,7 +435,10 @@ function lp() {
                 </div>
                 {riceLpContent.map((rice, index) => (
                   <div>
-                    <div className="flex justify-normal mb-2.5" key={index}>
+                    <div
+                      className="flex justify-normal mb-2.5"
+                      key={"rice_" + index}
+                    >
                       <div className="bg-[#FFD271] font-bold text-[12px] pl-1 w-[16px] h-[16px] align-center rounded-sm">
                         {rice.no}
                       </div>

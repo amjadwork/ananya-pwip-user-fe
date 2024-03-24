@@ -14,6 +14,9 @@ export const apiStagePaymentBeUrl =
 export const exportCostingServiceId =
   process.env.NEXT_PUBLIC_API_EXPORT_COSTING_SERVICE_ID;
 
+export const ricePriceServiceId =
+  process.env.NEXT_PUBLIC_API_RICE_PRICE_SERVICE_ID;
+
 // Razorpay configs
 export const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
 
