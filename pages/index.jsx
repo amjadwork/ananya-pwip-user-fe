@@ -90,7 +90,7 @@ export default function Home() {
   const redirectToApp = async () => {
     try {
       stopLoading();
-      handleNavigation("/export-costing");
+      handleNavigation("/home");
     } catch (error) {
       stopLoading();
       console.error("Error during login:", error);
