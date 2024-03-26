@@ -366,7 +366,8 @@ function Home() {
                 {
                   name: "Export Costing",
                   icon: exportCostingIcon,
-                  url: "/export-costing",
+                  url: "/export-costing/lp",
+                  subscribedUrl: "/export-costing",
                   serviceId: Number(exportCostingServiceId),
                 },
                 {

@@ -1,17 +1,24 @@
 import {
+  homeBottomBarIcon,
   exportCostingBottomBarIcon,
   learnBottomBarIcon,
   dashboardBottomBarIcon,
   myCostingBottomBarIcon,
   moreBottomBarIcon,
+  watchlistBottomBarIcon,
 } from "../theme/icon";
 
 export const options = [
   {
-    icon: exportCostingBottomBarIcon,
-    label: "Costing",
-    path: "export-costing",
+    icon: homeBottomBarIcon,
+    label: "Home",
+    path: "home",
   },
+  // {
+  //   icon: exportCostingBottomBarIcon,
+  //   label: "Costing",
+  //   path: "export-costing",
+  // },
   {
     icon: learnBottomBarIcon,
     label: "Learn",
@@ -24,8 +31,13 @@ export const options = [
   // },
   {
     icon: myCostingBottomBarIcon,
-    label: "Saved",
+    label: "My costing",
     path: "my-costing",
+  },
+  {
+    icon: watchlistBottomBarIcon,
+    label: "Watchlist",
+    path: "watchlist",
   },
   {
     icon: moreBottomBarIcon,

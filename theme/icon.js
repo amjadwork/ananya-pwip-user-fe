@@ -126,10 +126,47 @@ export const verifyIcon = (
   </svg>
 );
 
+export const homeBottomBarIcon = (
+  <svg
+    // width="18"
+    height="20"
+    viewBox="0 0 30 30"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M11.25 26.2504V17.0004C11.25 16.3003 11.25 15.9503 11.3862 15.6829C11.5061 15.4477 11.6973 15.2565 11.9325 15.1366C12.1999 15.0004 12.5499 15.0004 13.25 15.0004H16.75C17.4501 15.0004 17.8001 15.0004 18.0675 15.1366C18.3027 15.2565 18.4939 15.4477 18.6138 15.6829C18.75 15.9503 18.75 16.3003 18.75 17.0004V26.2504M13.7721 3.45543L5.29424 10.0493C4.72753 10.4901 4.44417 10.7105 4.24003 10.9865C4.05921 11.231 3.9245 11.5064 3.84253 11.7992C3.75 12.1298 3.75 12.4888 3.75 13.2067V22.2504C3.75 23.6505 3.75 24.3506 4.02248 24.8854C4.26217 25.3558 4.64462 25.7382 5.11502 25.9779C5.6498 26.2504 6.34987 26.2504 7.75 26.2504H22.25C23.6501 26.2504 24.3502 26.2504 24.885 25.9779C25.3554 25.7382 25.7378 25.3558 25.9775 24.8854C26.25 24.3506 26.25 23.6505 26.25 22.2504V13.2067C26.25 12.4888 26.25 12.1298 26.1575 11.7992C26.0755 11.5064 25.9408 11.231 25.76 10.9865C25.5558 10.7105 25.2725 10.4901 24.7058 10.0493L16.2279 3.45543C15.7887 3.11386 15.5691 2.94308 15.3267 2.87743C15.1127 2.8195 14.8873 2.8195 14.6733 2.87743C14.4309 2.94308 14.2113 3.11386 13.7721 3.45543Z"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
+export const watchlistBottomBarIcon = (
+  <svg
+    // width="14"
+    height="20"
+    viewBox="0 0 19 23"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M15.7296 1.36393C16.9671 1.50792 17.875 2.57546 17.875 3.82185V21.25L9.4375 17.0316L1 21.25V3.82185C1 2.57546 1.90675 1.50792 3.14538 1.36393C7.32609 0.878689 11.5489 0.878689 15.7296 1.36393Z"
+      fill="white"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
+
 export const exportCostingBottomBarIcon = (
   <svg
-    width="25"
-    height="18"
+    // width="25"
+    height="20"
     viewBox="0 0 25 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -150,8 +187,8 @@ export const exportCostingBottomBarIcon = (
 
 export const learnBottomBarIcon = (
   <svg
-    width="25"
-    height="18"
+    // width="25"
+    height="20"
     viewBox="0 0 25 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -168,8 +205,8 @@ export const learnBottomBarIcon = (
 
 export const dashboardBottomBarIcon = (
   <svg
-    width="23"
-    height="18"
+    // width="23"
+    height="20"
     viewBox="0 0 23 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -207,8 +244,8 @@ export const dashboardBottomBarIcon = (
 
 export const myCostingBottomBarIcon = (
   <svg
-    width="19"
-    height="18"
+    // width="19"
+    height="20"
     viewBox="0 0 19 23"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -225,8 +262,8 @@ export const myCostingBottomBarIcon = (
 
 export const moreBottomBarIcon = (
   <svg
-    width="18"
-    height="18"
+    // width="18"
+    height="20"
     viewBox="0 0 18 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
@@ -6711,4 +6748,3 @@ export const filterIcon = (
     />
   </svg>
 );
-

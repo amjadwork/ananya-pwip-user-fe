@@ -32,6 +32,7 @@ const atRoutes = [
   "profile-edit",
   "category",
   "subscription-details",
+  "rice-price",
 ];
 
 export function Header(props) {
