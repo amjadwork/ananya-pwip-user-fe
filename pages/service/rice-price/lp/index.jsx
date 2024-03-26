@@ -1,10 +1,17 @@
 /** @format */
 
-import React, { useEffect, useCallback, useLayoutEffect } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import Lottie from "lottie-react";
+import ReactPlayer from "react-player";
 
 // import moment from "moment";
 import useRazorpay from "react-razorpay";
@@ -20,7 +27,6 @@ import {
 
 // Import Components
 import { Header } from "@/components/Header";
-import { Button } from "@/components/Button";
 import axios from "axios";
 import {
   apiBaseURL,
@@ -33,6 +39,7 @@ import { apiStagePaymentBeUrl } from "@/utils/helper";
 import { riceLpContent } from "@/constants/riceLpContent";
 
 import paymentSuccessful from "../../../../theme/lottie/payment-success.json";
+import { nextArrow } from "../../../../theme/icon";
 
 // function calculatePercentage(value, total) {
 //   if (typeof value !== "number" || typeof total !== "number") {
@@ -75,6 +82,7 @@ function lp() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [Razorpay] = useRazorpay();
+  const videoRef = useRef();
 
   const { openBottomSheet, openToastMessage } = useOverlayContext();
 
@@ -83,6 +91,13 @@ function lp() {
   const userDetails = useSelector((state) => state.auth?.user);
   const authToken = useSelector((state) => state.auth?.token);
   const [plansCardContent, setPlansCardContent] = React.useState([]);
+
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [showDefaultThumbnail, setShowDefaultThumbnail] = useState(true);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
+  const [videoVolume, setVideoVolume] = useState(false);
+  const url = "https://www.youtube.com/embed/Tb4GGo2_QFM";
 
   const createOrder = async (planid) => {
     try {
@@ -303,9 +318,12 @@ function lp() {
             className={`min-h-[calc(100vh-120px)] inline-flex flex-col h-full w-full px-5 pt-[82px] pb-[120px] bg-white overflow-auto hide-scroll-bar`}
           >
             <React.Fragment>
-              <div className="text-[#1B1B1B] text-[20px] font-bold mb-8 flex justify-between">
+              <div className="text-[#1B1B1B] text-[20px] font-bold mb-8 flex justify-between items-center">
                 <span>Find the right rice price with us</span>
-                <div className="bg-[#F7F7F7] h-[80px] w-[180px] rounded-md"></div>
+                <img
+                  className="h-12 w-36"
+                  src="/assets/images/services/riceLP/riceLP3.svg"
+                />
               </div>
 
               {plansCardContent
@@ -327,7 +345,7 @@ function lp() {
                         {plan?.description}
                       </div>
                       <div
-                        className="font-normal text-sm text-[12px] text-[#2072AB] mt-3.5"
+                        className="font-normal text-sm text-[12px] text-[#2072AB] mt-3.5 flex items-center"
                         onClick={async () => {
                           const res = await startFreeTrialForUser();
 
@@ -344,7 +362,7 @@ function lp() {
                           }
                         }}
                       >
-                        Start now{" "}
+                        Start now &nbsp;{nextArrow}
                       </div>
                     </div>
                   );
@@ -390,7 +408,8 @@ function lp() {
                         {plan.name} Plan
                       </div>
                       <div className="text-[11px] font-light mt-0.5">
-                        &#8377;{plan.yearlyPrice}/- for 12 months
+                        &#8377;{(plan.price * 12 * 0.8).toFixed(2)}/- for 12
+                        months
                       </div>
                       <p className="font-normal text-[12px] mt-1.5">
                         {plan.description}
@@ -417,7 +436,7 @@ function lp() {
                   What do you get?
                 </div>
                 {riceLpContent.map((rice, index) => (
-                  <div>
+                  <div className="mb-9">
                     <div
                       className="flex justify-normal mb-2.5"
                       key={"rice_" + index}
@@ -437,10 +456,62 @@ function lp() {
                         Premium feature
                       </div>
                     )}
-                    <div className="bg-[#F7F7F7] mt-4 mb-6 h-[136px] w-full rounded-md"></div>
+                    <img
+                      className="mt-4 h-[140px] rounded-md"
+                      src={rice?.imageUrl}
+                    />
                   </div>
                 ))}
-                <div className="bg-[#F7F7F7] mt-4 mb-6 h-[176px] w-full rounded-md"></div>
+                <div className="mb-20 mt-11">
+                  <ReactPlayer
+                    ref={videoRef}
+                    url={url}
+                    loop={false}
+                    width="100%"
+                    height="176px"
+                    controls={false}
+                    light={false}
+                    playing={videoPlaying}
+                    stopOnUnmount={true}
+                    volume={videoVolume ? 0 : 1}
+                    onClickPreview={() => {
+                      return null;
+                    }}
+                    config={{
+                      file: {
+                        attributes: {
+                          controlsList: "nodownload", // Disable download button
+                        },
+                      },
+                    }}
+                    onProgress={(progress) => {
+                      const totalDuration = videoDuration;
+                      const currentProgress = progress?.playedSeconds
+                        ? Math.ceil(progress?.playedSeconds)
+                        : 0; // in seconds
+
+                      const percentageCompleted =
+                        (currentProgress / totalDuration) * 100;
+
+                      setVideoProgressInPercent(percentageCompleted);
+                    }}
+                    onDuration={(duration) => {
+                      setVideoDuration(duration);
+                    }}
+                    playIcon={
+                      <div className="relative">
+                        {/* <img
+                src={"/assets/images/play-icon.svg"}
+                className="h-[72px] w-[72px]"
+              /> */}
+                      </div>
+                    }
+                    onEnded={() => {
+                      setVideoPlaying(false);
+                      setShowDefaultThumbnail(true);
+                    }}
+                  />
+                </div>
               </div>
               <div
                 className="bg-[#006EB4] text-white p-3 text-center font-medium text-[16px] rounded-md"

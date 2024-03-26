@@ -6748,3 +6748,21 @@ export const filterIcon = (
     />
   </svg>
 );
+
+
+export const nextArrow = (
+  <svg
+    width="12"
+    height="6"
+    viewBox="0 0 12 6"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M9.27198 1L11.4488 3.11869M11.4488 3.11869L9.27198 5.23738M11.4488 3.11869H1"
+      stroke="#2072AB"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
+);
