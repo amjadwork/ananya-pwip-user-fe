@@ -6,6 +6,8 @@ export const riceLpContent = [
     name: "Anytime, anywhere rice prices.",
     description:
       "Unlimited access to rice prices to make your price discovery more convenient.",
+    premiumFeature: false,
+    imageUrl: "/assets/images/services/riceLP/riceLP1.svg",
   },
   {
     no: 2,
@@ -13,13 +15,6 @@ export const riceLpContent = [
     description:
       "Unlimited access to rice prices to make your price discovery more convenient.",
     premiumFeature: true,
-  },
-  {
-    no: 3,
-    name: "EXIM analysis to make the right decision.",
-    description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
-    premiumFeature: true,
+    imageUrl: "/assets/images/services/riceLP/riceLP2.svg",
   },
 ];
-
