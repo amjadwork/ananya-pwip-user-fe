@@ -83,6 +83,7 @@ function lp() {
   const dispatch = useDispatch();
   const [Razorpay] = useRazorpay();
   const videoRef = useRef();
+  const pickPlanRef = useRef(); // Reference to the "Pick your Plan" section
 
   const { openBottomSheet, openToastMessage } = useOverlayContext();
 
@@ -98,6 +99,26 @@ function lp() {
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
   const [videoVolume, setVideoVolume] = useState(false);
   const url = "https://www.youtube.com/embed/Tb4GGo2_QFM";
+
+  const [showFixedButton, setShowFixedButton] = useState(false);
+
+  const handleScroll = useCallback(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    const pickPlanSectionTop =
+      pickPlanRef.current.getBoundingClientRect().top + scrollTop;
+
+    // If the "Pick your Plan" section is in view, show the fixed button
+    setShowFixedButton(scrollTop > pickPlanSectionTop);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); // Only run this effect once when component mounts
 
   const createOrder = async (planid) => {
     try {
@@ -313,7 +334,7 @@ function lp() {
       <AppLayout>
         <Header />
 
-        <div className={`relative h-full w-full bg-white z-0`}>
+        <div className={`relative h-full w-full z-0`}>
           <div
             className={`min-h-[calc(100vh-120px)] inline-flex flex-col h-full w-full px-5 pt-[82px] pb-[120px] bg-white overflow-auto hide-scroll-bar`}
           >
@@ -368,171 +389,178 @@ function lp() {
                   );
                 })}
 
-              <div className="font-semibold text-[14px] mt-6">
-                Pick your Plan
-              </div>
-              <p className="font-normal text-[12px] text-[#1B1B1B] mt-1.5">
-                Recurring billing and cancel anytime.
-              </p>
-              <div>
-                {plansCardContent
-                  .filter(
-                    (plan) =>
-                      !plan.is_free &&
-                      plan.applicable_services.includes(SERVICE_ID)
-                  ) // Exclude the Free Trial plan
-                  .map((plan, index) => (
-                    <div
-                      key={plan?.id + index * 73}
-                      className={`py-7 px-5 text-white mt-${
-                        index === 0 ? "6" : "4"
-                      } rounded-lg mb-3.5`}
-                      style={{
-                        background: `linear-gradient(to top left, ${
-                          plan.name.toLowerCase() === "basic"
-                            ? "#533D75"
-                            : "#2F3F74"
-                        }, ${
-                          plan.name.toLowerCase() === "basic"
-                            ? "#A97AE6"
-                            : "#537FE7"
-                        })`,
-                      }}
-                    >
-                      {plan.name.toLowerCase() === "premium" && (
-                        <div className="bg-white h-[15px] w-[80px] text-[#384F90] text-center text-[10px] font-semibold rounded-sm mb-3">
-                          Recommended
+              <div ref={pickPlanRef}>
+                <div className="font-semibold text-[14px] mt-6">
+                  Pick your Plan
+                </div>
+                <p className="font-normal text-[12px] text-[#1B1B1B] mt-1.5">
+                  Recurring billing and cancel anytime.
+                </p>
+                <div>
+                  {plansCardContent
+                    .filter(
+                      (plan) =>
+                        !plan.is_free &&
+                        plan.applicable_services.includes(SERVICE_ID)
+                    ) // Exclude the Free Trial plan
+                    .map((plan, index) => (
+                      <div
+                        key={plan?.id + index * 73}
+                        className={`py-7 px-5 text-white mt-${
+                          index === 0 ? "6" : "4"
+                        } rounded-lg mb-3.5`}
+                        style={{
+                          background: `linear-gradient(to top left, ${
+                            plan.name.toLowerCase() === "basic"
+                              ? "#533D75"
+                              : "#2F3F74"
+                          }, ${
+                            plan.name.toLowerCase() === "basic"
+                              ? "#A97AE6"
+                              : "#537FE7"
+                          })`,
+                        }}
+                      >
+                        {plan.name.toLowerCase() === "premium" && (
+                          <div className="bg-white h-[15px] w-[80px] text-[#384F90] text-center text-[10px] font-semibold rounded-sm mb-3">
+                            Recommended
+                          </div>
+                        )}
+                        <div className="font-bold text-[16px] mt-2">
+                          {plan.name} Plan
+                        </div>
+                        <div className="text-[11px] font-light mt-0.5">
+                          &#8377;{(plan.price * 12 * 0.8).toFixed(2)}/- for 12
+                          months
+                        </div>
+                        <p className="font-normal text-[12px] mt-1.5">
+                          {plan.description}
+                        </p>
+                        <div className="flex justify-between mt-8">
+                          <div className="font-semibold text-[14px]">
+                            &#8377;{plan.price}/
+                            <span className="font-normal">month</span>
+                          </div>
+                          <div
+                            className="bg-white h-[28px] w-[98px] text-[#384F90] text-center p-1 text-[12px] font-semibold rounded-sm"
+                            onClick={async () => {
+                              handlePayment(plan);
+                            }}
+                          >
+                            Start now
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+                <div className="mt-6">
+                  <div className="text-[20px] font-bold mb-8">
+                    What do you get?
+                  </div>
+                  {riceLpContent.map((rice, index) => (
+                    <div className="mb-9">
+                      <div
+                        className="flex justify-normal mb-2.5"
+                        key={"rice_" + index}
+                      >
+                        <div className="bg-[#FFD271] font-bold text-[12px] pl-1 w-[16px] h-[16px] align-center rounded-sm">
+                          {rice.no}
+                        </div>
+                        <div className="font-bold text-[14px] ml-2">
+                          {rice.name}
+                        </div>
+                      </div>
+                      <div className="font-normal text-[12px]">
+                        {rice.description}
+                      </div>
+                      {rice.premiumFeature && (
+                        <div className="bg-[#FFD271]  h-[16px] w-[95px] text-black text-center text-[10px] font-semibold rounded-md mt-1 mb-5">
+                          Premium feature
                         </div>
                       )}
-                      <div className="font-bold text-[16px] mt-2">
-                        {plan.name} Plan
-                      </div>
-                      <div className="text-[11px] font-light mt-0.5">
-                        &#8377;{(plan.price * 12 * 0.8).toFixed(2)}/- for 12
-                        months
-                      </div>
-                      <p className="font-normal text-[12px] mt-1.5">
-                        {plan.description}
-                      </p>
-                      <div className="flex justify-between mt-8">
-                        <div className="font-semibold text-[14px]">
-                          &#8377;{plan.price}/
-                          <span className="font-normal">month</span>
-                        </div>
-                        <div
-                          className="bg-white h-[28px] w-[98px] text-[#384F90] text-center p-1 text-[12px] font-semibold rounded-sm"
-                          onClick={async () => {
-                            handlePayment(plan);
-                          }}
-                        >
-                          Start now
-                        </div>
-                      </div>
+                      <img
+                        className="mt-4 h-[140px] rounded-md"
+                        src={rice?.imageUrl}
+                      />
                     </div>
                   ))}
-              </div>
-              <div className="mt-6">
-                <div className="text-[20px] font-bold mb-8">
-                  What do you get?
-                </div>
-                {riceLpContent.map((rice, index) => (
-                  <div className="mb-9">
-                    <div
-                      className="flex justify-normal mb-2.5"
-                      key={"rice_" + index}
-                    >
-                      <div className="bg-[#FFD271] font-bold text-[12px] pl-1 w-[16px] h-[16px] align-center rounded-sm">
-                        {rice.no}
-                      </div>
-                      <div className="font-bold text-[14px] ml-2">
-                        {rice.name}
-                      </div>
-                    </div>
-                    <div className="font-normal text-[12px]">
-                      {rice.description}
-                    </div>
-                    {rice.premiumFeature && (
-                      <div className="bg-[#FFD271]  h-[16px] w-[95px] text-black text-center text-[10px] font-semibold rounded-md mt-1 mb-5">
-                        Premium feature
-                      </div>
-                    )}
-                    <img
-                      className="mt-4 h-[140px] rounded-md"
-                      src={rice?.imageUrl}
-                    />
-                  </div>
-                ))}
-                <div className="mb-20 mt-11">
-                  <ReactPlayer
-                    ref={videoRef}
-                    url={url}
-                    loop={false}
-                    width="100%"
-                    height="176px"
-                    controls={false}
-                    light={false}
-                    playing={videoPlaying}
-                    stopOnUnmount={true}
-                    volume={videoVolume ? 0 : 1}
-                    onClickPreview={() => {
-                      return null;
-                    }}
-                    config={{
-                      file: {
-                        attributes: {
-                          controlsList: "nodownload", // Disable download button
+                  <div className="mt-11">
+                    <ReactPlayer
+                      ref={videoRef}
+                      url={url}
+                      loop={false}
+                      width="100%"
+                      height="176px"
+                      controls={false}
+                      light={false}
+                      playing={videoPlaying}
+                      stopOnUnmount={true}
+                      volume={videoVolume ? 0 : 1}
+                      onClickPreview={() => {
+                        return null;
+                      }}
+                      config={{
+                        file: {
+                          attributes: {
+                            controlsList: "nodownload", // Disable download button
+                          },
                         },
-                      },
-                    }}
-                    onProgress={(progress) => {
-                      const totalDuration = videoDuration;
-                      const currentProgress = progress?.playedSeconds
-                        ? Math.ceil(progress?.playedSeconds)
-                        : 0; // in seconds
+                      }}
+                      onProgress={(progress) => {
+                        const totalDuration = videoDuration;
+                        const currentProgress = progress?.playedSeconds
+                          ? Math.ceil(progress?.playedSeconds)
+                          : 0; // in seconds
 
-                      const percentageCompleted =
-                        (currentProgress / totalDuration) * 100;
+                        const percentageCompleted =
+                          (currentProgress / totalDuration) * 100;
 
-                      setVideoProgressInPercent(percentageCompleted);
-                    }}
-                    onDuration={(duration) => {
-                      setVideoDuration(duration);
-                    }}
-                    playIcon={
-                      <div className="relative">
-                        {/* <img
+                        setVideoProgressInPercent(percentageCompleted);
+                      }}
+                      onDuration={(duration) => {
+                        setVideoDuration(duration);
+                      }}
+                      playIcon={
+                        <div className="relative">
+                          {/* <img
                 src={"/assets/images/play-icon.svg"}
                 className="h-[72px] w-[72px]"
               /> */}
-                      </div>
-                    }
-                    onEnded={() => {
-                      setVideoPlaying(false);
-                      setShowDefaultThumbnail(true);
-                    }}
-                  />
+                        </div>
+                      }
+                      onEnded={() => {
+                        setVideoPlaying(false);
+                        setShowDefaultThumbnail(true);
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
-              <div
-                className="bg-[#006EB4] text-white p-3 text-center font-medium text-[16px] rounded-md"
-                onClick={async () => {
-                  const res = await startFreeTrialForUser();
+              {/* Fixed button */}
+              {showFixedButton && (
+                <div className="container fixed bottom-0 left-0 right-0 bg-white p-2">
+                  <div
+                    className=" bg-[#006EB4] text-white p-4 text-center font-medium text-[16px] rounded-md"
+                    onClick={async () => {
+                      const res = await startFreeTrialForUser();
 
-                  if (res) {
-                    const details = await checkSubscription(
-                      SERVICE_ID,
-                      authToken
-                    );
+                      if (res) {
+                        const details = await checkSubscription(
+                          SERVICE_ID,
+                          authToken
+                        );
 
-                    if (details?.activeSubscription) {
-                      router.replace("/service/rice-price");
-                      return;
-                    }
-                  }
-                }}
-              >
-                Unlock Free Trial
-              </div>
+                        if (details?.activeSubscription) {
+                          router.replace("/service/rice-price");
+                          return;
+                        }
+                      }
+                    }}
+                  >
+                    Unlock Free Trial
+                  </div>
+                </div>
+              )}
             </React.Fragment>
           </div>
         </div>
