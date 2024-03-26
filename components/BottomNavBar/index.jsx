@@ -39,7 +39,7 @@ export function BottomNavBar({ scrollDirection = "up", lastScrollTop }) {
               } inline-flex flex-col items-center justify-center hover:bg-white-100 dark:hover:bg-white-100 group space-y-[6px]`}
             >
               {opt.icon}
-              <span className="text-xs font-medium font-sans whitespace-nowrap">
+              <span className="text-[11px] font-medium font-sans whitespace-nowrap">
                 {opt.label}
               </span>
             </button>
