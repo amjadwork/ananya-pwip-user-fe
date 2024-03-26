@@ -24,6 +24,7 @@ import {
 } from "@/redux/actions/category.actions";
 
 const atRoutes = [
+  "export-costing",
   "select-pod",
   "costing",
   "edit",
@@ -33,6 +34,7 @@ const atRoutes = [
   "category",
   "subscription-details",
   "rice-price",
+  "lp",
 ];
 
 export function Header(props) {

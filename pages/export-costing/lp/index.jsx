@@ -148,7 +148,7 @@ function lp() {
               const details = await checkSubscription(SERVICE_ID, authToken);
 
               if (details?.activeSubscription) {
-                router.replace("/service/rice-price");
+                router.replace("/export-costing");
               }
 
               if (responseVerify?.result === "Payment Success") {
@@ -338,7 +338,7 @@ function lp() {
                             );
 
                             if (details?.activeSubscription) {
-                              router.replace("/service/rice-price");
+                              router.replace("/export-costing");
                               return;
                             }
                           }
@@ -454,7 +454,7 @@ function lp() {
                     );
 
                     if (details?.activeSubscription) {
-                      router.replace("/service/rice-price");
+                      router.replace("/export-costing");
                       return;
                     }
                   }

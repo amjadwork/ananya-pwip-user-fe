@@ -10,7 +10,14 @@ import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions
 import { forexRateRequest } from "@/redux/actions/utils.actions";
 import { Button } from "@/components/Button";
 
-const hideBottomBarAtRoutes = ["costing", "edit", "detail"];
+const hideBottomBarAtRoutes = [
+  "costing",
+  "edit",
+  "detail",
+  "lp",
+  "rice-price",
+  "export-costing",
+];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();
