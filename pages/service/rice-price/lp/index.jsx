@@ -359,14 +359,14 @@ function lp() {
                       key={plan?.id + "_" + planIndex * 99}
                       className="bg-[#FFF8E9] p-5 rounded-lg"
                     >
-                      <div className="font-semibold text-[14px]">
+                      <span className="font-semibold text-[14px]">
                         Free Trial
-                      </div>
-                      <div className="text-[12px] font-normal mt-2">
+                      </span>
+                      <p className="text-[12px] font-normal mt-2 mb-0">
                         {plan?.description}
-                      </div>
+                      </p>
                       <div
-                        className="font-normal text-sm text-[12px] text-[#2072AB] mt-3.5 flex items-center"
+                        className="font-normal text-sm text-[#2072AB] mt-3.5 flex items-center"
                         onClick={async () => {
                           const res = await startFreeTrialForUser();
 
@@ -390,9 +390,9 @@ function lp() {
                 })}
 
               <div ref={pickPlanRef}>
-                <div className="font-semibold text-[14px] mt-6">
+                <span className="font-semibold text-[14px] mt-6">
                   Pick your Plan
-                </div>
+                </span>
                 <p className="font-normal text-[12px] text-[#1B1B1B] mt-1.5">
                   Recurring billing and cancel anytime.
                 </p>
@@ -437,17 +437,17 @@ function lp() {
                           {plan.description}
                         </p>
                         <div className="flex justify-between mt-8">
-                          <div className="font-semibold text-[14px]">
+                          <span className="font-semibold text-[14px]">
                             &#8377;{plan.price}/
                             <span className="font-normal">month</span>
-                          </div>
+                          </span>
                           <div
-                            className="bg-white h-[28px] w-[98px] text-[#384F90] text-center p-1 text-[12px] font-semibold rounded-sm"
+                            className="bg-white h-[32px] w-[98px] text-[#384F90] text-center p-1 text-[12px] font-semibold rounded inline-flex items-center justify-center"
                             onClick={async () => {
                               handlePayment(plan);
                             }}
                           >
-                            Start now
+                            <span>Start now</span>
                           </div>
                         </div>
                       </div>
@@ -474,30 +474,39 @@ function lp() {
                         {rice.description}
                       </div>
                       {rice.premiumFeature && (
-                        <div className="bg-[#FFD271]  h-[16px] w-[95px] text-black text-center text-[10px] font-semibold rounded-md mt-1 mb-5">
+                        <div className="bg-[#FFD271]  h-[16px] w-[95px] text-black text-center text-[10px] font-semibold rounded-lg mt-1 mb-5">
                           Premium feature
                         </div>
                       )}
                       <img
-                        className="mt-4 h-[140px] rounded-md"
+                        className="mt-4 w-full auto rounded-lg"
                         src={rice?.imageUrl}
                       />
                     </div>
                   ))}
-                  <div className="mt-11">
+                  <div
+                    className="lp relative bg-pwip-black-600 rounded-lg"
+                    // style={{ paddingBottom: "56.25%" }}
+                    id="videoPlayerEl"
+                  >
                     <ReactPlayer
                       ref={videoRef}
                       url={url}
                       loop={false}
                       width="100%"
                       height="176px"
+                      style={{
+                        borderRadius: 8,
+                      }}
                       controls={false}
-                      light={false}
+                      light={true}
+                      previewTabIndex={1}
                       playing={videoPlaying}
                       stopOnUnmount={true}
                       volume={videoVolume ? 0 : 1}
-                      onClickPreview={() => {
-                        return null;
+                      muted={videoVolume ? true : false}
+                      onReady={() => {
+                        setVideoPlaying(true);
                       }}
                       config={{
                         file: {
@@ -506,61 +515,72 @@ function lp() {
                           },
                         },
                       }}
-                      onProgress={(progress) => {
-                        const totalDuration = videoDuration;
-                        const currentProgress = progress?.playedSeconds
-                          ? Math.ceil(progress?.playedSeconds)
-                          : 0; // in seconds
-
-                        const percentageCompleted =
-                          (currentProgress / totalDuration) * 100;
-
-                        setVideoProgressInPercent(percentageCompleted);
-                      }}
-                      onDuration={(duration) => {
-                        setVideoDuration(duration);
-                      }}
                       playIcon={
-                        <div className="relative">
-                          {/* <img
-                src={"/assets/images/play-icon.svg"}
-                className="h-[72px] w-[72px]"
-              /> */}
+                        <div
+                          className="relative"
+                          onClick={() => {
+                            setVideoPlaying(true);
+                          }}
+                        >
+                          <svg
+                            width="52"
+                            height="51"
+                            viewBox="0 0 52 51"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <rect
+                              x="14.3976"
+                              y="14"
+                              width="23.2047"
+                              height="24"
+                              fill="#006EB4"
+                            />
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M5.0968 25.5C5.0968 14.0569 14.455 4.78125 26 4.78125C37.545 4.78125 46.9032 14.0569 46.9032 25.5C46.9032 36.9431 37.545 46.2188 26 46.2188C14.455 46.2188 5.0968 36.9431 5.0968 25.5ZM35.1631 23.4111C35.5387 23.6183 35.8515 23.9212 36.0694 24.2885C36.2872 24.6557 36.402 25.074 36.402 25.5C36.402 25.926 36.2872 26.3443 36.0694 26.7115C35.8515 27.0788 35.5387 27.3817 35.1631 27.5889L23.1507 34.204C22.7837 34.406 22.3698 34.5094 21.95 34.5042C21.5302 34.499 21.1191 34.3853 20.7572 34.1743C20.3954 33.9633 20.0953 33.6624 19.8868 33.3012C19.6783 32.9401 19.5685 32.5312 19.5682 32.1151V18.8849C19.5682 17.0638 21.5428 15.9099 23.1507 16.796L35.1631 23.4111Z"
+                              fill="white"
+                            />
+                          </svg>
                         </div>
                       }
                       onEnded={() => {
                         setVideoPlaying(false);
-                        setShowDefaultThumbnail(true);
                       }}
                     />
                   </div>
                 </div>
               </div>
               {/* Fixed button */}
-              {showFixedButton && (
-                <div className="container fixed bottom-0 left-0 right-0 bg-white p-2">
-                  <div
-                    className=" bg-[#006EB4] text-white p-4 text-center font-medium text-[16px] rounded-md"
-                    onClick={async () => {
-                      const res = await startFreeTrialForUser();
+              <div
+                className={`${
+                  showFixedButton
+                    ? "translate-y-0 opacity-1"
+                    : "translate-y-20 opacity-1"
+                } container fixed bottom-0 left-0 right-0 bg-white p-2 transition-transform`}
+              >
+                <div
+                  className=" bg-[#006EB4] text-white p-4 text-center font-medium text-[16px] rounded-lg"
+                  onClick={async () => {
+                    const res = await startFreeTrialForUser();
 
-                      if (res) {
-                        const details = await checkSubscription(
-                          SERVICE_ID,
-                          authToken
-                        );
+                    if (res) {
+                      const details = await checkSubscription(
+                        SERVICE_ID,
+                        authToken
+                      );
 
-                        if (details?.activeSubscription) {
-                          router.replace("/service/rice-price");
-                          return;
-                        }
+                      if (details?.activeSubscription) {
+                        router.replace("/service/rice-price");
+                        return;
                       }
-                    }}
-                  >
-                    Unlock Free Trial
-                  </div>
+                    }
+                  }}
+                >
+                  Unlock Free Trial
                 </div>
-              )}
+              </div>
             </React.Fragment>
           </div>
         </div>

@@ -31,7 +31,7 @@ export const options = [
   // },
   {
     icon: myCostingBottomBarIcon,
-    label: "My costing",
+    label: "My Costings",
     path: "my-costing",
   },
   {

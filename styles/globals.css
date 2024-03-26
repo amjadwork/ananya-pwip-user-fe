@@ -134,6 +134,11 @@ body::-webkit-scrollbar {
   /* opacity: 0; Make the overlay invisible */
 }
 
+.lp .react-player__preview {
+  border-radius: 8px;
+  pointer-events: all;
+}
+
 /* iframe {
   border-radius: 8px;
 } */
