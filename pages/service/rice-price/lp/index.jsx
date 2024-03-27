@@ -97,7 +97,7 @@ function lp() {
   const [showDefaultThumbnail, setShowDefaultThumbnail] = useState(true);
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
-  const [videoVolume, setVideoVolume] = useState(false);
+  const [videoVolume, setVideoVolume] = useState(0);
   const url = "https://www.youtube.com/embed/Tb4GGo2_QFM";
 
   const [showFixedButton, setShowFixedButton] = useState(false);
@@ -389,7 +389,7 @@ function lp() {
                   );
                 })}
 
-              <div ref={pickPlanRef}>
+              <div className="mt-8" ref={pickPlanRef}>
                 <span className="font-semibold text-[14px] mt-6">
                   Pick your Plan
                 </span>
@@ -494,7 +494,7 @@ function lp() {
                       url={url}
                       loop={false}
                       width="100%"
-                      height="176px"
+                      height="172px"
                       style={{
                         borderRadius: 8,
                       }}
@@ -503,8 +503,8 @@ function lp() {
                       previewTabIndex={1}
                       playing={videoPlaying}
                       stopOnUnmount={true}
-                      volume={videoVolume ? 0 : 1}
-                      muted={videoVolume ? true : false}
+                      volume={videoVolume}
+                      muted={!videoVolume ? true : false}
                       onReady={() => {
                         setVideoPlaying(true);
                       }}
