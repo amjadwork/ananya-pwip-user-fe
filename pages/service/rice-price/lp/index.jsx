@@ -558,7 +558,7 @@ function lp() {
                   showFixedButton
                     ? "translate-y-0 opacity-1"
                     : "translate-y-20 opacity-1"
-                } container fixed bottom-0 left-0 right-0 bg-white p-2 transition-transform`}
+                } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 transition-transform`}
               >
                 <div
                   className=" bg-[#006EB4] text-white p-4 text-center font-medium text-[16px] rounded-lg"
