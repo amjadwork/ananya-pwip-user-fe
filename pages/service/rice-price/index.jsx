@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect } from "react";
-
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { debounce } from "lodash";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
@@ -19,110 +19,16 @@ import {
 } from "@/utils/helper";
 
 import { fetchVariantPriceRequest } from "@/redux/actions/variant-prices.actions";
+import { productStateList } from "@/constants/stateList";
 
 // Import Containers
 
 // Import Layouts
 const SERVICE_ID = ricePriceServiceId;
 
-const productStateList = [
-  [
-    {
-      name: "Haryana",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/haryana.png?updatedAt=1711323994568",
-    },
-    {
-      name: "Odisha",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/odisha.png?updatedAt=1711323994651",
-    },
-  ],
-  [
-    {
-      name: "Punjab",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/punjab.png?updatedAt=1711323998032",
-    },
-    {
-      name: "Uttar Pradesh",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/uttar-pradesh.png?updatedAt=1711323997805",
-    },
-  ],
-  [
-    {
-      name: "Bihar",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/bihar.png?updatedAt=1711323994658",
-    },
-    {
-      name: "Gujrat",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/gujrat.png?updatedAt=1711323994488",
-    },
-  ],
-  [
-    {
-      name: "Madhya Pradesh",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/madhya-pradesh.png?updatedAt=1711323994654",
-    },
-    {
-      name: "West Bengal",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/west-bengal.png?updatedAt=1711323994646",
-    },
-  ],
-  [
-    {
-      name: "Chattisgarh",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/chattisgarh.png?updatedAt=1711323994048",
-    },
-    {
-      name: "Maharashtra",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/maharastra.png?updatedAt=1711323994208",
-    },
-  ],
-  [
-    {
-      name: "Telangana",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/telengana.png?updatedAt=1711323998233",
-    },
-
-    {
-      name: "Andhra Pradesh",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/andhra-pradesh.png?updatedAt=1711323998318",
-    },
-  ],
-  [
-    {
-      name: "Karnataka",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/karnataka.png?updatedAt=1711323997816",
-    },
-    {
-      name: "Kerala",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/kerala.png?updatedAt=1711323994348",
-    },
-  ],
-  [
-    {
-      name: "Tamil Nadu",
-      imageUrl:
-        "https://ik.imagekit.io/qeoc0zl3c/states/tamil-nadu.png?updatedAt=1711323994643",
-    },
-  ],
-];
-
 const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
   return (
-    <div className={`flex w-full flex-col px-5 mb-[24px] pb-4`}>
+    <div className={`flex w-full flex-col px-5 pb-4`}>
       <div className={`flex overflow-x-scroll hide-scroll-bar`}>
         <div className="flex flex-nowrap">
           <div
@@ -192,16 +98,40 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
 };
 
 function RicePrice() {
+  const fixedDivRef = useRef();
+
   const router = useRouter();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
   const variantPriceList =
     useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
 
+  const [isFixed, setIsFixed] = useState(false);
+
+  const checkY = () => {
+    if (fixedDivRef.current) {
+      const fixedDivTop = fixedDivRef.current.offsetTop; //fixedDivRef.current.offsetHeight;
+
+      const shouldBeFixed =
+        parseInt(window.scrollY.toFixed(0)) >= parseInt(fixedDivTop.toFixed(0));
+
+      if (shouldBeFixed) {
+        setIsFixed(true);
+      } else if (!shouldBeFixed) {
+        setIsFixed(false);
+      }
+    }
+  };
+
+  const debouncedCheckY = debounce(checkY, 5);
+
   useEffect(() => {
-    console.log("variantPriceList", variantPriceList);
-  }, [variantPriceList.length]);
-  //   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
+    window.addEventListener("scroll", debouncedCheckY);
+
+    return () => {
+      window.removeEventListener("scroll", debouncedCheckY);
+    };
+  }, []);
 
   async function initPage() {
     const details = await checkSubscription(SERVICE_ID, authToken);
@@ -373,20 +303,24 @@ function RicePrice() {
             </div>
           </div>
 
-          <div className="inline-flex flex-col w-full mt-8 bg-pwip-v2-gray-50">
-            <div className="inline-flex w-full items-center justify-between px-5 py-6">
-              <span className="text-pwip-v2-primary text-base font-bold">
-                120 varieties to explore
-              </span>
-              <span className="text-pwip-v2-gray-500 text-xs">
-                {searchIcon}
-              </span>
-            </div>
-
+          <div
+            ref={fixedDivRef}
+            className="inline-flex flex-col w-full mt-8 bg-pwip-v2-gray-50"
+          >
             <div
-              div
-              className="w-full h-auto inline-flex flex-col hide-scroll-bar"
+              className={`w-full bg-white ${
+                isFixed ? "sticky top-[56px] left-0 z-10" : ""
+              }`}
             >
+              <div className="inline-flex w-full items-center justify-between px-5 py-6">
+                <span className="text-pwip-v2-primary text-base font-bold">
+                  120 varieties to explore
+                </span>
+                <span className="text-pwip-v2-gray-500 text-xs">
+                  {searchIcon}
+                </span>
+              </div>
+
               <FilterSection
                 allTagsData={[
                   {
@@ -410,9 +344,17 @@ function RicePrice() {
                   //
                 }}
               />
+            </div>
 
+            <div
+              div
+              className="w-full h-auto inline-flex flex-col hide-scroll-bar mt-[24px]"
+            >
               <div
                 className={`w-full h-full space-y-4 px-5 pb-[72px] overflow-y-auto hide-scroll-bar transition-all`}
+                // style={{
+                //   paddingTop: isFixed ? "172px" : "",
+                // }}
               >
                 {variantPriceList.map((item, index) => {
                   return (
@@ -472,11 +414,16 @@ function RicePrice() {
 
                           {item?.source?.changeDir === "-" ? (
                             <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
-                              ₹{item?.source?.changeInPrice || 0}
+                              {item?.source?.changeDir}₹
+                              {`${item?.source?.changeInPrice}`.split("-")
+                                .length === 2
+                                ? `${item?.source?.changeInPrice}`.split("-")[1]
+                                : 0}
                             </span>
                           ) : (
                             <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
-                              ₹{item?.source?.changeInPrice || 0}
+                              {item?.source?.changeDir}₹
+                              {item?.source?.changeInPrice || 0}
                             </span>
                           )}
                         </div>
