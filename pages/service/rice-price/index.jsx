@@ -157,6 +157,8 @@ function RicePrice() {
   const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
     useState([]);
 
+  const [topWatchlistVariants, setTopWatchlistVariants] = useState([]);
+
   const checkY = () => {
     if (fixedDivRef.current) {
       const fixedDivTop = fixedDivRef.current.offsetTop; //fixedDivRef.current.offsetHeight;
@@ -206,6 +208,16 @@ function RicePrice() {
       if (variantWatchList.length) {
         const mergedData = mapWatchlist(variantWatchList, variantPriceList);
         setFilteredVariantPriceListData(mergedData);
+
+        let filteredForSavedWatchlist = [...mergedData].filter((d) => {
+          if (d?.watchlist?.saved) return d;
+        });
+
+        if (filteredForSavedWatchlist.length > 5) {
+          filteredForSavedWatchlist = filteredForSavedWatchlist.slice(0, 5);
+        }
+
+        setTopWatchlistVariants([...filteredForSavedWatchlist]);
       } else {
         setFilteredVariantPriceListData(variantPriceList);
       }
@@ -241,85 +253,64 @@ function RicePrice() {
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0`}
         >
-          <div className="inline-flex w-full items-center justify-between px-5 py-3">
-            <span className="text-pwip-v2-primary text-xs font-semibold">
-              Watchlist
-            </span>
-            <span className="text-pwip-v2-gray-500 text-xs">Manage</span>
-          </div>
+          {topWatchlistVariants?.length ? (
+            <div className="inline-flex w-full items-center justify-between px-5 py-3">
+              <span className="text-pwip-v2-primary text-xs font-semibold">
+                Watchlist
+              </span>
+              <span className="text-pwip-v2-gray-500 text-xs">Manage</span>
+            </div>
+          ) : null}
 
-          <div
-            className={`flex overflow-x-scroll hide-scroll-bar px-5 space-x-3`}
-          >
-            {[
-              {
-                name: "Basmati steam rice",
-                region: "Raichur",
-                currency: "₹",
-                price: 32,
-                unit: "kg",
-                changeInPrice: 0.5,
-                changeDir: "+",
-              },
-              {
-                name: "Basmati steam rice",
-                region: "Raichur",
-                currency: "₹",
-                price: 32,
-                unit: "kg",
-                changeInPrice: 0.5,
-                changeDir: "-",
-              },
-              {
-                name: "Basmati steam rice",
-                region: "Raichur",
-                currency: "₹",
-                price: 32,
-                unit: "kg",
-                changeInPrice: 0.5,
-                changeDir: "+",
-              },
-            ].map((item, index) => {
-              return (
-                <div
-                  key={item?.name + "_" + index}
-                  className="flex flex-nowrap"
-                >
-                  <div className="inline-flex flex-col px-3 py-4 bg-pwip-v2-gray-100 space-y-3 w-[242px] rounded-lg">
-                    <div className="inline-flex justify-between w-full">
-                      <span className="text-sm font-semibold text-pwip-black-600">
-                        {item?.name}
-                      </span>
+          {topWatchlistVariants?.length ? (
+            <div
+              className={`flex overflow-x-scroll hide-scroll-bar px-5 space-x-3`}
+            >
+              {topWatchlistVariants.map((item, index) => {
+                return (
+                  <div
+                    key={item?.name + "_" + index}
+                    className="flex flex-nowrap"
+                  >
+                    <div className="inline-flex flex-col px-3 py-4 bg-pwip-v2-gray-100 space-y-3 w-[242px] rounded-lg">
+                      <div className="inline-flex items-center justify-between w-full">
+                        <div className="w-[70%]">
+                          <span className="text-sm font-semibold text-pwip-black-600 line-clamp-1">
+                            {item?.name}
+                          </span>
+                        </div>
 
-                      <span className="text-sm font-bold text-pwip-v2-primary">
-                        {item?.currency}
-                        {item?.price} / {item?.unit}
-                      </span>
-                    </div>
-                    <div className="inline-flex justify-between w-full">
-                      <span className="text-xs font-normal text-pwip-gray-400">
-                        {item?.region}
-                      </span>
-
-                      {item?.changeDir === "+" ? (
-                        <span className="text-xs font-normal text-pwip-green-800">
-                          {item?.changeDir}
-                          {item?.currency}
-                          {item?.changeInPrice}
+                        <div className="w-auto inline-flex items-center justify-end">
+                          <span className="text-sm font-bold text-pwip-v2-primary whitespace-nowrap">
+                            ₹{item?.source?.price}/{item?.unit}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="inline-flex justify-between w-full">
+                        <span className="text-xs font-normal text-pwip-gray-400">
+                          {item?.source?.region}
                         </span>
-                      ) : (
-                        <span className="text-xs font-normal text-pwip-red-700">
-                          {item?.changeDir}
-                          {item?.currency}
-                          {item?.changeInPrice}
-                        </span>
-                      )}
+
+                        {item?.source?.changeDir === "+" ? (
+                          <span className="text-xs font-normal text-pwip-green-800">
+                            {item?.source?.changeDir}₹{item?.changeInPrice || 0}
+                          </span>
+                        ) : (
+                          <span className="text-xs font-normal text-pwip-red-700">
+                            {item?.source?.changeDir}₹
+                            {`${item?.source?.changeInPrice}`.split("-")
+                              .length === 2
+                              ? `${item?.source?.changeInPrice}`.split("-")[1]
+                              : 0}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : null}
 
           <div className="inline-flex flex-col w-full mt-8">
             <div className="inline-flex w-full items-center justify-between px-5 py-3">
@@ -375,7 +366,7 @@ function RicePrice() {
             >
               <div className="inline-flex w-full items-center justify-between px-5 py-6">
                 <span className="text-pwip-v2-primary text-base font-bold">
-                  120 varieties to explore
+                  {filteredVariantPriceListData?.length} varieties to explore
                 </span>
                 <span className="text-pwip-v2-gray-500 text-xs">
                   {searchIcon}
