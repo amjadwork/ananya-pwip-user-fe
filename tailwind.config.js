@@ -150,6 +150,7 @@ module.exports = {
     "to-[#537FE7]",
     "from-[#533D75]",
     "to-[#A97AE6]",
+    "h-[27px]",
   ],
   theme: {
     extend: {

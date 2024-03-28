@@ -130,7 +130,7 @@ export function Header(props) {
               src={
                 serviceLogoRoutes?.find((f) => f.route === activeRoute)?.logo
               }
-              className="h-[27px] w-full"
+              className="h-[27px] w-auto"
               alt="Logo"
             />
           ) : null}
