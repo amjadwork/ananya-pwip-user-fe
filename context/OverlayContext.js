@@ -21,6 +21,9 @@ export function OverlayProvider({ children }) {
   const [showToast, setShowToast] = useState(false);
   const [toastContent, setToastContent] = useState(null);
 
+  const [isSearchFilterModalOpen, setIsSearchFilterModalOpen] = useState(false);
+  const [searchFilterChildren, setSearchFilterChildren] = useState(null);
+
   const [bottomSheetChildren, setBottomSheetChildren] = useState(null);
 
   const [autoHideToast, setAutoHideToast] = useState(true);
@@ -37,6 +40,14 @@ export function OverlayProvider({ children }) {
     setIsModalOpen(true);
   };
   const closeModal = () => setIsModalOpen(false);
+
+  const openSearchFilterModal = (content) => {
+    setIsSearchFilterModalOpen(true);
+
+    setSearchFilterChildren(content);
+  };
+
+  const closeSearchFilterModal = () => setIsSearchFilterModalOpen(false);
 
   const openBottomSheet = async (
     content,
@@ -107,6 +118,10 @@ export function OverlayProvider({ children }) {
     showToast,
     openToastMessage,
     closeToastMessage,
+
+    isSearchFilterModalOpen,
+    openSearchFilterModal,
+    closeSearchFilterModal,
   };
 
   const bottomSheet = (
@@ -383,6 +398,12 @@ export function OverlayProvider({ children }) {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {isSearchFilterModalOpen && (
+        <div className="h-screen w-screen bg-white fixed top-0 left-0 overflow-hidden z-50 inline-flex justify-center items-center">
+          {searchFilterChildren}
         </div>
       )}
     </OverlayContext.Provider>

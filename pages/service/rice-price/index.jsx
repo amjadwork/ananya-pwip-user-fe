@@ -7,6 +7,8 @@ import { useSelector, useDispatch } from "react-redux";
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
+import { useOverlayContext } from "@/context/OverlayContext";
+
 import {
   searchIcon,
   bookmarkFilledIcon,
@@ -16,6 +18,9 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
+
+import SearchAndFilter from "@/containers/rice-price/SearchAndFilter";
+
 import {
   getStateAbbreviation,
   checkSubscription,
@@ -143,6 +148,8 @@ function mapWatchlist(array1, array2) {
 function RicePrice() {
   const fixedDivRef = useRef();
 
+  const { openSearchFilterModal, closeSearchFilterModal } = useOverlayContext();
+
   const router = useRouter();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
@@ -153,6 +160,8 @@ function RicePrice() {
 
   const [isFixed, setIsFixed] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("All");
+  const [variantAndWatchlistMergedData, setVariantAndWatchlistMergedData] =
+    useState([]);
 
   const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
     useState([]);
@@ -174,7 +183,7 @@ function RicePrice() {
     }
   };
 
-  const debouncedCheckY = debounce(checkY, 5);
+  const debouncedCheckY = debounce(checkY, 0);
 
   useEffect(() => {
     window.addEventListener("scroll", debouncedCheckY);
@@ -207,6 +216,7 @@ function RicePrice() {
     if (variantPriceList.length) {
       if (variantWatchList.length) {
         const mergedData = mapWatchlist(variantWatchList, variantPriceList);
+        setVariantAndWatchlistMergedData(mergedData);
         setFilteredVariantPriceListData(mergedData);
 
         let filteredForSavedWatchlist = [...mergedData].filter((d) => {
@@ -220,6 +230,8 @@ function RicePrice() {
         setTopWatchlistVariants([...filteredForSavedWatchlist]);
       } else {
         setFilteredVariantPriceListData(variantPriceList);
+        setVariantAndWatchlistMergedData(variantPriceList);
+        setTopWatchlistVariants([]);
       }
     }
   }, [variantWatchList, variantPriceList]);
@@ -253,12 +265,33 @@ function RicePrice() {
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0`}
         >
-          {topWatchlistVariants?.length ? (
-            <div className="inline-flex w-full items-center justify-between px-5 py-3">
-              <span className="text-pwip-v2-primary text-xs font-semibold">
-                Watchlist
-              </span>
-              <span className="text-pwip-v2-gray-500 text-xs">Manage</span>
+          <div className="inline-flex w-full items-center justify-between px-5 py-3">
+            <div className="inline-flex items-center space-x-2 text-pwip-v2-primary">
+              {/* {bookmarkOutlineIcon} */}
+
+              <span className="text-sm font-semibold">Watchlist</span>
+            </div>
+
+            <span className="text-pwip-v2-gray-500 text-sm">Manage</span>
+          </div>
+
+          {!topWatchlistVariants?.length ? (
+            <div className="px-5 w-full h-auto">
+              <div
+                className={`w-full h-[80px] bg-pwip-v2-gray-100 rounded-lg inline-flex flex-col justify-center items-center space-y-2`}
+              >
+                <span className="text-[11px] text-pwip-black-500">
+                  Add your favourite rice to the watchlist
+                </span>
+
+                <Button
+                  type="outline"
+                  fontSize="!text-[11px]"
+                  maxWidth="!max-h-[24px] !min-h-[24px] !max-w-[72px] !min-w-[72px]"
+                  label="Add now"
+                  rounded="rounded-md"
+                />
+              </div>
             </div>
           ) : null}
 
@@ -272,7 +305,7 @@ function RicePrice() {
                     key={item?.name + "_" + index}
                     className="flex flex-nowrap"
                   >
-                    <div className="inline-flex flex-col px-3 py-4 bg-pwip-v2-gray-100 space-y-3 w-[242px] rounded-lg">
+                    <div className="inline-flex flex-col px-3 py-4 bg-pwip-v2-gray-100 space-y-3 w-[242px] rounded-lg border-[1px] border-pwip-v2-gray-300">
                       <div className="inline-flex items-center justify-between w-full">
                         <div className="w-[70%]">
                           <span className="text-sm font-semibold text-pwip-black-600 line-clamp-1">
@@ -336,6 +369,10 @@ function RicePrice() {
                         return (
                           <div
                             key={states?.name + "_" + stateIndex}
+                            onClick={() => {
+                              const content = <SearchAndFilter />;
+                              openSearchFilterModal(content);
+                            }}
                             className="inline-flex flex-col items-center justify-center bg-white space-y-3 min-w-[80px] rounded-lg"
                           >
                             <img
@@ -400,7 +437,9 @@ function RicePrice() {
                 handleFilterSelect={(item, isAll) => {
                   if (selectedFilter !== "All" && isAll) {
                     setSelectedFilter("All");
-                    setFilteredVariantPriceListData([...variantPriceList]);
+                    setFilteredVariantPriceListData([
+                      ...variantAndWatchlistMergedData,
+                    ]);
                     return null;
                   }
 
@@ -410,13 +449,15 @@ function RicePrice() {
 
                   if (selectedFilter?.name === item?.name) {
                     setSelectedFilter(null);
-                    setFilteredVariantPriceListData([...variantPriceList]);
+                    setFilteredVariantPriceListData([
+                      ...variantAndWatchlistMergedData,
+                    ]);
                     return null;
                   } else {
                     setSelectedFilter(item);
                   }
 
-                  const dataToFilterOrSort = [...variantPriceList];
+                  const dataToFilterOrSort = [...variantAndWatchlistMergedData];
 
                   const filteredData = dataToFilterOrSort?.filter((d) => {
                     if (
@@ -557,7 +598,7 @@ function RicePrice() {
                   );
                 })}
 
-                {!variantPriceList?.length ? (
+                {!filteredVariantPriceListData?.length ? (
                   <div className="inline-flex flex-col justify-center items-center w-full h-full">
                     <img
                       className="w-auto h-[260px]"

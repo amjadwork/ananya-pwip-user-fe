@@ -24,7 +24,7 @@ import {
 } from "@/redux/actions/category.actions";
 
 const atRoutes = [
-  "export-costing",
+  // "export-costing",
   "select-pod",
   "costing",
   "edit",
@@ -33,8 +33,19 @@ const atRoutes = [
   "profile-edit",
   "category",
   "subscription-details",
-  "rice-price",
+  // "rice-price",
   "lp",
+];
+
+const serviceLogoRoutes = [
+  {
+    route: "rice-price",
+    logo: "/assets/images/services/rice-price-service-logo.png",
+  },
+  {
+    route: "export-costing",
+    logo: "/assets/images/services/ec-service-logo.png",
+  },
 ];
 
 export function Header(props) {
@@ -103,21 +114,26 @@ export function Header(props) {
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
           {((!hideLogo && activeRoute == "subscriptions") ||
-            (!atRoutes.includes(activeRoute) && !searchScreenActive) ||
+            (!atRoutes.includes(activeRoute) &&
+              !searchScreenActive &&
+              !serviceLogoRoutes?.find((f) => f.route === activeRoute)) ||
             showLogoForPreview) && (
-            // <a href="/export-costing" className="">
-            //   <img
-            //     src="/assets/images/logo-blue.png"
-            //     className="h-full w-[40px]"
-            //     alt="Logo"
-            //   />
-            // </a>
             <img
               src="/assets/images/logo-blue.png"
               className="h-full w-[40px]"
               alt="Logo"
             />
           )}
+
+          {serviceLogoRoutes?.find((f) => f.route === activeRoute) ? (
+            <img
+              src={
+                serviceLogoRoutes?.find((f) => f.route === activeRoute)?.logo
+              }
+              className="h-[27px] w-full"
+              alt="Logo"
+            />
+          ) : null}
 
           {((activeRoute !== "subscriptions" &&
             atRoutes.includes(activeRoute)) ||

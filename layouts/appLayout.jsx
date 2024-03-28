@@ -15,8 +15,8 @@ const hideBottomBarAtRoutes = [
   "edit",
   "detail",
   "lp",
-  "rice-price",
-  "export-costing",
+  // "rice-price",
+  // "export-costing",
 ];
 
 const AppLayout = ({ children }) => {
