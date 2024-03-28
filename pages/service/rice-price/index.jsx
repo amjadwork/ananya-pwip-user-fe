@@ -7,7 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
-import { searchIcon, bookmarkOutlineIcon } from "../../../theme/icon";
+import {
+  searchIcon,
+  bookmarkFilledIcon,
+  bookmarkOutlineIcon,
+} from "../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -18,7 +22,11 @@ import {
   ricePriceServiceId,
 } from "@/utils/helper";
 
-import { fetchVariantPriceRequest } from "@/redux/actions/variant-prices.actions";
+import {
+  fetchVariantPriceRequest,
+  addVariantToWatchlistRequest,
+  fetchAllWatchlistForVariantRequest,
+} from "@/redux/actions/variant-prices.actions";
 import { productStateList } from "@/constants/stateList";
 
 // Import Containers
@@ -43,11 +51,28 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
               onClick={() => {
                 handleFilterSelect(null, true);
               }}
-              className="overflow-hidden w-auto h-auto inline-flex items-center"
+              className="overflow-hidden text-pwip-v2-gray-800 w-auto h-auto inline-flex items-center space-x-2"
             >
-              <span className="text-sm text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
+              <span className="text-xs text-pwip-v2-gray-800 font-[400] whitespace-nowrap">
                 All
               </span>
+
+              {selectedFilter === "All" && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-[14px] h-[14px]"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              )}
             </div>
           </div>
           {[...allTagsData].map((items, index) => {
@@ -55,30 +80,30 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
 
             return (
               <div
-                key={items?.tagName + (index + 1 * 2)}
+                key={items?.name + (index + 1 * 2)}
                 onClick={() => {
                   handleFilterSelect(items);
                 }}
                 // className="inline-block px-[16px] py-[4px] border-[1px] border-pwip-v2-gray-200 bg-pwip-v2-gray-100 rounded-full mr-[12px]"
-                className={`inline-block whitespace-nowrap px-[16px] py-[4px] border-[1px] ${
-                  !isSelected
+                className={`inline-block whitespace-nowrap px-[16px] py-[3px] border-[1px] ${
+                  isSelected
                     ? "border-pwip-v2-primary-700 bg-pwip-v2-primary-200"
                     : "border-pwip-v2-gray-200 bg-pwip-v2-gray-100"
                 } rounded-full mr-[12px] transition-all`}
               >
                 <div className="overflow-hidden text-pwip-v2-gray-800 w-auto h-auto inline-flex items-center space-x-2">
-                  <span className="text-sm font-[400] whitespace-nowrap">
-                    {items?.tagName}
+                  <span className="text-xs font-[400] whitespace-nowrap">
+                    {items?.name}
                   </span>
 
-                  {!isSelected && (
+                  {isSelected && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="w-[18px] h-[18px]"
+                      class="w-[14px] h-[14px]"
                     >
                       <path
                         stroke-linecap="round"
@@ -97,6 +122,24 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
   );
 };
 
+function mapWatchlist(array1, array2) {
+  // Create a map to store objects from array1 based on _variantId and _sourceId
+  const map = new Map();
+  array1.forEach((item) =>
+    map.set(`${item._variantId}-${item._sourceId}`, item)
+  );
+
+  // Modify array2 to include watchlist key with matching object from array1
+  const newArray2 = array2.map((item) => {
+    const watchlistItem = map.get(`${item.variantId}-${item.source._sourceId}`);
+    return watchlistItem
+      ? { ...item, watchlist: watchlistItem }
+      : { ...item, watchlist: null };
+  });
+
+  return newArray2;
+}
+
 function RicePrice() {
   const fixedDivRef = useRef();
 
@@ -105,8 +148,14 @@ function RicePrice() {
   const authToken = useSelector((state) => state.auth?.token);
   const variantPriceList =
     useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
+  const variantWatchList =
+    useSelector((state) => state.variantPriceList.variantWatchList) || [];
 
   const [isFixed, setIsFixed] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
+  const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
+    useState([]);
 
   const checkY = () => {
     if (fixedDivRef.current) {
@@ -143,6 +192,7 @@ function RicePrice() {
     }
 
     await dispatch(fetchVariantPriceRequest());
+    await dispatch(fetchAllWatchlistForVariantRequest());
 
     return;
   }
@@ -150,6 +200,17 @@ function RicePrice() {
   useLayoutEffect(() => {
     initPage();
   }, []);
+
+  useEffect(() => {
+    if (variantPriceList.length) {
+      if (variantWatchList.length) {
+        const mergedData = mapWatchlist(variantWatchList, variantPriceList);
+        setFilteredVariantPriceListData(mergedData);
+      } else {
+        setFilteredVariantPriceListData(variantPriceList);
+      }
+    }
+  }, [variantWatchList, variantPriceList]);
 
   return (
     <React.Fragment>
@@ -324,45 +385,74 @@ function RicePrice() {
               <FilterSection
                 allTagsData={[
                   {
-                    tagName: "Basmati",
+                    _id: 0,
+                    name: "Basmati",
                   },
                   {
-                    tagName: "Non Basmati",
+                    _id: 1,
+                    name: "Parboiled",
                   },
                   {
-                    tagName: "Parboiled",
+                    _id: 2,
+                    name: "Raw",
                   },
                   {
-                    tagName: "Raw",
+                    _id: 3,
+                    name: "Steam",
                   },
                   {
-                    tagName: "Steam",
+                    _id: 4,
+                    name: "Sella",
                   },
                 ]}
-                selectedFilter="All"
+                selectedFilter={selectedFilter}
                 handleFilterSelect={(item, isAll) => {
-                  //
+                  if (selectedFilter !== "All" && isAll) {
+                    setSelectedFilter("All");
+                    setFilteredVariantPriceListData([...variantPriceList]);
+                    return null;
+                  }
+
+                  if (selectedFilter === "All" && isAll) {
+                    return null;
+                  }
+
+                  if (selectedFilter?.name === item?.name) {
+                    setSelectedFilter(null);
+                    setFilteredVariantPriceListData([...variantPriceList]);
+                    return null;
+                  } else {
+                    setSelectedFilter(item);
+                  }
+
+                  const dataToFilterOrSort = [...variantPriceList];
+
+                  const filteredData = dataToFilterOrSort?.filter((d) => {
+                    if (
+                      d?.name
+                        ?.toLowerCase()
+                        ?.includes(item?.name?.toLowerCase())
+                    ) {
+                      return d;
+                    }
+                  });
+
+                  setFilteredVariantPriceListData([...filteredData]);
                 }}
               />
             </div>
 
             <div
               div
-              className="w-full h-auto inline-flex flex-col hide-scroll-bar mt-[24px]"
+              className="w-full h-auto inline-flex flex-col hide-scroll-bar"
             >
               <div
-                className={`w-full h-full space-y-4 px-5 pb-[72px] overflow-y-auto hide-scroll-bar transition-all`}
-                // style={{
-                //   paddingTop: isFixed ? "172px" : "",
-                // }}
+                className={`w-full h-full space-y-4 px-5 pt-4 pb-[72px] overflow-y-auto hide-scroll-bar transition-all`}
               >
-                {variantPriceList.map((item, index) => {
+                {filteredVariantPriceListData.map((item, index) => {
                   return (
                     <div
                       key={item.source._id + index}
-                      onClick={() => {
-                        // router.push("/service/rice-price/details");
-                      }}
                       className="inline-flex flex-col w-full space-y-5 bg-white rounded-lg px-3 py-4"
                     >
                       <div className="inline-flex w-full justify-between">
@@ -370,7 +460,7 @@ function RicePrice() {
                           onClick={() => {
                             router.push("/service/rice-price/detail");
                           }}
-                          className="relative inline-flex space-x-3 w-full"
+                          className="relative inline-flex space-x-3 w-[90%]"
                         >
                           <img
                             src={
@@ -397,8 +487,38 @@ function RicePrice() {
                           </div>
                         </div>
 
-                        <div className="w-auto h-auto relative text-pwip-v2-primary-800">
-                          {bookmarkOutlineIcon}
+                        <div
+                          onClick={() => {
+                            if (
+                              item?.watchlist?.saved &&
+                              item?.watchlist?._sourceId ===
+                                item?.source?._sourceId
+                            ) {
+                              dispatch(
+                                addVariantToWatchlistRequest(
+                                  item?.variantId,
+                                  item?.source?._sourceId,
+                                  "remove"
+                                )
+                              );
+
+                              return;
+                            }
+
+                            dispatch(
+                              addVariantToWatchlistRequest(
+                                item?.variantId,
+                                item?.source?._sourceId,
+                                "add"
+                              )
+                            );
+                          }}
+                          className="w-[22px] h-[22px] inline-flex items-center justify-center relative text-pwip-v2-primary-800"
+                        >
+                          {item?.watchlist?.saved &&
+                          item?.watchlist?._sourceId === item?.source?._sourceId
+                            ? bookmarkFilledIcon
+                            : bookmarkOutlineIcon}
                         </div>
                       </div>
                       <div

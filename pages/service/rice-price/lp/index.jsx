@@ -561,7 +561,7 @@ function lp() {
                 } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 transition-transform`}
               >
                 <div
-                  className=" bg-[#006EB4] text-white p-4 text-center font-medium text-[16px] rounded-lg"
+                  className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
                   onClick={async () => {
                     const res = await startFreeTrialForUser();
 
