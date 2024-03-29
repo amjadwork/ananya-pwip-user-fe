@@ -1,12 +1,5 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { debounce } from "lodash";
-import Head from "next/head";
+import React, { useEffect, useMemo, useState } from "react";
+
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -23,32 +16,18 @@ import {
 // Import Components
 import { Button } from "@/components/Button";
 
-import {
-  getStateAbbreviation,
-  checkSubscription,
-  ricePriceServiceId,
-} from "@/utils/helper";
+import { getStateAbbreviation, ricePriceServiceId } from "@/utils/helper";
 
-import {
-  fetchVariantPriceRequest,
-  addVariantToWatchlistRequest,
-  fetchAllWatchlistForVariantRequest,
-} from "@/redux/actions/variant-prices.actions";
-import { productStateList } from "@/constants/stateList";
+import { addVariantToWatchlistRequest } from "@/redux/actions/variant-prices.actions";
 
 // Import Containers
 
 // Import Layouts
 const SERVICE_ID = ricePriceServiceId;
 
-const SearchInput = ({ placeholder }) => {
+const SearchInput = ({ placeholder, handleSearch = (val) => null }) => {
   const [searchStringValue, setSearchStringValue] = useState("");
   let blurOccurred = null;
-
-  const handleSearch = (value) => {
-    // Your search logic here
-    console.log("Search value:", value);
-  };
 
   const handleInputDoneClick = (e) => {
     // Your input done click logic here
@@ -206,140 +185,121 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
   );
 };
 
-function mapWatchlist(array1, array2) {
-  // Create a map to store objects from array1 based on _variantId and _sourceId
-  const map = new Map();
-  array1.forEach((item) =>
-    map.set(`${item._variantId}-${item._sourceId}`, item)
-  );
+function SearchAndFilter({ title, filterByState = "" }) {
+  const { closeSearchFilterModal } = useOverlayContext();
 
-  // Modify array2 to include watchlist key with matching object from array1
-  const newArray2 = array2.map((item) => {
-    const watchlistItem = map.get(`${item.variantId}-${item.source._sourceId}`);
-    return watchlistItem
-      ? { ...item, watchlist: watchlistItem }
-      : { ...item, watchlist: null };
-  });
-
-  return newArray2;
-}
-
-function SearchAndFilter({ title }) {
-  const fixedDivRef = useRef();
-
-  const { openSearchFilterModal, closeSearchFilterModal } = useOverlayContext();
-
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const authToken = useSelector((state) => state.auth?.token);
   const variantPriceList =
     useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
   const variantWatchList =
     useSelector((state) => state.variantPriceList.variantWatchList) || [];
 
-  const [isFixed, setIsFixed] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [variantAndWatchlistMergedData, setVariantAndWatchlistMergedData] =
-    useState([]);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [filterTags, setFilterTags] = useState([]);
   const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
     useState([]);
 
-  const [searchStringValue, setSearchStringValue] = React.useState("");
-
-  const checkY = () => {
-    if (fixedDivRef.current) {
-      const fixedDivTop = fixedDivRef.current.offsetTop; //fixedDivRef.current.offsetHeight;
-
-      const shouldBeFixed =
-        parseInt(window.scrollY.toFixed(0)) >= parseInt(fixedDivTop.toFixed(0));
-
-      if (shouldBeFixed) {
-        setIsFixed(true);
-      } else if (!shouldBeFixed) {
-        setIsFixed(false);
-      }
-    }
-  };
-
-  const debouncedCheckY = debounce(checkY, 0);
-
-  useEffect(() => {
-    window.addEventListener("scroll", debouncedCheckY);
-
-    return () => {
-      window.removeEventListener("scroll", debouncedCheckY);
-    };
-  }, []);
-
-  async function initPage() {
-    const details = await checkSubscription(SERVICE_ID, authToken);
-
-    if (!details?.activeSubscription) {
-      router.replace("/service/rice-price/lp");
-
-      return;
-    }
-
-    await dispatch(fetchVariantPriceRequest());
-    await dispatch(fetchAllWatchlistForVariantRequest());
-
-    return;
-  }
-
-  useLayoutEffect(() => {
-    initPage();
-  }, []);
+  const [intialVariantPriceListData, setIntialVariantPriceListData] = useState(
+    []
+  );
 
   function handleSearch(searchString) {
-    //
+    const dataToFilter = [...intialVariantPriceListData];
+
+    // Create an empty array to store the matching variants
+    const matchingVariants = [];
+
+    // Convert the search string to lowercase for a case-insensitive search
+    const searchLower = searchString.toLowerCase();
+
+    // Iterate through the array of variants
+    for (const variant of dataToFilter) {
+      // Convert the variant name to lowercase for comparison
+      const variantNameLower = variant.name.toLowerCase();
+      const sourceNameLower = variant.source.region.toLowerCase();
+      const sourceStateLower = variant.source.state.toLowerCase();
+
+      // Check if the variant name contains the search string
+      if (
+        variantNameLower.includes(searchLower) ||
+        sourceNameLower.includes(searchLower) ||
+        sourceStateLower.includes(searchLower)
+      ) {
+        // If it does, add the variant to the matchingVariants array
+        matchingVariants.push(variant);
+      }
+    }
+
+    if (searchString) {
+      setFilteredVariantPriceListData(matchingVariants);
+    }
+
+    if (!searchString) {
+      setFilteredVariantPriceListData([...intialVariantPriceListData]);
+    }
   }
 
   useEffect(() => {
+    function mapWatchlist(array1, array2) {
+      // Create a map to store objects from array1 based on _variantId and _sourceId
+      const map = new Map();
+      array1.forEach((item) =>
+        map.set(`${item._variantId}-${item._sourceId}`, item)
+      );
+
+      // Modify array2 to include watchlist key with matching object from array1
+      const newArray2 = array2.map((item) => {
+        const watchlistItem = map.get(
+          `${item.variantId}-${item.source._sourceId}`
+        );
+        return watchlistItem
+          ? { ...item, watchlist: watchlistItem }
+          : { ...item, watchlist: null };
+      });
+
+      return newArray2;
+    }
+
     if (variantPriceList.length) {
+      const stateName = filterByState;
+
       if (variantWatchList.length) {
         const mergedData = mapWatchlist(variantWatchList, variantPriceList);
-        setVariantAndWatchlistMergedData(mergedData);
-        setFilteredVariantPriceListData(mergedData);
 
-        let filteredForSavedWatchlist = [...mergedData].filter((d) => {
-          if (d?.watchlist?.saved) return d;
+        const list = [...mergedData].filter((d) => {
+          if (d?.source?.state?.toLowerCase() === stateName?.toLowerCase()) {
+            return d;
+          }
         });
 
-        if (filteredForSavedWatchlist.length > 5) {
-          filteredForSavedWatchlist = filteredForSavedWatchlist.slice(0, 5);
-        }
-      } else {
-        setFilteredVariantPriceListData(variantPriceList);
-        setVariantAndWatchlistMergedData(variantPriceList);
+        setFilteredVariantPriceListData(list);
+        setIntialVariantPriceListData(list);
+
+        // filter tags
+        const isDuplicateRegion = (regions, region) => {
+          return regions.some((r) => r._id === region._id);
+        };
+
+        const regionList = list.reduce((acc, curr) => {
+          const region = {
+            name: curr.source.region,
+            _id: curr.source._sourceId,
+          };
+          if (!isDuplicateRegion(acc, region)) {
+            acc.push(region);
+          }
+          return acc;
+        }, []);
+
+        setFilterTags([...regionList]);
       }
     }
-  }, [variantWatchList, variantPriceList]);
-
-  let blurOccurred = null;
-
-  const handleInputDoneClick = (event) => {
-    event.target.blur();
-  };
+  }, [variantPriceList, variantWatchList]);
 
   return (
     <React.Fragment>
-      <Head>
-        <meta charSet="utf-8" />
-
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        {/*<meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-*/}
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-
-        {/* <link rel="manifest" href="/manifest.json" /> */}
-        {/* <link rel="icon" href="/favicon.ico" /> */}
-      </Head>
-
       <div className={`relative h-full w-full bg-pwip-white-100 z-0`}>
         <div className="inline-flex flex-col w-full bg-pwip-v2-gray-50">
           <div
@@ -364,38 +324,20 @@ function SearchAndFilter({ title }) {
                 </div>
               </div>
 
-              <SearchInput placeholder="Search by rice name, or region" />
+              <SearchInput
+                placeholder="Search by rice name, or region"
+                handleSearch={handleSearch}
+              />
             </div>
 
             <FilterSection
-              allTagsData={[
-                {
-                  _id: 0,
-                  name: "Basmati",
-                },
-                {
-                  _id: 1,
-                  name: "Parboiled",
-                },
-                {
-                  _id: 2,
-                  name: "Raw",
-                },
-                {
-                  _id: 3,
-                  name: "Steam",
-                },
-                {
-                  _id: 4,
-                  name: "Sella",
-                },
-              ]}
+              allTagsData={filterTags}
               selectedFilter={selectedFilter}
               handleFilterSelect={(item, isAll) => {
                 if (selectedFilter !== "All" && isAll) {
                   setSelectedFilter("All");
                   setFilteredVariantPriceListData([
-                    ...variantAndWatchlistMergedData,
+                    ...intialVariantPriceListData,
                   ]);
                   return null;
                 }
@@ -407,18 +349,19 @@ function SearchAndFilter({ title }) {
                 if (selectedFilter?.name === item?.name) {
                   setSelectedFilter(null);
                   setFilteredVariantPriceListData([
-                    ...variantAndWatchlistMergedData,
+                    ...intialVariantPriceListData,
                   ]);
                   return null;
                 } else {
                   setSelectedFilter(item);
                 }
 
-                const dataToFilterOrSort = [...variantAndWatchlistMergedData];
+                const dataToFilterOrSort = [...intialVariantPriceListData];
 
                 const filteredData = dataToFilterOrSort?.filter((d) => {
                   if (
-                    d?.name?.toLowerCase()?.includes(item?.name?.toLowerCase())
+                    d?.source?.region?.toLowerCase() ===
+                    item?.name?.toLowerCase()
                   ) {
                     return d;
                   }

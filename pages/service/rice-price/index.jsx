@@ -379,6 +379,7 @@ function RicePrice() {
                               const content = (
                                 <SearchAndFilter
                                   title={`Explore varieties from ${states?.name}`}
+                                  filterByState={states?.name}
                                 />
                               );
                               openSearchFilterModal(content);
