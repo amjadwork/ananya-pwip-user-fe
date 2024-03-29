@@ -12,7 +12,7 @@ export const backIcon = (
   >
     <path
       d="M8 2L2 8L8 14"
-      stroke="white"
+      stroke="currentColor"
       strokeWidth="3"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -6749,7 +6749,6 @@ export const filterIcon = (
   </svg>
 );
 
-
 export const nextArrow = (
   <svg
     width="12"
@@ -6764,5 +6763,16 @@ export const nextArrow = (
       stroke-linecap="round"
       stroke-linejoin="round"
     />
+  </svg>
+);
+
+export const closeXmark = (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    class="w-5 h-5"
+  >
+    <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
   </svg>
 );

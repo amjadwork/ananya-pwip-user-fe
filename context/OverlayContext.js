@@ -402,7 +402,7 @@ export function OverlayProvider({ children }) {
       )}
 
       {isSearchFilterModalOpen && (
-        <div className="h-screen w-screen bg-white fixed top-0 left-0 overflow-hidden z-50 inline-flex justify-center items-center">
+        <div className="h-screen w-screen bg-white fixed top-0 left-0 z-50 inline-flex justify-center items-center">
           {searchFilterChildren}
         </div>
       )}
