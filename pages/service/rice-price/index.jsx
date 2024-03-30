@@ -501,7 +501,11 @@ function RicePrice() {
                       <div className="inline-flex w-full justify-between">
                         <div
                           onClick={() => {
-                            router.push("/service/rice-price/detail");
+                            router.push(
+                              "/service/rice-price/detail" +
+                                "/" +
+                                item?.variantId
+                            );
                           }}
                           className="relative inline-flex space-x-3 w-[90%]"
                         >
@@ -566,7 +570,9 @@ function RicePrice() {
                       </div>
                       <div
                         onClick={() => {
-                          router.push("/service/rice-price/detail");
+                          router.push(
+                            "/service/rice-price/detail" + "/" + item?.variantId
+                          );
                         }}
                         className="w-full inline-flex justify-between"
                       >
@@ -600,7 +606,11 @@ function RicePrice() {
                             minHeight="!min-h-[20px]"
                             fontSize="!text-[11px]"
                             onClick={async () => {
-                              router.push("/service/rice-price/detail");
+                              router.push(
+                                "/service/rice-price/detail" +
+                                  "/" +
+                                  item?.variantId
+                              );
                             }}
                           />
                         </div>

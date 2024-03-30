@@ -542,7 +542,10 @@ function Home() {
                   In volume
                 </span>
               </div>
-              <div className="w-full h-[180px] relative overflow-hidden mt-3">
+              <div
+                className="w-full h-[180px] relative overflow-hidden mt-3"
+                id="home-chart"
+              >
                 <Chart
                   options={{
                     data,

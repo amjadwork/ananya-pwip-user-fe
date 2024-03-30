@@ -113,17 +113,18 @@ export function Header(props) {
     >
       <div className="inline-flex items-center justify-between w-full h-auto">
         <div className="inline-flex items-center">
-          {((!hideLogo && activeRoute == "subscriptions") ||
-            (!atRoutes.includes(activeRoute) &&
-              !searchScreenActive &&
-              !serviceLogoRoutes?.find((f) => f.route === activeRoute)) ||
-            showLogoForPreview) && (
+          {(!hideLogo && activeRoute == "subscriptions") ||
+          (!atRoutes.includes(activeRoute) &&
+            !searchScreenActive &&
+            !hideLogo &&
+            !serviceLogoRoutes?.find((f) => f.route === activeRoute)) ||
+          showLogoForPreview ? (
             <img
               src="/assets/images/logo-blue.png"
               className="h-full w-[40px]"
               alt="Logo"
             />
-          )}
+          ) : hideLogo ? null : null}
 
           {serviceLogoRoutes?.find((f) => f.route === activeRoute) ? (
             <img
@@ -137,7 +138,8 @@ export function Header(props) {
 
           {((activeRoute !== "subscriptions" &&
             atRoutes.includes(activeRoute)) ||
-            searchScreenActive) &&
+            searchScreenActive ||
+            hideLogo) &&
             !hideBack && (
               <div
                 className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"

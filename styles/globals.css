@@ -123,6 +123,10 @@ body::-webkit-scrollbar {
   bottom: -32px !important;
 }
 
+#variant-properties .slick-dots {
+  bottom: -56px !important;
+}
+
 .slick-dots li {
   margin: 0;
   margin-right: 5px;
@@ -145,17 +149,30 @@ body::-webkit-scrollbar {
 /* slider ends */
 
 /* react-charts start */
-.ReactChart .tickLabel {
+#home-chart .ReactChart .tickLabel {
   font-size: 12px !important;
 }
 
-.ReactChart .domainAndTicks .tick line {
+#home-chart .ReactChart .domainAndTicks .tick line {
   display: none !important;
   visibility: hidden !important;
   stroke-width: 0 !important;
 }
 
-.ReactChart .domainAndTicks line {
+#home-chart .ReactChart .domainAndTicks line {
   stroke: #f4f4f4 !important;
 }
 /* react-charts end */
+
+#rice-detail .ReactChart .domain {
+  stroke: #dbdbdd !important;
+}
+
+#rice-detail .ReactChart .tick line {
+  stroke: #e6e6e9 !important;
+}
+
+#rice-detail .ReactChart .tick text {
+  font-size: 11px !important;
+  color: #808080 !important;
+}
