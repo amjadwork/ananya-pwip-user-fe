@@ -37,7 +37,7 @@ import {
 
 import moment from "moment";
 
-const graphPeriod = ["3W", "2M", "3M", "6M", "1Y", "2Y"];
+const graphPeriod = ["2W", "1M", "3M", "6M", "1Y", "2Y"];
 
 const propertyData = [
   {
@@ -135,7 +135,7 @@ function RicePriceDetail() {
         minDomainLength: 1.25,
         tickLabelRotationDeg: 0,
         tickCount: 3,
-        showDatumElements: true,
+        showDatumElements: true, // "onFocus",
         curve: curveBumpX,
         scaleType: "linear",
       },
