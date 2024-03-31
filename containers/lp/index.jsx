@@ -289,7 +289,13 @@ const LandingPage = (props) => {
                     );
 
                     if (details?.activeSubscription) {
+                      if (serviceName === "export-costing") {
+                        router.replace(`/${serviceName}`);
+                        return;
+                      }
+
                       router.replace(`/service/${serviceName}`);
+
                       return;
                     }
                   }
@@ -467,7 +473,13 @@ const LandingPage = (props) => {
               const details = await checkSubscription(SERVICE_ID, authToken);
 
               if (details?.activeSubscription) {
+                if (serviceName === "export-costing") {
+                  router.replace(`/${serviceName}`);
+                  return;
+                }
+
                 router.replace(`/service/${serviceName}`);
+
                 return;
               }
             }
