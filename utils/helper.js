@@ -198,50 +198,110 @@ export function secondsToMinutes(seconds) {
 }
 
 export function getStateAbbreviation(stateName) {
-  const stateAbbreviations = {
-    "Andhra Pradesh": "AP",
-    "Arunachal Pradesh": "AR",
-    Assam: "AS",
-    Bihar: "BR",
-    Chhattisgarh: "CG",
-    Goa: "GA",
-    Gujarat: "GJ",
-    Haryana: "HR",
-    "Himachal Pradesh": "HP",
-    "Jammu and Kashmir": "JK",
-    Jharkhand: "JH",
-    Karnataka: "KA",
-    Kerala: "KL",
-    "Madhya Pradesh": "MP",
-    Maharashtra: "MH",
-    Manipur: "MN",
-    Meghalaya: "ML",
-    Mizoram: "MZ",
-    Nagaland: "NL",
-    Odisha: "OD",
-    Punjab: "PB",
-    Rajasthan: "RJ",
-    Sikkim: "SK",
-    "Tamil Nadu": "TN",
-    Tripura: "TR",
-    Uttarakhand: "UK",
-    "Uttar Pradesh": "UP",
-    "West Bengal": "WB",
-    "Andaman and Nicobar Islands": "AN",
-    Chandigarh: "CH",
-    "Dadra and Nagar Haveli": "DH",
-    "Daman and Diu": "DD",
-    Delhi: "DL",
-    Lakshadweep: "LD",
-    Pondicherry: "PY",
-    Telangana: "TS",
-  };
+  if (stateName) {
+    const stateAbbreviations = {
+      "Andhra Pradesh": "AP",
+      "Arunachal Pradesh": "AR",
+      Assam: "AS",
+      Bihar: "BR",
+      Chhattisgarh: "CG",
+      Goa: "GA",
+      Gujarat: "GJ",
+      Haryana: "HR",
+      "Himachal Pradesh": "HP",
+      "Jammu and Kashmir": "JK",
+      Jharkhand: "JH",
+      Karnataka: "KA",
+      Kerala: "KL",
+      "Madhya Pradesh": "MP",
+      Maharashtra: "MH",
+      Manipur: "MN",
+      Meghalaya: "ML",
+      Mizoram: "MZ",
+      Nagaland: "NL",
+      Odisha: "OD",
+      Punjab: "PB",
+      Rajasthan: "RJ",
+      Sikkim: "SK",
+      "Tamil Nadu": "TN",
+      Tripura: "TR",
+      Uttarakhand: "UK",
+      "Uttar Pradesh": "UP",
+      "West Bengal": "WB",
+      "Andaman and Nicobar Islands": "AN",
+      Chandigarh: "CH",
+      "Dadra and Nagar Haveli": "DH",
+      "Daman and Diu": "DD",
+      Delhi: "DL",
+      Lakshadweep: "LD",
+      Pondicherry: "PY",
+      Telangana: "TS",
+    };
 
-  // Convert the input to title case for better matching
-  const formattedStateName = stateName
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+    // Convert the input to title case for better matching
+    const formattedStateName = stateName
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
 
-  // Check if the provided stateName exists in the mapping, if not return null
-  return stateAbbreviations[formattedStateName] || null;
+    // Check if the provided stateName exists in the mapping, if not return null
+    return stateAbbreviations[formattedStateName] || null;
+  }
+}
+
+export function getDateRangeByPeriod(period) {
+  const currentDate = new Date();
+  let startDate, endDate;
+
+  switch (period) {
+    case "3W":
+      startDate = new Date(currentDate.getTime() - 21 * 24 * 60 * 60 * 1000);
+      endDate = currentDate;
+      break;
+    case "1M":
+      startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 1,
+        1
+      );
+      endDate = currentDate;
+      break;
+    case "3M":
+      startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 3,
+        1
+      );
+      endDate = currentDate;
+      break;
+    case "6M":
+      startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 6,
+        1
+      );
+      endDate = currentDate;
+      break;
+    case "1Y":
+      startDate = new Date(
+        currentDate.getFullYear() - 1,
+        currentDate.getMonth(),
+        1
+      );
+      endDate = currentDate;
+      break;
+    case "2Y":
+      startDate = new Date(
+        currentDate.getFullYear() - 2,
+        currentDate.getMonth(),
+        1
+      );
+      endDate = currentDate;
+      break;
+    default:
+      startDate = null;
+      endDate = null;
+      break;
+  }
+
+  return { startDate: startDate.toISOString(), endDate: endDate.toISOString() };
 }

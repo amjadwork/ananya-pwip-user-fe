@@ -23,10 +23,21 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { getStateAbbreviation } from "@/utils/helper";
+import { getStateAbbreviation, getDateRangeByPeriod } from "@/utils/helper";
+
+import {
+  fetchProductDetailRequest,
+  fetchProductDetailFailure,
+} from "@/redux/actions/products.actions";
+import {
+  fetchVariantPriceRequest,
+  setSelectedVariantForDetailRequest,
+  fetchVariantPriceHistoryRequest,
+} from "@/redux/actions/variant-prices.actions";
+
 import moment from "moment";
 
-const graphPeriod = ["2W", "1M", "3M", "6M", "1Y", "2Y"];
+const graphPeriod = ["3W", "1M", "3M", "6M", "1Y", "2Y"];
 
 const propertyData = [
   {
@@ -52,11 +63,29 @@ const propertyData = [
 ];
 
 function RicePriceDetail() {
-  //   const router = useRouter();
-  //   const dispatch = useDispatch();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const variantDetail = useSelector((state) => state.products?.variantDetail);
+  const variantPriceDetailById = useSelector(
+    (state) => state.variantPriceList?.variantWithPriceList
+  );
+
+  const selectedVariantPriceDetail =
+    useSelector((state) => state.variantPriceList.variantDetails) || null;
+
+  const variantPriceHistoryData =
+    useSelector((state) => state.variantPriceList.variantPriceHistory) || null;
 
   const [selectedChartPeriod, setSelectedChartPeriod] = useState("3M");
   const [activeSlide, setActiveSlide] = useState(0);
+  const [variantDetailData, setVariantDetailData] = useState(null);
+  const [graphData, setGraphData] = useState([
+    {
+      label: "Rice Price",
+      data: [],
+    },
+  ]);
 
   const handleShare = () => {
     if (navigator && navigator.share) {
@@ -66,7 +95,7 @@ function RicePriceDetail() {
           text: ``,
           url:
             window.location.origin +
-            `${window.location.pathname}?utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03`,
+            `${window.location.pathname}?_s=${router?.query?._s}&utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03`,
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
@@ -79,7 +108,8 @@ function RicePriceDetail() {
       showGrid: false,
       invert: false,
       shouldNice: true,
-      getValue: (datum) => moment(datum.primary).format("DD MMM"),
+      getValue: (datum) => new Date(moment(datum.primary).format("YYYY-MM-DD")), // moment(datum.primary).format("MMM YY"),
+      tickLabelRotationDeg: 0,
       styles: {
         line: {
           strokeWidth: 1,
@@ -103,54 +133,15 @@ function RicePriceDetail() {
         shouldNice: true,
         getValue: (datum) => datum.secondary,
         minDomainLength: 1.25,
+        tickLabelRotationDeg: 0,
         tickCount: 3,
         showDatumElements: true,
         curve: curveBumpX,
         scaleType: "linear",
-        styles: {
-          line: {
-            strokeWidth: 8,
-            stroke: "red",
-          },
-          tick: {
-            strokeWidth: 8,
-            stroke: "red",
-            display: "none",
-            visibility: "hidden",
-          },
-        },
       },
     ],
     []
   );
-
-  const data = [
-    {
-      label: "Rice price",
-      data: [
-        {
-          primary: "2024-03-29T00:00:00.000Z",
-          secondary: 32,
-        },
-        {
-          primary: "2024-03-30T00:00:00.000Z",
-          secondary: 32.5,
-        },
-        {
-          primary: "2024-03-31T00:00:00.000Z",
-          secondary: 33,
-        },
-        {
-          primary: "2024-04-01T00:00:00.000Z",
-          secondary: 32,
-        },
-        {
-          primary: "2024-04-02T00:00:00.000Z",
-          secondary: 32.5,
-        },
-      ],
-    },
-  ];
 
   const sliderSettings = useMemo(
     () => ({
@@ -183,6 +174,73 @@ function RicePriceDetail() {
     [activeSlide]
   );
 
+  useEffect(() => {
+    if (variantDetail) {
+      let detailsObj = { ...variantDetail };
+
+      detailsObj.sourceRates =
+        detailsObj?.sourceRates?.find(
+          (s) => s._sourceId === router?.query?._s
+        ) || null;
+
+      setVariantDetailData(detailsObj);
+    }
+  }, [variantDetail]);
+
+  useEffect(() => {
+    if (variantPriceDetailById.length) {
+      dispatch(setSelectedVariantForDetailRequest(variantPriceDetailById[0]));
+    }
+  }, [variantPriceDetailById]);
+
+  useEffect(() => {
+    if (!selectedVariantPriceDetail && router?.query?.id && router?.query?._s) {
+      dispatch(fetchVariantPriceRequest(router?.query?.id, router?.query?._s));
+    }
+  }, [router?.query?.id, router?.query?._s, selectedVariantPriceDetail]);
+
+  useEffect(() => {
+    if (router?.query?.id && router?.query?._s && selectedChartPeriod) {
+      const variantId = router?.query?.id;
+      const sourceId = router?.query?._s;
+
+      const range = getDateRangeByPeriod(selectedChartPeriod);
+
+      let startDate = range.startDate;
+      let endDate = range.endDate;
+
+      dispatch(
+        fetchVariantPriceHistoryRequest(variantId, sourceId, startDate, endDate)
+      );
+    }
+  }, [router?.query?.id, router?.query?._s, selectedChartPeriod]);
+
+  useEffect(() => {
+    if (variantPriceHistoryData.length) {
+      let dataToPlot = [...variantPriceHistoryData].map((d) => {
+        return {
+          primary: d.createdAt,
+          secondary: d.price,
+          radius: undefined,
+        };
+      });
+
+      const graphDataPoints = [
+        {
+          label: "Rice Price",
+          data: dataToPlot,
+        },
+      ];
+      setGraphData(graphDataPoints);
+    }
+  }, [variantPriceHistoryData]);
+
+  useLayoutEffect(() => {
+    if (router?.query?.id) {
+      dispatch(fetchProductDetailRequest(router?.query?.id));
+    }
+  }, [router?.query?.id]);
+
   return (
     <React.Fragment>
       <Head>
@@ -199,7 +257,7 @@ function RicePriceDetail() {
           name="apple-mobile-web-app-status-bar-style"
           content="black-translucent"
         />
-*/}
+        */}
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
         {/* <link rel="manifest" href="/manifest.json" /> */}
@@ -216,7 +274,10 @@ function RicePriceDetail() {
             <div className="flex flex-col w-full space-y-1 px-5">
               <div className="inline-flex w-full items-center justify-between">
                 <span className="text-pwip-v2-primary-700 text-xs font-bold">
-                  Raichur, KA
+                  {selectedVariantPriceDetail?.source?.region},{" "}
+                  {getStateAbbreviation(
+                    selectedVariantPriceDetail?.source?.state
+                  )}
                 </span>
                 <div className="inline-flex items-center space-x-5">
                   <button
@@ -241,16 +302,17 @@ function RicePriceDetail() {
 
               <div className="inline-flex flex-col w-full">
                 <span className="text-pwip-v2-primary text-base font-bold">
-                  Sona Masuri Raw
+                  {variantDetailData?.variantName}
                 </span>
                 <span className="text-pwip-gray-550 text-xs font-regular">
-                  HSN Code: 10061090
+                  HSN Code: {variantDetailData?.HSNCode}
                 </span>
 
                 <div className="flex w-full items-end justify-between mt-4">
                   <div className="inline-flex items-end space-x-[10px]">
                     <span className="text-pwip-v2-primary text-xl font-bold">
-                      ₹32/Kg
+                      ₹{selectedVariantPriceDetail?.source?.price}/
+                      {selectedVariantPriceDetail?.source?.unit}
                     </span>
 
                     <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
@@ -263,9 +325,23 @@ function RicePriceDetail() {
                     </div>
                   </div>
 
-                  <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
-                    +₹0.50
-                  </span>
+                  {selectedVariantPriceDetail?.source?.changeDir === "+" ? (
+                    <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
+                      {selectedVariantPriceDetail?.source?.changeDir}₹
+                      {selectedVariantPriceDetail?.source?.changeInPrice || 0}
+                    </span>
+                  ) : (
+                    <span className="text-pwip-red-700 text-xs font-semibold mb-[3.5px]">
+                      {selectedVariantPriceDetail?.source?.changeDir}₹
+                      {`${selectedVariantPriceDetail?.source?.changeInPrice}`.split(
+                        "-"
+                      ).length === 2
+                        ? `${selectedVariantPriceDetail?.source?.changeInPrice}`.split(
+                            "-"
+                          )[1]
+                        : 0}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -275,28 +351,32 @@ function RicePriceDetail() {
                 className="w-full h-[200px] relative overflow-hidden mt-3"
                 id="rice-detail"
               >
-                <Chart
-                  options={{
-                    data,
-                    primaryAxis,
-                    secondaryAxes,
-                    padding: {
-                      left: 0,
-                      right: 0,
-                    },
-                    tooltip: {
-                      show: false,
-                      align: "top",
-                      alignPriority: "top",
-                    },
-
-                    showDebugAxes: false,
-                    showVoronoi: false,
-                    memoizeSeries: true,
-                    defaultColors: ["#61A1E7"],
-                    interactionMode: "primary",
-                  }}
-                />
+                {graphData[0]?.data?.length ? (
+                  <Chart
+                    options={{
+                      data: [...graphData],
+                      primaryAxis,
+                      secondaryAxes,
+                      padding: {
+                        left: 0,
+                        right: 0,
+                      },
+                      tooltip: {
+                        show: false,
+                      },
+                      showDebugAxes: false,
+                      showVoronoi: false,
+                      memoizeSeries: true,
+                      defaultColors: ["#61A1E7"],
+                      interactionMode: "primary",
+                      primaryCursor: {
+                        show: true,
+                        showLine: true,
+                        showLabel: true,
+                      },
+                    }}
+                  />
+                ) : null}
               </div>
 
               <div className="grid grid-cols-6 bg-pwip-v2-gray-100 rounded-lg mt-7">
@@ -372,4 +452,4 @@ function RicePriceDetail() {
 
 // export default withAuth(RicePriceDetail);
 
-export default RicePriceDetail;
+export default withAuth(RicePriceDetail);
