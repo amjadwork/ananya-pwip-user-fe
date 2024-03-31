@@ -194,10 +194,10 @@ function RicePriceDetail() {
   }, [variantPriceDetailById]);
 
   useEffect(() => {
-    if (!selectedVariantPriceDetail && router?.query?.id && router?.query?._s) {
+    if (router?.query?.id && router?.query?._s) {
       dispatch(fetchVariantPriceRequest(router?.query?.id, router?.query?._s));
     }
-  }, [router?.query?.id, router?.query?._s, selectedVariantPriceDetail]);
+  }, [router?.query?.id, router?.query?._s]);
 
   useEffect(() => {
     if (router?.query?.id && router?.query?._s && selectedChartPeriod) {
