@@ -253,6 +253,10 @@ export function getDateRangeByPeriod(period) {
   let startDate, endDate;
 
   switch (period) {
+    case "2W":
+      startDate = new Date(currentDate.getTime() - 14 * 24 * 60 * 60 * 1000);
+      endDate = currentDate;
+      break;
     case "3W":
       startDate = new Date(currentDate.getTime() - 21 * 24 * 60 * 60 * 1000);
       endDate = currentDate;
@@ -265,11 +269,25 @@ export function getDateRangeByPeriod(period) {
       );
       endDate = currentDate;
       break;
+    case "2M":
+      startDate = new Date(
+        currentDate.getFullYear(),
+        currentDate.getMonth() - 2,
+        1
+      );
+      endDate = currentDate;
+      break;
     case "3M":
       startDate = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth() - 3,
         1
+      );
+      endDate = currentDate;
+      break;
+    case "4M":
+      startDate = new Date(
+        Date.UTC(currentDate.getFullYear(), currentDate.getMonth() - 4, 1)
       );
       endDate = currentDate;
       break;
