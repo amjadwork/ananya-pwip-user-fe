@@ -1,20 +1,18 @@
 /** @format */
 
-export const riceLpContent = [
+export const features = [
   {
-    no: 1,
     name: "Anytime, anywhere rice prices.",
     description:
       "Unlimited access to rice prices to make your price discovery more convenient.",
     premiumFeature: false,
-    imageUrl: "/assets/images/services/riceLP/riceLP1.svg",
+    imageUrl: "/assets/images/services/lp/riceFeature1.svg",
   },
   {
-    no: 2,
     name: "Latest 2 year historical rice price data.",
     description:
       "Unlimited access to rice prices to make your price discovery more convenient.",
     premiumFeature: true,
-    imageUrl: "/assets/images/services/riceLP/riceLP2.svg",
+    imageUrl: "/assets/images/services/lp/riceFeature2.svg",
   },
 ];
