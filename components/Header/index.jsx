@@ -27,7 +27,7 @@ import {
 } from "@/redux/actions/category.actions";
 
 const atRoutes = [
-  // "export-costing",
+  "export-costing",
   "select-pod",
   "costing",
   "edit",
@@ -36,19 +36,19 @@ const atRoutes = [
   "profile-edit",
   "category",
   "subscription-details",
-  // "rice-price",
+  "rice-price",
   "lp",
 ];
 
 const serviceLogoRoutes = [
-  {
-    route: "rice-price",
-    logo: "/assets/images/services/rice-price-service-logo.png",
-  },
-  {
-    route: "export-costing",
-    logo: "/assets/images/services/ec-service-logo.png",
-  },
+  // {
+  //   route: "rice-price",
+  //   logo: "/assets/images/services/rice-price-service-logo.png",
+  // },
+  // {
+  //   route: "export-costing",
+  //   logo: "/assets/images/services/ec-service-logo.png",
+  // },
 ];
 
 export function Header(props) {
