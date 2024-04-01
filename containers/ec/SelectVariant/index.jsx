@@ -1283,6 +1283,8 @@ const SelectVariantContainer = (props) => {
                     key={items._id + index}
                     onClick={() => {
                       dispatch(searchScreenFailure());
+                      console.log("variantDetail items", items);
+
                       if (isFromEdit) {
                         if (setFieldValue) {
                           setFieldValue(

@@ -442,13 +442,14 @@ function Home() {
             </div>
 
             <div className="inline-flex w-full h-auto py-4 px-5 bg-pwip-v2-green-200 rounded-lg relative">
-              <div className="inline-flex flex-col space-y-6 h-full w-full max-w-[55%]">
+              <div className="inline-flex flex-col space-y-6 h-full w-full max-w-[60%]">
                 <div className="inline-flex flex-col space-y-1">
                   <span className="text-sm font-bold text-pwip-black-600 text-left">
-                    Become an exporter
+                    Curated for Exporter's need.
                   </span>
-                  <span className="text-xs font-normal text-pwip-black-500 text-left">
-                    Documentation, onboarding, and everything
+                  <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
+                    Upgrade to our all-in-one plan and get benefits of all the
+                    services.
                   </span>
                 </div>
 
@@ -456,11 +457,11 @@ function Home() {
                   <Button
                     type="white"
                     label="Know more"
-                    rounded="!rounded-md"
+                    rounded="!rounded-sm"
                     maxHeight="!max-h-[22px]"
                     minHeight="!min-h-[22px]"
                     fontSize="!text-xs"
-                    maxWidth="max-w-[65%]"
+                    maxWidth="max-w-[50%]"
                     onClick={async () => {
                       //
                     }}

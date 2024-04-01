@@ -46,6 +46,11 @@ import {
 
 import moment from "moment";
 
+import {
+  setCostingSelection,
+  // setCustomCostingSelection,
+} from "@/redux/actions/costing.actions.js";
+
 function compareArrays(arr, obj) {
   return arr.map((property) => {
     const { key } = property;
@@ -239,6 +244,7 @@ function RicePriceDetail() {
           (s) => s._sourceId === router?.query?._s
         ) || null;
 
+      console.log("variantDetail", detailsObj);
       setVariantDetailData(detailsObj);
     }
   }, [variantDetail]);
@@ -545,11 +551,25 @@ function RicePriceDetail() {
 
               <div className="absolute top-0 left-0 z-10 bg-transparent w-full h-full inline-flex flex-col items-center justify-between py-[32px]">
                 <h2 className="text-center text-pwip-white-100 font-bold text-sm">
-                  Calculate costing for Sona Masuri Raw
+                  <span className="opacity-[0.8]">Get</span>{" "}
+                  <span className="opacity-[1]">costing</span>{" "}
+                  <span className="opacity-[0.8]">
+                    for {variantDetailData?.variantName}
+                  </span>
                 </h2>
 
-                <button className="bg-pwip-white-100 rounded-md py-1 px-3 text-center text-pwip-v2-primary text-[11px]">
-                  Continue
+                <button
+                  onClick={() => {
+                    dispatch(
+                      setCostingSelection({
+                        product: variantDetailData,
+                      })
+                    );
+                    router.push("/export-costing/select-pod");
+                  }}
+                  className="bg-pwip-white-100 rounded-md py-2 px-5 text-center text-pwip-v2-primary text-[11px]"
+                >
+                  Generate now
                 </button>
               </div>
             </div>
