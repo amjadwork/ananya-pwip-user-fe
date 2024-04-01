@@ -339,7 +339,7 @@ function RicePriceDetail() {
         <Header hideLogo={true} />
 
         <div
-          className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-100 z-0 space-y-2`}
+          className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-100 z-0 space-y-2 pb-12`}
         >
           <div className="relative w-full h-auto pt-3 pb-4 bg-white">
             <div className="flex flex-col w-full space-y-1 px-5">
@@ -533,6 +533,25 @@ function RicePriceDetail() {
                   );
                 })}
               </Slider>
+            </div>
+          </div>
+
+          <div className="inline-flex w-full px-5 py-4 !mt-[42px]">
+            <div className="relative w-full">
+              <img
+                src="/assets/images/services/ec-cta-banner.png"
+                className="w-full h-full relative z-0"
+              />
+
+              <div className="absolute top-0 left-0 z-10 bg-transparent w-full h-full inline-flex flex-col items-center justify-between py-[32px]">
+                <h2 className="text-center text-pwip-white-100 font-bold text-sm">
+                  Calculate costing for Sona Masuri Raw
+                </h2>
+
+                <button className="bg-pwip-white-100 rounded-md py-1 px-3 text-center text-pwip-v2-primary text-[11px]">
+                  Continue
+                </button>
+              </div>
             </div>
           </div>
         </div>
