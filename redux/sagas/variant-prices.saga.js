@@ -22,8 +22,6 @@ import { makeApiCall } from "./_commonFunctions.saga";
 function* fetchVariantWithPrice(action) {
   const query = action?.payload;
 
-  console.log("query", query);
-
   const variantId = query?.variantId || null;
   const sourceId = query?.sourceId || null;
 
@@ -45,6 +43,7 @@ function* fetchVariantWithPrice(action) {
 // watchlist
 function* addOrRemoveVariantInWatchlist(action) {
   const actionPayload = action?.payload;
+  const callbackById = actionPayload?.callbackById;
 
   const body = {
     variantId: actionPayload?.variantId,
@@ -63,20 +62,27 @@ function* addOrRemoveVariantInWatchlist(action) {
     );
 
     if (response) {
-      yield put(fetchAllWatchlistForVariantRequest());
+      if (callbackById) {
+        yield put(fetchAllWatchlistForVariantRequest(actionPayload?.variantId));
+      } else {
+        yield put(fetchAllWatchlistForVariantRequest());
+      }
     }
   } catch (error) {
     console.error(error);
   }
 }
 
-function* fetchWatchlistForVariant() {
+function* fetchWatchlistForVariant(action) {
+  const id = action?.payload?.id;
   try {
-    const response = yield call(
-      makeApiCall,
-      "/service/rice-price/variant-watchlist",
-      "get"
-    );
+    let url = "/service/rice-price/variant-watchlist";
+
+    if (id) {
+      url = `/service/rice-price/variant-watchlist?variantId=${id}`;
+    }
+
+    const response = yield call(makeApiCall, url, "get");
 
     if (response) {
       yield put(addVariantToWatchlistSuccess(response.data));

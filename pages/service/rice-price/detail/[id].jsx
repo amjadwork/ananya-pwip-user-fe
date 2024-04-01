@@ -33,34 +33,76 @@ import {
   fetchVariantPriceRequest,
   setSelectedVariantForDetailRequest,
   fetchVariantPriceHistoryRequest,
+  addVariantToWatchlistRequest,
+  fetchAllWatchlistForVariantRequest,
 } from "@/redux/actions/variant-prices.actions";
+
+import { fetchVariantProfileRequest } from "@/redux/actions/variant-profile.actions";
+
+import {
+  graphPeriod,
+  propertyData,
+} from "@/constants/variantProfile.constants";
 
 import moment from "moment";
 
-const graphPeriod = ["2W", "1M", "3M", "6M", "1Y", "2Y"];
+function compareArrays(arr, obj) {
+  return arr.map((property) => {
+    const { key } = property;
+    const value = obj[key];
 
-const propertyData = [
-  {
-    icon: "/assets/images/services/prop/grain-type.png",
-    label: "Grain type",
-    value: "Medium grain",
-  },
-  {
-    icon: "/assets/images/services/prop/grain-length.png",
-    label: "Grain length",
-    value: "N/A",
-  },
-  {
-    icon: "/assets/images/services/prop/grain-width.png",
-    label: "Grain width",
-    value: "N/A",
-  },
-  {
-    icon: "/assets/images/services/prop/grain-color.png",
-    label: "Color",
-    value: "off white",
-  },
-];
+    if (typeof value === "string") {
+      return {
+        ...property,
+        value: value,
+        isString: true,
+        showOnlyRangeTo: false,
+      };
+    } else if (typeof value === "object") {
+      const { rangeFrom, rangeTo, unit, notes } = value;
+      if (rangeFrom === 0 && rangeTo === 0) {
+        return {
+          ...property,
+          value: notes,
+          isString: false,
+          showOnlyRangeTo: true,
+        };
+      } else if (rangeFrom === 0) {
+        return {
+          ...property,
+          value: `${rangeTo} ${unit}`,
+          isString: false,
+          showOnlyRangeTo: true,
+        };
+      } else {
+        return {
+          ...property,
+          value: `${rangeFrom} - ${rangeTo} ${unit}`,
+          isString: false,
+          showOnlyRangeTo: false,
+        };
+      }
+    } else {
+      return property;
+    }
+  });
+}
+
+function generateSliderArr(inputArray) {
+  let resultArray = [];
+  let currentSubArray = [];
+
+  for (let i = 0; i < inputArray.length; i++) {
+    currentSubArray.push(inputArray[i]);
+
+    if ((i + 1) % 3 === 0 || i === inputArray.length - 1) {
+      resultArray.push([...currentSubArray]);
+      currentSubArray = [];
+    }
+  }
+
+  return resultArray;
+}
 
 function RicePriceDetail() {
   const router = useRouter();
@@ -77,9 +119,23 @@ function RicePriceDetail() {
   const variantPriceHistoryData =
     useSelector((state) => state.variantPriceList.variantPriceHistory) || null;
 
+  const variantProfileData =
+    useSelector((state) => state.variantProfile.variantProfileData) || null;
+
+  const variantWatchList =
+    useSelector((state) => state.variantPriceList.variantWatchList) || [];
+
+  const watchListData =
+    useMemo(
+      () => variantWatchList.find((d) => d?._sourceId === router?.query?._s),
+      [variantWatchList]
+    ) || null;
+
   const [selectedChartPeriod, setSelectedChartPeriod] = useState("3M");
   const [activeSlide, setActiveSlide] = useState(0);
   const [variantDetailData, setVariantDetailData] = useState(null);
+  const [variantProfileDetailData, setVariantProfileDetailData] = useState([]);
+
   const [graphData, setGraphData] = useState([
     {
       label: "Rice Price",
@@ -148,7 +204,7 @@ function RicePriceDetail() {
       dots: true,
       infinite: true,
       autoplay: true,
-      autoplaySpeed: 6000,
+      autoplaySpeed: 8000,
       speed: 500,
       arrows: false,
       slidesToShow: 1,
@@ -162,9 +218,9 @@ function RicePriceDetail() {
           <div
             className={`${
               activeSlide === i
-                ? "w-[18px] bg-[#003559]"
-                : "w-[8px] bg-[#E1E0E0]"
-            } h-[8px] rounded-full`}
+                ? "w-[6px] bg-[#003559]"
+                : "w-[6px] bg-[#E1E0E0]"
+            } h-[6px] rounded-full`}
           >
             {/*  */}
           </div>
@@ -235,9 +291,24 @@ function RicePriceDetail() {
     }
   }, [variantPriceHistoryData]);
 
+  useEffect(() => {
+    if (variantProfileData?.length) {
+      const profileObject = variantProfileData[0];
+      const combinedArray = compareArrays(propertyData, profileObject);
+
+      if (combinedArray.length) {
+        const silderArray = generateSliderArr(combinedArray);
+
+        setVariantProfileDetailData(silderArray);
+      }
+    }
+  }, [variantProfileData]);
+
   useLayoutEffect(() => {
     if (router?.query?.id) {
       dispatch(fetchProductDetailRequest(router?.query?.id));
+      dispatch(fetchVariantProfileRequest(router?.query?.id));
+      dispatch(fetchAllWatchlistForVariantRequest(router?.query?.id));
     }
   }, [router?.query?.id]);
 
@@ -290,12 +361,32 @@ function RicePriceDetail() {
                   </button>
 
                   <button
-                    onClick={() => {
-                      //
+                    onClick={async () => {
+                      if (watchListData?.saved) {
+                        await dispatch(
+                          addVariantToWatchlistRequest(
+                            router?.query?.id,
+                            router?.query?._s,
+                            "remove",
+                            true
+                          )
+                        );
+                      } else {
+                        await dispatch(
+                          addVariantToWatchlistRequest(
+                            router?.query?.id,
+                            router?.query?._s,
+                            "add",
+                            true
+                          )
+                        );
+                      }
                     }}
                     className="w-[22px] h-[22px] inline-flex items-center justify-center relative text-pwip-v2-primary-800 outline-none border-none"
                   >
-                    {bookmarkFilledIcon}
+                    {watchListData?.saved
+                      ? bookmarkFilledIcon
+                      : bookmarkOutlineIcon}
                   </button>
                 </div>
               </div>
@@ -411,16 +502,16 @@ function RicePriceDetail() {
 
             <div id="variant-properties" className="mt-5">
               <Slider {...sliderSettings}>
-                {[1, 2, 3, 4].map((items, index) => {
+                {variantProfileDetailData.map((items, index) => {
                   return (
                     <div
-                      key={items + index * 123}
-                      className="grid grid-rows-4 w-full px-3"
+                      key={"items_13ew" + index * 123}
+                      className="grid grid-rows-4 w-full px-3 min-h-[183px]"
                     >
-                      {propertyData.map((property, propertyIndex) => (
+                      {items.map((property, propertyIndex) => (
                         <div
                           className={`py-5 ${
-                            propertyIndex === propertyData.length - 1
+                            propertyIndex === items.length - 1
                               ? ""
                               : "border-b-[1px] border-b-pwip-v2-gray-250"
                           } w-full inline-flex justify-between items-center`}

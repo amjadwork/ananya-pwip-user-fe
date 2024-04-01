@@ -17,6 +17,7 @@ import categoryReducer from "./category.reducers";
 import learnListReducer from "./learn.reducers";
 import tagsReducer from "./tags.reducers";
 import variantPriceReducer from "./variant-prices.reducers";
+import variantProfileReducer from "./variant-profile.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -37,6 +38,7 @@ const rootReducer = combineReducers({
   learnList: learnListReducer,
   tags: tagsReducer,
   variantPriceList: variantPriceReducer,
+  variantProfile: variantProfileReducer,
 });
 
 export default rootReducer;

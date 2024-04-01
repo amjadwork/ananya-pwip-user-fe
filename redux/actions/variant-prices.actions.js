@@ -39,16 +39,25 @@ export const fetchVariantPriceFailure = (error) => ({
 });
 
 // watchlist
-export const fetchAllWatchlistForVariantRequest = () => ({
+export const fetchAllWatchlistForVariantRequest = (id) => ({
   type: FETCH_WATCHLIST_FOR_VARIANT_REQUEST,
+  payload: {
+    id: id,
+  },
 });
 
-export const addVariantToWatchlistRequest = (variantId, sourceId, type) => ({
+export const addVariantToWatchlistRequest = (
+  variantId,
+  sourceId,
+  type,
+  callbackById = false
+) => ({
   type: ADD_REMOVE_VARIANT_IN_WATCHLIST_REQUEST,
   payload: {
     variantId: variantId,
     sourceId: sourceId,
     type: type,
+    callbackById: callbackById,
   },
 });
 
