@@ -38,6 +38,7 @@ const LandingPage = (props) => {
     features,
     videoContent,
     SERVICE_ID,
+    videoUrl,
   } = props;
 
   const authToken = useSelector((state) => state.auth?.token);
@@ -57,7 +58,6 @@ const LandingPage = (props) => {
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
   const [videoVolume, setVideoVolume] = useState(0);
-  const url = "https://www.youtube.com/embed/Tb4GGo2_QFM";
 
   const [showFixedButton, setShowFixedButton] = useState(false);
 
@@ -388,12 +388,11 @@ const LandingPage = (props) => {
           {videoContent ? (
             <div
               className="lp relative bg-pwip-black-600 rounded-lg"
-              // style={{ paddingBottom: "56.25%" }}
               id="videoPlayerEl"
             >
               <ReactPlayer
                 ref={videoRef}
-                url={url}
+                url={videoUrl}
                 loop={false}
                 width="100%"
                 height="172px"
