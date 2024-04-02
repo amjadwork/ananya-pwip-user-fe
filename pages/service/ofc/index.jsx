@@ -336,8 +336,8 @@ function OFCService() {
                     </div>
 
                     <div className="inline-flex items-center justify-end w-auto h-full">
-                      <span className="text-base font-semibold text-pwip-black-500">
-                        $119 / mt
+                      <span className="text-base font-semibold text-pwip-green-800">
+                        $119/mt
                       </span>
                     </div>
                   </div>
