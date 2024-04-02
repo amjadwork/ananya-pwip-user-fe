@@ -288,7 +288,7 @@ function OFCService() {
                     </div>
                     <div className="inline-flex items-center justify-center w-full h-full">
                       <img
-                        className="h-auto w-[62px]"
+                        className="h-auto w-[80%]"
                         src="/assets/images/services/ofc/ship.svg"
                       />
                     </div>
@@ -298,7 +298,7 @@ function OFCService() {
                       </span>
                     </div>
                   </div>
-                  <div className="inline-flex flex-col w-full mt-2 space-y-1">
+                  <div className="inline-flex flex-col w-full mt-2 space-y-1 border-b-[2px] border-b-pwip-gray-300 border-dashed pb-4">
                     <div className="inline-flex items-center w-full">
                       <div className="inline-flex items-center justify-start w-full h-full">
                         <span className="text-xs font-regular text-pwip-black-500">
@@ -321,10 +321,24 @@ function OFCService() {
                       </div>
 
                       <div className="inline-flex items-center justify-end w-full h-full">
-                        <span className="text-xs font-regular text-pwip-gray-500">
+                        <span className="text-xs font-regular text-pwip-gray-400">
                           Malaysia
                         </span>
                       </div>
+                    </div>
+                  </div>
+
+                  <div className="inline-flex items-center justify-between w-full pt-4">
+                    <div className="inline-flex items-center justify-start w-auto h-full">
+                      <span className="text-base font-semibold text-pwip-black-500">
+                        Charges
+                      </span>
+                    </div>
+
+                    <div className="inline-flex items-center justify-end w-auto h-full">
+                      <span className="text-base font-semibold text-pwip-black-500">
+                        $119 / mt
+                      </span>
                     </div>
                   </div>
                 </div>

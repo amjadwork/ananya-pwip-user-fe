@@ -482,7 +482,7 @@ function Home() {
                 </div>
               </div>
 
-              <div className="h-full">
+              <div className="h-full max-w-[40%]">
                 <img
                   src="/assets/images/home_main/container.svg"
                   alt="container"
