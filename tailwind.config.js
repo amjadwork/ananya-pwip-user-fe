@@ -153,6 +153,8 @@ module.exports = {
     "h-[27px]",
     "w-[6px]",
     "h-[6px]",
+    "h-[47px]",
+    "h-[32px]",
   ],
   theme: {
     extend: {

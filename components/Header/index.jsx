@@ -38,6 +38,7 @@ const atRoutes = [
   "subscription-details",
   "rice-price",
   "lp",
+  "ofc",
 ];
 
 const serviceLogoRoutes = [

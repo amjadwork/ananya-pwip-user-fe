@@ -15,6 +15,7 @@ import {
   ricePriceServiceId,
   exportCostingServiceId,
   checkSubscription,
+  ofcServiceId,
 } from "@/utils/helper";
 
 import {
@@ -365,36 +366,38 @@ function Home() {
               {[
                 {
                   name: "Export Costing",
-                  icon: exportCostingIcon,
+                  icon: "/assets/images/home_main/export-costing.png",
                   url: "/export-costing/lp",
                   subscribedUrl: "/export-costing",
                   serviceId: Number(exportCostingServiceId),
                 },
                 {
                   name: "Rice prices",
-                  icon: ricePriceServiceIcon,
+                  icon: "/assets/images/home_main/rice-prices.png",
                   url: "/service/rice-price/lp",
                   subscribedUrl: "/service/rice-price",
                   serviceId: Number(ricePriceServiceId),
                 },
                 {
                   name: "Export orders",
-                  icon: exportOrdersServiceIcon,
-                  url: "/service/export-orders",
+                  icon: "/assets/images/home_main/export-orders.png",
+                  subscribedUrl: "/service/export-orders",
                 },
                 {
-                  name: "Labs",
-                  icon: labsServiceIcon,
-                  url: "/service/labs",
+                  name: "OFC",
+                  icon: "/assets/images/home_main/ofc.png",
+                  subscribedUrl: "/service/ofc",
+                  url: "/service/ofc/lp",
+                  serviceId: Number(ofcServiceId),
                 },
                 {
-                  name: "Network",
-                  icon: networkServiceIcon,
-                  url: "/service/network",
+                  name: "EXIM",
+                  icon: "/assets/images/home_main/exim.png",
+                  url: "/service/exim",
                 },
                 {
                   name: "Community",
-                  icon: communityProductIcon,
+                  icon: "/assets/images/home_main/community.png",
                   url: "https://community.pwip.co/",
                 },
               ].map((item, index) => {
@@ -430,7 +433,14 @@ function Home() {
                     className="inline-flex flex-col w-full items-center space-y-2 cursor-pointer"
                   >
                     <div className="w-full h-[78px] rounded-lg border-[1px] border-pwip-v2-primary-50 inline-flex items-center justify-center">
-                      {item.icon}
+                      <img
+                        src={item.icon}
+                        className={`h-[32px] ${
+                          item?.name === "Export orders" ? "!h-[47px]" : ""
+                        }  ${item?.name === "EXIM" ? "!h-[36px]" : ""} ${
+                          item?.name === "Community" ? "!h-[38px]" : ""
+                        }`}
+                      />
                     </div>
 
                     <span className="text-pwip-black-600 font-medium text-xs text-center">
@@ -441,15 +451,18 @@ function Home() {
               })}
             </div>
 
-            <div className="inline-flex w-full h-auto py-4 px-5 bg-pwip-v2-green-200 rounded-lg relative">
+            <div className="inline-flex w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative">
               <div className="inline-flex flex-col space-y-6 h-full w-full max-w-[60%]">
                 <div className="inline-flex flex-col space-y-1">
                   <span className="text-sm font-bold text-pwip-black-600 text-left">
                     Curated for Exporter's need.
                   </span>
                   <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
-                    Upgrade to our all-in-one plan and get benefits of all the
-                    services.
+                    Upgrade to all-in-one plan at{" "}
+                    <span className="font-semibold text-pwip-v2-green-900">
+                      ₹1499/-
+                    </span>{" "}
+                    and get all the benefits.
                   </span>
                 </div>
 
@@ -457,9 +470,9 @@ function Home() {
                   <Button
                     type="white"
                     label="Know more"
-                    rounded="!rounded-sm"
-                    maxHeight="!max-h-[22px]"
-                    minHeight="!min-h-[22px]"
+                    rounded="!rounded-md"
+                    maxHeight="!max-h-[26px]"
+                    minHeight="!min-h-[26px]"
                     fontSize="!text-xs"
                     maxWidth="max-w-[50%]"
                     onClick={async () => {

@@ -17,6 +17,7 @@ const hideBottomBarAtRoutes = [
   "lp",
   "rice-price",
   "export-costing",
+  "ofc",
 ];
 
 const AppLayout = ({ children }) => {

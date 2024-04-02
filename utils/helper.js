@@ -30,6 +30,8 @@ export const exportCostingServiceId =
 export const ricePriceServiceId =
   process.env.NEXT_PUBLIC_API_RICE_PRICE_SERVICE_ID;
 
+export const ofcServiceId = process.env.NEXT_PUBLIC_OFC_SERVICE_ID;
+
 // Razorpay configs
 export const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
 

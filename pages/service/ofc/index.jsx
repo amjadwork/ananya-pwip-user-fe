@@ -1,0 +1,340 @@
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { debounce } from "lodash";
+import Head from "next/head";
+import { useRouter } from "next/router";
+import { useSelector, useDispatch } from "react-redux";
+
+import withAuth from "@/hoc/withAuth";
+import AppLayout from "@/layouts/appLayout.jsx";
+
+import { useOverlayContext } from "@/context/OverlayContext";
+
+import { searchIcon, bookmarkOutlineIcon } from "../../../theme/icon";
+
+// Import Components
+import { Header } from "@/components/Header";
+import { Button } from "@/components/Button";
+
+import SearchAndFilter from "@/containers/rice-price/SearchAndFilter";
+
+import {
+  getStateAbbreviation,
+  checkSubscription,
+  ofcServiceId,
+} from "@/utils/helper";
+
+import {
+  fetchVariantPriceRequest,
+  addVariantToWatchlistRequest,
+  fetchAllWatchlistForVariantRequest,
+  setSelectedVariantForDetailRequest,
+} from "@/redux/actions/variant-prices.actions";
+import { productStateList } from "@/constants/stateList";
+
+// Import Containers
+
+// Import Layouts
+const SERVICE_ID = ofcServiceId;
+
+function mapWatchlist(array1, array2) {
+  // Create a map to store objects from array1 based on _variantId and _sourceId
+  const map = new Map();
+  array1.forEach((item) =>
+    map.set(`${item._variantId}-${item._sourceId}`, item)
+  );
+
+  // Modify array2 to include watchlist key with matching object from array1
+  const newArray2 = array2.map((item) => {
+    const watchlistItem = map.get(`${item.variantId}-${item.source._sourceId}`);
+    return watchlistItem
+      ? { ...item, watchlist: watchlistItem }
+      : { ...item, watchlist: null };
+  });
+
+  return newArray2;
+}
+
+function OFCService() {
+  const fixedDivRef = useRef();
+
+  const {
+    openSearchFilterModal,
+    closeSearchFilterModal,
+    isSearchFilterModalOpen,
+  } = useOverlayContext();
+
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const authToken = useSelector((state) => state.auth?.token);
+  const variantPriceList =
+    useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
+  const variantWatchList =
+    useSelector((state) => state.variantPriceList.variantWatchList) || [];
+
+  const [isFixed, setIsFixed] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState("All");
+  const [variantAndWatchlistMergedData, setVariantAndWatchlistMergedData] =
+    useState([]);
+
+  const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
+    useState([]);
+
+  const [topWatchlistVariants, setTopWatchlistVariants] = useState([]);
+
+  const navigateToDetail = async (item) => {
+    await dispatch(setSelectedVariantForDetailRequest(item));
+
+    router.push(
+      "/service/rice-price/detail" +
+        "/" +
+        item?.variantId +
+        `?_s=${item?.source?._sourceId}`
+    );
+  };
+
+  const checkY = () => {
+    if (fixedDivRef.current) {
+      const fixedDivTop = fixedDivRef.current.offsetTop; //fixedDivRef.current.offsetHeight;
+
+      const shouldBeFixed =
+        parseInt(window.scrollY.toFixed(0)) >= parseInt(fixedDivTop.toFixed(0));
+
+      if (shouldBeFixed) {
+        setIsFixed(true);
+      } else if (!shouldBeFixed) {
+        setIsFixed(false);
+      }
+    }
+  };
+
+  const debouncedCheckY = debounce(checkY, 0);
+
+  useEffect(() => {
+    window.addEventListener("scroll", debouncedCheckY);
+
+    return () => {
+      window.removeEventListener("scroll", debouncedCheckY);
+    };
+  }, []);
+
+  async function initPage() {
+    const details = await checkSubscription(SERVICE_ID, authToken);
+
+    if (!details?.activeSubscription) {
+      router.replace("/service/rice-price/lp");
+
+      return;
+    }
+
+    await dispatch(fetchVariantPriceRequest());
+    await dispatch(fetchAllWatchlistForVariantRequest());
+
+    return;
+  }
+
+  useLayoutEffect(() => {
+    initPage();
+  }, []);
+
+  useEffect(() => {
+    if (variantPriceList.length) {
+      if (variantWatchList.length) {
+        const mergedData = mapWatchlist(variantWatchList, variantPriceList);
+        setVariantAndWatchlistMergedData(mergedData);
+        setFilteredVariantPriceListData(mergedData);
+
+        let filteredForSavedWatchlist = [...mergedData].filter((d) => {
+          if (d?.watchlist?.saved) return d;
+        });
+
+        if (filteredForSavedWatchlist.length > 5) {
+          filteredForSavedWatchlist = filteredForSavedWatchlist.slice(0, 5);
+        }
+
+        setTopWatchlistVariants([...filteredForSavedWatchlist]);
+      } else {
+        setFilteredVariantPriceListData(variantPriceList);
+        setVariantAndWatchlistMergedData(variantPriceList);
+        setTopWatchlistVariants([]);
+      }
+    }
+  }, [variantWatchList, variantPriceList]);
+
+  return (
+    <React.Fragment>
+      <Head>
+        <meta charSet="utf-8" />
+
+        <title>My costing history | PWIP</title>
+
+        <meta name="PWIP App" content="PWIP App" />
+        <meta name="description" content="Generated by create next app" />
+
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/*<meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
+*/}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+        {/* <link rel="manifest" href="/manifest.json" /> */}
+        {/* <link rel="icon" href="/favicon.ico" /> */}
+      </Head>
+
+      <AppLayout>
+        <Header />
+
+        <div
+          className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-50 z-0`}
+        >
+          <div className="inline-flex flex-col w-full h-full">
+            <div className={`w-full bg-white`}>
+              <div className="inline-flex flex-col space-y-1 w-full px-5 py-6">
+                <span className="text-pwip-v2-primary text-xs font-regular">
+                  Lets search for
+                </span>
+                <span className="text-pwip-v2-primary text-lg font-semibold">
+                  Ocean freight charges.
+                </span>
+              </div>
+            </div>
+
+            <div
+              div
+              className="w-full h-full inline-flex flex-col hide-scroll-bar"
+            >
+              <div
+                className={`w-full h-full space-y-4 px-5 py-4 overflow-y-auto hide-scroll-bar transition-all`}
+              >
+                <div
+                  className="rounded-lg w-full inline-flex flex-col space-y-3 bg-white p-4 relative"
+                  style={{ boxShadow: "0px 1px 6px -2px #00000012" }}
+                >
+                  <div
+                    onClick={() => {
+                      console.log("POL");
+                    }}
+                    className="inline-flex items-center space-x-4 border-[1px] border-pwip-gray-300 rounded-lg w-full px-3 py-2 relative z-10"
+                  >
+                    <div className="min-h-[42px] h-[42px] min-w-[42px] w-[42px] rounded-lg bg-pwip-v2-gray-100 inline-flex items-center justify-center">
+                      <img
+                        className="h-6 w-6"
+                        src="/assets/images/services/ofc/pol-ofc.svg"
+                      />
+                    </div>
+
+                    <div className="inline-flex flex-col space-y-1 w-full">
+                      <span className="font-semibold text-sm text-pwip-black-600">
+                        Vishakapatnam (VIZAG)
+                      </span>
+                      <span className="font-regular text-xs text-pwip-v2-gray-500">
+                        Andhra Pradesh
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="rounded-full h-[42px] w-[42px] bg-pwip-v2-primary-500 absolute top-[4.15rem] right-[2.5rem] z-20 !m-0 inline-flex items-center justify-center">
+                    <img
+                      className="h-5 w-5"
+                      src="/assets/images/services/ofc/go-to-port-arrow.svg"
+                    />
+                  </div>
+
+                  <div
+                    onClick={() => {
+                      console.log("POD");
+                    }}
+                    className="inline-flex items-center space-x-4 border-[1px] border-pwip-gray-300 rounded-lg w-full px-3 py-2 relative z-10 !mb-4"
+                  >
+                    <div className="min-h-[42px] h-[42px] min-w-[42px] w-[42px] rounded-lg bg-pwip-v2-gray-100 inline-flex items-center justify-center">
+                      <img
+                        className="h-6 w-6"
+                        src="/assets/images/services/ofc/pod-ofc.svg"
+                      />
+                    </div>
+
+                    <div className="inline-flex flex-col space-y-1 w-full">
+                      <span className="font-semibold text-sm text-pwip-black-600">
+                        Pasin Gudang (MYPGU)
+                      </span>
+                      <span className="font-regular text-xs text-pwip-v2-gray-500">
+                        Malaysia
+                      </span>
+                    </div>
+                  </div>
+
+                  <Button
+                    type={"primary"}
+                    label="Search OFC"
+                    //
+                    onClick={async () => {
+                      console.log("search");
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="bg-white w-full h-full py-4 px-5">
+                <h3 className="text-base font-semibold">Search result</h3>
+
+                <div className="w-full rounded-lg bg-pwip-v2-gray-50 p-4 mt-5">
+                  <div className="inline-flex items-center w-full">
+                    <div className="inline-flex items-center justify-start w-auto h-full">
+                      <span className="text-sm font-regular text-pwip-black-500">
+                        VIZAG
+                      </span>
+                    </div>
+                    <div className="inline-flex items-center justify-center w-full h-full">
+                      <img
+                        className="h-auto w-[62px]"
+                        src="/assets/images/services/ofc/ship.svg"
+                      />
+                    </div>
+                    <div className="inline-flex items-center justify-end w-auto h-full">
+                      <span className="text-sm font-regular text-pwip-black-500">
+                        MYPGU
+                      </span>
+                    </div>
+                  </div>
+                  <div className="inline-flex flex-col w-full mt-2 space-y-1">
+                    <div className="inline-flex items-center w-full">
+                      <div className="inline-flex items-center justify-start w-full h-full">
+                        <span className="text-xs font-regular text-pwip-black-500">
+                          Vishakapatnam
+                        </span>
+                      </div>
+
+                      <div className="inline-flex items-center justify-end w-full h-full">
+                        <span className="text-xs font-regular text-pwip-black-500">
+                          Pasin Gudang
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="inline-flex items-center w-full">
+                      <div className="inline-flex items-center justify-start w-full h-full">
+                        <span className="text-xs font-regular text-pwip-gray-400">
+                          Andhra Pradesh
+                        </span>
+                      </div>
+
+                      <div className="inline-flex items-center justify-end w-full h-full">
+                        <span className="text-xs font-regular text-pwip-gray-500">
+                          Malaysia
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AppLayout>
+    </React.Fragment>
+  );
+}
+
+export default withAuth(OFCService);
