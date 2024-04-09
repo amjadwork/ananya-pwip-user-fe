@@ -143,7 +143,12 @@ const LandingPage = (props) => {
               const details = await checkSubscription(SERVICE_ID, authToken);
 
               if (details?.activeSubscription) {
-                router.replace(`/${serviceName}`);
+                if (serviceName === "export-costing") {
+                  router.replace(`/${serviceName}`);
+                  return;
+                }
+
+                router.replace(`/service/${serviceName}`);
               }
 
               if (responseVerify?.result === "Payment Success") {
@@ -222,7 +227,12 @@ const LandingPage = (props) => {
     await dispatch(getPlansRequest());
 
     if (details?.activeSubscription) {
-      router.replace(`/${serviceName}`);
+      if (serviceName === "export-costing") {
+        router.replace(`/${serviceName}`);
+        return;
+      }
+
+      router.replace(`/service/${serviceName}`);
       return;
     }
 
