@@ -36,6 +36,7 @@ const atRoutes = [
   "profile-edit",
   "category",
   "subscription-details",
+  "watchlist",
   "rice-price",
   "lp",
   "ofc",
@@ -202,6 +203,7 @@ export function Header(props) {
           {![
             "subscriptions",
             "subscription-details",
+            "watchlist",
             "profile-edit",
             "more",
             "costing",

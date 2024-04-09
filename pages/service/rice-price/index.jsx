@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { debounce } from "lodash";
 import Head from "next/head";
@@ -290,7 +292,14 @@ function RicePrice() {
               <span className="text-sm font-semibold">Watchlist</span>
             </div>
 
-            <span className="text-pwip-v2-gray-500 text-sm">Manage</span>
+            <span
+              className="text-pwip-v2-gray-500 text-sm hover:cursor-pointer"
+              onClick={() => {
+                router.push("/watchlist");
+              }}
+            >
+              Manage
+            </span>
           </div>
 
           {!topWatchlistVariants?.length ? (
@@ -541,7 +550,6 @@ function RicePrice() {
                             </span>
                           </div>
                         </div>
-
                         <div
                           onClick={() => {
                             if (
@@ -576,6 +584,7 @@ function RicePrice() {
                             : bookmarkOutlineIcon}
                         </div>
                       </div>
+                      
                       <div
                         onClick={() => {
                           navigateToDetail(item);
