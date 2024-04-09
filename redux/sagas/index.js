@@ -18,6 +18,7 @@ import learnListSaga from "./learn.saga";
 import tagsSaga from "./tags.saga";
 import variantsWithPriceSaga from "./variant-prices.saga";
 import variantsProfileSaga from "./variant-profile.saga";
+import ofcSaga from "./ofc.saga";
 
 function* rootSaga() {
   yield all([
@@ -40,6 +41,7 @@ function* rootSaga() {
     tagsSaga(),
     variantsWithPriceSaga(),
     variantsProfileSaga(),
+    ofcSaga(),
   ]);
 }
 

@@ -451,11 +451,11 @@ function Home() {
               })}
             </div>
 
-            <div className="inline-flex w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative">
-              <div className="inline-flex flex-col space-y-6 h-full w-full max-w-[60%]">
+            <div className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative">
+              <div className="inline-flex flex-col space-y-5 h-full w-full cols-span-7">
                 <div className="inline-flex flex-col space-y-1">
                   <span className="text-sm font-bold text-pwip-black-600 text-left">
-                    Curated for Exporter's need.
+                    Curated for Exporter's.
                   </span>
                   <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
                     Upgrade to all-in-one plan at{" "}
@@ -474,7 +474,7 @@ function Home() {
                     maxHeight="!max-h-[26px]"
                     minHeight="!min-h-[26px]"
                     fontSize="!text-xs"
-                    maxWidth="max-w-[50%]"
+                    maxWidth="max-w-[60%]"
                     onClick={async () => {
                       //
                     }}
@@ -482,7 +482,7 @@ function Home() {
                 </div>
               </div>
 
-              <div className="h-full max-w-[40%]">
+              <div className="h-full cols-span-5">
                 <img
                   src="/assets/images/home_main/container.svg"
                   alt="container"

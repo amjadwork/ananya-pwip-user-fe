@@ -9,6 +9,11 @@ import {
   searchScreenRequest,
   searchScreenFailure,
 } from "@/redux/actions/utils.actions.js";
+import {
+  setSelectedPOLForOFCRequest,
+  setSelectedPODForOFCRequest,
+} from "@/redux/actions/ofc.actions";
+
 import { debounce } from "lodash";
 const { flag } = require("country-emoji");
 
@@ -160,6 +165,7 @@ const SelectLocationContainer = (props) => {
   const fixedDivRef = useRef();
 
   const isFromEdit = props.isFromEdit || false;
+  const isFromOtherService = props.isFromOtherService || false;
   const locationType = props.locationType || "destination";
   const setFieldValue = props.setFieldValue;
   const containerWeight = props.containerWeight || 26;
@@ -198,6 +204,8 @@ const SelectLocationContainer = (props) => {
   const [isFixed, setIsFixed] = React.useState(false);
   const [filterOptions, setFilterOptions] = React.useState([]);
   const [selectedFilter, setSelectedFilter] = React.useState(null);
+
+  console.log("here", locationsData?.locations?.origin);
 
   async function fetchTransportationCost(originId, sourceId) {
     try {
@@ -285,7 +293,7 @@ const SelectLocationContainer = (props) => {
           [...locationsData.locations.destinations].slice(0, 5)
         );
 
-        if (isFromEdit) {
+        if (isFromEdit || isFromOtherService) {
           setListDestinationData([...locationsData.locations.destinations]);
         } else {
           setListDestinationData(
@@ -325,7 +333,7 @@ const SelectLocationContainer = (props) => {
         setPopularDestinationData(
           [...locationsData.locations.origin].slice(0, 5)
         );
-        if (isFromEdit) {
+        if (isFromEdit || isFromOtherService) {
           setListDestinationData([...locationsData.locations.origin]);
         } else {
           setListDestinationData(
@@ -352,7 +360,7 @@ const SelectLocationContainer = (props) => {
         );
       }
     }
-  }, [locationsData, locationType, isFromEdit]);
+  }, [locationsData, locationType, isFromEdit, isFromOtherService]);
 
   React.useEffect(() => {
     if (selectedCosting && selectedCosting.product) {
@@ -405,7 +413,11 @@ const SelectLocationContainer = (props) => {
       setListDestinationData(matchingVariants);
     }
 
-    if (!searchString && locationType === "destination") {
+    if (
+      !searchString &&
+      locationType === "destination" &&
+      locationsData.locations.destinations.length
+    ) {
       setPopularDestinationData(
         [...locationsData.locations.destinations].slice(0, 5)
       );
@@ -415,15 +427,17 @@ const SelectLocationContainer = (props) => {
       //     locationsData.locations.destinations.length - 1
       //   )
       // );
-      if (isFromEdit) {
-        setListDestinationData([...locationsData.locations.destinations]);
+      if (isFromEdit || isFromOtherService) {
+        if (locationsData.locations.destinations.length)
+          setListDestinationData([...locationsData.locations.destinations]);
       } else {
-        setListDestinationData(
-          [...locationsData.locations.destinations].slice(
-            5,
-            locationsData.locations.destinations.length - 1
-          )
-        );
+        if (locationsData.locations.destinations.length)
+          setListDestinationData(
+            [...locationsData.locations.destinations].slice(
+              5,
+              locationsData.locations.destinations.length - 1
+            )
+          );
       }
     }
 
@@ -437,7 +451,7 @@ const SelectLocationContainer = (props) => {
       //     locationsData.locations.origin.length - 1
       //   )
       // );
-      if (isFromEdit) {
+      if (isFromEdit || isFromOtherService) {
         setListDestinationData([...locationsData.locations.origin]);
       } else {
         setListDestinationData(
@@ -485,14 +499,14 @@ const SelectLocationContainer = (props) => {
   };
 
   React.useEffect(() => {
-    if (!isFromEdit) {
+    if (!isFromEdit && !isFromOtherService) {
       window.addEventListener("scroll", debouncedCheckY);
 
       return () => {
         window.removeEventListener("scroll", debouncedCheckY);
       };
     }
-  }, [isFromEdit]);
+  }, [isFromEdit, isFromOtherService]);
 
   let blurOccurred = null;
 
@@ -580,7 +594,7 @@ const SelectLocationContainer = (props) => {
             </button>
           ) : null}
         </div>
-        {isFromEdit ? (
+        {isFromEdit || isFromOtherService ? (
           <FilterSection
             locationType={locationType}
             inFixedBar={true}
@@ -638,10 +652,15 @@ const SelectLocationContainer = (props) => {
             ? mainContainerHeight + 120 + "px"
             : window.innerWidth >= 1280
             ? "136px"
+            : isFromOtherService
+            ? mainContainerHeight - 20 + "px"
             : mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromEdit && !searchStringValue && !searchScreenActive ? (
+        {!isFromEdit &&
+        !searchStringValue &&
+        !searchScreenActive &&
+        !isFromOtherService ? (
           <React.Fragment>
             <h2
               className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -680,7 +699,7 @@ const SelectLocationContainer = (props) => {
                             : "#ffffff",
                       }}
                       onClick={async () => {
-                        if (isFromEdit) {
+                        if (isFromEdit || isFromOtherService) {
                           if (locationType === "destination") {
                             const sourceId =
                               selectedCosting.customCostingSelection
@@ -691,34 +710,36 @@ const SelectLocationContainer = (props) => {
                               items?._id
                             );
 
-                            if (response.cha.length) {
-                              setFieldValue(
-                                "cfsHandling",
-                                Math.floor(
-                                  response?.cha[0]?.destinations[0]?.chaCharge /
-                                    containerWeight
-                                )
-                              );
-                            }
+                            if (setFieldValue) {
+                              if (response.cha.length) {
+                                setFieldValue(
+                                  "cfsHandling",
+                                  Math.floor(
+                                    response?.cha[0]?.destinations[0]
+                                      ?.chaCharge / containerWeight
+                                  )
+                                );
+                              }
 
-                            if (response.ofc.length) {
-                              setFieldValue(
-                                "ofc",
-                                Math.floor(
-                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                    containerWeight
-                                )
-                              );
-                            }
+                              if (response.ofc.length) {
+                                setFieldValue(
+                                  "ofc",
+                                  Math.floor(
+                                    response?.ofc[0]?.destinations[0]
+                                      ?.ofcCharge / containerWeight
+                                  )
+                                );
+                              }
 
-                            if (response.shl.length) {
-                              setFieldValue(
-                                "shl",
-                                Math.floor(
-                                  response?.shl[0]?.destinations[0]?.shlCharge /
-                                    containerWeight
-                                )
-                              );
+                              if (response.shl.length) {
+                                setFieldValue(
+                                  "shl",
+                                  Math.floor(
+                                    response?.shl[0]?.destinations[0]
+                                      ?.shlCharge / containerWeight
+                                  )
+                                );
+                              }
                             }
                           }
 
@@ -737,16 +758,18 @@ const SelectLocationContainer = (props) => {
                                 sourceId
                               );
 
-                              if (
-                                response?.data &&
-                                response?.data?.length &&
-                                response?.data[0]?.sourceLocations?.length
-                              ) {
-                                setFieldValue(
-                                  "transportation",
-                                  response?.data[0]?.sourceLocations[0]
-                                    ?.transportationCharge
-                                );
+                              if (setFieldValue) {
+                                if (
+                                  response?.data &&
+                                  response?.data?.length &&
+                                  response?.data[0]?.sourceLocations?.length
+                                ) {
+                                  setFieldValue(
+                                    "transportation",
+                                    response?.data[0]?.sourceLocations[0]
+                                      ?.transportationCharge
+                                  );
+                                }
                               }
                             }
                           }
@@ -786,11 +809,14 @@ const SelectLocationContainer = (props) => {
         <React.Fragment>
           <div
             className={`w-full h-auto inline-flex flex-col ${
-              !isFromEdit ? "mt-[32px]" : ""
+              !isFromEdit || !isFromOtherService ? "mt-[32px]" : ""
             }`}
           >
             <div className="flex overflow-x-scroll hide-scroll-bar">
-              {!isFromEdit && !searchScreenActive && !searchStringValue ? (
+              {!isFromEdit &&
+              !isFromOtherService &&
+              !searchScreenActive &&
+              !searchStringValue ? (
                 <FilterSection
                   fixedDivRef={fixedDivRef}
                   locationType={locationType}
@@ -862,9 +888,26 @@ const SelectLocationContainer = (props) => {
                           : "#ffffff",
                     }}
                     onClick={async () => {
+                      if (isFromOtherService && locationType === "origin") {
+                        dispatch(setSelectedPOLForOFCRequest(items));
+                        closeBottomSheet();
+                        return;
+                      }
+
+                      if (
+                        isFromOtherService &&
+                        locationType === "destination"
+                      ) {
+                        dispatch(setSelectedPODForOFCRequest(items));
+                        closeBottomSheet();
+                        return;
+                      }
+
                       if (isFromEdit) {
                         if (locationType === "destination") {
-                          setFieldValue("_destinationId", items);
+                          if (setFieldValue) {
+                            setFieldValue("_destinationId", items);
+                          }
 
                           const response = await fetchCHAandSHLandOFCCost(
                             formValues?._originId?._id ||
@@ -873,39 +916,43 @@ const SelectLocationContainer = (props) => {
                             items?._id
                           );
 
-                          if (response.cha.length) {
-                            setFieldValue(
-                              "cfsHandling",
-                              Math.floor(
-                                response?.cha[0]?.destinations[0]?.chaCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
+                          if (setFieldValue) {
+                            if (response.cha.length) {
+                              setFieldValue(
+                                "cfsHandling",
+                                Math.floor(
+                                  response?.cha[0]?.destinations[0]?.chaCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
 
-                          if (response.ofc.length && shipmentTerm !== "FOB") {
-                            setFieldValue(
-                              "ofc",
-                              Math.floor(
-                                response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
+                            if (response.ofc.length && shipmentTerm !== "FOB") {
+                              setFieldValue(
+                                "ofc",
+                                Math.floor(
+                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
 
-                          if (response.shl.length) {
-                            setFieldValue(
-                              "shl",
-                              Math.floor(
-                                response?.shl[0]?.destinations[0]?.shlCharge /
-                                  containerWeight
-                              )
-                            );
+                            if (response.shl.length) {
+                              setFieldValue(
+                                "shl",
+                                Math.floor(
+                                  response?.shl[0]?.destinations[0]?.shlCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
                           }
                         }
 
                         if (locationType === "origin") {
-                          setFieldValue("_originId", items);
+                          if (setFieldValue) {
+                            setFieldValue("_originId", items);
+                          }
 
                           const response = await fetchCHAandSHLandOFCCost(
                             items?._id,
@@ -914,34 +961,36 @@ const SelectLocationContainer = (props) => {
                                 .portOfDestination._id
                           );
 
-                          if (response.cha.length) {
-                            setFieldValue(
-                              "cfsHandling",
-                              Math.floor(
-                                response?.cha[0]?.destinations[0]?.chaCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
+                          if (setFieldValue) {
+                            if (response.cha.length) {
+                              setFieldValue(
+                                "cfsHandling",
+                                Math.floor(
+                                  response?.cha[0]?.destinations[0]?.chaCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
 
-                          if (response.ofc.length && shipmentTerm !== "FOB") {
-                            setFieldValue(
-                              "ofc",
-                              Math.floor(
-                                response?.ofc[0]?.destinations[0]?.ofcCharge /
-                                  containerWeight
-                              )
-                            );
-                          }
+                            if (response.ofc.length && shipmentTerm !== "FOB") {
+                              setFieldValue(
+                                "ofc",
+                                Math.floor(
+                                  response?.ofc[0]?.destinations[0]?.ofcCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
 
-                          if (response.shl.length) {
-                            setFieldValue(
-                              "shl",
-                              Math.floor(
-                                response?.shl[0]?.destinations[0]?.shlCharge /
-                                  containerWeight
-                              )
-                            );
+                            if (response.shl.length) {
+                              setFieldValue(
+                                "shl",
+                                Math.floor(
+                                  response?.shl[0]?.destinations[0]?.shlCharge /
+                                    containerWeight
+                                )
+                              );
+                            }
                           }
 
                           if (
@@ -955,16 +1004,18 @@ const SelectLocationContainer = (props) => {
                                   ?.sourceObject?._id
                             );
 
-                            if (
-                              response?.data &&
-                              response?.data?.length &&
-                              response?.data[0]?.sourceLocations?.length
-                            ) {
-                              setFieldValue(
-                                "transportation",
-                                response?.data[0]?.sourceLocations[0]
-                                  ?.transportationCharge
-                              );
+                            if (setFieldValue) {
+                              if (
+                                response?.data &&
+                                response?.data?.length &&
+                                response?.data[0]?.sourceLocations?.length
+                              ) {
+                                setFieldValue(
+                                  "transportation",
+                                  response?.data[0]?.sourceLocations[0]
+                                    ?.transportationCharge
+                                );
+                              }
                             }
                           }
                         }

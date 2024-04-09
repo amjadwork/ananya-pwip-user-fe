@@ -8,6 +8,7 @@ import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
 
 import { useOverlayContext } from "@/context/OverlayContext";
+import SelectLocationContainer from "@/containers/ec/SelectLocation";
 
 import { searchIcon, bookmarkOutlineIcon } from "../../../theme/icon";
 
@@ -17,11 +18,7 @@ import { Button } from "@/components/Button";
 
 import SearchAndFilter from "@/containers/rice-price/SearchAndFilter";
 
-import {
-  getStateAbbreviation,
-  checkSubscription,
-  ofcServiceId,
-} from "@/utils/helper";
+import { api, checkSubscription, ofcServiceId } from "@/utils/helper";
 
 import {
   fetchVariantPriceRequest,
@@ -29,6 +26,11 @@ import {
   fetchAllWatchlistForVariantRequest,
   setSelectedVariantForDetailRequest,
 } from "@/redux/actions/variant-prices.actions";
+import {
+  fetchDestinationRequest,
+  fetchOriginRequest,
+} from "@/redux/actions/location.actions";
+
 import { productStateList } from "@/constants/stateList";
 
 // Import Containers
@@ -61,6 +63,10 @@ function OFCService() {
     openSearchFilterModal,
     closeSearchFilterModal,
     isSearchFilterModalOpen,
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    isBottomSheetOpen,
   } = useOverlayContext();
 
   const router = useRouter();
@@ -70,64 +76,21 @@ function OFCService() {
     useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
   const variantWatchList =
     useSelector((state) => state.variantPriceList.variantWatchList) || [];
+  const selectedPOL = useSelector((state) => state.ofc.selectedPOL);
+  const selectedPOD = useSelector((state) => state.ofc.selectedPOD);
 
-  const [isFixed, setIsFixed] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [variantAndWatchlistMergedData, setVariantAndWatchlistMergedData] =
-    useState([]);
-
-  const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
-    useState([]);
-
-  const [topWatchlistVariants, setTopWatchlistVariants] = useState([]);
-
-  const navigateToDetail = async (item) => {
-    await dispatch(setSelectedVariantForDetailRequest(item));
-
-    router.push(
-      "/service/rice-price/detail" +
-        "/" +
-        item?.variantId +
-        `?_s=${item?.source?._sourceId}`
-    );
-  };
-
-  const checkY = () => {
-    if (fixedDivRef.current) {
-      const fixedDivTop = fixedDivRef.current.offsetTop; //fixedDivRef.current.offsetHeight;
-
-      const shouldBeFixed =
-        parseInt(window.scrollY.toFixed(0)) >= parseInt(fixedDivTop.toFixed(0));
-
-      if (shouldBeFixed) {
-        setIsFixed(true);
-      } else if (!shouldBeFixed) {
-        setIsFixed(false);
-      }
-    }
-  };
-
-  const debouncedCheckY = debounce(checkY, 0);
-
-  useEffect(() => {
-    window.addEventListener("scroll", debouncedCheckY);
-
-    return () => {
-      window.removeEventListener("scroll", debouncedCheckY);
-    };
-  }, []);
+  const [ofcResultData, setOFCResultData] = useState(null);
 
   async function initPage() {
     const details = await checkSubscription(SERVICE_ID, authToken);
 
     if (!details?.activeSubscription) {
-      router.replace("/service/rice-price/lp");
+      router.replace("/service/ofc/lp");
 
       return;
     }
 
-    await dispatch(fetchVariantPriceRequest());
-    await dispatch(fetchAllWatchlistForVariantRequest());
+    dispatch(fetchOriginRequest());
 
     return;
   }
@@ -137,28 +100,10 @@ function OFCService() {
   }, []);
 
   useEffect(() => {
-    if (variantPriceList.length) {
-      if (variantWatchList.length) {
-        const mergedData = mapWatchlist(variantWatchList, variantPriceList);
-        setVariantAndWatchlistMergedData(mergedData);
-        setFilteredVariantPriceListData(mergedData);
-
-        let filteredForSavedWatchlist = [...mergedData].filter((d) => {
-          if (d?.watchlist?.saved) return d;
-        });
-
-        if (filteredForSavedWatchlist.length > 5) {
-          filteredForSavedWatchlist = filteredForSavedWatchlist.slice(0, 5);
-        }
-
-        setTopWatchlistVariants([...filteredForSavedWatchlist]);
-      } else {
-        setFilteredVariantPriceListData(variantPriceList);
-        setVariantAndWatchlistMergedData(variantPriceList);
-        setTopWatchlistVariants([]);
-      }
+    if (selectedPOL) {
+      dispatch(fetchDestinationRequest(null, selectedPOL?._id));
     }
-  }, [variantWatchList, variantPriceList]);
+  }, [selectedPOL]);
 
   return (
     <React.Fragment>
@@ -214,7 +159,20 @@ function OFCService() {
                 >
                   <div
                     onClick={() => {
-                      console.log("POL");
+                      setOFCResultData(null);
+                      const content = (
+                        <div>
+                          <SelectLocationContainer
+                            title="Select Port of Origin"
+                            roundedTop={false}
+                            noTop={true}
+                            noPaddingBottom={true}
+                            isFromOtherService={true}
+                            locationType="origin"
+                          />
+                        </div>
+                      );
+                      openBottomSheet(content);
                     }}
                     className="inline-flex items-center space-x-4 border-[1px] border-pwip-gray-300 rounded-lg w-full px-3 py-2 relative z-10"
                   >
@@ -226,12 +184,23 @@ function OFCService() {
                     </div>
 
                     <div className="inline-flex flex-col space-y-1 w-full">
-                      <span className="font-semibold text-sm text-pwip-black-600">
-                        Vishakapatnam (VIZAG)
+                      <span
+                        className={`
+                        text-sm ${
+                          selectedPOL
+                            ? "text-pwip-black-600 font-semibold"
+                            : "text-pwip-v2-gray-500 font-medium"
+                        }
+                      `}
+                      >
+                        {selectedPOL?.portName || "Port of loading"} (
+                        {selectedPOL?.portCode || "POL"})
                       </span>
-                      <span className="font-regular text-xs text-pwip-v2-gray-500">
-                        Andhra Pradesh
-                      </span>
+                      {selectedPOL ? (
+                        <span className="font-regular text-xs text-pwip-v2-gray-500">
+                          {selectedPOL?.state}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
 
@@ -244,7 +213,20 @@ function OFCService() {
 
                   <div
                     onClick={() => {
-                      console.log("POD");
+                      setOFCResultData(null);
+                      const content = (
+                        <div>
+                          <SelectLocationContainer
+                            title="Select Port of Destination"
+                            roundedTop={false}
+                            noTop={true}
+                            noPaddingBottom={true}
+                            isFromOtherService={true}
+                            locationType="destination"
+                          />
+                        </div>
+                      );
+                      openBottomSheet(content);
                     }}
                     className="inline-flex items-center space-x-4 border-[1px] border-pwip-gray-300 rounded-lg w-full px-3 py-2 relative z-10 !mb-4"
                   >
@@ -256,93 +238,130 @@ function OFCService() {
                     </div>
 
                     <div className="inline-flex flex-col space-y-1 w-full">
-                      <span className="font-semibold text-sm text-pwip-black-600">
-                        Pasin Gudang (MYPGU)
+                      <span
+                        className={`
+                        text-sm ${
+                          selectedPOD
+                            ? "text-pwip-black-600 font-semibold"
+                            : "text-pwip-v2-gray-500 font-medium"
+                        }
+                      `}
+                      >
+                        {selectedPOD?.portName || "Destination port"} (
+                        {selectedPOD?.portCode || "POD"})
                       </span>
-                      <span className="font-regular text-xs text-pwip-v2-gray-500">
-                        Malaysia
-                      </span>
+                      {selectedPOD ? (
+                        <span className="font-regular text-xs text-pwip-v2-gray-500">
+                          {selectedPOD?.country}
+                        </span>
+                      ) : null}
                     </div>
                   </div>
 
                   <Button
-                    type={"primary"}
+                    type={
+                      selectedPOL && selectedPOD && !ofcResultData
+                        ? "primary"
+                        : "disabled"
+                    }
                     label="Search OFC"
-                    //
+                    disabled={
+                      selectedPOL && selectedPOD && !ofcResultData
+                        ? false
+                        : true
+                    }
                     onClick={async () => {
-                      console.log("search");
+                      const responseOFC = await api.get(
+                        `/ofc?origin=${selectedPOL?._id}&destination=${selectedPOD?._id}`,
+                        {
+                          headers: {
+                            "Content-Type": "application/json",
+                            Accept: "application/pdf",
+                            Authorization: `Bearer ${authToken}`,
+                          },
+                        }
+                      );
+
+                      if (
+                        responseOFC?.data?.length &&
+                        responseOFC?.data[0]?.destinations?.length
+                      ) {
+                        setOFCResultData(responseOFC?.data[0]?.destinations[0]);
+                      }
                     }}
                   />
                 </div>
               </div>
 
-              <div className="bg-white w-full h-full py-4 px-5">
-                <h3 className="text-base font-semibold">Search result</h3>
+              {ofcResultData ? (
+                <div className="bg-white w-full h-full py-4 px-5">
+                  <h3 className="text-base font-semibold">Search result</h3>
 
-                <div className="w-full rounded-lg bg-pwip-v2-gray-50 p-4 mt-5">
-                  <div className="inline-flex items-center w-full">
-                    <div className="inline-flex items-center justify-start w-auto h-full">
-                      <span className="text-sm font-regular text-pwip-black-500">
-                        VIZAG
-                      </span>
-                    </div>
-                    <div className="inline-flex items-center justify-center w-full h-full">
-                      <img
-                        className="h-auto w-[80%]"
-                        src="/assets/images/services/ofc/ship.svg"
-                      />
-                    </div>
-                    <div className="inline-flex items-center justify-end w-auto h-full">
-                      <span className="text-sm font-regular text-pwip-black-500">
-                        MYPGU
-                      </span>
-                    </div>
-                  </div>
-                  <div className="inline-flex flex-col w-full mt-2 space-y-1 border-b-[2px] border-b-pwip-gray-300 border-dashed pb-4">
+                  <div className="w-full rounded-lg bg-pwip-v2-gray-50 p-4 mt-5">
                     <div className="inline-flex items-center w-full">
-                      <div className="inline-flex items-center justify-start w-full h-full">
-                        <span className="text-xs font-regular text-pwip-black-500">
-                          Vishakapatnam
+                      <div className="inline-flex items-center justify-start w-auto h-full">
+                        <span className="text-sm font-regular text-pwip-black-500">
+                          {selectedPOL?.portCode}
                         </span>
                       </div>
-
-                      <div className="inline-flex items-center justify-end w-full h-full">
-                        <span className="text-xs font-regular text-pwip-black-500">
-                          Pasin Gudang
-                        </span>
+                      <div className="inline-flex items-center justify-center w-full h-full">
+                        <img
+                          className="h-auto w-[80%]"
+                          src="/assets/images/services/ofc/ship.svg"
+                        />
                       </div>
-                    </div>
-
-                    <div className="inline-flex items-center w-full">
-                      <div className="inline-flex items-center justify-start w-full h-full">
-                        <span className="text-xs font-regular text-pwip-gray-400">
-                          Andhra Pradesh
-                        </span>
-                      </div>
-
-                      <div className="inline-flex items-center justify-end w-full h-full">
-                        <span className="text-xs font-regular text-pwip-gray-400">
-                          Malaysia
+                      <div className="inline-flex items-center justify-end w-auto h-full">
+                        <span className="text-sm font-regular text-pwip-black-500">
+                          {selectedPOD?.portCode}
                         </span>
                       </div>
                     </div>
-                  </div>
+                    <div className="inline-flex flex-col w-full mt-2 space-y-1 border-b-[2px] border-b-pwip-gray-300 border-dashed pb-4">
+                      <div className="inline-flex items-center w-full">
+                        <div className="inline-flex items-center justify-start w-full h-full">
+                          <span className="text-xs font-regular text-pwip-black-500">
+                            {selectedPOL?.portName}
+                          </span>
+                        </div>
 
-                  <div className="inline-flex items-center justify-between w-full pt-4">
-                    <div className="inline-flex items-center justify-start w-auto h-full">
-                      <span className="text-base font-semibold text-pwip-black-500">
-                        Charges
-                      </span>
+                        <div className="inline-flex items-center justify-end w-full h-full">
+                          <span className="text-xs font-regular text-pwip-black-500">
+                            {selectedPOD?.portName}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="inline-flex items-center w-full">
+                        <div className="inline-flex items-center justify-start w-full h-full">
+                          <span className="text-xs font-regular text-pwip-gray-400">
+                            {selectedPOL?.state}
+                          </span>
+                        </div>
+
+                        <div className="inline-flex items-center justify-end w-full h-full">
+                          <span className="text-xs font-regular text-pwip-gray-400">
+                            {selectedPOD?.country}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="inline-flex items-center justify-end w-auto h-full">
-                      <span className="text-base font-semibold text-pwip-green-800">
-                        $119/mt
-                      </span>
+                    <div className="inline-flex items-center justify-between w-full pt-4">
+                      <div className="inline-flex items-center justify-start w-auto h-full">
+                        <span className="text-base font-semibold text-pwip-black-500">
+                          Charges
+                        </span>
+                      </div>
+
+                      <div className="inline-flex items-center justify-end w-auto h-full">
+                        <span className="text-base font-semibold text-pwip-green-800">
+                          ₹{ofcResultData?.ofcCharge}/mt
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ) : null}
             </div>
           </div>
         </div>
