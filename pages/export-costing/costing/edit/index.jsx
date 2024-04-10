@@ -50,7 +50,11 @@ import {
 // import CostingForm from "@/containers/ec/Forms/CostingForm";
 // import BreakupForm from "@/containers/ec/Forms/BreakupForm";
 
-import { getCostingToSaveHistoryPayload } from "@/utils/helper";
+import {
+  exportCostingServiceId,
+  apiStagePaymentBeUrl,
+  getCostingToSaveHistoryPayload,
+} from "@/utils/helper";
 
 import {
   riceCardIcon,
@@ -366,7 +370,10 @@ function EditCosting() {
   const checkUserSubscriptionDetails = async () => {
     try {
       const response = await axios.get(
-        apiBaseURL + "api" + "/user-subscription", //+ userDetails.user._id,
+        apiStagePaymentBeUrl +
+          "api" +
+          "/user-subscription?serviceId=" +
+          exportCostingServiceId, //+ userDetails.user._id,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -2337,18 +2344,89 @@ function EditCosting() {
                         return null;
                       }
 
+                      // const subscriptionResponse =
+                      //   await checkUserSubscriptionDetails();
+                      // const currentPlan =
+                      //   getObjectWithLatestDate(subscriptionResponse);
+
+                      // if (
+                      //   currentPlan?.total_generated_costing >=
+                      //   currentPlan?.usage_cap
+                      // ) {
+                      //   openToastMessage({
+                      //     type: "error",
+                      //     message: "You have exhausted your current plan!!",
+                      //     // autoHide: false,
+                      //   });
+
+                      //   return;
+                      // }
+
                       const subscriptionResponse =
                         await checkUserSubscriptionDetails();
-                      const currentPlan =
-                        getObjectWithLatestDate(subscriptionResponse);
+                      let currentPlan = null;
+
+                      if (typeof subscriptionResponse === "object") {
+                        currentPlan = subscriptionResponse;
+                      }
+
+                      if (subscriptionResponse?.length) {
+                        currentPlan = subscriptionResponse[0];
+                      }
+
+                      if (!currentPlan) {
+                        openToastMessage({
+                          type: "error",
+                          message:
+                            "Something went wrong while checking subscription details",
+                          // autoHide: false,
+                        });
+
+                        return;
+                      }
 
                       if (
-                        currentPlan?.total_generated_costing >=
-                        currentPlan?.usage_cap
+                        !currentPlan?.activeSubscription &&
+                        !currentPlan?.userSubscriptionHistory?.length
                       ) {
                         openToastMessage({
                           type: "error",
-                          message: "You have exhausted your current plan!!",
+                          message:
+                            currentPlan?.message ||
+                            "You have no active subscription",
+                          // autoHide: false,
+                        });
+
+                        return;
+                      }
+
+                      if (!currentPlan?.activeSubscription) {
+                        openToastMessage({
+                          type: "error",
+                          message:
+                            currentPlan?.message ||
+                            "You have no active subscription",
+                          // autoHide: false,
+                        });
+
+                        return;
+                      }
+
+                      if (currentPlan?.isSubscriptionExpired) {
+                        openToastMessage({
+                          type: "error",
+                          message: "Your subscription is expired",
+                          // autoHide: false,
+                        });
+
+                        return;
+                      }
+
+                      if (currentPlan?.isSubscriptionExhausted) {
+                        openToastMessage({
+                          type: "error",
+                          message:
+                            "You have exhausted your current subscription",
                           // autoHide: false,
                         });
 
