@@ -7,12 +7,12 @@ import {
 } from "theme/icon";
 
 export const moreSettingOptions = [
-  {
-    label: "Community",
-    icon: communityIcon,
-    backgroundColor: "#CFECFF66",
-    path: "/community",
-  },
+  // {
+  //   label: "Community",
+  //   icon: communityIcon,
+  //   backgroundColor: "#CFECFF66",
+  //   path: "/community",
+  // },
 
   // {
   //   label: "My orders",

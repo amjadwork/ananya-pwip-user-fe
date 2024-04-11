@@ -14,6 +14,12 @@ import {
   setSelectedPODForOFCRequest,
 } from "@/redux/actions/ofc.actions";
 
+import {
+  searchIcon,
+  // bookmarkFilledIcon,
+  // bookmarkOutlineIcon,
+} from "../../../theme/icon";
+
 import { debounce } from "lodash";
 const { flag } = require("country-emoji");
 
@@ -31,37 +37,56 @@ const FilterSection = ({
   filterOptions = [],
   handleFilterSelect,
   selectedFilter,
+  isFromEdit,
 }) => {
+  const dispatch = useDispatch();
+  const searchScreenActive = useSelector(
+    (state) => state.utils.searchScreenActive
+  );
+
   return (
     <div
       ref={fixedDivRef}
-      className={`flex w-full flex-col ${
-        !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
-      }
-      ${
-        isFixed && !searchFocus
-          ? "fixed left-0 top-[142px] bg-white z-20"
-          : "top-[158px]"
-      } pb-4
-      `}
+      className={`flex w-full flex-col`}
       style={{
-        animation:
-          isFixed && !searchFocus
-            ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
-            : "unset",
+        animation: !searchFocus
+          ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
+          : "unset",
         background:
-          isFixed && !searchFocus
+          !searchFocus || !searchScreenActive || !isFromEdit
             ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
             : "unset",
       }}
     >
-      <h2
-        className={`text-pwip-v2-primary font-sans text-base font-bold ${
-          inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
-        }`}
+      <div
+        className={`inline-flex w-full items-end justify-between ${
+          searchScreenActive || isFromEdit ? "mt-[38px]" : ""
+        } mb-[24px]`}
       >
-        Choose the {locationType} port
-      </h2>
+        <div className="w-full flex flex-col">
+          {!isFromEdit ? (
+            <span className="text-xs font-semibold text-pwip-v2-gray-400">
+              Step 2
+            </span>
+          ) : null}
+
+          <h2 className={`text-pwip-v2-primary font-sans text-base font-bold`}>
+            Choose the {locationType} port
+          </h2>
+        </div>
+
+        {!searchScreenActive && !isFromEdit ? (
+          <div
+            className="text-pwip-v2-gray-500 text-xs h-6 w-6 text-center inline-flex items-center justify-center"
+            onClick={() => {
+              dispatch(searchScreenRequest(true));
+              // window.clearTimeout(blurOccurred);
+            }}
+          >
+            <span>{searchIcon}</span>
+          </div>
+        ) : null}
+      </div>
 
       <div
         className={`flex overflow-x-scroll hide-scroll-bar ${
@@ -204,8 +229,6 @@ const SelectLocationContainer = (props) => {
   const [isFixed, setIsFixed] = React.useState(false);
   const [filterOptions, setFilterOptions] = React.useState([]);
   const [selectedFilter, setSelectedFilter] = React.useState(null);
-
-  console.log("here", locationsData?.locations?.origin);
 
   async function fetchTransportationCost(originId, sourceId) {
     try {
@@ -374,7 +397,7 @@ const SelectLocationContainer = (props) => {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, [selectedCostingProduct]);
+  }, [searchScreenActive]);
 
   function handleSearch(searchString) {
     const dataToFilter = [...destinationList];
@@ -510,139 +533,142 @@ const SelectLocationContainer = (props) => {
 
   let blurOccurred = null;
 
-  console.log("popularDestinationData", locationsData?.locations?.destinations);
+  console.log(
+    searchScreenActive && !isFromEdit,
+    searchScreenActive,
+    isFromEdit
+  );
 
   return (
     <React.Fragment>
       <div
         id="fixedMenuSection"
         className={`fixed ${
-          !noTop ? "top-[56px]" : "top-[18px]"
-        }  h-[auto] w-full z-10 py-3 pb-[30px] px-5`}
+          !noTop ? "top-[56px]" : "top-[14px]"
+        }  h-[auto] w-full z-10 py-3 pb-[18px] px-5`}
         style={{
           background:
             "linear-gradient(180deg, #FFF 84.97%, rgba(255, 255, 255, 0.00) 100%)",
         }}
       >
-        <div
-          style={{
-            filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
-          }}
-          className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
-        >
-          <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
-            <svg
-              width="17"
-              height="16"
-              viewBox="0 0 17 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                opacity="0.7"
-                d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
-                stroke="#878D96"
-                strokeWidth="1.52292"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <input
-            placeholder={`Search for a ${locationType} port`}
-            className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
-            value={searchStringValue}
-            onChange={(event) => {
-              setSearchStringValue(event.target.value);
-              handleSearch(event.target.value);
+        {searchScreenActive || isFromEdit ? (
+          <div
+            style={{
+              filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
             }}
-            onFocus={() => {
-              // setSearchFocus(true);
-              dispatch(searchScreenRequest(true));
-              window.clearTimeout(blurOccurred);
-            }}
-            onBlur={(e) => {
-              // setSearchFocus(false);
-              // dispatch(searchScreenFailure());
-              blurOccurred = window.setTimeout(function () {
-                handleInputDoneClick(e);
-              }, 10);
-            }}
-          />
-          {searchStringValue || searchScreenActive ? (
-            <button
-              onClick={() => {
-                setSearchStringValue("");
-                dispatch(searchScreenFailure());
-                handleSearch("");
-              }}
-              className="outline-none border-none bg-transparent inline-flex items-center justify-center"
-            >
+            className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
+          >
+            <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
               <svg
-                width="19"
-                height="19"
-                viewBox="0 0 19 19"
+                width="17"
+                height="16"
+                viewBox="0 0 17 16"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
-                  stroke="#686E6D"
-                  strokeWidth="2"
+                  opacity="0.7"
+                  d="M15.62 14.7062L12.0868 11.3939M13.9956 7.09167C13.9956 10.456 11.0864 13.1833 7.49778 13.1833C3.90915 13.1833 1 10.456 1 7.09167C1 3.72733 3.90915 1 7.49778 1C11.0864 1 13.9956 3.72733 13.9956 7.09167Z"
+                  stroke="#878D96"
+                  strokeWidth="1.52292"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
               </svg>
             </button>
-          ) : null}
-        </div>
-        {isFromEdit || isFromOtherService ? (
-          <FilterSection
-            locationType={locationType}
-            inFixedBar={true}
-            filterOptions={filterOptions}
-            selectedFilter={selectedFilter}
-            handleFilterSelect={(item) => {
-              if (selectedFilter?.name === item?.name) {
-                setSelectedFilter(null);
-                setListDestinationData([
-                  ...locationsData.locations.destinations,
-                ]);
-                return null;
-              } else {
-                setSelectedFilter(item);
-              }
 
-              if (locationType === "destination") {
-                const dataToFilterOrSort = [
-                  ...locationsData.locations.destinations,
-                ];
-
-                const filteredData = dataToFilterOrSort.filter((d) => {
-                  if (
-                    d.country.toLowerCase().includes(item.name.toLowerCase())
-                  ) {
-                    return d;
-                  }
-                });
-
-                setListDestinationData([...filteredData]);
-              }
-
-              if (locationType === "origin") {
-                const dataToFilterOrSort = [...locationsData.locations.origin];
-
-                const filteredData = dataToFilterOrSort.filter((d) => {
-                  if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
-                    return d;
-                  }
-                });
-
-                setListDestinationData([...filteredData]);
-              }
-            }}
-          />
+            <input
+              placeholder={`Search for a ${locationType} port`}
+              className="h-full w-full bg-white pl-[18px] text-sm font-sans outline-none border-none placeholder:text-pwip-v2-gray-500"
+              value={searchStringValue}
+              onChange={(event) => {
+                setSearchStringValue(event.target.value);
+                handleSearch(event.target.value);
+              }}
+              onFocus={() => {
+                // setSearchFocus(true);
+                dispatch(searchScreenRequest(true));
+                window.clearTimeout(blurOccurred);
+              }}
+              onBlur={(e) => {
+                // setSearchFocus(false);
+                // dispatch(searchScreenFailure());
+                blurOccurred = window.setTimeout(function () {
+                  handleInputDoneClick(e);
+                }, 10);
+              }}
+            />
+            {searchStringValue || searchScreenActive ? (
+              <button
+                onClick={() => {
+                  setSearchStringValue("");
+                  dispatch(searchScreenFailure());
+                  handleSearch("");
+                }}
+                className="outline-none border-none bg-transparent inline-flex items-center justify-center"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 19 19"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M13.4584 5.54199L5.54175 13.4587M5.54175 5.54199L13.4584 13.4587"
+                    stroke="#686E6D"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            ) : null}
+          </div>
         ) : null}
+
+        <FilterSection
+          locationType={locationType}
+          isFromEdit={isFromEdit}
+          inFixedBar={true}
+          filterOptions={filterOptions}
+          selectedFilter={selectedFilter}
+          handleFilterSelect={(item) => {
+            if (selectedFilter?.name === item?.name) {
+              setSelectedFilter(null);
+              setListDestinationData([...locationsData.locations.destinations]);
+              return null;
+            } else {
+              setSelectedFilter(item);
+            }
+
+            if (locationType === "destination") {
+              const dataToFilterOrSort = [
+                ...locationsData.locations.destinations,
+              ];
+
+              const filteredData = dataToFilterOrSort.filter((d) => {
+                if (d.country.toLowerCase().includes(item.name.toLowerCase())) {
+                  return d;
+                }
+              });
+
+              setListDestinationData([...filteredData]);
+            }
+
+            if (locationType === "origin") {
+              const dataToFilterOrSort = [...locationsData.locations.origin];
+
+              const filteredData = dataToFilterOrSort.filter((d) => {
+                if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
+                  return d;
+                }
+              });
+
+              setListDestinationData([...filteredData]);
+            }
+          }}
+        />
       </div>
 
       <div
@@ -651,232 +677,22 @@ const SelectLocationContainer = (props) => {
         } overflow-auto hide-scroll-bar`}
         style={{
           paddingTop: isFromEdit
-            ? mainContainerHeight + 120 + "px"
+            ? mainContainerHeight + 96 + "px"
             : window.innerWidth >= 1280
             ? "136px"
             : isFromOtherService
             ? mainContainerHeight - 20 + "px"
-            : mainContainerHeight + 32 + "px",
+            : searchScreenActive
+            ? mainContainerHeight + 22 + "px"
+            : mainContainerHeight + 36 + "px",
         }}
       >
-        {/* {!isFromEdit &&
-        !searchStringValue &&
-        !searchScreenActive &&
-        !isFromOtherService ? (
-          <React.Fragment>
-            <h2
-              className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              Top 5 popular destination ports
-            </h2>
-
-            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
-              <div className="flex flex-nowrap">
-                {[...popularDestinationData].map((items, index) => {
-                  const imageURI =
-                    "/assets/images/" +
-                    `${
-                      index === 0
-                        ? "one.png"
-                        : index === 1
-                        ? "two.png"
-                        : index === 2
-                        ? "three.png"
-                        : index === 3
-                        ? "four.png"
-                        : index === 4
-                        ? "five.png"
-                        : ""
-                    }`;
-                  return (
-                    <div
-                      key={`${index}_` + (index + 1 * 2)}
-                      className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4 transition-all"
-                      style={{
-                        boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                        backdropFilter: "blur(8px)",
-                        backgroundColor:
-                          selectedCosting?.portOfDestination?._id === items._id
-                            ? "#F5FAFF"
-                            : "#ffffff",
-                      }}
-                      onClick={async () => {
-                        if (isFromEdit || isFromOtherService) {
-                          if (locationType === "destination") {
-                            const sourceId =
-                              selectedCosting.customCostingSelection
-                                .portOfOrigin._id;
-
-                            const response = await fetchCHAandSHLandOFCCost(
-                              sourceId,
-                              items?._id
-                            );
-
-                            if (setFieldValue) {
-                              if (response.cha.length) {
-                                setFieldValue(
-                                  "cfsHandling",
-                                  Math.floor(
-                                    response?.cha[0]?.destinations[0]
-                                      ?.chaCharge / containerWeight
-                                  )
-                                );
-                              }
-
-                              if (response.ofc.length) {
-                                setFieldValue(
-                                  "ofc",
-                                  Math.floor(
-                                    response?.ofc[0]?.destinations[0]
-                                      ?.ofcCharge / containerWeight
-                                  )
-                                );
-                              }
-
-                              if (response.shl.length) {
-                                setFieldValue(
-                                  "shl",
-                                  Math.floor(
-                                    response?.shl[0]?.destinations[0]
-                                      ?.shlCharge / containerWeight
-                                  )
-                                );
-                              }
-                            }
-                          }
-
-                          if (locationType === "origin") {
-                            if (
-                              selectedCosting?.customCostingSelection?.product
-                            ) {
-                              const sourceId =
-                                selectedCosting?.customCostingSelection?.product
-                                  ?.sourceRates?._sourceId ||
-                                selectedCosting?.customCostingSelection?.product
-                                  ?.sourceObject?._id;
-
-                              const response = await fetchTransportationCost(
-                                items?._id,
-                                sourceId
-                              );
-
-                              if (setFieldValue) {
-                                if (
-                                  response?.data &&
-                                  response?.data?.length &&
-                                  response?.data[0]?.sourceLocations?.length
-                                ) {
-                                  setFieldValue(
-                                    "transportation",
-                                    response?.data[0]?.sourceLocations[0]
-                                      ?.transportationCharge
-                                  );
-                                }
-                              }
-                            }
-                          }
-
-                          closeBottomSheet();
-                        } else {
-                          dispatch(
-                            setCostingSelection({
-                              ...selectedCosting,
-                              portOfDestination: items,
-                            })
-                          );
-                        }
-                      }}
-                    >
-                      <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
-                        <img src={imageURI} className="w-[24px] h-[24px]" />
-                        <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                          <span className="line-clamp-1">{items.country}</span>
-                          <span className="text-sm">{flag(items.country)}</span>
-                        </div>
-                        <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
-                          {items.portName}
-                        </span>
-                        <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1 uppercase">
-                          {items.portCode}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </React.Fragment>
-        ) : null} */}
-
         <React.Fragment>
           <div
             className={`w-full h-auto inline-flex flex-col ${
               !isFromEdit || !isFromOtherService ? "mt-[32px]" : ""
             }`}
           >
-            <div className="flex overflow-x-scroll hide-scroll-bar">
-              {!isFromEdit &&
-              !isFromOtherService &&
-              !searchScreenActive &&
-              !searchStringValue ? (
-                <FilterSection
-                  fixedDivRef={fixedDivRef}
-                  locationType={locationType}
-                  isFixed={isFixed}
-                  searchFocus={searchScreenActive}
-                  filterOptions={filterOptions}
-                  selectedFilter={selectedFilter}
-                  handleFilterSelect={(item) => {
-                    if (selectedFilter?.name === item?.name) {
-                      setSelectedFilter(null);
-                      setListDestinationData([
-                        ...locationsData.locations.destinations,
-                      ]);
-                      return null;
-                    } else {
-                      setSelectedFilter(item);
-                    }
-
-                    if (locationType === "destination") {
-                      const dataToFilterOrSort = [
-                        ...locationsData.locations.destinations,
-                      ];
-
-                      const filteredData = dataToFilterOrSort.filter((d) => {
-                        if (
-                          d.country
-                            .toLowerCase()
-                            .includes(item.name.toLowerCase())
-                        ) {
-                          return d;
-                        }
-                      });
-
-                      setListDestinationData([...filteredData]);
-                    }
-
-                    if (locationType === "origin") {
-                      const dataToFilterOrSort = [
-                        ...locationsData.locations.origin,
-                      ];
-
-                      const filteredData = dataToFilterOrSort.filter((d) => {
-                        if (
-                          d.country
-                            .toLowerCase()
-                            .includes(item.name.toLowerCase())
-                        ) {
-                          return d;
-                        }
-                      });
-
-                      setListDestinationData([...filteredData]);
-                    }
-                  }}
-                />
-              ) : null}
-            </div>
-
             <div className="w-full h-full space-y-[24px]">
               {[...listDestinationData].map((items, index) => {
                 return (

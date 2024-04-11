@@ -29,12 +29,12 @@ import {
 } from "@/redux/actions/category.actions";
 
 import {
-  exportCostingIcon,
-  ricePriceServiceIcon,
-  exportOrdersServiceIcon,
-  labsServiceIcon,
-  networkServiceIcon,
-  communityProductIcon,
+  // exportCostingIcon,
+  // ricePriceServiceIcon,
+  // exportOrdersServiceIcon,
+  // labsServiceIcon,
+  // networkServiceIcon,
+  // communityProductIcon,
   infoIcon,
   arrowLongRightIcon,
 } from "../../theme/icon";
@@ -511,7 +511,7 @@ function Home() {
               Top 5 destination ports for rice
             </h2>
 
-            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5">
+            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 w-full">
               <div className="flex flex-nowrap">
                 {[...popularDestinationData].map((items, index) => {
                   const imageURI =
@@ -571,7 +571,7 @@ function Home() {
                     key={items?.name + index}
                     className="inline-flex flex-col items-center justify-center space-y-[10px]"
                     onClick={() => {
-                      dispatch(searchScreenFailure());
+                      // dispatch(searchScreenFailure());
                       dispatch(
                         fetchCategoryRequest({
                           productCategory: {
@@ -590,7 +590,7 @@ function Home() {
                         })
                       );
 
-                      router.push("/category");
+                      router.push("/category?from=home");
                     }}
                   >
                     <div
@@ -600,11 +600,7 @@ function Home() {
                       className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
                     >
                       <img
-                        src={
-                          items?.image
-                          // items.images[0] ||
-                          // "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
-                        }
+                        src={items?.image}
                         className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
                       />
                     </div>
@@ -618,14 +614,16 @@ function Home() {
           </React.Fragment>
 
           <React.Fragment>
-            <h3 className="px-5 mt-[32px] text-pwip-v2-primary font-sans text-base font-bold">
-              Top sourcing locations
-            </h3>
-            <span className="px-5 text-sm text-pwip-v2-gray-400 font-normal">
-              Search rice from India's favourite sourcing locations
-            </span>
+            <div className="inline-flex w-full flex-col px-5 mt-[32px] ">
+              <h3 className="text-pwip-v2-primary font-sans text-base font-bold">
+                Top sourcing locations
+              </h3>
+              <span className="text-sm text-pwip-v2-gray-400 font-normal">
+                Search rice from India's favourite sourcing locations
+              </span>
+            </div>
 
-            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 mt-5">
+            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 mt-5 w-full">
               <div className="flex flex-nowrap">
                 {getUniqueObjectsBySourceId([...popularSourceLocationData]).map(
                   (items, index) => {
@@ -645,7 +643,7 @@ function Home() {
                             })
                           );
 
-                          router.push("/category");
+                          router.push("/category?from=home");
                         }}
                       >
                         <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
