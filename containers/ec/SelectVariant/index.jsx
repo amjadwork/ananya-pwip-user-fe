@@ -124,7 +124,6 @@ const FilterSection = ({
           <div
             className="text-pwip-v2-gray-500 text-xs h-6 w-6 text-center inline-flex items-center justify-center"
             onClick={() => {
-              console.log("clicked");
               dispatch(searchScreenRequest(true));
               // window.clearTimeout(blurOccurred);
             }}
@@ -501,7 +500,6 @@ const SelectVariantContainer = (props) => {
       }
 
       if (productList) {
-        console.log("productList", productList);
         setListProductsData([...productList]);
 
         // let riceCats = riceCategory.filter((f) => {
@@ -678,13 +676,35 @@ const SelectVariantContainer = (props) => {
 
   return (
     <React.Fragment>
+      {/* {!isFromEdit && !searchScreenActive ? (
+        <div
+          className={`inline-flex items-center mt-[56px] h-[auto] min-h-[120px] w-full z-0 py-3 px-5 bg-pwip-v2-primary-100`}
+        >
+          <div className="inline-flex space-x-4 w-full">
+            <div className="inline-flex w-full flex-col">
+              <h3 className="text-sm text-pwip-black-600 font-semibold">
+                Costings at your finger tips!
+              </h3>
+              <p className="text-xs text-pwip-v2-gray-500 font-normal mt-1">
+                Generate costings in 2 clicks and be ready with your estimates.
+              </p>
+            </div>
+
+            <img
+              className="h-[32px] w-auto"
+              src="/assets/images/services/ec-service-logo.png"
+            />
+          </div>
+        </div>
+      ) : null} */}
+
       <div
         id="fixedMenuSection"
-        className={`fixed transition-all ${
-          isFromEdit ? "top-[14px]" : "top-[56px]"
-        } h-[auto] w-full z-10 py-3 ${
+        className={`transition-all bg-white  ${
+          isFromEdit ? "fixed" : "sticky top-[56px]"
+        } pt-5 pb-3 h-[auto] w-full ${
           isFromCategory || isFromEdit ? "pb-[18px]" : "pb-[18px]"
-        } px-5`}
+        } px-5 z-10`}
         style={{
           transition: "max-height 6000s ease",
           background:
@@ -970,15 +990,15 @@ const SelectVariantContainer = (props) => {
       </div>
 
       <div
-        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar max-xl:pt-[96px]`}
+        className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
         style={{
           paddingTop: isFromEdit
-            ? mainContainerHeight + 96 + "px"
+            ? mainContainerHeight + 104 + "px"
             : window.innerWidth >= 1280
             ? "136px"
-            : // : searchScreenActive
-              // ? mainContainerHeight + 86 + "px"
-              mainContainerHeight + 32 + "px",
+            : searchScreenActive
+            ? 38 + "px"
+            : 32 + "px",
         }}
       >
         <React.Fragment>

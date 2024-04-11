@@ -38,6 +38,7 @@ const FilterSection = ({
   handleFilterSelect,
   selectedFilter,
   isFromEdit,
+  isFromOtherService,
 }) => {
   const dispatch = useDispatch();
   const searchScreenActive = useSelector(
@@ -64,7 +65,7 @@ const FilterSection = ({
         } mb-[24px]`}
       >
         <div className="w-full flex flex-col">
-          {!isFromEdit ? (
+          {!isFromEdit && !isFromOtherService ? (
             <span className="text-xs font-semibold text-pwip-v2-gray-400">
               Step 2
             </span>
@@ -533,12 +534,6 @@ const SelectLocationContainer = (props) => {
 
   let blurOccurred = null;
 
-  console.log(
-    searchScreenActive && !isFromEdit,
-    searchScreenActive,
-    isFromEdit
-  );
-
   return (
     <React.Fragment>
       <div
@@ -630,6 +625,7 @@ const SelectLocationContainer = (props) => {
         <FilterSection
           locationType={locationType}
           isFromEdit={isFromEdit}
+          isFromOtherService={isFromOtherService}
           inFixedBar={true}
           filterOptions={filterOptions}
           selectedFilter={selectedFilter}
@@ -681,10 +677,10 @@ const SelectLocationContainer = (props) => {
             : window.innerWidth >= 1280
             ? "136px"
             : isFromOtherService
-            ? mainContainerHeight - 20 + "px"
+            ? mainContainerHeight + "px"
             : searchScreenActive
             ? mainContainerHeight + 22 + "px"
-            : mainContainerHeight + 36 + "px",
+            : 162 + "px",
         }}
       >
         <React.Fragment>

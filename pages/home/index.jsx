@@ -76,31 +76,6 @@ const data = [
         primary: "Jun",
         secondary: 70,
       },
-      // {
-      //   primary: "Jul",
-      //   secondary: 93,
-      // },
-      // {
-      //   primary: "Aug",
-      //   secondary: 78,
-      // },
-      // {
-      //   primary: "Sep",
-      //   secondary: 99,
-      // },
-      // {
-      //   primary: "Oct",
-      //   secondary: 14,
-      // },
-
-      // {
-      //   primary: "Nov",
-      //   secondary: 42,
-      // },
-      // {
-      //   primary: "Dec",
-      //   secondary: 31,
-      // },
     ],
   },
   {
@@ -131,31 +106,6 @@ const data = [
         primary: "Jun",
         secondary: 65,
       },
-      // {
-      //   primary: "Jul",
-      //   secondary: 16,
-      // },
-      // {
-      //   primary: "Aug",
-      //   secondary: 8,
-      // },
-      // {
-      //   primary: "Sep",
-      //   secondary: 87,
-      // },
-      // {
-      //   primary: "Oct",
-      //   secondary: 4,
-      // },
-
-      // {
-      //   primary: "Nov",
-      //   secondary: 12,
-      // },
-      // {
-      //   primary: "Dec",
-      //   secondary: 1,
-      // },
     ],
   },
   {
@@ -186,31 +136,6 @@ const data = [
         primary: "Jun",
         secondary: 65,
       },
-      // {
-      //   primary: "Jul",
-      //   secondary: 43,
-      // },
-      // {
-      //   primary: "Aug",
-      //   secondary: 75,
-      // },
-      // {
-      //   primary: "Sep",
-      //   secondary: 13,
-      // },
-      // {
-      //   primary: "Oct",
-      //   secondary: 45,
-      // },
-
-      // {
-      //   primary: "Nov",
-      //   secondary: 77,
-      // },
-      // {
-      //   primary: "Dec",
-      //   secondary: 96,
-      // },
     ],
   },
 ];
@@ -504,129 +429,135 @@ function Home() {
             </div>
           </div>
 
-          <div className="w-full h-auto">
-            <h2
-              className={`px-5 mt-2 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              Top 5 destination ports for rice
-            </h2>
+          <div className="inline-flex flex-col w-full">
+            <div className="w-full h-auto">
+              <h2
+                className={`px-5 mt-2 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
+              >
+                Top 5 destination ports for rice
+              </h2>
 
-            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 w-full">
-              <div className="flex flex-nowrap">
-                {[...popularDestinationData].map((items, index) => {
-                  const imageURI =
-                    "/assets/images/" +
-                    `${
-                      index === 0
-                        ? "one.png"
-                        : index === 1
-                        ? "two.png"
-                        : index === 2
-                        ? "three.png"
-                        : index === 3
-                        ? "four.png"
-                        : index === 4
-                        ? "five.png"
-                        : ""
-                    }`;
+              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 w-full">
+                <div className="flex flex-nowrap">
+                  {[...popularDestinationData].map((items, index) => {
+                    const imageURI =
+                      "/assets/images/" +
+                      `${
+                        index === 0
+                          ? "one.png"
+                          : index === 1
+                          ? "two.png"
+                          : index === 2
+                          ? "three.png"
+                          : index === 3
+                          ? "four.png"
+                          : index === 4
+                          ? "five.png"
+                          : ""
+                      }`;
+                    return (
+                      <div
+                        key={`${index}_` + (index + 1 * 2)}
+                        className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4 transition-all border-[1px] border-pwip-v2-gray-250"
+                      >
+                        <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
+                          <img src={imageURI} className="w-[24px] h-[24px]" />
+                          <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
+                            <span className="line-clamp-1">
+                              {items.country}
+                            </span>
+                            <span className="text-sm">
+                              {flag(items.country)}
+                            </span>
+                          </div>
+                          <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
+                            {items.portName}
+                          </span>
+                          <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1 uppercase">
+                            {items.portCode}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full h-auto">
+              <h2
+                className={`px-5 mt-[32px] text-pwip-v2-primary font-sans text-base font-bold`}
+              >
+                Rice catagories
+              </h2>
+              <span className="px-5 text-sm text-pwip-v2-gray-400 font-normal">
+                Search rice by the category
+              </span>
+
+              <div className="grid grid-cols-4 gap-4 px-5 mt-5">
+                {[...riceCategory].map((items, index) => {
                   return (
                     <div
-                      key={`${index}_` + (index + 1 * 2)}
-                      className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4 transition-all border-[1px] border-pwip-v2-gray-250"
+                      key={items?.name + index}
+                      className="inline-flex flex-col items-center justify-center space-y-[10px]"
+                      onClick={() => {
+                        // dispatch(searchScreenFailure());
+                        dispatch(
+                          fetchCategoryRequest({
+                            productCategory: {
+                              name: items.name,
+                              color:
+                                index === 0
+                                  ? "#F3F7F9"
+                                  : index === 1
+                                  ? "#F7FFF2"
+                                  : index === 2
+                                  ? "#FFF5EF"
+                                  : index === 3
+                                  ? "#FFFBED"
+                                  : "#F3F7F9",
+                            },
+                          })
+                        );
+
+                        router.push("/category?from=home");
+                      }}
                     >
-                      <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
-                        <img src={imageURI} className="w-[24px] h-[24px]" />
-                        <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                          <span className="line-clamp-1">{items.country}</span>
-                          <span className="text-sm">{flag(items.country)}</span>
-                        </div>
-                        <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
-                          {items.portName}
-                        </span>
-                        <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1 uppercase">
-                          {items.portCode}
-                        </span>
+                      <div
+                        style={{
+                          background: items?.color,
+                        }}
+                        className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
+                      >
+                        <img
+                          src={items?.image}
+                          className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
+                        />
                       </div>
+                      <span className="text-pwip-gray-700 text-sm font-[500] font-sans text-center line-clamp-1">
+                        {items?.name}
+                      </span>
                     </div>
                   );
                 })}
               </div>
             </div>
-          </div>
 
-          <div className="w-full h-auto">
-            <h2
-              className={`px-5 mt-[32px] text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              Rice catagories
-            </h2>
-            <span className="px-5 text-sm text-pwip-v2-gray-400 font-normal">
-              Search rice by the category
-            </span>
+            <div className="w-full h-auto">
+              <div className="inline-flex w-full flex-col px-5 mt-[32px] ">
+                <h3 className="text-pwip-v2-primary font-sans text-base font-bold">
+                  Top sourcing locations
+                </h3>
+                <span className="text-sm text-pwip-v2-gray-400 font-normal">
+                  Search rice from India's favourite sourcing locations
+                </span>
+              </div>
 
-            <div className="grid grid-cols-4 gap-4 px-5 mt-5">
-              {[...riceCategory].map((items, index) => {
-                return (
-                  <div
-                    key={items?.name + index}
-                    className="inline-flex flex-col items-center justify-center space-y-[10px]"
-                    onClick={() => {
-                      // dispatch(searchScreenFailure());
-                      dispatch(
-                        fetchCategoryRequest({
-                          productCategory: {
-                            name: items.name,
-                            color:
-                              index === 0
-                                ? "#F3F7F9"
-                                : index === 1
-                                ? "#F7FFF2"
-                                : index === 2
-                                ? "#FFF5EF"
-                                : index === 3
-                                ? "#FFFBED"
-                                : "#F3F7F9",
-                          },
-                        })
-                      );
-
-                      router.push("/category?from=home");
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: items?.color,
-                      }}
-                      className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
-                    >
-                      <img
-                        src={items?.image}
-                        className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
-                      />
-                    </div>
-                    <span className="text-pwip-gray-700 text-sm font-[500] font-sans text-center line-clamp-1">
-                      {items?.name}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="w-full h-auto">
-            <div className="inline-flex w-full flex-col px-5 mt-[32px] ">
-              <h3 className="text-pwip-v2-primary font-sans text-base font-bold">
-                Top sourcing locations
-              </h3>
-              <span className="text-sm text-pwip-v2-gray-400 font-normal">
-                Search rice from India's favourite sourcing locations
-              </span>
-            </div>
-
-            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 mt-5 w-full">
-              <div className="flex flex-nowrap">
-                {getUniqueObjectsBySourceId([...popularSourceLocationData]).map(
-                  (items, index) => {
+              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] px-5 mt-5 w-full">
+                <div className="flex flex-nowrap">
+                  {getUniqueObjectsBySourceId([
+                    ...popularSourceLocationData,
+                  ]).map((items, index) => {
                     return (
                       <div
                         key={items?.sourceName + (index + 1 * 2)}
@@ -668,8 +599,8 @@ function Home() {
                         </div>
                       </div>
                     );
-                  }
-                )}
+                  })}
+                </div>
               </div>
             </div>
           </div>
