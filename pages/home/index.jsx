@@ -27,6 +27,7 @@ import {
   fetchCategoryRequest,
   // fetchCategoryFailure,
 } from "@/redux/actions/category.actions";
+import { useOverlayContext } from "@/context/OverlayContext";
 
 import {
   // exportCostingIcon,
@@ -74,6 +75,9 @@ function Home() {
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
 
+  const { openBottomSheet, closeBottomSheet, stopLoading } =
+    useOverlayContext();
+
   const [eximTrendsData, setEximTrendsData] = React.useState(null);
 
   const fetchEXIMTrend = async () => {
@@ -93,16 +97,10 @@ function Home() {
 
       let eximData = transformData(eximDataFromResponse?.chart);
 
-      if (eximData?.length > 3) {
-        eximData = eximData.slice(0, 3);
-      }
-
       const eximTrends = {
         ...response?.data,
         chart: eximData || [],
       };
-
-      console.log("response", eximTrends);
 
       setEximTrendsData(eximTrends);
     } catch (err) {
@@ -295,6 +293,12 @@ function Home() {
                   <div
                     key={item?.name + "_" + index}
                     onClick={async () => {
+                      if (item?.comingSoon) {
+                        router.push("/waitlist?_s=" + item?.name);
+
+                        return;
+                      }
+
                       if (item.name.toLowerCase() === "community") {
                         window.open(item.url, "_blank");
 
@@ -392,7 +396,7 @@ function Home() {
           </div>
 
           <div className="inline-flex flex-col w-full relative">
-            <div className="w-full h-auto">
+            {/* <div className="w-full h-auto">
               <h2
                 className={`px-5 mt-2 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
               >
@@ -444,11 +448,11 @@ function Home() {
                   })}
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="w-full h-auto">
               <h2
-                className={`px-5 mt-[32px] text-pwip-v2-primary font-sans text-base font-bold`}
+                className={`px-5 mt-2 text-pwip-v2-primary font-sans text-base font-bold`}
               >
                 Rice catagories
               </h2>

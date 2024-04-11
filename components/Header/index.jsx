@@ -40,6 +40,7 @@ const atRoutes = [
   "rice-price",
   "lp",
   "ofc",
+  "waitlist",
 ];
 
 const serviceLogoRoutes = [
