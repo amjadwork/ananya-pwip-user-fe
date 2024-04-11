@@ -5,6 +5,7 @@ import { debounce } from "lodash";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import Lottie from "lottie-react";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -16,6 +17,7 @@ import {
   bookmarkFilledIcon,
   bookmarkOutlineIcon,
 } from "../../../theme/icon";
+import ServiceSplashLottie from "../../../theme/lottie/service-splash.json";
 
 // Import Components
 import { Header } from "@/components/Header";
@@ -155,6 +157,7 @@ function RicePrice() {
     openSearchFilterModal,
     closeSearchFilterModal,
     isSearchFilterModalOpen,
+    stopLoading,
   } = useOverlayContext();
 
   const router = useRouter();
@@ -174,6 +177,9 @@ function RicePrice() {
     useState([]);
 
   const [topWatchlistVariants, setTopWatchlistVariants] = useState([]);
+
+  const [splashScreen, setSplashScreen] = React.useState(false);
+  const [progressValue, setProgressValue] = React.useState(0); // State for progress value
 
   const navigateToDetail = async (item) => {
     await dispatch(setSelectedVariantForDetailRequest(item));
@@ -253,6 +259,50 @@ function RicePrice() {
       }
     }
   }, [variantWatchList, variantPriceList]);
+
+  React.useEffect(() => {
+    setSplashScreen(true);
+    stopLoading();
+  }, []);
+
+  React.useEffect(() => {
+    // Update progress value using requestAnimationFrame
+    const updateProgressValue = () => {
+      const duration = 2000;
+      const startTime = Date.now();
+      const endTime = startTime + duration;
+
+      const updateProgress = () => {
+        const now = Date.now();
+        const elapsedTime = now - startTime;
+        const progress = (elapsedTime / duration) * 100;
+
+        const currentValue = progress > 100 ? 100 : progress; // Limit progress to 100%
+        setProgressValue(currentValue);
+
+        if (now < endTime) {
+          requestAnimationFrame(updateProgress);
+        }
+      };
+
+      requestAnimationFrame(updateProgress);
+    };
+
+    if (splashScreen) {
+      updateProgressValue();
+
+      // Reset progress value after given seconds
+      setTimeout(() => {
+        stopLoading();
+        setProgressValue(0);
+        setSplashScreen(false);
+      }, 2300);
+    }
+  }, [splashScreen]);
+
+  const style = {
+    height: 180,
+  };
 
   return (
     <React.Fragment>
@@ -584,7 +634,7 @@ function RicePrice() {
                             : bookmarkOutlineIcon}
                         </div>
                       </div>
-                      
+
                       <div
                         onClick={() => {
                           navigateToDetail(item);
@@ -647,6 +697,48 @@ function RicePrice() {
                 ) : null}
               </div>
             </div>
+          </div>
+        </div>
+
+        <div
+          className={`h-screen w-screen fixed top-0 left-0 transition-all bg-white inline-flex flex-col justify-between ${
+            splashScreen ? "block opacity-1 z-20" : "hidden opacity-0"
+          }`}
+        >
+          <div className="inline-flex space-y-3 items-center flex-col justify-center h-full w-full px-8 relative top-[-100px]">
+            {/* Splash screen content */}
+            <div className="min-w-[310px] h-auto relative inline-flex items-center justify-center">
+              <img
+                className="h-[32px] absolute z-10"
+                src="/assets/images/services/rice-price-service-logo.png"
+              />
+              <div className="w-auto z-0">
+                <Lottie animationData={ServiceSplashLottie} style={style} />
+              </div>
+            </div>
+
+            <div className="inline-flex items-center flex-col justify-center">
+              <span className="text-center text-sm text-pwip-black-500 font-semibold leading-5">
+                Get your estimated freight charges anytime, anywhere
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="px-5 w-full h-auto">
+              <div className="w-full h-2 rounded-full bg-pwip-v2-gray-350 !mt-12">
+                <div
+                  style={{ width: `${progressValue}%` }}
+                  className="h-2 rounded-full bg-pwip-v2-primary-500"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center flex-col justify-center px-8 pb-8">
+            <span className="text-center text-xs text-pwip-v2-gray-500 leading-5">
+              Generate costing in 2 clicks for estimations and customize it as
+              per your order before sharing ahead.
+            </span>
           </div>
         </div>
       </AppLayout>
