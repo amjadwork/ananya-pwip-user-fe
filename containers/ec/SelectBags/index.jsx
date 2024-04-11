@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 // import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 // import { setCustomCostingSelection } from "@/redux/actions/costing.actions.js";
@@ -41,10 +41,30 @@ const SelectBagsContainer = (props) => {
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [packagingBagsData, setPackagingBagsData] = React.useState([]);
 
+  function addImageUrlToObjectArray(inputObj, inputArray) {
+    return inputArray.map((item) => ({
+      ...item,
+      imageUrl: inputObj[item.bag],
+    }));
+  }
+
+  const bagsImage = useMemo(
+    () => ({
+      Jute: "https://ik.imagekit.io/qeoc0zl3c/Jute.png?updatedAt=1710446463732",
+      "PP Woven":
+        "https://ik.imagekit.io/qeoc0zl3c/PP.png?updatedAt=1710446460819",
+      BOPP: "https://ik.imagekit.io/qeoc0zl3c/BOPP.png?updatedAt=1710446460713",
+      "Non Woven":
+        "https://ik.imagekit.io/qeoc0zl3c/NonWoven.png?updatedAt=1710446461067",
+    }),
+    []
+  );
+
   React.useEffect(() => {
     if (packagingBags && !packagingBags?.error && packagingBags?.bags?.length) {
-      setPackagingBagsData(getUniqueBags(packagingBags?.bags));
-      // setPackagingBagsData(packagingBags?.bags);
+      setPackagingBagsData(
+        addImageUrlToObjectArray(bagsImage, getUniqueBags(packagingBags?.bags))
+      );
     }
   }, [packagingBags]);
 
@@ -108,7 +128,7 @@ const SelectBagsContainer = (props) => {
                 }}
               >
                 <div className="w-full pt-3 inline-flex items-center justify-center">
-                  <img src="/assets/images/bags/jutebag.png" />
+                  <img src={items?.imageUrl} />
                 </div>
                 <div className="p-3 flex w-fill flex-col space-y-[4px]">
                   <span className="text-pwip-gray-700 text-sm font-bold font-sans line-clamp-1 text-center">
