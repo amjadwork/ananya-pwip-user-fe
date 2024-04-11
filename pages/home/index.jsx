@@ -294,7 +294,7 @@ function Home() {
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0 pb-[72px]`}
         >
-          <div
+          {/* <div
             className={`relative left-0 h-[auto] w-full bg-white z-0 py-6 px-5`}
           >
             <div
@@ -366,9 +366,9 @@ function Home() {
                 </button>
               ) : null}
             </div>
-          </div>
+          </div> */}
           <div
-            className={`inline-flex flex-col h-full w-full px-5 bg-white pb-6 hide-scroll-bar space-y-8`}
+            className={`inline-flex flex-col h-full w-full px-5 bg-white pb-6 pt-5 hide-scroll-bar space-y-8`}
             // style={{
             //   paddingTop: mainContainerHeight + "px",
             //   paddingBottom: mainContainerHeight + 20 + "px",
@@ -504,7 +504,7 @@ function Home() {
             </div>
           </div>
 
-          <React.Fragment>
+          <div className="w-full h-auto">
             <h2
               className={`px-5 mt-2 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
             >
@@ -552,9 +552,9 @@ function Home() {
                 })}
               </div>
             </div>
-          </React.Fragment>
+          </div>
 
-          <React.Fragment>
+          <div className="w-full h-auto">
             <h2
               className={`px-5 mt-[32px] text-pwip-v2-primary font-sans text-base font-bold`}
             >
@@ -611,9 +611,9 @@ function Home() {
                 );
               })}
             </div>
-          </React.Fragment>
+          </div>
 
-          <React.Fragment>
+          <div className="w-full h-auto">
             <div className="inline-flex w-full flex-col px-5 mt-[32px] ">
               <h3 className="text-pwip-v2-primary font-sans text-base font-bold">
                 Top sourcing locations
@@ -672,7 +672,7 @@ function Home() {
                 )}
               </div>
             </div>
-          </React.Fragment>
+          </div>
 
           <div className="bg-pwip-v2-gray-100 w-full h-full px-5 py-6 mt-[32px]">
             <h3 className="text-sm font-bold text-pwip-black-600">
