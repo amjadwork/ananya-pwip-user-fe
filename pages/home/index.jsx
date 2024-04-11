@@ -49,98 +49,6 @@ const { flag } = require("country-emoji");
 // Import Containers
 
 // Import Layouts
-const data = [
-  {
-    label: "RNR Parboiled",
-    color: "#165BAA",
-    data: [
-      {
-        primary: "Jan",
-        secondary: 98,
-      },
-      {
-        primary: "Feb",
-        secondary: 83,
-      },
-      {
-        primary: "Mar",
-        secondary: 98,
-      },
-      {
-        primary: "Apr",
-        secondary: 27,
-      },
-      {
-        primary: "May",
-        secondary: 14,
-      },
-      {
-        primary: "Jun",
-        secondary: 70,
-      },
-    ],
-  },
-  {
-    label: "Basmati sella",
-    color: "#3988FF",
-    data: [
-      {
-        primary: "Jan",
-        secondary: 37,
-      },
-      {
-        primary: "Feb",
-        secondary: 45,
-      },
-      {
-        primary: "Mar",
-        secondary: 70,
-      },
-      {
-        primary: "Apr",
-        secondary: 7,
-      },
-      {
-        primary: "May",
-        secondary: 87,
-      },
-      {
-        primary: "Jun",
-        secondary: 65,
-      },
-    ],
-  },
-  {
-    label: "Basmati steam",
-    color: "#6DC4FD",
-    data: [
-      {
-        primary: "Jan",
-        secondary: 6,
-      },
-      {
-        primary: "Feb",
-        secondary: 30,
-      },
-      {
-        primary: "Mar",
-        secondary: 77,
-      },
-      {
-        primary: "Apr",
-        secondary: 89,
-      },
-      {
-        primary: "May",
-        secondary: 36,
-      },
-      {
-        primary: "Jun",
-        secondary: 65,
-      },
-    ],
-  },
-];
 
 function transformData(inputArray) {
   const outputArray = [];
@@ -166,7 +74,6 @@ function Home() {
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
 
-  const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [eximTrendsData, setEximTrendsData] = React.useState(null);
 
   const fetchEXIMTrend = async () => {
@@ -209,26 +116,6 @@ function Home() {
       fetchEXIMTrend();
     }
   }, [authToken]);
-
-  // useEffect(() => {
-  //   if (authToken) {
-  //     fetchEXIMTrend(authToken);
-  //   }
-  // }, [authToken]);
-
-  React.useEffect(() => {
-    const element = document.getElementById("fixedMenuSection");
-    if (element) {
-      const height = element.offsetHeight;
-      setMainContainerHeight(height);
-    }
-  }, []);
-
-  const handleInputDoneClick = (event) => {
-    event.target.blur();
-  };
-
-  let blurOccurred = null;
 
   const primaryAxis = React.useMemo(
     () => ({
@@ -381,6 +268,7 @@ function Home() {
                 },
                 {
                   name: "Export orders",
+                  comingSoon: true,
                   icon: "/assets/images/home_main/export-orders.png",
                   subscribedUrl: "/service/export-orders",
                 },
@@ -393,6 +281,7 @@ function Home() {
                 },
                 {
                   name: "EXIM",
+                  comingSoon: true,
                   icon: "/assets/images/home_main/exim.png",
                   url: "/service/exim",
                 },
@@ -433,10 +322,19 @@ function Home() {
                     }}
                     className="inline-flex flex-col w-full items-center space-y-2 cursor-pointer"
                   >
-                    <div className="w-full h-[78px] rounded-lg border-[1px] border-pwip-v2-primary-50 inline-flex items-center justify-center">
+                    <div className="w-full h-[78px] rounded-lg border-[1px] border-pwip-v2-primary-50 inline-flex items-center justify-center relative">
+                      {item?.comingSoon ? (
+                        <div className="absolute z-0 h-auto w-full rounded-lg top-0 left-0 inline-flex justify-end">
+                          <div className="inline-flex h-auto w-auto items-center justify-center py-[1px] rounded-tr-lg rounded-bl-lg px-2 bg-pwip-v2-yellow-100">
+                            <span className="animate-text bg-gradient-to-r from-teal-500 via-purple-500 to-orange-500 bg-clip-text text-transparent text-center text-[9px] font-semibold">
+                              Coming Soon
+                            </span>
+                          </div>
+                        </div>
+                      ) : null}
                       <img
                         src={item.icon}
-                        className={`h-[32px] ${
+                        className={`h-[32px] relative z-10 ${
                           item?.name === "Export orders" ? "!h-[47px]" : ""
                         }  ${item?.name === "EXIM" ? "!h-[36px]" : ""} ${
                           item?.name === "Community" ? "!h-[38px]" : ""
@@ -493,7 +391,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="inline-flex flex-col w-full">
+          <div className="inline-flex flex-col w-full relative">
             <div className="w-full h-auto">
               <h2
                 className={`px-5 mt-2 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
@@ -734,55 +632,61 @@ function Home() {
                   In volume
                 </span>
               </div>
-              <div
-                className="w-full h-[180px] relative overflow-hidden mt-3"
-                id="home-chart"
-              >
-                <Chart
-                  options={{
-                    data: eximTrendsData?.chart || [],
-                    primaryAxis,
-                    secondaryAxes,
-                    // tooltip: {
-                    //   show: true,
-                    //   showDatumInTooltip: true,
-                    //   align: "top",
-                    //   alignPriority: "top",
-                    // },
-                    showDebugAxes: false,
-                    showVoronoi: false,
-                    memoizeSeries: true,
-                    defaultColors: ["#165BAA", "#3988FF", "#6DC4FD"],
-                    getSeriesStyle: () => {
-                      return {
-                        rectangle: {
-                          height: "15px",
-                        },
-                      };
-                    },
-                  }}
-                />
-              </div>
-              <div className="inline-flex flex-col w-full space-y-1 mt-5">
-                {eximTrendsData?.chart?.map((item, index) => {
-                  return (
-                    <div
-                      key={item?.label + "_" + index}
-                      className="inline-flex items-center space-x-2"
-                    >
+
+              {eximTrendsData?.chart?.length ? (
+                <div
+                  className="w-full h-[180px] relative overflow-hidden mt-3"
+                  id="home-chart"
+                >
+                  <Chart
+                    options={{
+                      data: eximTrendsData?.chart || [],
+                      primaryAxis,
+                      secondaryAxes,
+                      // tooltip: {
+                      //   show: true,
+                      //   showDatumInTooltip: true,
+                      //   align: "top",
+                      //   alignPriority: "top",
+                      // },
+                      showDebugAxes: false,
+                      showVoronoi: false,
+                      memoizeSeries: true,
+                      defaultColors: ["#165BAA", "#3988FF", "#6DC4FD"],
+                      getSeriesStyle: () => {
+                        return {
+                          rectangle: {
+                            height: "15px",
+                          },
+                        };
+                      },
+                    }}
+                  />
+                </div>
+              ) : null}
+
+              {eximTrendsData?.chart?.length ? (
+                <div className="inline-flex flex-col w-full space-y-1 mt-5">
+                  {eximTrendsData?.chart?.map((item, index) => {
+                    return (
                       <div
-                        className="h-2 w-4"
-                        style={{
-                          backgroundColor: item?.color,
-                        }}
-                      />
-                      <span className="text-xs text-pwip-v2-gray-800">
-                        {item?.label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
+                        key={item?.label + "_" + index}
+                        className="inline-flex items-center space-x-2"
+                      >
+                        <div
+                          className="h-2 w-4"
+                          style={{
+                            backgroundColor: item?.color,
+                          }}
+                        />
+                        <span className="text-xs text-pwip-v2-gray-800">
+                          {item?.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
           <div className="bg-pwip-v2-primary-100 inline-flex w-full h-auto items-center justify-center text-pwip-v2-primary-600 font-semibold space-x-2 py-5 border-t-[1px] border-t-pwip-v2-gray-200 cursor-pointer">
