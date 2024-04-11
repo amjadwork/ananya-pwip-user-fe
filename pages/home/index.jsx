@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
@@ -41,6 +41,8 @@ import {
 
 // Import Components
 import { Header } from "@/components/Header";
+import axios from "axios";
+import { apiBaseURL } from "utils/helper";
 
 const { flag } = require("country-emoji");
 
@@ -140,17 +142,79 @@ const data = [
   },
 ];
 
+function transformData(inputArray) {
+  const outputArray = [];
+  const colorCodes = ["#165BAA", "#3988FF", "#6DC4FD"];
+
+  inputArray.forEach((item) => {
+    const label = item.HSN;
+    const color = colorCodes[inputArray.findIndex((i) => i.HSN === item.HSN)];
+
+    const dataToAdd = item.data.map(({ primary, secondary }) => ({
+      primary,
+      secondary,
+    }));
+
+    outputArray.push({ label, color, data: dataToAdd });
+  });
+
+  return outputArray;
+}
+
 function Home() {
   const router = useRouter();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
-  const [searchStringValue, setSearchStringValue] = React.useState("");
+  const [eximTrendsData, setEximTrendsData] = React.useState(null);
 
-  function handleSearch(searchString) {
-    //
-  }
+  const fetchEXIMTrend = async () => {
+    try {
+      const response = await axios.get(
+        apiBaseURL +
+          "api" +
+          "/service/rice-price/exim-trend?ToDate=11-04-2024&rangeInMonths=12",
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const eximDataFromResponse = response?.data;
+
+      let eximData = transformData(eximDataFromResponse?.chart);
+
+      if (eximData?.length > 3) {
+        eximData = eximData.slice(0, 3);
+      }
+
+      const eximTrends = {
+        ...response?.data,
+        chart: eximData || [],
+      };
+
+      console.log("response", eximTrends);
+
+      setEximTrendsData(eximTrends);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // Use useMemo if you need to memoize the function
+  useMemo(() => {
+    if (authToken) {
+      fetchEXIMTrend();
+    }
+  }, [authToken]);
+
+  // useEffect(() => {
+  //   if (authToken) {
+  //     fetchEXIMTrend(authToken);
+  //   }
+  // }, [authToken]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -617,13 +681,13 @@ function Home() {
                 <div className="flex flex-nowrap">
                   {[
                     {
-                      label: "Popular rice",
-                      description: "RNR PARBOILED RICE",
+                      label: "Popular HSN",
+                      description: eximTrendsData?.topHSN?.hsn,
                       imageSrc: "/assets/images/home_main/rice_cat.png",
                     },
                     {
                       label: "Popular destination ports",
-                      description: "SINGAPORE",
+                      description: eximTrendsData?.topDestination?.destination,
                       imageSrc: "/assets/images/home_main/port_cat.png",
                     },
                   ].map((item, index) => {
@@ -656,7 +720,7 @@ function Home() {
               <div className="inline-flex w-full flex-col space-y-1 border-b-[1px] border-b-pwip-v2-gray-200 pb-6">
                 <div className="inline-flex justify-between w-full items-center">
                   <span className="text-pwip-v2-gray-400 text-base font-semibold">
-                    Top 3 exported rice HSN in last 6 months
+                    Top 3 exported HSN in last 6 months
                   </span>
 
                   <div className="text-pwip-v2-gray-400 inline-flex items-center justify-center h-auto w-auto">
@@ -664,7 +728,7 @@ function Home() {
                   </div>
                 </div>
                 <span className="text-pwip-v2-primary text-2xl font-semibold">
-                  991 tonn
+                  {eximTrendsData?.totalVolume?.toFixed(0)} tonn
                 </span>
                 <span className="text-pwip-v2-primary text-sm font-normal">
                   In volume
@@ -676,7 +740,7 @@ function Home() {
               >
                 <Chart
                   options={{
-                    data,
+                    data: eximTrendsData?.chart || [],
                     primaryAxis,
                     secondaryAxes,
                     // tooltip: {
@@ -700,7 +764,7 @@ function Home() {
                 />
               </div>
               <div className="inline-flex flex-col w-full space-y-1 mt-5">
-                {data?.map((item, index) => {
+                {eximTrendsData?.chart?.map((item, index) => {
                   return (
                     <div
                       key={item?.label + "_" + index}
