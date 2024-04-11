@@ -18,6 +18,7 @@ const hideBottomBarAtRoutes = [
   "rice-price",
   "export-costing",
   "ofc",
+  "waitlist",
 ];
 
 const AppLayout = ({ children }) => {
