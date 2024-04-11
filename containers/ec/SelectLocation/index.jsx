@@ -510,6 +510,8 @@ const SelectLocationContainer = (props) => {
 
   let blurOccurred = null;
 
+  console.log("popularDestinationData", locationsData?.locations?.destinations);
+
   return (
     <React.Fragment>
       <div
@@ -657,7 +659,7 @@ const SelectLocationContainer = (props) => {
             : mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromEdit &&
+        {/* {!isFromEdit &&
         !searchStringValue &&
         !searchScreenActive &&
         !isFromOtherService ? (
@@ -804,7 +806,7 @@ const SelectLocationContainer = (props) => {
               </div>
             </div>
           </React.Fragment>
-        ) : null}
+        ) : null} */}
 
         <React.Fragment>
           <div

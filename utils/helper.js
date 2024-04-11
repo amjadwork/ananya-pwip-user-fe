@@ -325,3 +325,30 @@ export function getDateRangeByPeriod(period) {
 
   return { startDate: startDate.toISOString(), endDate: endDate.toISOString() };
 }
+
+export function getUniqueObjectsBySourceId(inputArray) {
+  const uniqueObjects = {};
+
+  inputArray.forEach((item) => {
+    const sourceId = item._sourceId;
+
+    // Check if the sourceId is already in the result object
+    if (!uniqueObjects[sourceId]) {
+      // If not found, add the current object to the result object
+      uniqueObjects[sourceId] = {
+        ...item,
+        totalVariants: 1,
+        variants: [item.variant],
+      };
+    } else {
+      // If found, increment the totalVariants count and add the variant to the array
+      uniqueObjects[sourceId].totalVariants += 1;
+      uniqueObjects[sourceId].variants.push(item.variant);
+    }
+  });
+
+  // Convert the result object to an array
+  const resultArray = Object.values(uniqueObjects);
+
+  return resultArray;
+}

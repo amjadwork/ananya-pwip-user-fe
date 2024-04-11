@@ -155,6 +155,8 @@ module.exports = {
     "h-[6px]",
     "h-[47px]",
     "h-[32px]",
+    "cols-span-10",
+    "cols-span-2",
   ],
   theme: {
     extend: {

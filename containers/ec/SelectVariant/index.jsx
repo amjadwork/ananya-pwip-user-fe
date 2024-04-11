@@ -453,6 +453,8 @@ const SelectVariantContainer = (props) => {
         });
       }
 
+      console.log("sourceList", sourceList);
+
       if (sourceList.length) {
         setPopularSourceLocationData(
           getUniqueObjectsBySourceId(sourceList)
@@ -954,7 +956,7 @@ const SelectVariantContainer = (props) => {
             : mainContainerHeight + 32 + "px",
         }}
       >
-        {!isFromCategory &&
+        {/* {!isFromCategory &&
         !isFromEdit &&
         !searchScreenActive &&
         !searchStringValue ? (
@@ -1017,9 +1019,9 @@ const SelectVariantContainer = (props) => {
               })}
             </div>
           </React.Fragment>
-        ) : null}
+        ) : null} */}
 
-        {!isFromCategory &&
+        {/* {!isFromCategory &&
         !isFromEdit &&
         !searchScreenActive &&
         !searchStringValue ? (
@@ -1067,7 +1069,6 @@ const SelectVariantContainer = (props) => {
                           {items?.sourceName || ""}
                         </span>
                         <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
-                          {/* {items?.totalVariants || 0} {variety} of rice available */}
                           {items?.totalVariants || 0}{" "}
                           {items?.totalVariants > 1 ? "varieties" : "variety"}{" "}
                           available
@@ -1079,7 +1080,7 @@ const SelectVariantContainer = (props) => {
               </div>
             </div>
           </React.Fragment>
-        ) : null}
+        ) : null} */}
 
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
