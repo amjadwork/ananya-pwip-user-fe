@@ -77,7 +77,7 @@ function ExportCosting() {
         stopLoading();
         setProgressValue(0);
         setSplashScreen(false);
-      }, 3000);
+      }, 2300);
     }
   }, [splashScreen]);
 
