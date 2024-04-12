@@ -107,6 +107,7 @@ function* handleAuthSuccessAndFailure(action) {
             {
               ...user,
               ...response.data.data,
+              newUser: response?.data?.newUser,
               apiMessage: response.data.message,
             },
             token

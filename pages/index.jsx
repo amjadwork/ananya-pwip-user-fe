@@ -8,10 +8,15 @@ import Head from "next/head";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { useSession, signIn } from "next-auth/react";
 import { useSelector, useDispatch } from "react-redux";
-import Slider from "react-slick";
+// import Slider from "react-slick";
 import { useRouter } from "next/router";
 
-import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import {
+  handleSettingAuthDataRequest,
+  handleSettingAuthDataSuccess,
+} from "redux/actions/auth.actions";
+import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
+import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
 
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 
@@ -22,10 +27,13 @@ import ContainerShip from "../theme/lottie/container-ship.json";
 
 export default function Home() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const dispatch = useDispatch();
 
-  const userDetails = useSelector((state) => state.auth?.user);
+  const authToken = useSelector((state) => state.auth.token);
+  const authUser = useSelector((state) => state.auth.user);
+  const profileObject = useSelector((state) => state.profile);
+  const userObject = useSelector((state) => state.user);
 
   const {
     openBottomSheet,
@@ -35,51 +43,36 @@ export default function Home() {
     isLoading,
   } = useOverlayContext();
 
-  const [activeSlide, setActiveSlide] = useState(0);
+  // const [activeSlide, setActiveSlide] = useState(0);
   // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 600,
-    arrows: false,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
-    initialSlide: 0,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    beforeChange: function (prev, next) {
-      setActiveSlide(next);
-    },
-  };
-
-  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
-    const content = (
-      <React.Fragment>
-        <ProfileDetailForm
-          token={token}
-          fields={fields}
-          fieldHeading={{
-            heading: fieldHeading,
-          }}
-          professionOptions={[]}
-          userObject={{ userData: userDetails }}
-          profileObject={{}}
-          isStandalone={true}
-        />
-      </React.Fragment>
-    );
-    openBottomSheet(content, () => null, true, true);
-  };
+  // const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+  //   const content = (
+  //     <React.Fragment>
+  //       <ProfileDetailForm
+  //         token={token}
+  //         fields={fields}
+  //         fieldHeading={{
+  //           heading: fieldHeading,
+  //         }}
+  //         professionOptions={[]}
+  //         userObject={{ userData: userDetails }}
+  //         profileObject={{}}
+  //         isStandalone={true}
+  //       />
+  //     </React.Fragment>
+  //   );
+  //   openBottomSheet(content, () => null, true, true);
+  // };
 
   const handleNavigation = (path) => {
     router.push(path);
   };
 
-  // const handleNavigation = (path) => {
-  //   router.push(path);
-  // };
+  async function getUserProfileDetails() {
+    await dispatch(fetchUserRequest());
+    await dispatch(fetchProfileRequest());
+  }
 
   const handleLogin = async () => {
     try {
@@ -101,15 +94,39 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (session) {
+    if (status === "authenticated" && session?.accessToken) {
       startLoading();
-      redirectToApp();
-      // const res = dispatch(
-      //   handleSettingAuthDataRequest(session.user, session.accessToken)
-      // );
-      // console.log(res);
+      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
     }
-  }, [session]);
+  }, [status, session?.accessToken]);
+
+  useEffect(() => {
+    if (
+      authUser?.apiMessage === "success" &&
+      !profileObject?.profileData &&
+      !userObject?.userData
+    ) {
+      getUserProfileDetails();
+    }
+  }, [authUser?.apiMessage]);
+
+  useEffect(() => {
+    if (profileObject?.profileData && userObject?.userData && authToken) {
+      const userPayload = {
+        ...authUser,
+        ...profileObject?.profileData,
+        ...userObject?.userData,
+      };
+      dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
+      if (userPayload?.newUser) {
+        stopLoading();
+        handleNavigation("/onboarding");
+      } else {
+        stopLoading();
+        redirectToApp();
+      }
+    }
+  }, [profileObject, userObject]);
 
   // useEffect(() => {
   //   if (session) {
@@ -142,9 +159,9 @@ export default function Home() {
   //     }
   //   }
   // }, [userDetails]);
-  const style = {
-    height: 180,
-  };
+  // const style = {
+  //   height: 180,
+  // };
 
   return (
     <React.Fragment>
@@ -207,6 +224,7 @@ export default function Home() {
           >
             Get started
           </button>
+
           <div className="w-full max-w-[85%]">
             <p className="text-center font-[400] text-sm">
               By logging in you accept our terms of uses and privacy policy
