@@ -157,7 +157,7 @@ function Subscription() {
                     } else {
                       subscriptionValidity =
                         subscription.expiresInDays <= 10 ? (
-                          <span className="text-red-500">{`Expires in ${daysLeft} days`}</span>
+                          <span className="text-red-500">{`Expires in ${subscription?.expiresInDays} days`}</span>
                         ) : (
                           `Expires on ${date}`
                         );
