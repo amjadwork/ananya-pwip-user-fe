@@ -487,9 +487,23 @@ function RicePrice() {
                 <span className="text-pwip-v2-primary text-base font-bold">
                   {filteredVariantPriceListData?.length} varieties to explore
                 </span>
-                <span className="text-pwip-v2-gray-500 text-xs">
-                  {searchIcon}
-                </span>
+                <div
+                  onClick={() => {
+                    const content = (
+                      <SearchAndFilter
+                        // title={`Explore varieties from ${states?.name}`}
+                        // filterByState={states?.name}
+                        fromSearch={true}
+                      />
+                    );
+                    openSearchFilterModal(content);
+                  }}
+                  className="w-auto h-auto"
+                >
+                  <span className="text-pwip-v2-gray-500 text-xs">
+                    {searchIcon}
+                  </span>
+                </div>
               </div>
 
               <FilterSection

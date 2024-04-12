@@ -185,7 +185,7 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
   );
 };
 
-function SearchAndFilter({ title, filterByState = "" }) {
+function SearchAndFilter({ title, filterByState = "", fromSearch = false }) {
   const { closeSearchFilterModal } = useOverlayContext();
 
   const variantPriceList =
@@ -241,38 +241,42 @@ function SearchAndFilter({ title, filterByState = "" }) {
     }
   }
 
-  useEffect(() => {
-    function mapWatchlist(array1, array2) {
-      // Create a map to store objects from array1 based on _variantId and _sourceId
-      const map = new Map();
-      array1.forEach((item) =>
-        map.set(`${item._variantId}-${item._sourceId}`, item)
+  function mapWatchlist(array1, array2) {
+    // Create a map to store objects from array1 based on _variantId and _sourceId
+    const map = new Map();
+    array1.forEach((item) =>
+      map.set(`${item._variantId}-${item._sourceId}`, item)
+    );
+
+    // Modify array2 to include watchlist key with matching object from array1
+    const newArray2 = array2.map((item) => {
+      const watchlistItem = map.get(
+        `${item.variantId}-${item.source._sourceId}`
       );
+      return watchlistItem
+        ? { ...item, watchlist: watchlistItem }
+        : { ...item, watchlist: null };
+    });
 
-      // Modify array2 to include watchlist key with matching object from array1
-      const newArray2 = array2.map((item) => {
-        const watchlistItem = map.get(
-          `${item.variantId}-${item.source._sourceId}`
-        );
-        return watchlistItem
-          ? { ...item, watchlist: watchlistItem }
-          : { ...item, watchlist: null };
-      });
+    return newArray2;
+  }
 
-      return newArray2;
-    }
-
+  useEffect(() => {
     if (variantPriceList.length) {
       const stateName = filterByState;
 
-      if (variantWatchList.length) {
+      if (variantPriceList.length) {
         const mergedData = mapWatchlist(variantWatchList, variantPriceList);
 
-        const list = [...mergedData].filter((d) => {
+        let list = [...mergedData].filter((d) => {
           if (d?.source?.state?.toLowerCase() === stateName?.toLowerCase()) {
             return d;
           }
         });
+
+        if (fromSearch) {
+          list = [...mergedData];
+        }
 
         setFilteredVariantPriceListData(list);
         setIntialVariantPriceListData(list);
@@ -293,7 +297,34 @@ function SearchAndFilter({ title, filterByState = "" }) {
           return acc;
         }, []);
 
-        setFilterTags([...regionList]);
+        if (fromSearch) {
+          const category = [
+            {
+              _id: 0,
+              name: "Basmati",
+            },
+            {
+              _id: 1,
+              name: "Parboiled",
+            },
+            {
+              _id: 2,
+              name: "Raw",
+            },
+            {
+              _id: 3,
+              name: "Steam",
+            },
+            {
+              _id: 4,
+              name: "Sella",
+            },
+          ];
+
+          setFilterTags([...category]);
+        } else {
+          setFilterTags([...regionList]);
+        }
       }
     }
   }, [variantPriceList, variantWatchList]);
@@ -334,6 +365,45 @@ function SearchAndFilter({ title, filterByState = "" }) {
               allTagsData={filterTags}
               selectedFilter={selectedFilter}
               handleFilterSelect={(item, isAll) => {
+                if (fromSearch) {
+                  if (selectedFilter !== "All" && isAll) {
+                    setSelectedFilter("All");
+                    setFilteredVariantPriceListData([
+                      ...intialVariantPriceListData,
+                    ]);
+                    return null;
+                  }
+
+                  if (selectedFilter === "All" && isAll) {
+                    return null;
+                  }
+
+                  if (selectedFilter?.name === item?.name) {
+                    setSelectedFilter(null);
+                    setFilteredVariantPriceListData([
+                      ...intialVariantPriceListData,
+                    ]);
+                    return null;
+                  } else {
+                    setSelectedFilter(item);
+                  }
+
+                  const dataToFilterOrSort = [...intialVariantPriceListData];
+
+                  const filteredData = dataToFilterOrSort?.filter((d) => {
+                    if (
+                      d?.name
+                        ?.toLowerCase()
+                        ?.includes(item?.name?.toLowerCase())
+                    ) {
+                      return d;
+                    }
+                  });
+
+                  setFilteredVariantPriceListData([...filteredData]);
+                  return;
+                }
+
                 if (selectedFilter !== "All" && isAll) {
                   setSelectedFilter("All");
                   setFilteredVariantPriceListData([
