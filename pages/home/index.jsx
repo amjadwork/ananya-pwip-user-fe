@@ -43,7 +43,7 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 import axios from "axios";
-import { apiBaseURL } from "utils/helper";
+import { apiBaseURL, formatNumberWithCommas } from "utils/helper";
 
 const { flag } = require("country-emoji");
 
@@ -140,7 +140,12 @@ function Home() {
         elementType: "bar",
         showGrid: true,
         shouldNice: true,
-        getValue: (datum) => datum.secondary,
+        getValue: (datum) => {
+          return datum.secondary;
+        },
+        minDomainLength: 1.25,
+        tickLabelRotationDeg: 0,
+        tickCount: 3,
       },
     ],
     []
@@ -637,7 +642,10 @@ function Home() {
                   </div>
                 </div>
                 <span className="text-pwip-v2-primary text-2xl font-semibold">
-                  {eximTrendsData?.totalVolume?.toFixed(0)} tonn
+                  {formatNumberWithCommas(
+                    eximTrendsData?.totalVolume?.toFixed(0) || 0
+                  )}{" "}
+                  tonn
                 </span>
                 <span className="text-pwip-v2-primary text-sm font-normal">
                   In volume
@@ -700,8 +708,15 @@ function Home() {
               ) : null}
             </div>
           </div>
-          <div className="bg-pwip-v2-primary-100 inline-flex w-full h-auto items-center justify-center text-pwip-v2-primary-600 font-semibold space-x-2 py-5 border-t-[1px] border-t-pwip-v2-gray-200 cursor-pointer">
-            <span className="text-xs">See detailed EXIM analysis</span>
+          <div
+            onClick={() => {
+              router.push("/waitlist?_s=EXIM");
+            }}
+            className="bg-pwip-v2-primary-100 inline-flex w-full h-auto items-center justify-center text-pwip-v2-primary-600 font-semibold space-x-2 py-5 border-t-[1px] border-t-pwip-v2-gray-200 cursor-pointer"
+          >
+            <span className="text-xs">
+              Want to know see such analysis more?
+            </span>
             {arrowLongRightIcon}
           </div>
         </div>

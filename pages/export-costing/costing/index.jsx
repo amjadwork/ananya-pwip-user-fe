@@ -1255,7 +1255,7 @@ function CostingOverview() {
               <div className="w-full">
                 <Button
                   type="outline"
-                  label="Back to home"
+                  label="New costing"
                   onClick={() => {
                     dispatch(saveCostingFailure());
                     setGeneratedCostingData(null);

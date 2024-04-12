@@ -21,6 +21,38 @@ export function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);
 }
 
+export function formatNumberWithCommas(input) {
+  // Convert the input to a string if it's not already
+  const numberString = typeof input === "number" ? input.toString() : input;
+
+  // Use a regular expression to add commas every three digits
+  return numberString.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+export function abbreviateNumber(input) {
+  // Remove commas and spaces from the input string
+  const numberString = input.replace(/[,\s]/g, "");
+
+  // Convert the string to a number
+  const number = parseFloat(numberString);
+
+  // Check if the number is valid
+  if (isNaN(number)) {
+    return "Invalid input";
+  }
+
+  // Determine the abbreviation based on the number's magnitude
+  if (number < 1000) {
+    return number.toString();
+  } else if (number >= 1000 && number < 100000) {
+    return (number / 1000).toFixed(0) + "k";
+  } else if (number >= 100000 && number < 10000000) {
+    return (number / 100000).toFixed(0) + "L";
+  } else if (number >= 10000000) {
+    return (number / 10000000).toFixed(0) + "cr";
+  }
+}
+
 export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-stage.pwip.co/";
 export const apiStagePaymentBeUrl =
   process.env.NEXT_PUBLIC_API_STAGE_PAYMENT_BE_URL;

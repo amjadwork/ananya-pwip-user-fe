@@ -110,7 +110,7 @@ const FilterSection = ({
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="w-[18px] h-[18px]"
+                      className="w-[18px] h-[18px]"
                     >
                       <path
                         stroke-linecap="round"

@@ -58,6 +58,7 @@ const LandingPage = (props) => {
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
   const [videoVolume, setVideoVolume] = useState(0);
+  const [subscriptionData, setSubscriptionData] = useState(null);
 
   const [showFixedButton, setShowFixedButton] = useState(false);
 
@@ -223,6 +224,14 @@ const LandingPage = (props) => {
   async function initPage() {
     const details = await checkSubscription(SERVICE_ID, authToken);
 
+    if (typeof details === "object") {
+      setSubscriptionData(details);
+    }
+
+    if (details?.length) {
+      setSubscriptionData(details[0]);
+    }
+
     await dispatch(getServicesRequest());
     await dispatch(getPlansRequest());
 
@@ -281,38 +290,78 @@ const LandingPage = (props) => {
           return (
             <div
               key={plan?.id + "_" + planIndex * 99}
-              className="bg-[#FFF8E9] p-5 rounded-lg"
+              className={`${
+                !subscriptionData?.activeSubscription &&
+                subscriptionData?.userSubscriptionHistory?.length
+                  ? "bg-red-100"
+                  : "bg-[#FFF8E9]"
+              } p-5 rounded-lg`}
             >
-              <span className="font-semibold text-[14px]">Free Trial</span>
-              <p className="text-[12px] font-normal mt-2 mb-0">
-                {plan?.description}
-              </p>
-              <div
-                className="font-normal text-sm text-[#2072AB] mt-3.5 flex items-center"
-                onClick={async () => {
-                  const res = await startFreeTrialForUser();
+              {!subscriptionData?.activeSubscription &&
+              subscriptionData?.userSubscriptionHistory?.length ? (
+                <React.Fragment>
+                  <div className="inline-flex w-full items-center justify-between text-red-800">
+                    <span className="font-semibold text-[14px] ">
+                      Subscription expired!
+                    </span>
 
-                  if (res) {
-                    const details = await checkSubscription(
-                      SERVICE_ID,
-                      authToken
-                    );
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      height={"20px"}
+                      width={"20px"}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"
+                      />
+                    </svg>
+                  </div>
 
-                    if (details?.activeSubscription) {
-                      if (serviceName === "export-costing") {
-                        router.replace(`/${serviceName}`);
-                        return;
+                  <p className="text-[12px] text-pwip-black-600 font-normal mt-3 mb-0">
+                    Hey! looks like your subscription has expired, select a plan
+                    from below to renew your subscription to continue your
+                    experience with{" "}
+                    <span className="font-semibold">
+                      {serviceName?.replace("-", " ")}
+                    </span>{" "}
+                    service
+                  </p>
+                </React.Fragment>
+              ) : (
+                <React.Fragment>
+                  <span className="font-semibold text-[14px]">Free Trial</span>
+                  <p className="text-[12px] font-normal mt-2 mb-0">
+                    {plan?.description}
+                  </p>
+                  <div
+                    className="font-normal text-sm text-[#2072AB] mt-3.5 flex items-center"
+                    onClick={async () => {
+                      const res = await startFreeTrialForUser();
+
+                      if (res) {
+                        const details = await checkSubscription(
+                          SERVICE_ID,
+                          authToken
+                        );
+
+                        if (details?.activeSubscription) {
+                          if (serviceName === "export-costing") {
+                            router.replace(`/${serviceName}`);
+                            return;
+                          }
+
+                          router.replace(`/service/${serviceName}`);
+
+                          return;
+                        }
                       }
-
-                      router.replace(`/service/${serviceName}`);
-
-                      return;
-                    }
-                  }
-                }}
-              >
-                Start now &nbsp;{nextArrow}
-              </div>
+                    }}
+                  >
+                    Start now &nbsp;{nextArrow}
+                  </div>
+                </React.Fragment>
+              )}
             </div>
           );
         })}
@@ -466,37 +515,40 @@ const LandingPage = (props) => {
       </div>
 
       {/* Fixed button */}
-      <div
-        className={`${
-          showFixedButton
-            ? "translate-y-0 opacity-1"
-            : "translate-y-20 opacity-1"
-        } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 transition-transform`}
-      >
+      {!subscriptionData?.activeSubscription &&
+      subscriptionData?.userSubscriptionHistory?.length ? null : (
         <div
-          className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
-          onClick={async () => {
-            const res = await startFreeTrialForUser();
+          className={`${
+            showFixedButton
+              ? "translate-y-0 opacity-1"
+              : "translate-y-20 opacity-1"
+          } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
+        >
+          <div
+            className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
+            onClick={async () => {
+              const res = await startFreeTrialForUser();
 
-            if (res) {
-              const details = await checkSubscription(SERVICE_ID, authToken);
+              if (res) {
+                const details = await checkSubscription(SERVICE_ID, authToken);
 
-              if (details?.activeSubscription) {
-                if (serviceName === "export-costing") {
-                  router.replace(`/${serviceName}`);
+                if (details?.activeSubscription) {
+                  if (serviceName === "export-costing") {
+                    router.replace(`/${serviceName}`);
+                    return;
+                  }
+
+                  router.replace(`/service/${serviceName}`);
+
                   return;
                 }
-
-                router.replace(`/service/${serviceName}`);
-
-                return;
               }
-            }
-          }}
-        >
-          Unlock Free Trial
+            }}
+          >
+            Unlock Free Trial
+          </div>
         </div>
-      </div>
+      )}
     </React.Fragment>
   );
 };

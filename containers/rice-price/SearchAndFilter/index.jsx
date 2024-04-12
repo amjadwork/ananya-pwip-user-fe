@@ -127,7 +127,7 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="w-[14px] h-[14px]"
+                  className="w-[14px] h-[14px]"
                 >
                   <path
                     stroke-linecap="round"
@@ -166,7 +166,7 @@ const FilterSection = ({ allTagsData, handleFilterSelect, selectedFilter }) => {
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="w-[14px] h-[14px]"
+                      className="w-[14px] h-[14px]"
                     >
                       <path
                         stroke-linecap="round"

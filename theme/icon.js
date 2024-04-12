@@ -2060,7 +2060,7 @@ export const sharePrimaryIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
-    class="w-4 h-4"
+    className="w-4 h-4"
   >
     <path d="M13 4.5a2.5 2.5 0 1 1 .702 1.737L6.97 9.604a2.518 2.518 0 0 1 0 .792l6.733 3.367a2.5 2.5 0 1 1-.671 1.341l-6.733-3.367a2.5 2.5 0 1 1 0-3.475l6.733-3.366A2.52 2.52 0 0 1 13 4.5Z" />
   </svg>
@@ -6152,7 +6152,7 @@ export const building = (
     stroke-width="1.5"
     stroke="currentColor"
     data-slot="icon"
-    class="w-6 h-6"
+    className="w-6 h-6"
   >
     <path
       stroke-linecap="round"
@@ -6596,7 +6596,7 @@ export const searchIcon = (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    class="w-5 h-5"
+    className="w-5 h-5"
   >
     <path
       stroke-linecap="round"
@@ -6782,7 +6782,7 @@ export const closeXmark = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 20 20"
     fill="currentColor"
-    class="w-5 h-5"
+    className="w-5 h-5"
   >
     <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
   </svg>
@@ -6813,7 +6813,7 @@ export const checkOutlineIcon = (
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    class="w-6 h-6"
+    className="w-6 h-6"
   >
     <path
       stroke-linecap="round"
@@ -6828,7 +6828,7 @@ export const checkFilledIcon = (
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="currentColor"
-    class="w-6 h-6"
+    className="w-6 h-6"
   >
     <path
       fill-rule="evenodd"
