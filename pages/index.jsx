@@ -183,7 +183,7 @@ export default function Home() {
                 className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-center inline-flex w-full flex-col space-y-2 transition-all`}
               >
                 <p className="text-base font-semibold text-pwip-v2-primary">
-                  Welcome to PWIP
+                  Your export partner
                 </p>
                 <h2 className="text-2xl">
                   Let’s get your Export <br /> Business Journey Started
