@@ -50,7 +50,7 @@ function mapWatchlist(array1, array2) {
   return newArray2;
 }
 
-function watchlist() {
+function Watchlist() {
   const router = useRouter();
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
@@ -116,7 +116,6 @@ function watchlist() {
       item?.watchlist?.saved &&
       item?.watchlist?._sourceId === item?.source?._sourceId
     ) {
-      console.log("we are here in remove");
       dispatch(
         addVariantToWatchlistRequest(
           item?.variantId,
@@ -150,7 +149,7 @@ function watchlist() {
         getStateAbbreviation={getStateAbbreviation}
       />
     );
-    openBottomSheet(content, () => null, true);
+    openBottomSheet(content);
   };
 
   const handleInputDoneClick = (event) => {
@@ -379,4 +378,4 @@ function watchlist() {
   );
 }
 
-export default withAuth(watchlist);
+export default withAuth(Watchlist);

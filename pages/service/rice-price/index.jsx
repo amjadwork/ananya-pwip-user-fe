@@ -24,6 +24,7 @@ import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 
 import SearchAndFilter from "@/containers/rice-price/SearchAndFilter";
+import WatchlistBottomSheet from "@/containers/rice-price/WatchlistBottomSheet";
 
 import {
   getStateAbbreviation,
@@ -155,7 +156,7 @@ function RicePrice() {
 
   const {
     openSearchFilterModal,
-    closeSearchFilterModal,
+    openBottomSheet,
     isSearchFilterModalOpen,
     stopLoading,
   } = useOverlayContext();
@@ -180,6 +181,46 @@ function RicePrice() {
 
   const [splashScreen, setSplashScreen] = React.useState(false);
   const [progressValue, setProgressValue] = React.useState(0); // State for progress value
+
+  const handleRemoveFromWatchlist = (item) => {
+    if (
+      item?.watchlist?.saved &&
+      item?.watchlist?._sourceId === item?.source?._sourceId
+    ) {
+      dispatch(
+        addVariantToWatchlistRequest(
+          item?.variantId,
+          item?.source?._sourceId,
+          "remove"
+        )
+      );
+      const updatedWatchlist = watchlistVariants.filter(
+        (variant) =>
+          variant?.variantId !== item?.variantId ||
+          variant?.source?._sourceId !== item?.source?._sourceId
+      );
+      setFilteredVariantPriceListData(updatedWatchlist);
+    } else {
+      dispatch(
+        addVariantToWatchlistRequest(
+          item?.variantId,
+          item?.source?._sourceId,
+          "add"
+        )
+      );
+    }
+  };
+
+  const handleAddMoreBottomSheet = () => {
+    const content = (
+      <WatchlistBottomSheet // Use the bottom sheet component here
+        variantAndWatchlistMergedData={variantAndWatchlistMergedData}
+        handleRemoveFromWatchlist={handleRemoveFromWatchlist}
+        getStateAbbreviation={getStateAbbreviation}
+      />
+    );
+    openBottomSheet(content);
+  };
 
   const navigateToDetail = async (item) => {
     await dispatch(setSelectedVariantForDetailRequest(item));
@@ -367,6 +408,9 @@ function RicePrice() {
                   maxWidth="!max-h-[24px] !min-h-[24px] !max-w-[72px] !min-w-[72px]"
                   label="Add now"
                   rounded="rounded-md"
+                  onClick={() => {
+                    handleAddMoreBottomSheet();
+                  }}
                 />
               </div>
             </div>

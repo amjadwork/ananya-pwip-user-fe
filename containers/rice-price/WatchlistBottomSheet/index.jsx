@@ -1,14 +1,62 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { checkOutlineIcon, checkFilledIcon } from "../../../theme/icon";
+import {
+  checkOutlineIcon,
+  checkFilledIcon,
+  bookmarkOutlineIcon,
+  bookmarkFilledIcon,
+} from "../../../theme/icon";
+import { useSelector, useDispatch } from "react-redux";
+
+function mapWatchlist(array1, array2) {
+  // Create a map to store objects from array1 based on _variantId and _sourceId
+  const map = new Map();
+  array1.forEach((item) =>
+    map.set(`${item._variantId}-${item._sourceId}`, item)
+  );
+
+  // Modify array2 to include watchlist key with matching object from array1
+  const newArray2 = array2.map((item) => {
+    const watchlistItem = map.get(`${item.variantId}-${item.source._sourceId}`);
+    return watchlistItem
+      ? { ...item, watchlist: watchlistItem }
+      : { ...item, watchlist: null };
+  });
+
+  return newArray2;
+}
 
 const WatchlistBottomSheet = ({
-  variantAndWatchlistMergedData,
-  handleRemoveFromWatchlist,
   getStateAbbreviation,
+  handleRemoveFromWatchlist,
 }) => {
+  const variantPriceList =
+    useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
+  const variantWatchList =
+    useSelector((state) => state.variantPriceList.variantWatchList) || [];
+
+  const [variantAndWatchlistMergedData, setVariantAndWatchlistMergedData] =
+    useState([]);
+  const [filteredVariantPriceListData, setFilteredVariantPriceListData] =
+    useState([]);
+
+  useEffect(() => {
+    if (variantPriceList.length) {
+      if (variantWatchList.length) {
+        const mergedData = mapWatchlist(variantWatchList, variantPriceList);
+        setVariantAndWatchlistMergedData(mergedData);
+        setFilteredVariantPriceListData(mergedData);
+      } else {
+        setFilteredVariantPriceListData(variantPriceList);
+        setVariantAndWatchlistMergedData(variantPriceList);
+      }
+    }
+  }, [variantWatchList, variantPriceList]);
+
+  console.log("filteredVariantPriceListData", filteredVariantPriceListData);
+
   return (
     <React.Fragment>
       <div div className="w-full inline-flex flex-col hide-scroll-bar">
@@ -48,12 +96,12 @@ const WatchlistBottomSheet = ({
                   </div>
                   <div
                     onClick={() => handleRemoveFromWatchlist(item)}
-                    className="w-[22px] h-[22px] inline-flex items-center justify-center relative  text-pwip-green-800"
+                    className="w-[22px] h-[22px] inline-flex items-center justify-center relative  text-pwip-primary"
                   >
                     {item?.watchlist?.saved &&
                     item?.watchlist?._sourceId === item?.source?._sourceId
-                      ? checkFilledIcon
-                      : checkOutlineIcon}
+                      ? bookmarkFilledIcon
+                      : bookmarkOutlineIcon}
                   </div>
                 </div>
 
