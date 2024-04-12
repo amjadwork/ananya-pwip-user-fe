@@ -4,13 +4,69 @@ import React from "react";
 import Head from "next/head";
 
 import withAuth from "@/hoc/withAuth";
+import { useRouter } from "next/router";
+
 import AppLayout from "@/layouts/appLayout.jsx";
+import { useSelector } from "react-redux";
+
 import { inSubscription } from "../../theme/icon";
+import axios from "axios";
+import { apiBaseURL } from "@/utils/helper";
 
 // Import Components
 import { Header } from "@/components/Header";
 
 function SubscriptionDetails() {
+  const router = useRouter();
+  const { subscriptionName, subscriptionType, subscription_id } = router.query;
+  const authToken = useSelector((state) => state.auth?.token);
+  const [subscriptionDetail, setSubscriptionDetail] = React.useState(null);
+
+  const paisaToRupees = (paisa) => {
+    return paisa / 100;
+  };
+
+  const formatDateTime = (dateTimeString, includeTime = true) => {
+    const dateObj = new Date(dateTimeString);
+    const options = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    const formattedDateTime = dateObj.toLocaleDateString("en-GB", options);
+
+    if (includeTime) {
+      const time = dateObj.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+      return `${formattedDateTime} at ${time}`;
+    } else {
+      return formattedDateTime;
+    }
+  };
+  const getSubscriptionDetails = async () => {
+    try {
+      const response = await axios.get(
+        apiBaseURL + "api" + "/subscription" + "/" + subscription_id,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+      setSubscriptionDetail(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  React.useEffect(() => {
+    getSubscriptionDetails();
+  }, []);
+
+  console.log(subscriptionDetail, "here");
   return (
     <React.Fragment>
       <Head>
@@ -37,97 +93,113 @@ function SubscriptionDetails() {
           <div
             className={`min-h-[calc(100vh-120px)] inline-flex  bg-pwip-v2-primary-100 flex-col h-full w-full px-5 pt-[82px] pb-[120px] overflow-auto hide-scroll-bar`}
           >
-            <React.Fragment>
+            {subscriptionDetail && (
               <div className="w-full h-auto bg-white p-4 border border-solid border-[#ccc] shadow rounded-xl">
                 <div className="flex">
                   {inSubscription}
 
                   <div className="w-full flex justify-between">
-                    <div className="text-sm font-semibold ml-2 flex items-center">
-                      Rice Price
+                    <div className="text-xs font-semibold ml-2 flex items-center">
+                      {subscriptionName}{" "}
                     </div>
-                    <div className="text-xs h-5 w-14 text-white bg-[#25AF7D] px-3 flex items-center rounded-md ">
-                      Active
+                    <div className="text-[10px] h-5 w-14 text-white bg-[#25AF7D] px-3 flex items-center rounded-md ">
+                      {subscriptionDetail.active === 1 ? "Active" : "Inactive"}{" "}
                     </div>
                   </div>
                 </div>
-                <div className="w-full flex justify-between text-sm mt-3">
-                  <div className="font-semibold">Basic Plan</div>
+                <div className="w-full flex justify-between text-xs mt-3">
+                  <div className="font-semibold">{subscriptionType} Plan</div>
                   <div className="font-semibold">
-                    &#8377;299<span className="font-normal">/mo</span>
+                    &#8377;{paisaToRupees(subscriptionDetail.amount_paid)}
                   </div>
                 </div>
-                <div className=" w-full flex text-xs mt-1">
-                  <div className="text-[#808080]">Validity: 30 days</div>{" "}
+                <div className=" w-full flex text-[10px] mt-1">
+                  <div className="text-[#808080]">
+                    Validity: {subscriptionDetail.subscription_validity}{" "}
+                    {subscriptionDetail.subscription_validity_type}
+                  </div>{" "}
                   <div className="text-[#B5B5B5]">
-                    (27 April - 27 May, 2024)
+                    {"("}
+                    {formatDateTime(
+                      subscriptionDetail.created_at,
+                      false
+                    )} -{" "}
+                    {formatDateTime(
+                      subscriptionDetail.subscription_end_date,
+                      false
+                    )}
+                    {")"}
                   </div>
                 </div>
-                <hr className="w-full mt-3"></hr>
-                <div className="flex flex-col">
-                  <div className=" w-full h-10 border-b border-solid border-[#F9F9F9] flex items-center ">
-                    <div className="flex justify-left">
+                <hr className="w-full mt-[18px]"></hr>
+                <div className="flex flex-col mt-5">
+                  <div className=" w-full h-6 border-b border-solid border-[#F9F9F9] flex items-center mb-2 ">
+                    <div className="flex justify-left mb-[10px]">
                       <img
                         src="/assets/images/paper-bill.png"
                         alt="paper-bill"
                         width={14}
                         height={14}
                       />
-                      <h2 className="text-[#1B1B1B] font-normal text-xs ml-2">
-                        Order #846748294
+                      <h2 className="text-[#1B1B1B] font-normal text-[10px] ml-2">
+                        Order ID #{subscriptionDetail.order_id}
                       </h2>
                     </div>
                   </div>
-                  <div className=" w-full h-10 border-b border-solid border-[#F9F9F9] flex items-center  ">
-                    <div className="flex justify-left">
+                  <div className=" w-full h-6 border-b border-solid border-[#F9F9F9] flex items-center mb-2 ">
+                    <div className="flex justify-left mb-[10px]">
                       <img
                         src="/assets/images/paper-bill.png"
                         alt="paper-bill"
                         width={14}
                         height={14}
                       />
-                      <h2 className="text-[#1B1B1B] font-normal text-xs ml-2">
-                        Transaction ID #T8467482
+                      <h2 className="text-[#1B1B1B] font-normal text-[10px] ml-2">
+                        Transaction ID #{subscriptionDetail.payment_id}
                       </h2>
                     </div>
                   </div>
-                  <div className=" w-full h-10 border-b border-solid border-[#F9F9F9] flex items-center  ">
-                    <div className="flex justify-left">
+                  <div className=" w-full h-6 border-b border-solid border-[#F9F9F9] flex items-center mb-2  ">
+                    <div className="flex justify-left mb-[10px]">
                       <img
                         src="/assets/images/paper-bill.png"
                         alt="paper-bill"
                         width={14}
                         height={14}
                       />
-                      <h2 className="text-[#1B1B1B] font-normal text-xs ml-2">
-                        Payment made on 27 April, 2024 at 07:49 PM
+                      <h2 className="text-[#1B1B1B] font-normal text-[10px] ml-2">
+                        Payment made on{" "}
+                        {formatDateTime(subscriptionDetail.amount_paid_date)}
                       </h2>
                     </div>
                   </div>
-                  <div className=" w-full h-10 flex items-center ">
-                    <div className="flex justify-left">
-                      <img
-                        src="/assets/images/paper-bill.png"
-                        alt="paper-bill"
-                        width={14}
-                        height={14}
-                      />
-                      <h2 className="text-[#1B1B1B] font-normal text-xs ml-2">
-                        Request subscription cancellation
-                      </h2>
-                    </div>
+                  <div className="flex justify-left mb-[10px]">
+                    <img
+                      src="/assets/images/paper-bill.png"
+                      alt="paper-bill"
+                      width={14}
+                      height={14}
+                    />
+                    <a
+                      href="https://tally.so/r/wMbBdX"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#1B1B1B] font-normal text-[10px] ml-2"
+                    >
+                      Request subscription cancellation
+                    </a>
                   </div>
-                  <button
+                </div>
+                {/* <button
                     onClick={() => {
                       //onclick function
                     }}
                     className="border border-[#2072AB] w-[40%] mt-4 p-1 rounded-md text-pwip-primary text-center text-xs"
                   >
                     Download Invoice
-                  </button>
-                </div>
+                  </button> */}
               </div>
-            </React.Fragment>
+            )}
           </div>
         </div>
       </AppLayout>
