@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
@@ -5,6 +7,7 @@ import { useDispatch } from "react-redux";
 
 import { hideToastNotificationFailure } from "@/redux/actions/toastOverlay.actions";
 import { forexRateRequest } from "@/redux/actions/utils.actions";
+import { forexRateSuccess } from "redux/actions/utils.actions";
 
 const OverlayContext = createContext();
 
@@ -371,11 +374,7 @@ export function OverlayProvider({ children }) {
               <div className="inline-flex items-center justify-center w-full space-x-5">
                 <button
                   onClick={() => {
-                    dispatch(
-                      forexRateRequest({
-                        usd: 82, //parseFloat(usdValue || 0),
-                      })
-                    );
+                    dispatch(forexRateRequest());
                     closeModal();
                   }}
                   className="bg-pwip-primary border-[1px] border-pwip-primary w-full py-2 rounded-md text-white text-center text-xs"
@@ -385,8 +384,8 @@ export function OverlayProvider({ children }) {
                 <button
                   onClick={() => {
                     dispatch(
-                      forexRateRequest({
-                        usd: usdInputValue,
+                      forexRateSuccess({
+                        INR: usdInputValue,
                       })
                     );
                     closeModal();

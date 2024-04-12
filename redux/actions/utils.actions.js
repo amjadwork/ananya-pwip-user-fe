@@ -1,3 +1,5 @@
+/** @format */
+
 import {
   SHOW_LOADER_REQUEST,
   SHOW_LOADER_SUCCESS,
@@ -31,10 +33,10 @@ export const forexRateRequest = (data) => {
   };
 };
 
-export const forexRateSuccess = (action) => {
+export const forexRateSuccess = (data) => {
   return {
     type: SET_FOREX_RATE_SUCCESS,
-    payload: action.payload,
+    payload: data,
   };
 };
 
