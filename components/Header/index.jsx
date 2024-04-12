@@ -202,8 +202,7 @@ export function Header(props) {
             )}
         </div>
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
-          {(["more", "costing"].includes(activeRoute) ||
-            !router?.query?.id) && (
+          {["more", "costing"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={async () => {
@@ -240,21 +239,20 @@ export function Header(props) {
             "costing",
             "waitlist",
             "lp",
-          ].includes(activeRoute) &&
-            router?.query?.id && (
-              <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    openModal(forexRate?.USD || 0);
-                  }}
-                  className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
-                >
-                  <span>USD = ₹{forexRate?.USD}</span>
-                  {pencilIcon}
-                </button>
-              </div>
-            )}
+          ].includes(activeRoute) && (
+            <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={() => {
+                  openModal(forexRate?.USD || 0);
+                }}
+                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
+              >
+                <span>USD = ₹{forexRate?.USD}</span>
+                {pencilIcon}
+              </button>
+            </div>
+          )}
 
           {["lp", "waitlist"].includes(activeRoute) ? (
             <img
