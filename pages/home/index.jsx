@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 
 import Head from "next/head";
@@ -85,7 +85,7 @@ function Home() {
       const response = await axios.get(
         apiBaseURL +
           "api" +
-          "/service/rice-price/exim-trend?ToDate=11-04-2024&rangeInMonths=12",
+          "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -102,16 +102,23 @@ function Home() {
         chart: eximData || [],
       };
 
+      localStorage.setItem("eximTrends", JSON.stringify(eximTrends));
+
       setEximTrendsData(eximTrends);
     } catch (err) {
       console.log(err);
     }
   };
 
-  // Use useMemo if you need to memoize the function
-  useMemo(() => {
+  useLayoutEffect(() => {
     if (authToken) {
-      fetchEXIMTrend();
+      const eximTrends = localStorage.getItem("eximTrends");
+
+      if (eximTrends) {
+        setEximTrendsData(JSON.parse(eximTrends));
+      } else {
+        fetchEXIMTrend();
+      }
     }
   }, [authToken]);
 
