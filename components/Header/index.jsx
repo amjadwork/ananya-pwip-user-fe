@@ -1,6 +1,6 @@
 /** @format */
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -44,14 +44,31 @@ const atRoutes = [
 ];
 
 const serviceLogoRoutes = [
-  // {
-  //   route: "rice-price",
-  //   logo: "/assets/images/services/rice-price-service-logo.png",
-  // },
-  // {
-  //   route: "export-costing",
-  //   logo: "/assets/images/services/ec-service-logo.png",
-  // },
+  {
+    route: "rice-price",
+    query: "",
+    logo: "/assets/images/services/rice-price-service-logo.png",
+  },
+  {
+    route: "export-costing",
+    query: "",
+    logo: "/assets/images/services/ec-service-logo.png",
+  },
+  {
+    route: "waitlist",
+    query: "Export orders",
+    logo: "/assets/images/services/eo-service-logo.png",
+  },
+  {
+    route: "waitlist",
+    query: "EXIM",
+    logo: "/assets/images/services/exim-service-logo.png",
+  },
+  {
+    route: "ofc",
+    query: "",
+    logo: "/assets/images/services/ofc-service-logo.png",
+  },
 ];
 
 export function Header(props) {
@@ -69,10 +86,12 @@ export function Header(props) {
   const showLogoForPreview = props.showLogoForPreview || false;
 
   const hideBack = props.hideBack || false;
-  const handleClickEdit = props.handleClickEdit || null;
+  // const handleClickEdit = props.handleClickEdit || null;
   const backgroundColor = props.backgroundColor || "bg-white";
 
   const [activeRoute, setActiveRoute] = React.useState("");
+  const [activeServiceRoute, setActiveServiceRoute] = React.useState("");
+  const [serviceLogoRoute, setServiceLogoRoute] = React.useState(null);
   // const [environmentBasedclassNamees, setEnvironmentBasedclassNamees] =
   //   React.useState("");
 
@@ -87,6 +106,12 @@ export function Header(props) {
   React.useEffect(() => {
     if (router) {
       const splitedRoutes = router.route.split("/");
+
+      if (splitedRoutes[splitedRoutes.length - 1] === "lp") {
+        setActiveServiceRoute(splitedRoutes[splitedRoutes.length - 2]);
+      } else {
+        setActiveServiceRoute("");
+      }
 
       setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
     }
@@ -113,6 +138,21 @@ export function Header(props) {
   //   }
   // }, [activeRoute]);
 
+  useEffect(() => {
+    const serviceLogoRouteObject =
+      serviceLogoRoutes?.find((f) => {
+        if (
+          f?.route === activeServiceRoute ||
+          router?.query?._s === f?.query ||
+          (f.route === activeRoute && !router?.query?._s)
+        ) {
+          return f;
+        }
+      }) || {};
+
+    setServiceLogoRoute(serviceLogoRouteObject);
+  }, [activeServiceRoute, activeRoute, router]);
+
   return (
     <header
       className={`inline-flex items-center w-full h-[56px] px-5 py-4 space-x-4 ${backgroundColor} fixed top-0 z-10`}
@@ -122,8 +162,7 @@ export function Header(props) {
           {(!hideLogo && activeRoute == "subscriptions") ||
           (!atRoutes.includes(activeRoute) &&
             !searchScreenActive &&
-            !hideLogo &&
-            !serviceLogoRoutes?.find((f) => f.route === activeRoute)) ||
+            !hideLogo) ||
           showLogoForPreview ? (
             <img
               src="/assets/images/logo-blue.png"
@@ -131,16 +170,6 @@ export function Header(props) {
               alt="Logo"
             />
           ) : hideLogo ? null : null}
-
-          {serviceLogoRoutes?.find((f) => f.route === activeRoute) ? (
-            <img
-              src={
-                serviceLogoRoutes?.find((f) => f.route === activeRoute)?.logo
-              }
-              className="h-[27px] w-auto"
-              alt="Logo"
-            />
-          ) : null}
 
           {((activeRoute !== "subscriptions" &&
             atRoutes.includes(activeRoute)) ||
@@ -208,6 +237,8 @@ export function Header(props) {
             "profile-edit",
             "more",
             "costing",
+            "waitlist",
+            "lp",
           ].includes(activeRoute) &&
             !router?.query?.id && (
               <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
@@ -223,6 +254,14 @@ export function Header(props) {
                 </button>
               </div>
             )}
+
+          {["lp", "waitlist"].includes(activeRoute) ? (
+            <img
+              src={serviceLogoRoute?.logo || ""}
+              className="h-[24px] w-auto"
+              alt="Logo"
+            />
+          ) : null}
         </div>
       </div>
     </header>
