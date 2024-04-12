@@ -1224,7 +1224,7 @@ function CostingOverview() {
                 onClick={() => {
                   handleOpenUnitSelectBottomSheet();
                 }}
-                className="w-full inline-flex items-center justify-start space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]"
+                className="w-full inline-flex items-center justify-start space-x-3 text-white text-[11px] border-r-[1px] border-r-white border-opacity-[0.42]"
               >
                 <span>{selectedUnit?.label}</span>
                 {chevronDown}
@@ -1234,9 +1234,10 @@ function CostingOverview() {
                 onClick={() => {
                   handleOpenShipmentTermSelectBottomSheet();
                 }}
-                className="w-full inline-flex items-center justify-center space-x-3 text-white text-sm border-r-[1px] border-r-white border-opacity-[0.42]"
+                className="w-full inline-flex items-center justify-center space-x-3 text-white text-[11px] border-r-[1px] border-r-white border-opacity-[0.42]"
               >
                 <span>{shipmentTerm}</span>
+
                 {chevronDown}
               </div>
 
@@ -1244,7 +1245,7 @@ function CostingOverview() {
                 onClick={() => {
                   openModal(forexRate?.USD || 0);
                 }}
-                className="w-full inline-flex items-center justify-end space-x-3 text-white text-sm"
+                className="w-full inline-flex items-center justify-end space-x-3 text-white text-[11px]"
               >
                 <span>USD = ₹{forexRate?.USD}</span>
                 {pencilIcon}
