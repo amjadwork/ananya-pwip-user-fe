@@ -244,12 +244,13 @@ export function Header(props) {
               <button
                 type="button"
                 onClick={() => {
-                  openModal(forexRate?.USD || 0);
+                  if (activeRoute === "export-costing")
+                    openModal(forexRate?.USD || 0);
                 }}
                 className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2"
               >
                 <span>USD = ₹{forexRate?.USD}</span>
-                {pencilIcon}
+                {activeRoute === "export-costing" ? pencilIcon : null}
               </button>
             </div>
           )}

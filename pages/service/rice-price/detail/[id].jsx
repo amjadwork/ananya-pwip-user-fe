@@ -156,7 +156,7 @@ function RicePriceDetail() {
           text: ``,
           url:
             window.location.origin +
-            `${window.location.pathname}?_s=${router?.query?._s}&utm_source=yourapp&utm_medium=social&utm_campaign=summer_sale&source=yourapp&campaign=summer_sale&user_id=123456&timestamp=2023-08-03`,
+            `${window.location.pathname}?_s=${router?.query?._s}`,
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
