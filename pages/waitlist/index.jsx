@@ -151,7 +151,7 @@ const WaitingList = (props) => {
   // const dispatch = useDispatch();
   const pickPlanRef = useRef(); // Reference to the "Pick your Plan" section
 
-  const { openToastMessage } = useOverlayContext();
+  const { openToastMessage, startLoading, stopLoading } = useOverlayContext();
 
   const [showJoinList, setShowJoinList] = useState(false);
 
@@ -163,6 +163,7 @@ const WaitingList = (props) => {
   });
 
   const handleJoinWaitlist = async () => {
+    startLoading();
     const formBody = generateEventData(userDetails, router?.query?._s);
     const endpoint = apiBaseURL + "api/webhook/tally";
 
@@ -179,6 +180,8 @@ const WaitingList = (props) => {
           },
         }
       );
+
+      stopLoading();
 
       if (response?.status === 200) {
         localStorage.setItem(toKebabCase(router?.query?._s), true);
