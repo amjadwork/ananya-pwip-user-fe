@@ -74,6 +74,8 @@ const FilterSection = ({
   isFromCategory,
   filterForCategory,
 }) => {
+  const router = useRouter();
+
   const { openBottomSheet, closeBottomSheet } = useOverlayContext();
   const dispatch = useDispatch();
   const searchScreenActive = useSelector(
@@ -88,9 +90,10 @@ const FilterSection = ({
         animation: !searchFocus
           ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
           : "unset",
-        background: !searchFocus
-          ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
-          : "unset",
+        background:
+          !searchFocus && router?.query?.from !== "home"
+            ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
+            : "unset",
       }}
     >
       <div
@@ -109,8 +112,7 @@ const FilterSection = ({
             <h2
               className={`text-pwip-v2-primary font-sans text-base font-bold`}
             >
-              Choose from {listProductsData?.length || 0} varieties of{" "}
-              {filterForCategory?.productCategory?.name} rice
+              Choose from {filterForCategory?.productCategory?.name} rice
             </h2>
           ) : (
             <h2

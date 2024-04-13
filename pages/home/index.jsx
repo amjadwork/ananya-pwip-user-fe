@@ -528,7 +528,7 @@ function Home() {
                   Top sourcing locations
                 </h3>
                 <span className="text-sm text-pwip-v2-gray-400 font-normal">
-                  Search rice from India's favourite sourcing locations
+                  India's favourite sourcing locations
                 </span>
               </div>
 
