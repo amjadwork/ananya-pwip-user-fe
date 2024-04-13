@@ -35,6 +35,8 @@ import {
 
 import { productStateList } from "@/constants/stateList";
 
+import ShipOFC from "../../../theme/lottie/ofc-ship.json";
+
 // Import Containers
 
 // Import Layouts
@@ -421,6 +423,10 @@ function OFCService() {
                   </div>
                 </div>
               ) : null}
+
+              <div className="w-auto z-0 bg-white">
+                <Lottie animationData={ShipOFC} style={style} />
+              </div>
             </div>
           </div>
         </div>
@@ -459,12 +465,12 @@ function OFCService() {
             </div>
           </div>
 
-          <div className="inline-flex items-center flex-col justify-center px-8 pb-8">
+          {/* <div className="inline-flex items-center flex-col justify-center px-8 pb-8">
             <span className="text-center text-xs text-pwip-v2-gray-500 leading-5">
               Generate costing in 2 clicks for estimations and customize it as
               per your order before sharing ahead.
             </span>
-          </div>
+          </div> */}
         </div>
       </AppLayout>
     </React.Fragment>

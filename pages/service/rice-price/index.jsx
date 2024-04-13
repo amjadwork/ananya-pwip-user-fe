@@ -786,7 +786,7 @@ function RicePrice() {
 
             <div className="inline-flex items-center flex-col justify-center">
               <span className="text-center text-sm text-pwip-black-500 font-semibold leading-5">
-                Get your estimated freight charges anytime, anywhere
+                Get your estimated rates for rice anytime, anywhere
               </span>
             </div>
 
@@ -803,8 +803,7 @@ function RicePrice() {
 
           <div className="inline-flex items-center flex-col justify-center px-8 pb-8">
             <span className="text-center text-xs text-pwip-v2-gray-500 leading-5">
-              Generate costing in 2 clicks for estimations and customize it as
-              per your order before sharing ahead.
+              Get your prices for making business estimations on fingertips
             </span>
           </div>
         </div>
