@@ -1,5 +1,6 @@
-import React, { useEffect, useLayoutEffect, useMemo } from "react";
+import React, { useEffect, useLayoutEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
+import useRazorpay from "react-razorpay";
 
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -43,13 +44,250 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 import axios from "axios";
-import { apiBaseURL, formatNumberWithCommas } from "utils/helper";
+import {
+  apiBaseURL,
+  apiStagePaymentBeUrl,
+  formatNumberWithCommas,
+  pwipPrimeServiceId,
+  razorpayKey,
+} from "utils/helper";
+
+import Lottie from "lottie-react";
+import paymentSuccessful from "../../theme/lottie/payment-success.json";
 
 const { flag } = require("country-emoji");
+
+const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
 
 // Import Containers
 
 // Import Layouts
+
+function PWIPPrimeLP({ authToken }) {
+  const [Razorpay] = useRazorpay();
+  const router = useRouter();
+
+  const { openBottomSheet, closeBottomSheet, openToastMessage } =
+    useOverlayContext();
+
+  const userDetails = useSelector((state) => state.auth?.user);
+
+  const SERVICE_ID = Number(pwipPrimeServiceId);
+
+  const createOrder = async (planid) => {
+    try {
+      const response = await axios.post(
+        API_STAGE_PAYMENT_BE + "api" + "/create-order",
+        {
+          plan_id: planid,
+          service_id: pwipPrimeServiceId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response?.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const verifyPayment = async (body) => {
+    try {
+      const response = await axios.post(
+        API_STAGE_PAYMENT_BE + "api" + "/verify-pay",
+        body,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      return response?.data;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  const handlePayment = useCallback(
+    async (item) => {
+      const orderResponse = await createOrder(item?.id, userDetails?._id);
+
+      try {
+        if (orderResponse.rz_order?.order_id) {
+          const options = {
+            // key: "rzp_live_SGjcr25rqb3FMM", //"rzp_test_aw3ZNIR1FCxuQl",
+            key: razorpayKey,
+            currency: "INR",
+            name: "PWIP Foodtech Pvt Limited",
+            description: "Your export partners",
+            image: "https://pwip.co/assets/web/img/web/logo.png",
+            order_id: orderResponse.rz_order?.order_id,
+            handler: async (res) => {
+              const paymentVerifyPayload = {
+                ...res,
+                planId: item?.id,
+                serviceId: SERVICE_ID,
+              };
+              const responseVerify = await verifyPayment(paymentVerifyPayload);
+
+              const details = await checkSubscription(SERVICE_ID, authToken);
+
+              if (details?.activeSubscription) {
+                closeBottomSheet();
+                router.replace(`/home`);
+              }
+
+              if (responseVerify?.result === "Payment Success") {
+                const content = (
+                  <div className="w-full h-full relative bg-white px-5 pt-[56px]">
+                    <div className="w-full flex flex-col items-center">
+                      <div className="min-w-[310px] h-auto">
+                        <Lottie animationData={paymentSuccessful} />
+                      </div>
+                      <span className="text-center font-bold text-pwip-green-800 text-lg">
+                        Payment Successful
+                      </span>
+                    </div>
+                    <div className="inline-flex w-full h-full flex-col justify-between px-5 mt-12">
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-bold">
+                          Transaction id
+                        </span>
+                        <span className="text-sky-950 text-sm font-bold">
+                          {res?.razorpay_payment_id}
+                        </span>
+                      </div>
+                      <div className="flex justify-between py-2">
+                        <span className="text-sky-950 text-sm font-medium">
+                          Amount Paid
+                        </span>
+                        <span className="text-zinc-900 text-sm font-medium">
+                          ₹{Math.ceil(orderResponse?.rz_order?.amount / 100)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+                openBottomSheet(content, null, true);
+              } else {
+                openToastMessage({
+                  type: "error",
+                  message: "Payment failed, try again",
+                  // autoHide: false,
+                });
+              }
+            },
+            prefill: {
+              name: userDetails.name,
+              email: userDetails.email,
+              phone: userDetails.phone || "",
+              contact: userDetails.phone || "",
+            },
+            notes: {
+              address:
+                "PWIP FOODTECH PVT LTD WeWork, Vaishnavi Signature.78/9 Outer Ring Road, Bellandur Main Rd, Bengaluru, Karnataka 560103",
+            },
+            theme: {
+              color: "#003559",
+            },
+          };
+          const rzpay = new Razorpay(options);
+          rzpay.open();
+        }
+      } catch (err) {
+        openToastMessage({
+          type: "error",
+          message: "Something went while creating your order, try again",
+          // autoHide: false,
+        });
+        console.log(err);
+      }
+    },
+    [Razorpay]
+  );
+
+  return (
+    <div className="inline-flex flex-col w-full h-full px-5 pt-8 pb-[82px]">
+      <div className="inline-flex flex-col w-full h-full space-y-3">
+        <div className="inline-flex items-center justify-center space-x-3">
+          <img
+            className="h-[22px] w-[22px]"
+            src="/assets/images/services/lp/diamond.png"
+          />
+          <h2 className="text-lg font-bold text-center">PWIP Prime</h2>
+        </div>
+        <p className="text-center text-xs text-pwip-black-600">
+          PWIP Prime provides all services from today and the one that will come
+          in future, all under one plan, discover a lot of possibilities in your
+          export business with this.
+        </p>
+      </div>
+
+      <div className="w-full my-10">
+        <img
+          className="w-full"
+          src="/assets/images/services/lp/all-services.png"
+        />
+      </div>
+
+      <div className="inline-flex flex-col w-full h-full space-y-3">
+        <div className="inline-flex items-center justify-center space-x-3">
+          <h2 className="text-lg text-center font-bold">
+            All export related problems, <br />
+            One solution
+          </h2>
+        </div>
+      </div>
+
+      <div className="w-full my-10">
+        <img
+          className="w-full"
+          src="/assets/images/services/lp/price-compare.png"
+        />
+      </div>
+
+      <div
+        className={`container fixed bottom-[64px] left-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
+      >
+        <div
+          className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
+          onClick={async () => {
+            const plan = {
+              id: 125,
+              name: "PWIP Prime",
+              description: "",
+              validity: 30,
+              validity_type: "days",
+              refund_policy: 1,
+              refund_policy_valid_day: 7,
+              currency: "INR",
+              applicable_for_users: [],
+              applicable_services: [27, 30, 32, 35],
+              price: 1499,
+              show_for_user: 0,
+              usage_cap: 0,
+              createdAt: "2024-04-13T06:20:28.000Z",
+              updatedAt: "2024-04-13T06:58:09.000Z",
+              active: 1,
+              deletedBy: null,
+              is_free: 0,
+              is_unlimited: 1,
+              show_to_user: 0,
+            };
+            handlePayment(plan);
+          }}
+        >
+          Pay and Subscribe
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function transformData(inputArray) {
   const outputArray = [];
@@ -368,7 +606,14 @@ function Home() {
               })}
             </div>
 
-            <div className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative">
+            <div
+              onClick={async () => {
+                const content = <PWIPPrimeLP authToken={authToken} />;
+
+                openBottomSheet(content);
+              }}
+              className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative"
+            >
               <div className="inline-flex flex-col space-y-5 h-full cols-span-10">
                 <div className="inline-flex flex-col space-y-1">
                   <span className="text-sm font-bold text-pwip-black-600 text-left whitespace-nowrap">
@@ -392,9 +637,6 @@ function Home() {
                     minHeight="!min-h-[26px]"
                     fontSize="!text-xs"
                     maxWidth="max-w-[60%]"
-                    onClick={async () => {
-                      //
-                    }}
                   />
                 </div>
               </div>

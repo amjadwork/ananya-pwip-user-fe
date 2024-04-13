@@ -100,7 +100,13 @@ export function Header(props) {
       dispatch(resetCustomCostingSelection());
     }
 
-    router.back();
+    // console.log("here i am", router, window.history);
+
+    if (window.history.length <= 2) {
+      router.push("/home");
+    } else {
+      router.back();
+    }
   };
 
   React.useEffect(() => {

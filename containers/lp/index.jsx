@@ -431,7 +431,9 @@ const LandingPage = (props) => {
           {pickYourPlan
             .filter(
               (plan) =>
-                !plan.is_free && plan.applicable_services.includes(SERVICE_ID)
+                !plan.is_free &&
+                plan.show_for_user &&
+                plan.applicable_services.includes(SERVICE_ID)
             ) // Exclude the Free Trial plan
             .map((plan, index) => (
               <div
