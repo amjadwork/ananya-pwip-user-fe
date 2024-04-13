@@ -460,7 +460,13 @@ function SearchAndFilter({ title, filterByState = "", fromSearch = false }) {
                   <div className="inline-flex w-full justify-between">
                     <div
                       onClick={() => {
-                        router.push("/service/rice-price/detail");
+                        closeSearchFilterModal();
+                        router.push(
+                          "/service/rice-price/detail" +
+                            "/" +
+                            item?.variantId +
+                            `?_s=${item?.source?._sourceId}`
+                        );
                       }}
                       className="relative inline-flex space-x-3 w-[90%]"
                     >
@@ -523,7 +529,14 @@ function SearchAndFilter({ title, filterByState = "", fromSearch = false }) {
                   </div>
                   <div
                     onClick={() => {
-                      router.push("/service/rice-price/detail");
+                      // router.push("/service/rice-price/detail");
+                      closeSearchFilterModal();
+                      router.push(
+                        "/service/rice-price/detail" +
+                          "/" +
+                          item?.variantId +
+                          `?_s=${item?.source?._sourceId}`
+                      );
                     }}
                     className="w-full inline-flex justify-between"
                   >
@@ -557,7 +570,14 @@ function SearchAndFilter({ title, filterByState = "", fromSearch = false }) {
                         minHeight="!min-h-[20px]"
                         fontSize="!text-[11px]"
                         onClick={async () => {
-                          router.push("/service/rice-price/detail");
+                          // router.push("/service/rice-price/detail");
+                          closeSearchFilterModal();
+                          router.push(
+                            "/service/rice-price/detail" +
+                              "/" +
+                              item?.variantId +
+                              `?_s=${item?.source?._sourceId}`
+                          );
                         }}
                       />
                     </div>
