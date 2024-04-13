@@ -23,7 +23,7 @@ export function BottomNavBar({ scrollDirection = "up", lastScrollTop }) {
         boxShadow: "12px -3px 29px 17px rgba(0, 0, 0, 0.08)",
       }}
     >
-      <div className="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+      <div className="grid h-full w-full grid-cols-5 mx-auto font-medium px-0">
         {options.map((opt, index) => {
           return (
             <button
@@ -35,11 +35,13 @@ export function BottomNavBar({ scrollDirection = "up", lastScrollTop }) {
               className={`${
                 activeRoute === opt.path
                   ? "text-pwip-v2-primary-500"
-                  : "text-pwip-v2-gray-500"
-              } inline-flex flex-col items-center justify-center px-5 hover:bg-white-100 dark:hover:bg-white-100 group space-y-[6px]`}
+                  : "text-pwip-v2-gray-400"
+              } inline-flex flex-col items-center justify-center hover:bg-white-100 dark:hover:bg-white-100 group space-y-[6px]`}
             >
               {opt.icon}
-              <span className="text-xs font-medium font-sans">{opt.label}</span>
+              <span className="text-[11px] font-medium font-sans whitespace-nowrap">
+                {opt.label}
+              </span>
             </button>
           );
         })}

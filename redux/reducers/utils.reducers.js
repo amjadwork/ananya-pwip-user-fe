@@ -1,3 +1,5 @@
+/** @format */
+
 import {
   SHOW_LOADER_SUCCESS,
   SHOW_LOADER_FAILURE,
@@ -32,7 +34,9 @@ const utilsReducer = (state = initialState, action) => {
       return {
         ...state,
         forexRate: {
-          USD: action.payload.usd,
+          USD: parseFloat(
+            action.payload?.rates?.INR || action.payload?.INR
+          ).toFixed(1),
         },
       };
     case SET_FOREX_RATE_FAILURE:

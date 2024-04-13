@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "pwip-master",
+  "private_key_id": "84b5903e9a8237b47f1f7876af8aa7219cfad358",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJnLmYtdSNkMYR\n4SAudeJcS0YgLnEfEf84THjxvCvienVfdef3yS/olficZyMYh0KrQ+vecZ0aFXi4\n3bn8H5CtNwzv8/zxII1oeN9UFwtWW0Q3VZPYbcF8LYLVtn+THffZsGSvcO7uim5Y\n1qu27PJWafILheE7NWxM3KItXZSVPckjSRGE8HJR0dr0brgk67AOGb7SM4Ne5qnj\nW4ClNXx5uR5LQhqr2vceBmzAB3gPokI5V4iBrHVUJO2d7mT/mT70XcXDOM1GybFi\nTZ3gmCKpkE6xbjOTRiozTzVirrHMAqdQHcV+w6zDdsI130I7qB4XYNpMWRmKivOH\n2hounkwTAgMBAAECggEAXufefFMYAB4HB1KdBhHrITw0AiEqkhA0PsnM4yqL0/yG\ndQ35SOzVlxzF38YzQLAng5yhE2ETLbyuzANgMh2fytJPzkLiLpX+yw+fPaPta9Th\nq1SnGKot+yknXjgfHN9uFXUSKH42k2bp4/sF8UHgICqWTLNUn70ZwqLX2xgiwg9x\nSWntnTwofoN7UcYoDA8K8CbyRS1BYPR58yjZnxZjaoyVszdu6Rv7Wm8aZYe0lyjz\njVecVeJ7NcLtV1TZB28FmACLNSyrtuAHzNmhvlu3VmUFkCAaEtgNNhBuM1qzqPyw\nRj9CvfCKzmtRrbAZwXitnqnrxxJpILK4Sx2ghgdkZQKBgQD6v4GwD+1fx6fHHGb8\ne5wNCVixo+QIEaPkGbVaG//TKy0stE5sOe6zJVkUBRg8xsJsJHTBSrYVZ2NjpHZN\ngTnQ6LSERpIp8smZgIUHqZW9afMyCykaUwzvOmxAInbkvG7ovnnEbnc+VqLU6euf\nm2P5PXJum0SSia5xKM2XQgrH7QKBgQDN1cFfZdYxyfKhkJAr7sHKFZZ1RFIoRgne\niiysLVdp7TS7og25Ub1cZLKiRmdXV3MYrweZdYgOGG18oQfdkhjN/e9bNHvHgeQQ\np8OPvyGmCwvpk+WHKNBJx3hlX0dMLXfT1mG06zZKPuv7diH303Ulw/DqK9DIyAdw\ngLLBCcLj/wKBgQDsAZwbDqKpZ84uxjjYo695RbbJXCygu5m6c8gRjBD5vMXEMeEu\nVEirLRfuk+0AJ0OPbbDGzX8cHjeZ7Y273UmBq8VcSt//w5ikdia/04owwaw5CfAh\n6tFdyWth4g5ttD3fqogJrr9lWT3hkFpJ24P5bzBpkpK0KgqaT4FSQMLM8QKBgQCX\ngNRaUWy9LPXH8c4MaCp/gjBClE0ck6DEClQjTyReNVhxGzCazQ1iKkRJqSR7Z0Sy\nUHJ5g8bnCRfdefF+JwDW7if1q8XH7VVe5PzOm1I7EzprbI6vU10sUQPPKbgi2/yt\nEcjND6vgLjwn1KXf8ebyKyzyT9nXT1QafMAV0gd/JQKBgBDj2esZv0wg8mu2gvW+\nnAeKmg7IgkIk8UEyrrtQJ3A0eQeXE5Qwshz4v1e6Okkk/aMbf3mR0qjFAwLA8tbi\nMhZQUWnn0PdHJ4QwFXex5BaQllb9ofwU8u8XQ2CsYFqz9SS7MklPyzKqYmb4lO8t\n5yQ2LqPwmXBGFBJrHPY9evWj\n-----END PRIVATE KEY-----\n",
+  "client_email": "pwip-community-onboarding@pwip-master.iam.gserviceaccount.com",
+  "client_id": "106422520966677926683",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pwip-community-onboarding%40pwip-master.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { BottomSheet } from "react-spring-bottom-sheet";
 import "react-spring-bottom-sheet/dist/style.css";
@@ -5,6 +7,7 @@ import { useDispatch } from "react-redux";
 
 import { hideToastNotificationFailure } from "@/redux/actions/toastOverlay.actions";
 import { forexRateRequest } from "@/redux/actions/utils.actions";
+import { forexRateSuccess } from "redux/actions/utils.actions";
 
 const OverlayContext = createContext();
 
@@ -20,6 +23,9 @@ export function OverlayProvider({ children }) {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastContent, setToastContent] = useState(null);
+
+  const [isSearchFilterModalOpen, setIsSearchFilterModalOpen] = useState(false);
+  const [searchFilterChildren, setSearchFilterChildren] = useState(null);
 
   const [bottomSheetChildren, setBottomSheetChildren] = useState(null);
 
@@ -37,6 +43,14 @@ export function OverlayProvider({ children }) {
     setIsModalOpen(true);
   };
   const closeModal = () => setIsModalOpen(false);
+
+  const openSearchFilterModal = (content) => {
+    setIsSearchFilterModalOpen(true);
+
+    setSearchFilterChildren(content);
+  };
+
+  const closeSearchFilterModal = () => setIsSearchFilterModalOpen(false);
 
   const openBottomSheet = async (
     content,
@@ -107,6 +121,10 @@ export function OverlayProvider({ children }) {
     showToast,
     openToastMessage,
     closeToastMessage,
+
+    isSearchFilterModalOpen,
+    openSearchFilterModal,
+    closeSearchFilterModal,
   };
 
   const bottomSheet = (
@@ -356,11 +374,7 @@ export function OverlayProvider({ children }) {
               <div className="inline-flex items-center justify-center w-full space-x-5">
                 <button
                   onClick={() => {
-                    dispatch(
-                      forexRateRequest({
-                        usd: 82, //parseFloat(usdValue || 0),
-                      })
-                    );
+                    dispatch(forexRateRequest());
                     closeModal();
                   }}
                   className="bg-pwip-primary border-[1px] border-pwip-primary w-full py-2 rounded-md text-white text-center text-xs"
@@ -370,8 +384,8 @@ export function OverlayProvider({ children }) {
                 <button
                   onClick={() => {
                     dispatch(
-                      forexRateRequest({
-                        usd: usdInputValue,
+                      forexRateSuccess({
+                        INR: usdInputValue,
                       })
                     );
                     closeModal();
@@ -383,6 +397,12 @@ export function OverlayProvider({ children }) {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {isSearchFilterModalOpen && (
+        <div className="h-screen w-screen bg-white fixed top-0 left-0 z-50 inline-flex justify-center items-center">
+          {searchFilterChildren}
         </div>
       )}
     </OverlayContext.Provider>

@@ -55,16 +55,19 @@ function* fetchOriginLocation(payload) {
         state?.costing?.customCostingSelection?.product?.sourceRates?._sourceId
     );
 
-    const response = yield call(
-      makeApiCall,
+    let url =
       "/location/origin" +
-        `?filterBySource=${
-          payload.sourceId ||
-          selectedSourceIdFromCustomCosting ||
-          selectedSourceId
-        }`,
-      "get"
-    );
+      `?filterBySource=${
+        payload.sourceId ||
+        selectedSourceIdFromCustomCosting ||
+        selectedSourceId
+      }`;
+
+    if (!payload.sourceId) {
+      url = "/location/origin";
+    }
+
+    const response = yield call(makeApiCall, url, "get");
     yield put(fetchOriginSuccess(response.data.origin));
   } catch (error) {
     yield put(fetchOriginFailure(error));

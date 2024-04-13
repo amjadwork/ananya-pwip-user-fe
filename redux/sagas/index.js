@@ -16,6 +16,9 @@ import subscriptionSaga from "./subscription.saga";
 import categorySaga from "./category.saga";
 import learnListSaga from "./learn.saga";
 import tagsSaga from "./tags.saga";
+import variantsWithPriceSaga from "./variant-prices.saga";
+import variantsProfileSaga from "./variant-profile.saga";
+import ofcSaga from "./ofc.saga";
 
 function* rootSaga() {
   yield all([
@@ -36,6 +39,9 @@ function* rootSaga() {
     categorySaga(),
     learnListSaga(),
     tagsSaga(),
+    variantsWithPriceSaga(),
+    variantsProfileSaga(),
+    ofcSaga(),
   ]);
 }
 

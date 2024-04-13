@@ -1,8 +1,15 @@
 import { call, put, takeLatest, select } from "redux-saga/effects";
-import { FETCH_PRODUCTS_REQUEST } from "../actions/types/products.types";
+import {
+  FETCH_PRODUCTS_REQUEST,
+  FETCH_PRODUCT_DETAIL_REQUEST,
+} from "../actions/types/products.types";
 import {
   fetchProductsSuccess,
   fetchProductsFailure,
+
+  // variant details
+  fetchProductDetailSuccess,
+  fetchProductDetailFailure,
 } from "../actions/products.actions";
 import { makeApiCall } from "./_commonFunctions.saga";
 
@@ -21,6 +28,19 @@ function* fetchProducts() {
   }
 }
 
+function* fetchProductDetailById(action) {
+  const id = action.payload;
+
+  try {
+    const response = yield call(makeApiCall, "/variant/" + id, "get");
+
+    yield put(fetchProductDetailSuccess(response.data));
+  } catch (error) {
+    yield put(fetchProductDetailFailure(error));
+  }
+}
+
 export default function* productsSaga() {
   yield takeLatest(FETCH_PRODUCTS_REQUEST, fetchProducts);
+  yield takeLatest(FETCH_PRODUCT_DETAIL_REQUEST, fetchProductDetailById);
 }

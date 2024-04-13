@@ -1,4 +1,6 @@
-import { put, takeLatest } from "redux-saga/effects";
+/** @format */
+
+import { call, put, takeLatest } from "redux-saga/effects";
 import {
   SHOW_LOADER_REQUEST,
   SET_FOREX_RATE_REQUEST,
@@ -12,6 +14,7 @@ import {
   searchScreenSuccess,
   searchScreenFailure,
 } from "../actions/utils.actions";
+import { makeApiCall } from "./_commonFunctions.saga";
 
 function* setLoaderUtil(data) {
   try {
@@ -21,9 +24,14 @@ function* setLoaderUtil(data) {
   }
 }
 
-function* setForexRateUtil(data) {
+function* setForexRateUtil() {
   try {
-    yield put(forexRateSuccess(data));
+    const response = yield call(makeApiCall, "/forexrate?currency=usd", "get");
+    if (response.data) {
+      yield put(forexRateSuccess(response.data));
+    } else {
+      yield put(forexRateSuccess(response));
+    }
   } catch (error) {
     yield put(forexRateFailure(error));
   }

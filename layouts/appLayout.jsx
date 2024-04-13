@@ -8,9 +8,18 @@ import { BottomNavBar } from "@/components/BottomNavBar";
 
 import { setTermsOfShipmentRequest } from "@/redux/actions/shipmentTerms.actions";
 import { forexRateRequest } from "@/redux/actions/utils.actions";
-import { Button } from "@/components/Button";
+// import { Button } from "@/components/Button";
 
-const hideBottomBarAtRoutes = ["costing", "edit", "detail"];
+const hideBottomBarAtRoutes = [
+  "costing",
+  "edit",
+  "detail",
+  "lp",
+  "rice-price",
+  "export-costing",
+  "ofc",
+  "waitlist",
+];
 
 const AppLayout = ({ children }) => {
   const router = useRouter();

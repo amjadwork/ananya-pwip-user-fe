@@ -16,6 +16,9 @@ import subscriptionReducer from "./subscription.reducers";
 import categoryReducer from "./category.reducers";
 import learnListReducer from "./learn.reducers";
 import tagsReducer from "./tags.reducers";
+import variantPriceReducer from "./variant-prices.reducers";
+import variantProfileReducer from "./variant-profile.reducers";
+import ofcReducer from "./ofc.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -35,6 +38,9 @@ const rootReducer = combineReducers({
   category: categoryReducer,
   learnList: learnListReducer,
   tags: tagsReducer,
+  variantPriceList: variantPriceReducer,
+  variantProfile: variantProfileReducer,
+  ofc: ofcReducer,
 });
 
 export default rootReducer;

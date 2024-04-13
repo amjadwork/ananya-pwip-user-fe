@@ -146,12 +146,24 @@ module.exports = {
     "bg-yellow-800",
     "bg-pwip-v2-gray-200",
     "z-[1000]",
+    "from-[#2F3F74]",
+    "to-[#537FE7]",
+    "from-[#533D75]",
+    "to-[#A97AE6]",
+    "h-[27px]",
+    "w-[6px]",
+    "h-[6px]",
+    "h-[47px]",
+    "h-[32px]",
+    "cols-span-10",
+    "cols-span-2",
+    "border-pwip-v2-gray-400 ",
   ],
   theme: {
     extend: {
       fontFamily: {
-        serif: ["Gilroy", "arial"],
-        sans: ["DM-sans", "sans-serif"],
+        serif: ["Inter", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
       },
 
       colors: {
@@ -160,6 +172,23 @@ module.exports = {
         white: "#FFFFFF",
         black: "#000",
         ...color,
+      },
+
+      animation: {
+        text: "text 5s ease infinite",
+      },
+
+      keyframes: {
+        text: {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
       },
     },
     // colors: {
