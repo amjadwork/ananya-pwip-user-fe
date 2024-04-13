@@ -314,7 +314,7 @@ function Home() {
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
 
-  const { openBottomSheet, closeBottomSheet, stopLoading } =
+  const { openBottomSheet, closeBottomSheet, stopLoading, startLoading } =
     useOverlayContext();
 
   const [eximTrendsData, setEximTrendsData] = React.useState(null);
@@ -344,8 +344,11 @@ function Home() {
       localStorage.setItem("eximTrends", JSON.stringify(eximTrends));
 
       setEximTrendsData(eximTrends);
+
+      stopLoading();
     } catch (err) {
       console.log(err);
+      stopLoading();
     }
   };
 
@@ -356,6 +359,7 @@ function Home() {
       if (eximTrends) {
         setEximTrendsData(JSON.parse(eximTrends));
       } else {
+        startLoading();
         fetchEXIMTrend();
       }
     }
