@@ -480,26 +480,41 @@ function Home() {
                     <div
                       key={items?.name + index}
                       className="inline-flex flex-col items-center justify-center space-y-[10px]"
-                      onClick={() => {
-                        dispatch(
-                          fetchCategoryRequest({
-                            productCategory: {
-                              name: items.name,
-                              color:
-                                index === 0
-                                  ? "#F3F7F9"
-                                  : index === 1
-                                  ? "#F7FFF2"
-                                  : index === 2
-                                  ? "#FFF5EF"
-                                  : index === 3
-                                  ? "#FFFBED"
-                                  : "#F3F7F9",
-                            },
-                          })
+                      onClick={async () => {
+                        const subsRes = await checkSubscription(
+                          Number(ricePriceServiceId),
+                          authToken
                         );
 
-                        router.push("/category?from=home");
+                        if (!subsRes?.activeSubscription) {
+                          router.push("/service/rice-price/lp");
+
+                          return;
+                        }
+
+                        if (subsRes?.activeSubscription) {
+                          dispatch(
+                            fetchCategoryRequest({
+                              productCategory: {
+                                name: items.name,
+                                color:
+                                  index === 0
+                                    ? "#F3F7F9"
+                                    : index === 1
+                                    ? "#F7FFF2"
+                                    : index === 2
+                                    ? "#FFF5EF"
+                                    : index === 3
+                                    ? "#FFFBED"
+                                    : "#F3F7F9",
+                              },
+                            })
+                          );
+
+                          router.push("/category?from=home");
+
+                          return;
+                        }
                       }}
                     >
                       <div
@@ -545,15 +560,31 @@ function Home() {
                         //   boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
                         //   backdropFilter: "blur(8px)",
                         // }}
-                        onClick={() => {
+                        onClick={async () => {
                           // dispatch(searchScreenFailure());
-                          dispatch(
-                            fetchCategoryRequest({
-                              sourceId: items._sourceId,
-                            })
+
+                          const subsRes = await checkSubscription(
+                            Number(ricePriceServiceId),
+                            authToken
                           );
 
-                          router.push("/category?from=home");
+                          if (!subsRes?.activeSubscription) {
+                            router.push("/service/rice-price/lp");
+
+                            return;
+                          }
+
+                          if (subsRes?.activeSubscription) {
+                            dispatch(
+                              fetchCategoryRequest({
+                                sourceId: items._sourceId,
+                              })
+                            );
+
+                            router.push("/category?from=home");
+
+                            return;
+                          }
                         }}
                       >
                         <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
