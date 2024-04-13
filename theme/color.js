@@ -8,6 +8,7 @@ export const color = {
   "pwip-v2-primary-500": "#2072AB",
   "pwip-v2-primary-200": "#CFECFF",
   "pwip-v2-primary-100": "#F9FBFC",
+  "pwip-v2-primary-50": "#B1CEE2",
 
   "pwip-primary": "#14517B",
   "pwip-primary-400": "#24A3D0",
@@ -18,12 +19,14 @@ export const color = {
   // 434B53
   "pwip-v2-gray-800": "#434B53",
   "pwip-v2-gray-500": "#818383",
+  "pwip-v2-gray-400": "#828282",
+  "pwip-v2-gray-350": "#DEDEDE",
   "pwip-v2-gray-300": "#E6E7E7",
   "pwip-v2-gray-250": "#E6EFF4",
   "pwip-v2-gray-200": "#E2E2E7",
-  "pwip-v2-gray-300": "#DEDEDE",
   "pwip-v2-gray-100": "#F3F7F9",
   "pwip-v2-gray-50": "#FAFAFA",
+  "pwip-v2-gray-40": "#FBFBFB",
 
   "pwip-gray-1100": "#1D2624",
   "pwip-gray-1000": "#3D4544",
@@ -46,16 +49,22 @@ export const color = {
   "pwip-v2-gray-500": "#878D96",
 
   "pwip-green-800": "#00B58F",
+  "pwip-green-600": "#00A78C",
+
+  "pwip-red-700": "#D90000",
 
   "pwip-teal-900": "#008B94",
 
   "pwip-orange-900": "#FD9A27",
 
   "pwip-black-600": "#1B1B1B",
+  "pwip-black-500": "#231F20",
 
   "pwip-v2-yellow-100": "#FFF8E9",
 
+  "pwip-v2-green-900": "#086a45",
   "pwip-v2-green-800": "#45D9D0",
   "pwip-v2-green-700": "#65FDF4",
   "pwip-v2-green-300": "#CFE4C4",
+  "pwip-v2-green-200": "#CBF0E2",
 };

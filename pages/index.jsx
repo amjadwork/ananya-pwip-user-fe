@@ -8,21 +8,32 @@ import Head from "next/head";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { useSession, signIn } from "next-auth/react";
 import { useSelector, useDispatch } from "react-redux";
-import Slider from "react-slick";
+// import Slider from "react-slick";
 import { useRouter } from "next/router";
 
-import { handleSettingAuthDataRequest } from "redux/actions/auth.actions";
+import {
+  handleSettingAuthDataRequest,
+  handleSettingAuthDataSuccess,
+} from "redux/actions/auth.actions";
+import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
+import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
 
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 
-// import ProfileDetailForm from "@/components/ProfileDetailForm";
+import Lottie from "lottie-react";
+import ContainerShip from "../theme/lottie/container-ship.json";
+
+//  import ProfileDetailForm from "@/components/ProfileDetailForm";
 
 export default function Home() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const dispatch = useDispatch();
 
-  const userDetails = useSelector((state) => state.auth?.user);
+  const authToken = useSelector((state) => state.auth.token);
+  const authUser = useSelector((state) => state.auth.user);
+  const profileObject = useSelector((state) => state.profile);
+  const userObject = useSelector((state) => state.user);
 
   const {
     openBottomSheet,
@@ -32,51 +43,36 @@ export default function Home() {
     isLoading,
   } = useOverlayContext();
 
-  const [activeSlide, setActiveSlide] = useState(0);
+  // const [activeSlide, setActiveSlide] = useState(0);
   // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
-  const sliderSettings = {
-    dots: false,
-    infinite: true,
-    speed: 600,
-    arrows: false,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    adaptiveHeight: true,
-    initialSlide: 0,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    beforeChange: function (prev, next) {
-      setActiveSlide(next);
-    },
-  };
-
-  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
-    const content = (
-      <React.Fragment>
-        <ProfileDetailForm
-          token={token}
-          fields={fields}
-          fieldHeading={{
-            heading: fieldHeading,
-          }}
-          professionOptions={[]}
-          userObject={{ userData: userDetails }}
-          profileObject={{}}
-          isStandalone={true}
-        />
-      </React.Fragment>
-    );
-    openBottomSheet(content, () => null, true, true);
-  };
+  // const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+  //   const content = (
+  //     <React.Fragment>
+  //       <ProfileDetailForm
+  //         token={token}
+  //         fields={fields}
+  //         fieldHeading={{
+  //           heading: fieldHeading,
+  //         }}
+  //         professionOptions={[]}
+  //         userObject={{ userData: userDetails }}
+  //         profileObject={{}}
+  //         isStandalone={true}
+  //       />
+  //     </React.Fragment>
+  //   );
+  //   openBottomSheet(content, () => null, true, true);
+  // };
 
   const handleNavigation = (path) => {
     router.push(path);
   };
 
-  // const handleNavigation = (path) => {
-  //   router.push(path);
-  // };
+  async function getUserProfileDetails() {
+    await dispatch(fetchUserRequest());
+    await dispatch(fetchProfileRequest());
+  }
 
   const handleLogin = async () => {
     try {
@@ -90,7 +86,7 @@ export default function Home() {
   const redirectToApp = async () => {
     try {
       stopLoading();
-      handleNavigation("/export-costing");
+      handleNavigation("/home");
     } catch (error) {
       stopLoading();
       console.error("Error during login:", error);
@@ -98,15 +94,39 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (session) {
+    if (status === "authenticated" && session?.accessToken) {
       startLoading();
-      redirectToApp();
-      // const res = dispatch(
-      //   handleSettingAuthDataRequest(session.user, session.accessToken)
-      // );
-      // console.log(res);
+      dispatch(handleSettingAuthDataRequest(session.user, session.accessToken));
     }
-  }, [session]);
+  }, [status, session?.accessToken]);
+
+  useEffect(() => {
+    if (
+      authUser?.apiMessage === "success" &&
+      !profileObject?.profileData &&
+      !userObject?.userData
+    ) {
+      getUserProfileDetails();
+    }
+  }, [authUser?.apiMessage]);
+
+  useEffect(() => {
+    if (profileObject?.profileData && userObject?.userData && authToken) {
+      const userPayload = {
+        ...authUser,
+        ...profileObject?.profileData,
+        ...userObject?.userData,
+      };
+      dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
+      if (userPayload?.newUser) {
+        stopLoading();
+        handleNavigation("/onboarding");
+      } else {
+        stopLoading();
+        redirectToApp();
+      }
+    }
+  }, [profileObject, userObject]);
 
   // useEffect(() => {
   //   if (session) {
@@ -139,6 +159,9 @@ export default function Home() {
   //     }
   //   }
   // }, [userDetails]);
+  // const style = {
+  //   height: 180,
+  // };
 
   return (
     <React.Fragment>
@@ -146,7 +169,7 @@ export default function Home() {
         <meta charSet="utf-8" />
         <title>Home | pwip - Export Costing </title>
 
-        <meta name="Reciplay" content="Reciplay" />
+        <meta name="PWIP App" content="PWIP App" />
         <meta name="description" content="Generated by create next app" />
 
         <meta name="mobile-web-app-capable" content="yes" />
@@ -162,115 +185,31 @@ export default function Home() {
         {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
-      <div className="min-h-screen flex flex-col items-center bg-white pb-[82px] hide-scroll-bar">
+      <div className="min-h-screen flex flex-col items-center bg-white pb-[82px] hide-scroll-bar justify-around">
         <div className="inline-flex flex-col items-center h-full w-full">
-          <div className="inline-flex justify-start items-center w-full px-5 py-3">
+          <div className="inline-flex justify-center items-center w-full px-5 py-3">
             <img
               src="/assets/images/logo-blue.png"
               className="h-[38px] w-[38px]"
             />
           </div>
 
-          <div className="relative w-full h-full mt-[24px] px-5">
+          <div className="relative w-full h-full mt-[8px] px-5 space-y-8">
             <div className="inline-flex w-full items-center justify-center">
               <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
-                  activeSlide === 0 ? "block" : "hidden"
-                }`}
+                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-center inline-flex w-full flex-col space-y-2 transition-all`}
               >
-                <h2>Multiple varieties to choose.</h2>
-                <p className="text-sm font-[400]">
-                  Discover 100+ Indian varieties, elevating your exports with
-                  diverse choices from regions across India.
+                <p className="text-base font-semibold text-pwip-v2-primary">
+                  Your export partner
                 </p>
-              </div>
-
-              <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
-                  activeSlide === 1 ? "block" : "hidden"
-                }`}
-              >
-                <h2>No limits on shipment.</h2>
-                <p className="text-sm font-[400]">
-                  Select your destination port with ease for seamless and
-                  efficient management of your shipments.
-                </p>
-              </div>
-
-              <div
-                className={`mb-0 font-sans font-bold text-lg text-pwip-black-600 text-left inline-flex w-full flex-col space-y-2 transition-all ${
-                  activeSlide === 2 ? "block" : "hidden"
-                }`}
-              >
-                <h2>Costing made simple.</h2>
-                <p className="text-sm font-[400]">
-                  Generate costings effortlessly – just 2 clicks away.
-                  Streamline your global business journey.
-                </p>
+                <h2 className="text-2xl">
+                  Let’s get your Export <br /> Business Journey Started
+                </h2>
               </div>
             </div>
-            <div
-              // id="swipeElement"
-              className="relative h-full overflow-hidden mt-[32px] bg-[#F8F3EA] rounded-lg pt-[24px]"
-              // onTouchStart={handleTouchStart}
-              // onTouchMove={handleTouchMove}
-              // onTouchEnd={handleTouchEnd}
-            >
-              <div className="duration-700 ease-in-out h-auto inlin-flex items-end">
-                <Slider {...sliderSettings}>
-                  <img
-                    src="/assets/images/onboarding/one.svg"
-                    className={`h-[320px] w-full`}
-                    alt="onboarding 1 image"
-                  />
 
-                  <img
-                    src="/assets/images/onboarding/two.svg"
-                    className={`h-[320px] w-full`}
-                    alt="onboarding 2 image"
-                  />
-
-                  <img
-                    src="/assets/images/onboarding/three.svg"
-                    className={`h-[320px] w-full`}
-                    alt="onboarding 3 image"
-                  />
-                </Slider>
-              </div>
-            </div>
-            <div className="flex items-center justify-center space-x-[4px] w-full mt-[24px]">
-              <button
-                type="button"
-                onClick={() => {
-                  // window.clearInterval(timeoutId);
-                  // setActive(0);
-                }}
-                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  activeSlide !== 0 ? "!bg-pwip-v2-gray-200 !w-2" : ""
-                }`}
-              ></button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  // window.clearInterval(timeoutId);
-                  // setActive(1);
-                }}
-                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  activeSlide !== 1 ? "!bg-pwip-v2-gray-200 !w-2" : ""
-                }`}
-              ></button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  // window.clearInterval(timeoutId);
-                  // setActive(2);
-                }}
-                className={`w-5 h-2 rounded-full bg-pwip-v2-primary-600 transition-all duration-500 ${
-                  activeSlide !== 2 ? "!bg-pwip-v2-gray-200 !w-2" : ""
-                }`}
-              ></button>
+            <div className="w-auto z-0">
+              <Lottie animationData={ContainerShip} />
             </div>
           </div>
         </div>
@@ -285,6 +224,7 @@ export default function Home() {
           >
             Get started
           </button>
+
           <div className="w-full max-w-[85%]">
             <p className="text-center font-[400] text-sm">
               By logging in you accept our terms of uses and privacy policy

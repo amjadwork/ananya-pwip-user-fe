@@ -17,29 +17,6 @@ import { setTagsRequest } from "@/redux/actions/tags.actions.js";
 
 import { secondsToMinutes } from "@/utils/helper.js";
 
-const popularFilters = [
-  {
-    name: "All",
-    icon: "one.png",
-  },
-  {
-    name: "Rice",
-    icon: "two.png",
-  },
-  {
-    name: "Exports",
-    icon: "three.png",
-  },
-  {
-    name: "Founder's fun network",
-    icon: "four.png",
-  },
-  {
-    name: "Steam",
-    icon: "five.png",
-  },
-];
-
 const FilterSection = ({
   inFixedBar,
   fixedDivRef,
@@ -133,7 +110,7 @@ const FilterSection = ({
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="w-[18px] h-[18px]"
+                      className="w-[18px] h-[18px]"
                     >
                       <path
                         stroke-linecap="round"

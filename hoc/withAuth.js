@@ -20,37 +20,37 @@ const withAuth = (WrappedComponent) => {
     const authToken = useSelector((state) => state.auth.token);
     const authUser = useSelector((state) => state.auth.user);
 
-    useLayoutEffect(() => {
-      if (status === "authenticated" && !authToken) {
-        dispatch(
-          handleSettingAuthDataRequest(session.user, session.accessToken)
-        );
-      }
-    }, [status, authToken]);
+    // useLayoutEffect(() => {
+    //   if (status === "authenticated" && !authToken) {
+    //     dispatch(
+    //       handleSettingAuthDataRequest(session.user, session.accessToken)
+    //     );
+    //   }
+    // }, [status, authToken]);
 
-    async function getUserProfileDetails() {
-      await dispatch(fetchUserRequest());
-      await dispatch(fetchProfileRequest());
-    }
+    // async function getUserProfileDetails() {
+    //   await dispatch(fetchUserRequest());
+    //   await dispatch(fetchProfileRequest());
+    // }
 
-    useLayoutEffect(() => {
-      if (authUser && !profileObject?.profileData && !userObject?.userData) {
-        if (authUser?.apiMessage) {
-          getUserProfileDetails();
-        }
-      }
-    }, [authUser, fetchProfileRequest, fetchUserRequest]);
+    // useLayoutEffect(() => {
+    //   if (authUser && !profileObject?.profileData && !userObject?.userData) {
+    //     if (authUser?.apiMessage) {
+    //       getUserProfileDetails();
+    //     }
+    //   }
+    // }, [authUser, fetchProfileRequest, fetchUserRequest]);
 
-    useLayoutEffect(() => {
-      if (profileObject?.profileData && userObject?.userData && authToken) {
-        const userPayload = {
-          ...authUser,
-          ...profileObject?.profileData,
-          ...userObject?.userData,
-        };
-        dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
-      }
-    }, [authToken, profileObject?.profileData, userObject?.userData]);
+    // useLayoutEffect(() => {
+    //   if (profileObject?.profileData && userObject?.userData && authToken) {
+    //     const userPayload = {
+    //       ...authUser,
+    //       ...profileObject?.profileData,
+    //       ...userObject?.userData,
+    //     };
+    //     dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
+    //   }
+    // }, [authToken, profileObject?.profileData, userObject?.userData]);
 
     if (status === "loading" && !authToken) {
       return (

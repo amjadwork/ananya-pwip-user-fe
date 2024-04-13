@@ -14,6 +14,12 @@ import {
 } from "@/redux/actions/category.actions";
 
 import {
+  searchIcon,
+  // bookmarkFilledIcon,
+  // bookmarkOutlineIcon,
+} from "../../../theme/icon";
+
+import {
   setCostingSelection,
   // setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
@@ -55,6 +61,7 @@ const riceCategory = [
 const FilterSection = ({
   listProductsData,
   inFixedBar,
+  isFromEdit,
   fixedDivRef,
   isFixed,
   searchFocus,
@@ -67,53 +74,68 @@ const FilterSection = ({
   isFromCategory,
   filterForCategory,
 }) => {
+  const router = useRouter();
+
   const { openBottomSheet, closeBottomSheet } = useOverlayContext();
+  const dispatch = useDispatch();
+  const searchScreenActive = useSelector(
+    (state) => state.utils.searchScreenActive
+  );
 
   return (
     <div
       ref={fixedDivRef}
-      className={`flex w-full flex-col ${
-        !inFixedBar ? "px-5 mb-[32px]" : "pb-2"
-      }
-      ${
-        isFixed && !searchFocus ? "fixed left-0 top-[158px] bg-white z-20" : ""
-      } pb-4
-      `}
+      className={`flex w-full flex-col`}
       style={{
-        animation:
-          isFixed && !searchFocus
-            ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
-            : "unset",
+        animation: !searchFocus
+          ? "500ms ease-in-out 0s 1 normal none running fadeInDown"
+          : "unset",
         background:
-          isFixed && !searchFocus
+          !searchFocus && router?.query?.from !== "home"
             ? "linear-gradient(rgb(255, 255, 255) 94.86%, rgba(255, 255, 255, 0) 100%)"
             : "unset",
       }}
     >
-      {isFromCategory ? (
-        <h2
-          className={`text-pwip-v2-primary font-sans text-base font-bold ${
-            inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
-          }`}
-        >
-          Choose from {listProductsData?.length || 0} varieties of{" "}
-          {filterForCategory?.productCategory?.name} rice
-        </h2>
-      ) : (
-        <h2
-          className={`text-pwip-v2-primary font-sans text-base font-bold ${
-            inFixedBar && !searchFocus ? "mb-[24px] mt-[38px]" : ""
-          }`}
-        >
-          Choose from {listProductsData?.length || 0} varieties
-        </h2>
-      )}
-
       <div
-        className={`flex overflow-x-scroll hide-scroll-bar ${
-          !inFixedBar ? "mt-[20px]" : ""
+        className={`inline-flex w-full items-end justify-between ${
+          searchScreenActive || isFromEdit ? "mt-[38px]" : ""
         }`}
       >
+        <div className="w-full flex flex-col">
+          {!isFromCategory && !isFromEdit ? (
+            <span className="text-xs font-semibold text-pwip-v2-gray-400">
+              Step 1
+            </span>
+          ) : null}
+
+          {isFromCategory ? (
+            <h2
+              className={`text-pwip-v2-primary font-sans text-base font-bold`}
+            >
+              Choose from {filterForCategory?.productCategory?.name} rice
+            </h2>
+          ) : (
+            <h2
+              className={`text-pwip-v2-primary font-sans text-base font-bold`}
+            >
+              Choose rice from {listProductsData?.length || 0} varieties
+            </h2>
+          )}
+        </div>
+        {!searchScreenActive && !isFromEdit ? (
+          <div
+            className="text-pwip-v2-gray-500 text-xs h-6 w-6 text-center inline-flex items-center justify-center"
+            onClick={() => {
+              dispatch(searchScreenRequest(true));
+              // window.clearTimeout(blurOccurred);
+            }}
+          >
+            <span>{searchIcon}</span>
+          </div>
+        ) : null}
+      </div>
+
+      <div className={`flex overflow-x-scroll hide-scroll-bar mt-[20px]`}>
         <div className="flex flex-nowrap">
           <div
             onClick={() => {
@@ -298,7 +320,7 @@ const FilterSection = ({
                       viewBox="0 0 24 24"
                       stroke-width="1.5"
                       stroke="currentColor"
-                      class="w-[18px] h-[18px]"
+                      className="w-[18px] h-[18px]"
                     >
                       <path
                         stroke-linecap="round"
@@ -405,7 +427,7 @@ const SelectVariantContainer = (props) => {
 
       // dispatch(fetchCategoryFailure());
     }
-  }, []);
+  }, [searchScreenActive]);
 
   React.useEffect(() => {
     if (!products?.error && !popularSourceLocationData?.length) {
@@ -656,14 +678,37 @@ const SelectVariantContainer = (props) => {
 
   return (
     <React.Fragment>
+      {/* {!isFromEdit && !searchScreenActive ? (
+        <div
+          className={`inline-flex items-center mt-[56px] h-[auto] min-h-[120px] w-full z-0 py-3 px-5 bg-pwip-v2-primary-100`}
+        >
+          <div className="inline-flex space-x-4 w-full">
+            <div className="inline-flex w-full flex-col">
+              <h3 className="text-sm text-pwip-black-600 font-semibold">
+                Costings at your finger tips!
+              </h3>
+              <p className="text-xs text-pwip-v2-gray-500 font-normal mt-1">
+                Generate costings in 2 clicks and be ready with your estimates.
+              </p>
+            </div>
+
+            <img
+              className="h-[32px] w-auto"
+              src="/assets/images/services/ec-service-logo.png"
+            />
+          </div>
+        </div>
+      ) : null} */}
+
       <div
         id="fixedMenuSection"
-        className={`fixed ${
-          isFromEdit ? "top-[14px]" : "top-[56px]"
-        } h-[auto] w-full z-10 py-3 ${
-          isFromCategory || isFromEdit ? "pb-[18px]" : "pb-[32px]"
-        } px-5`}
+        className={`transition-all bg-white  ${
+          isFromEdit ? "fixed" : "sticky top-[56px]"
+        } pt-5 pb-3 h-[auto] w-full ${
+          isFromCategory || isFromEdit ? "pb-[18px]" : "pb-[18px]"
+        } px-5 z-10`}
         style={{
+          transition: "max-height 6000s ease",
           background:
             !isFromCategory && !isFixed
               ? "linear-gradient(180deg, #FFFFFF 94.86%, rgba(255, 255, 255, 0.00) 100%)"
@@ -678,7 +723,11 @@ const SelectVariantContainer = (props) => {
           style={{
             filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
           }}
-          className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
+          className={`h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans ${
+            searchScreenActive || isFromEdit
+              ? "inline-flex items-center opacity-1"
+              : "hidden opacity-0"
+          } transition-opacity px-[18px]`}
         >
           <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
             <svg
@@ -757,520 +806,205 @@ const SelectVariantContainer = (props) => {
           ) : null}
         </div>
 
-        {isFromCategory || isFromEdit ? (
-          <FilterSection
-            listProductsData={listProductsData}
-            inFixedBar={true}
-            filterOptions={filterOptions}
-            isFromCategory={isFromCategory}
-            filterForCategory={filterForCategory}
-            handleFilterSelect={(item) => {
-              setSelectedFilter(item);
-              if (selectedFilter?.name === item?.name) {
-                setSelectedFilter(null);
-                setListProductsData([...productsData]);
-                return null;
-              } else {
-                setSelectedFilter(item);
-              }
-              const dataToFilterOrSort = [...productsData];
-
-              const filteredData = dataToFilterOrSort.filter((d) => {
-                if (
-                  d.variantName.toLowerCase().includes(item.name.toLowerCase())
-                ) {
-                  return d;
-                }
-
-                if (
-                  d.sourceRates.sourceName
-                    .toLowerCase()
-                    .includes(item.name.toLowerCase())
-                ) {
-                  return d;
-                }
-              });
-
-              setListProductsData([...filteredData]);
-            }}
-            selectedFilter={selectedFilter}
-            handleRadioSelection={(item, method) => {
-              const dataToFilterOrSort = [...productsData];
-
-              if (method === "sort") {
-                setSortByMethod(item);
-
-                if (item.value === "name") {
-                  const sortedArrary = dataToFilterOrSort.sort((a, b) => {
-                    const variantNameA = a?.variantName;
-                    const variantNameB = b?.variantName;
-
-                    if (variantNameA < variantNameB) {
-                      return -1;
-                    }
-                    if (variantNameA > variantNameB) {
-                      return 1;
-                    }
-                    return 0;
-                  });
-                  setListProductsData([...sortedArrary]);
-                }
-
-                if (item.value === "price") {
-                  const sortedArrary = dataToFilterOrSort.sort(
-                    (a, b) => a?.sourceRates?.price - b?.sourceRates?.price
-                  );
-
-                  setListProductsData([...sortedArrary]);
-                }
-              }
-
-              if (method === "filter") {
-                setFilterByMethod(item);
-
-                if (item?.value === "source") {
-                  const filterOpt = dataToFilterOrSort.map((d) => {
-                    return {
-                      name: d?.sourceRates?.sourceName,
-                    };
-                  });
-
-                  const uniqueNamesSet = new Set();
-                  filterOpt.forEach((item) => {
-                    uniqueNamesSet.add(item.name);
-                  });
-
-                  const uniqueNamesArray = Array.from(uniqueNamesSet);
-                  setFilterOptions(
-                    uniqueNamesArray.map((d) => ({
-                      name: d,
-                    }))
-                  );
-                }
-
-                if (item?.value === "category") {
-                  let riceCats = [...riceCategory];
-
-                  if (
-                    filterForCategory?.productCategory?.name.toLowerCase() ===
-                    "basmati"
-                  ) {
-                    riceCats = [
-                      {
-                        name: "Sella",
-                        color: "#CFE4C4",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                      },
-                      {
-                        name: "Raw",
-                        color: "#E7D4C9",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                      },
-                      {
-                        name: "Steam",
-                        color: "#F7EDC6",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
-                      },
-                    ];
-                  }
-
-                  if (
-                    filterForCategory?.productCategory?.name.toLowerCase() ===
-                    "parboiled"
-                  ) {
-                    riceCats = [
-                      {
-                        name: "White",
-                        color: "#CFE4C4",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                      },
-                      {
-                        name: "Gold",
-                        color: "#E7D4C9",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                      },
-                    ];
-                  }
-
-                  if (
-                    filterForCategory?.productCategory?.name.toLowerCase() ===
-                    "raw"
-                  ) {
-                    riceCats = [
-                      {
-                        name: "New",
-                        color: "#CFE4C4",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                      },
-                      {
-                        name: "Old",
-                        color: "#E7D4C9",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                      },
-                    ];
-                  }
-
-                  if (
-                    filterForCategory?.productCategory?.name.toLowerCase() ===
-                    "steam"
-                  ) {
-                    riceCats = [
-                      {
-                        name: "New",
-                        color: "#CFE4C4",
-                        image:
-                          "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                      },
-                    ];
-                  }
-
-                  setFilterOptions([...riceCats]);
-                }
-              }
-
+        <FilterSection
+          listProductsData={listProductsData}
+          isFromEdit={isFromEdit}
+          inFixedBar={true}
+          filterOptions={filterOptions}
+          isFromCategory={isFromCategory}
+          filterForCategory={filterForCategory}
+          handleFilterSelect={(item) => {
+            setSelectedFilter(item);
+            if (selectedFilter?.name === item?.name) {
+              setSelectedFilter(null);
+              setListProductsData([...productsData]);
               return null;
-            }}
-            filterByMethod={filterByMethod}
-            sortByMethod={sortByMethod}
-          />
-        ) : null}
+            } else {
+              setSelectedFilter(item);
+            }
+            const dataToFilterOrSort = [...productsData];
+
+            const filteredData = dataToFilterOrSort.filter((d) => {
+              if (
+                d.variantName.toLowerCase().includes(item.name.toLowerCase())
+              ) {
+                return d;
+              }
+
+              if (
+                d.sourceRates.sourceName
+                  .toLowerCase()
+                  .includes(item.name.toLowerCase())
+              ) {
+                return d;
+              }
+            });
+
+            setListProductsData([...filteredData]);
+          }}
+          selectedFilter={selectedFilter}
+          handleRadioSelection={(item, method) => {
+            const dataToFilterOrSort = [...productsData];
+
+            if (method === "sort") {
+              setSortByMethod(item);
+
+              if (item.value === "name") {
+                const sortedArrary = dataToFilterOrSort.sort((a, b) => {
+                  const variantNameA = a?.variantName;
+                  const variantNameB = b?.variantName;
+
+                  if (variantNameA < variantNameB) {
+                    return -1;
+                  }
+                  if (variantNameA > variantNameB) {
+                    return 1;
+                  }
+                  return 0;
+                });
+                setListProductsData([...sortedArrary]);
+              }
+
+              if (item.value === "price") {
+                const sortedArrary = dataToFilterOrSort.sort(
+                  (a, b) => a?.sourceRates?.price - b?.sourceRates?.price
+                );
+
+                setListProductsData([...sortedArrary]);
+              }
+            }
+
+            if (method === "filter") {
+              setFilterByMethod(item);
+
+              if (item?.value === "source") {
+                const filterOpt = dataToFilterOrSort.map((d) => {
+                  return {
+                    name: d?.sourceRates?.sourceName,
+                  };
+                });
+
+                const uniqueNamesSet = new Set();
+                filterOpt.forEach((item) => {
+                  uniqueNamesSet.add(item.name);
+                });
+
+                const uniqueNamesArray = Array.from(uniqueNamesSet);
+                setFilterOptions(
+                  uniqueNamesArray.map((d) => ({
+                    name: d,
+                  }))
+                );
+              }
+
+              if (item?.value === "category") {
+                let riceCats = [...riceCategory];
+
+                if (
+                  filterForCategory?.productCategory?.name.toLowerCase() ===
+                  "basmati"
+                ) {
+                  riceCats = [
+                    {
+                      name: "Sella",
+                      color: "#CFE4C4",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
+                    },
+                    {
+                      name: "Raw",
+                      color: "#E7D4C9",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
+                    },
+                    {
+                      name: "Steam",
+                      color: "#F7EDC6",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
+                    },
+                  ];
+                }
+
+                if (
+                  filterForCategory?.productCategory?.name.toLowerCase() ===
+                  "parboiled"
+                ) {
+                  riceCats = [
+                    {
+                      name: "White",
+                      color: "#CFE4C4",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
+                    },
+                    {
+                      name: "Gold",
+                      color: "#E7D4C9",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
+                    },
+                  ];
+                }
+
+                if (
+                  filterForCategory?.productCategory?.name.toLowerCase() ===
+                  "raw"
+                ) {
+                  riceCats = [
+                    {
+                      name: "New",
+                      color: "#CFE4C4",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
+                    },
+                    {
+                      name: "Old",
+                      color: "#E7D4C9",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
+                    },
+                  ];
+                }
+
+                if (
+                  filterForCategory?.productCategory?.name.toLowerCase() ===
+                  "steam"
+                ) {
+                  riceCats = [
+                    {
+                      name: "New",
+                      color: "#CFE4C4",
+                      image:
+                        "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
+                    },
+                  ];
+                }
+
+                setFilterOptions([...riceCats]);
+              }
+            }
+
+            return null;
+          }}
+          filterByMethod={filterByMethod}
+          sortByMethod={sortByMethod}
+        />
       </div>
 
       <div
         className={`min-h-screen h-full w-full bg-white pb-0 overflow-auto hide-scroll-bar`}
         style={{
           paddingTop: isFromEdit
-            ? mainContainerHeight + 110 + "px"
-            : mainContainerHeight + 32 + "px",
+            ? mainContainerHeight + 104 + "px"
+            : window.innerWidth >= 1280
+            ? "136px"
+            : searchScreenActive
+            ? 38 + "px"
+            : 32 + "px",
         }}
       >
-        {!isFromCategory &&
-        !isFromEdit &&
-        !searchScreenActive &&
-        !searchStringValue ? (
-          <React.Fragment>
-            <h2
-              className={`px-5 mt-4 mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              Choose rice by category
-            </h2>
-
-            <div className="grid grid-cols-4 gap-4 px-5">
-              {[...riceCategory].map((items, index) => {
-                return (
-                  <div
-                    key={items?.name + index}
-                    className="inline-flex flex-col items-center justify-center space-y-[10px]"
-                    onClick={() => {
-                      dispatch(searchScreenFailure());
-                      dispatch(
-                        fetchCategoryRequest({
-                          productCategory: {
-                            name: items.name,
-                            color:
-                              index === 0
-                                ? "#F3F7F9"
-                                : index === 1
-                                ? "#F7FFF2"
-                                : index === 2
-                                ? "#FFF5EF"
-                                : index === 3
-                                ? "#FFFBED"
-                                : "#F3F7F9",
-                          },
-                        })
-                      );
-
-                      router.push("/category");
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: items?.color,
-                      }}
-                      className="h-[72px] w-[72px] rounded-lg inline-flex items-center justify-center"
-                    >
-                      <img
-                        src={
-                          items?.image
-                          // items.images[0] ||
-                          // "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
-                        }
-                        className="bg-cover h-[58px] w-[58px] object-cover rounded-md"
-                      />
-                    </div>
-                    <span className="text-pwip-gray-700 text-sm font-[500] font-sans text-center line-clamp-1">
-                      {items?.name}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </React.Fragment>
-        ) : null}
-
-        {!isFromCategory &&
-        !isFromEdit &&
-        !searchScreenActive &&
-        !searchStringValue ? (
-          <React.Fragment>
-            <h2
-              className={`px-5 mt-[32px] mb-5 text-pwip-v2-primary font-sans text-base font-bold`}
-            >
-              Top 5 rice sourcing locations
-            </h2>
-
-            <div className="flex overflow-x-scroll hide-scroll-bar py-2 px-5">
-              <div className="flex flex-nowrap">
-                {[...popularSourceLocationData].map((items, index) => {
-                  return (
-                    <div
-                      key={items?.sourceName + (index + 1 * 2)}
-                      className="inline-block px-[15px] py-[18px] bg-pwip-v2-primary-100 rounded-xl mr-4"
-                      style={{
-                        boxShadow: "0px 2px 2px 0px rgba(0, 0, 0, 0.12)",
-                        backdropFilter: "blur(8px)",
-                      }}
-                      onClick={() => {
-                        dispatch(searchScreenFailure());
-                        dispatch(
-                          fetchCategoryRequest({
-                            sourceId: items._sourceId,
-                          })
-                        );
-
-                        router.push("/category");
-                      }}
-                    >
-                      <div className="overflow-hidden w-[186px] h-auto inline-flex flex-col">
-                        <img
-                          src={"/assets/images/" + items?.icon}
-                          className="w-[24px] h-[24px]"
-                        />
-                        <div className="mt-[10px] inline-flex items-center space-x-2 text-pwip-v2-primary-800 text-xs font-[600]">
-                          <span className="line-clamp-1">
-                            {items?.sourceState} (IN)
-                          </span>
-                          <span className="text-sm">🇮🇳</span>
-                        </div>
-                        <span className="mt-[4px] text-base text-pwip-v2-gray-800 font-[800] line-clamp-1">
-                          {items?.sourceName || ""}
-                        </span>
-                        <span className="mt-[6px] text-xs text-pwip-v2-gray-500 font-[400] line-clamp-1">
-                          {/* {items?.totalVariants || 0} {variety} of rice available */}
-                          {items?.totalVariants || 0}{" "}
-                          {items?.totalVariants > 1 ? "varieties" : "variety"}{" "}
-                          available
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </React.Fragment>
-        ) : null}
-
         <React.Fragment>
           <div className="w-full h-auto inline-flex flex-col mt-[32px]">
-            {!isFromCategory &&
-            !isFromEdit &&
-            !searchScreenActive &&
-            !searchStringValue ? (
-              <FilterSection
-                fixedDivRef={fixedDivRef}
-                listProductsData={listProductsData}
-                isFixed={isFixed}
-                searchFocus={searchScreenActive}
-                filterOptions={filterOptions}
-                isFromCategor={isFromCategory}
-                filterForCategory={filterForCategory}
-                handleFilterSelect={(item) => {
-                  if (selectedFilter?.name === item?.name) {
-                    setSelectedFilter(null);
-                    setListProductsData([...productsData]);
-                    return null;
-                  } else {
-                    setSelectedFilter(item);
-                  }
-                  const dataToFilterOrSort = [...productsData];
-
-                  const filteredData = dataToFilterOrSort.filter((d) => {
-                    if (
-                      d.variantName
-                        .toLowerCase()
-                        .includes(item.name.toLowerCase())
-                    ) {
-                      return d;
-                    }
-
-                    if (
-                      d.sourceRates.sourceName
-                        .toLowerCase()
-                        .includes(item.name.toLowerCase())
-                    ) {
-                      return d;
-                    }
-                  });
-
-                  setListProductsData([...filteredData]);
-                }}
-                selectedFilter={selectedFilter}
-                handleRadioSelection={(item, method) => {
-                  const dataToFilterOrSort = [...productsData];
-
-                  if (method === "sort") {
-                    setSortByMethod(item);
-
-                    if (item.value === "name") {
-                      const sortedArrary = dataToFilterOrSort.sort((a, b) => {
-                        const variantNameA = a?.variantName;
-                        const variantNameB = b?.variantName;
-
-                        if (variantNameA < variantNameB) {
-                          return -1;
-                        }
-                        if (variantNameA > variantNameB) {
-                          return 1;
-                        }
-                        return 0;
-                      });
-                      setListProductsData([...sortedArrary]);
-                    }
-
-                    if (item.value === "price") {
-                      const sortedArrary = dataToFilterOrSort.sort(
-                        (a, b) => a?.sourceRates?.price - b?.sourceRates?.price
-                      );
-
-                      setListProductsData([...sortedArrary]);
-                    }
-                  }
-
-                  if (method === "filter") {
-                    setFilterByMethod(item);
-
-                    if (item?.value === "source") {
-                      const filterOpt = dataToFilterOrSort.map((d) => {
-                        return {
-                          name: d?.sourceRates?.sourceName,
-                        };
-                      });
-
-                      const uniqueNamesSet = new Set();
-                      filterOpt.forEach((item) => {
-                        uniqueNamesSet.add(item.name);
-                      });
-
-                      const uniqueNamesArray = Array.from(uniqueNamesSet);
-                      setFilterOptions(
-                        uniqueNamesArray.map((d) => ({
-                          name: d,
-                        }))
-                      );
-                    }
-
-                    if (item?.value === "category") {
-                      let riceCats = [...riceCategory];
-
-                      if (
-                        filterForCategory?.productCategory?.name.toLowerCase() ===
-                        "basmati"
-                      ) {
-                        riceCats = [
-                          {
-                            name: "Sella",
-                            color: "#CFE4C4",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                          },
-                          {
-                            name: "Raw",
-                            color: "#E7D4C9",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                          },
-                          {
-                            name: "Steam",
-                            color: "#F7EDC6",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Basmati.png?updatedAt=1706983367141",
-                          },
-                        ];
-                      }
-
-                      if (
-                        filterForCategory?.productCategory?.name.toLowerCase() ===
-                        "parboiled"
-                      ) {
-                        riceCats = [
-                          {
-                            name: "White",
-                            color: "#CFE4C4",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                          },
-                          {
-                            name: "Gold",
-                            color: "#E7D4C9",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                          },
-                        ];
-                      }
-
-                      if (
-                        filterForCategory?.productCategory?.name.toLowerCase() ===
-                        "raw"
-                      ) {
-                        riceCats = [
-                          {
-                            name: "New",
-                            color: "#CFE4C4",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                          },
-                          {
-                            name: "Old",
-                            color: "#E7D4C9",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Raw.png?updatedAt=1706983415401",
-                          },
-                        ];
-                      }
-
-                      if (
-                        filterForCategory?.productCategory?.name.toLowerCase() ===
-                        "steam"
-                      ) {
-                        riceCats = [
-                          {
-                            name: "New",
-                            color: "#CFE4C4",
-                            image:
-                              "https://ik.imagekit.io/qeoc0zl3c/Parboiled.png?updatedAt=1706983415797",
-                          },
-                        ];
-                      }
-
-                      setFilterOptions([...riceCats]);
-                    }
-                  }
-
-                  return null;
-                }}
-                filterByMethod={filterByMethod}
-                sortByMethod={sortByMethod}
-              />
-            ) : null}
-
             <div
               className={`w-full h-full space-y-[24px] px-5 pb-[88px] overflow-y-auto hide-scroll-bar transition-all`}
             >
@@ -1280,6 +1014,14 @@ const SelectVariantContainer = (props) => {
                     key={items._id + index}
                     onClick={() => {
                       dispatch(searchScreenFailure());
+
+                      if (isFromCategory && router?.query?.from === "home") {
+                        router?.push(
+                          `/service/rice-price/detail/${items?._id}?_s=${items?.sourceRates?._sourceId}`
+                        );
+                        return;
+                      }
+
                       if (isFromEdit) {
                         if (setFieldValue) {
                           setFieldValue(

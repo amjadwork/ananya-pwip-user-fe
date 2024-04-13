@@ -2,49 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* -------------- Gilroy ----------------*/
-
-@font-face {
-  font-family: "Gilroy";
-  src: url("/assets/font/Gilroy/Gilroy-Regular.ttf") format("truetype"),
-    url("/assets/font/Gilroy/Gilroy-Regular.woff") format("woff");
-
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Gilroy";
-  src: url("/assets/font/Gilroy/Gilroy-Bold.woff") format("woff"),
-    url("/assets/font/Gilroy/Gilroy-Bold.ttf") format("truetype");
-
-  font-weight: bold;
-  font-style: normal;
-}
-
-/* -------------- DM-Sans ----------------*/
-
-@font-face {
-  font-family: "DM-Sans";
-  src: url("/assets/font/DMSans/DMSans-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "DM-Sans";
-  src: url("/assets/font/DMSans/DMSans-Bold.ttf") format("truetype");
-  font-weight: bold;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "DM-Sans";
-  src: url("/assets/font/DMSans/DMSans-Italic.ttf") format("truetype");
-  font-weight: normal;
-  font-style: italic;
-}
-
 body {
   margin: env(safe-area-inset-top) 0 0 0;
 }
@@ -58,7 +15,9 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: "Gilroy";
+  /* font-family: "Gilroy"; */
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
 }
 
 a {
@@ -68,7 +27,9 @@ a {
 
 * {
   box-sizing: border-box;
-  font-family: "Gilroy";
+  /* font-family: "Gilroy"; */
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
 }
 
 /* Firefox */
@@ -162,6 +123,10 @@ body::-webkit-scrollbar {
   bottom: -32px !important;
 }
 
+#variant-properties .slick-dots {
+  bottom: -56px !important;
+}
+
 .slick-dots li {
   margin: 0;
   margin-right: 5px;
@@ -173,7 +138,41 @@ body::-webkit-scrollbar {
   /* opacity: 0; Make the overlay invisible */
 }
 
+.lp .react-player__preview {
+  border-radius: 8px;
+  pointer-events: all;
+}
+
 /* iframe {
   border-radius: 8px;
 } */
 /* slider ends */
+
+/* react-charts start */
+#home-chart .ReactChart .tickLabel {
+  font-size: 12px !important;
+}
+
+#home-chart .ReactChart .domainAndTicks .tick line {
+  display: none !important;
+  visibility: hidden !important;
+  stroke-width: 0 !important;
+}
+
+#home-chart .ReactChart .domainAndTicks line {
+  stroke: #f4f4f4 !important;
+}
+/* react-charts end */
+
+#rice-detail .ReactChart .domain {
+  stroke: #dbdbdd !important;
+}
+
+#rice-detail .ReactChart .tick line {
+  stroke: #e6e6e9 !important;
+}
+
+#rice-detail .ReactChart .tick text {
+  font-size: 11px !important;
+  color: #808080 !important;
+}
