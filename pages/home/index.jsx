@@ -17,6 +17,7 @@ import {
   exportCostingServiceId,
   checkSubscription,
   ofcServiceId,
+  pwipPrimePlanId,
   getUniqueObjectsBySourceId,
 } from "@/utils/helper";
 import {
@@ -258,7 +259,7 @@ function PWIPPrimeLP({ authToken }) {
           className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
           onClick={async () => {
             const plan = {
-              id: 125,
+              id: pwipPrimePlanId,
               name: "PWIP Prime",
               description: "",
               validity: 30,

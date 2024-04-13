@@ -70,6 +70,8 @@ export const ofcServiceId = process.env.NEXT_PUBLIC_OFC_SERVICE_ID;
 
 export const pwipPrimeServiceId = process.env.NEXT_PUBLIC_PWIP_PRIME_SERVICE_ID;
 
+export const pwipPrimePlanId = process.env.NEXT_PUBLIC_PWIP_PRIME_PLAN_ID;
+
 // Razorpay configs
 export const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY;
 
