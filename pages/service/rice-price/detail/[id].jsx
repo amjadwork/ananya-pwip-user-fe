@@ -415,7 +415,7 @@ function RicePriceDetail() {
                     <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
                       <span className="text-pwip-gray-550 text-xs font-regular">
                         Last price: ₹
-                        {selectedVariantPriceDetail?.source?.price +
+                        {selectedVariantPriceDetail?.source?.price -
                           selectedVariantPriceDetail?.source?.changeInPrice}
                       </span>
                       {/* <span className="text-pwip-gray-400 text-xs font-regular mb-[3.5px]">
