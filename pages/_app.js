@@ -84,17 +84,17 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
                 <DesktopWarning />
               </div>
               <div className="relative h-screen w-[380px] max-w-[380px] min-w-[380px] overflow-hidden flex justify-center items-center bg-white">
-                <img
+                {/* <img
                   src="/assets/images/iphone-mockup.svg"
                   className="h-[820px] absolute z-[150] w-[380px]"
-                />
+                /> */}
 
-                <Frame
+                {/* <Frame
                   className="h-[95%] max-h-[768px] w-[95%] rounded-[3.25rem] relative z-[160]"
                   initialContent="<!DOCTYPE html><html><head><meta name='viewport' content='width=device-width, initial-scale=1.0'><link rel='stylesheet' href='https://pwip-app-production-s3-storage.blr1.digitaloceanspaces.com/ec.assets/tailwind.css'><style>@tailwind base;@tailwind components;@tailwind utilities;@font-face {font-family: 'Gilroy';src: url('/assets/font/Gilroy/Gilroy-Regular.ttf') format('truetype'),url('/assets/font/Gilroy/Gilroy-Regular.woff') format('woff');font-weight: normal;font-style: normal;}@font-face {font-family: 'Gilroy';src: url('/assets/font/Gilroy/Gilroy-Bold.woff') format('woff'),url('/assets/font/Gilroy/Gilroy-Bold.ttf') format('truetype');font-weight: bold;font-style: normal;}@font-face {font-family: 'DM-Sans';src: url('/assets/font/DMSans/DMSans-Regular.ttf') format('truetype');font-weight: normal;font-style: normal;}@font-face {font-family: 'DM-Sans';src: url('/assets/font/DMSans/DMSans-Bold.ttf') format('truetype');font-weight: bold;font-style: normal;}@font-face {font-family: 'DM-Sans';src: url('/assets/font/DMSans/DMSans-Italic.ttf') format('truetype');font-weight: normal;font-style: italic;}body {margin: env(safe-area-inset-top) 0 0 0;}body {margin-top: constant(safe-area-inset-top);padding-bottom: constant(safe-area-inset-bottom);}html,body {padding: 0;margin: 0;font-family: 'Gilroy';}a {color: inherit;text-decoration: none;}* {box-sizing: border-box;font-family: 'Gilroy';}body {scrollbar-width: none;}body {-ms-overflow-style: none;}body::-webkit-scrollbar {display: none;}.hide-scroll-bar {-ms-overflow-style: none;scrollbar-width: none;}.hide-scroll-bar::-webkit-scrollbar {display: none;}[data-rsbs-backdrop] {z-index: 20 !important;}[data-rsbs-overlay] {z-index: 25 !important;}.slick-dots {bottom: -32px !important;}.slick-dots li {margin: 0;margin-right: 5px;width: auto;}.react-player__preview {pointer-events: none;}</style></head><body><div></div></body></html>"
                 >
                   <Component {...pageProps} />
-                </Frame>
+                </Frame> */}
               </div>
             </div>
 
