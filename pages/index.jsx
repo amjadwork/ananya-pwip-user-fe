@@ -18,7 +18,14 @@ import {
 import { fetchProfileRequest } from "@/redux/actions/profileEdit.actions";
 import { fetchUserRequest } from "@/redux/actions/userEdit.actions";
 
-import ProfileDetailForm from "@/components/ProfileDetailForm";
+import axios from "axios";
+import {
+  apiBaseURL,
+  apiStagePaymentBeUrl,
+  formatNumberWithCommas,
+  pwipPrimeServiceId,
+  razorpayKey,
+} from "utils/helper";
 
 import Lottie from "lottie-react";
 import ContainerShip from "../theme/lottie/container-ship.json";
@@ -34,6 +41,38 @@ export default function Home() {
   const authUser = useSelector((state) => state.auth.user);
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
+
+  const [eximTrendsData, setEximTrendsData] = React.useState(null);
+
+  const fetchEXIMTrend = async () => {
+    try {
+      const response = await axios.get(
+        apiBaseURL +
+          "api" +
+          "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      const eximDataFromResponse = response?.data;
+
+      let eximData = transformData(eximDataFromResponse?.chart);
+
+      const eximTrends = {
+        ...response?.data,
+        chart: eximData || [],
+      };
+
+      localStorage.setItem("eximTrends", JSON.stringify(eximTrends));
+
+      setEximTrendsData(eximTrends);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const {
     openBottomSheet,
@@ -123,6 +162,15 @@ export default function Home() {
         handleNavigation("/onboarding");
       } else {
         stopLoading();
+
+        // const eximTrends = localStorage.getItem("eximTrends");
+
+        // if (eximTrends) {
+        //   setEximTrendsData(JSON.parse(eximTrends));
+        // } else {
+        //   fetchEXIMTrend();
+        // }
+
         redirectToApp();
       }
     }
