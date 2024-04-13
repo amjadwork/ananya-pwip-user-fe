@@ -11,7 +11,7 @@ export const features = [
   {
     name: "Latest 2 year historical rice price data.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
+      "Access to rice prices starting from 2021 and respective HSN analytics (coming soon).",
     premiumFeature: true,
     imageUrl: "/assets/images/services/lp/riceFeature2.svg",
   },

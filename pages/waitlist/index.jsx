@@ -92,28 +92,28 @@ const featuresExportOrders = [
   {
     name: "Be the first one to accept PWIP orders.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
+      "Secure your spot as the premier choice for export orders with PWIP's cutting-edge capabilities.",
     // premiumFeature: false,
     imageUrl: "/assets/images/services/lp/export-order-feature-1.png",
   },
   {
     name: "Place your own export order.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
+      "Empower your export strategy by tailoring orders to your preferences with our versatile platform.",
     // premiumFeature: true,
     imageUrl: "/assets/images/services/lp/export-order-feature-2.png",
   },
   {
     name: "Track your export order anytime, anywhere.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
+      "Stay informed and in control with PWIP's convenient tracking for your export orders.",
     // premiumFeature: true,
     imageUrl: "/assets/images/services/lp/export-order-feature-3.png",
   },
   {
     name: "Stay updated all the time.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
+      "Experience constant updates on order progress via PWIP's voice and video notifications for total transparency.",
     // premiumFeature: true,
     imageUrl: "/assets/images/services/lp/export-order-feature-4.png",
   },
@@ -123,22 +123,22 @@ const featuresEXIM = [
   {
     name: "Individual EXIM analysis of HSN groups.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
-    // premiumFeature: false,
+      "Gain insightful EXIM analysis tailored to specific HSN groups with individualized reporting feature.",
+    premiumFeature: false,
     imageUrl: "/assets/images/services/lp/exim-feature-1.png",
   },
   {
     name: "Know the trends, before you invest.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
-    // premiumFeature: true,
+      "Anticipate market movements with insights on trending rice HSN groups, ports, and import destinations.",
+    premiumFeature: true,
     imageUrl: "/assets/images/services/lp/exim-feature-2.png",
   },
   {
     name: "Browse through the complete data.",
     description:
-      "Unlimited access to rice prices to make your price discovery more convenient.",
-    // premiumFeature: true,
+      "Easily navigate and filter through comprehensive EXIM tables with user-friendly browsing features.",
+    premiumFeature: true,
     imageUrl: "/assets/images/services/lp/exim-feature-3.png",
   },
 ];
