@@ -157,6 +157,7 @@ module.exports = {
     "h-[32px]",
     "cols-span-10",
     "cols-span-2",
+    "border-pwip-v2-gray-400 ",
   ],
   theme: {
     extend: {

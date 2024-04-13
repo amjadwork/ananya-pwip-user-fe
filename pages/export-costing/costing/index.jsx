@@ -506,11 +506,11 @@ function CostingOverview() {
 
   React.useEffect(() => {
     if (shipmentTerm && componentShipmentTerm) {
-      dispatch(updateCostingFailure());
       const payloadBody = {
         shipmentTermType: shipmentTerm || "FOB",
         termOfAgreement: shipmentTerm || "FOB",
       };
+
       dispatch(updateCostingRequest(payloadBody));
       dispatch(fetchGeneratedCostingFailure());
       dispatch(fetchMyCostingFailure());
@@ -693,6 +693,7 @@ function CostingOverview() {
                         selected: items?.value,
                         showShipmentTermDropdown: false,
                       };
+                      console.log("here 1");
                       dispatch(setTermsOfShipmentRequest(action));
                     }}
                   />
