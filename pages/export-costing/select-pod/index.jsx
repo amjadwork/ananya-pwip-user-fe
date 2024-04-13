@@ -307,6 +307,8 @@ function SelectPortOfDestination() {
                   // autoHide: false,
                 });
 
+                router?.push("/export-costing/lp");
+
                 return;
               }
 

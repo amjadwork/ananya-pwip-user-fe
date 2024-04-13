@@ -236,8 +236,18 @@ const LandingPage = (props) => {
     await dispatch(getPlansRequest());
 
     if (details?.activeSubscription) {
-      if (serviceName === "export-costing") {
+      if (
+        serviceName === "export-costing" &&
+        !details?.isSubscriptionExhausted
+      ) {
         router.replace(`/${serviceName}`);
+        return;
+      }
+
+      if (
+        serviceName === "export-costing" &&
+        details?.isSubscriptionExhausted
+      ) {
         return;
       }
 
@@ -291,8 +301,9 @@ const LandingPage = (props) => {
             <div
               key={plan?.id + "_" + planIndex * 99}
               className={`${
-                !subscriptionData?.activeSubscription &&
-                subscriptionData?.userSubscriptionHistory?.length
+                (!subscriptionData?.activeSubscription &&
+                  subscriptionData?.userSubscriptionHistory?.length) ||
+                subscriptionData?.isSubscriptionExhausted
                   ? "bg-red-100"
                   : "bg-[#FFF8E9]"
               } p-5 rounded-lg`}
@@ -322,6 +333,51 @@ const LandingPage = (props) => {
                     Hey! looks like your subscription has expired, select a plan
                     from below to renew your subscription to continue your
                     experience with{" "}
+                    <span className="font-semibold">
+                      {serviceName?.replace("-", " ")}
+                    </span>{" "}
+                    service
+                  </p>
+                </React.Fragment>
+              ) : subscriptionData?.isSubscriptionExhausted ? (
+                <React.Fragment>
+                  <div className="inline-flex w-full items-center justify-between text-red-800">
+                    <span className="font-semibold text-[14px] ">
+                      You have exhausted your usage limit!
+                    </span>
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                      height={"20px"}
+                      width={"20px"}
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z"
+                      />
+                    </svg>
+                  </div>
+
+                  <div className="inline-flex flex-col w-full space-y-2 mt-5">
+                    <div className="w-full rounded-full h-2 bg-red-800"></div>
+                    <div className="inline-flex w-full justify-between">
+                      <span className="text-xs text-left text-red-700">
+                        {
+                          subscriptionData?.activeSubscriptionObject
+                            ?.total_generated_costing
+                        }{" "}
+                        out of{" "}
+                        {subscriptionData?.activeSubscriptionObject?.usage_cap}{" "}
+                        costings generated
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[12px] text-pwip-black-600 font-normal mt-3 mb-0">
+                    Hey! looks like you have exhausted your subscription usage
+                    limit, select a plan from below to upgrade your subscription
+                    to continue your experience with{" "}
                     <span className="font-semibold">
                       {serviceName?.replace("-", " ")}
                     </span>{" "}
@@ -516,7 +572,7 @@ const LandingPage = (props) => {
 
       {/* Fixed button */}
       {!subscriptionData?.activeSubscription &&
-      subscriptionData?.userSubscriptionHistory?.length ? null : (
+      !subscriptionData?.userSubscriptionHistory?.length ? (
         <div
           className={`${
             showFixedButton
@@ -548,7 +604,7 @@ const LandingPage = (props) => {
             Unlock Free Trial
           </div>
         </div>
-      )}
+      ) : null}
     </React.Fragment>
   );
 };
