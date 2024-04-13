@@ -305,6 +305,8 @@ function Home() {
                   <div
                     key={item?.name + "_" + index}
                     onClick={async () => {
+                      sessionStorage.removeItem("backThroughServicePage");
+
                       if (item?.comingSoon) {
                         router.push("/waitlist?_s=" + item?.name);
 

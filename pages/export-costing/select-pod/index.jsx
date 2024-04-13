@@ -188,6 +188,7 @@ function SelectPortOfDestination() {
                 className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm text-pwip-v2-primary-500"
                 onClick={() => {
                   dispatch(resetCostingSelection());
+                  sessionStorage.setItem("backThroughServicePage", true);
                   router.replace("/export-costing");
                 }}
               >

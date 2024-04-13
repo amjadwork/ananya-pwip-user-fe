@@ -112,7 +112,16 @@ function OFCService() {
   }, [selectedPOL]);
 
   React.useEffect(() => {
-    setSplashScreen(true);
+    const backThroughServicePage = sessionStorage.getItem(
+      "backThroughServicePage"
+    );
+
+    if (backThroughServicePage || backThroughServicePage === "true") {
+      setSplashScreen(false);
+    } else {
+      setSplashScreen(true);
+    }
+
     stopLoading();
   }, []);
 

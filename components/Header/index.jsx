@@ -150,6 +150,17 @@ export function Header(props) {
         }
       }) || {};
 
+    if (router?.query?.id) {
+      const splitedRoutes = router.route.split("/");
+
+      const serviceName = splitedRoutes[splitedRoutes.length - 3];
+
+      if (serviceName) {
+        setActiveServiceRoute(serviceName);
+        sessionStorage.setItem("backThroughServicePage", true);
+      }
+    }
+
     setServiceLogoRoute(serviceLogoRouteObject);
   }, [activeServiceRoute, activeRoute, router]);
 
@@ -193,6 +204,7 @@ export function Header(props) {
 
                   if (activeRoute === "select-pod" && !searchScreenActive) {
                     dispatch(resetCostingSelection());
+                    sessionStorage.setItem("backThroughServicePage", true);
                   }
                 }}
               >
