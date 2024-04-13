@@ -49,7 +49,8 @@ const LandingPage = (props) => {
   const dispatch = useDispatch();
   const pickPlanRef = useRef(); // Reference to the "Pick your Plan" section
 
-  const { openBottomSheet, openToastMessage } = useOverlayContext();
+  const { openBottomSheet, openToastMessage, startLoading, stopLoading } =
+    useOverlayContext();
 
   const [Razorpay] = useRazorpay();
 
@@ -222,6 +223,7 @@ const LandingPage = (props) => {
   );
 
   async function initPage() {
+    startLoading();
     const details = await checkSubscription(SERVICE_ID, authToken);
 
     if (typeof details === "object") {
@@ -234,6 +236,8 @@ const LandingPage = (props) => {
 
     await dispatch(getServicesRequest());
     await dispatch(getPlansRequest());
+
+    stopLoading();
 
     if (details?.activeSubscription) {
       if (
@@ -393,6 +397,7 @@ const LandingPage = (props) => {
                   <div
                     className="font-normal text-sm text-[#2072AB] mt-3.5 flex items-center"
                     onClick={async () => {
+                      startLoading();
                       const res = await startFreeTrialForUser();
 
                       if (res) {
@@ -400,6 +405,8 @@ const LandingPage = (props) => {
                           SERVICE_ID,
                           authToken
                         );
+
+                        stopLoading();
 
                         if (details?.activeSubscription) {
                           if (serviceName === "export-costing") {
@@ -585,11 +592,12 @@ const LandingPage = (props) => {
           <div
             className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
             onClick={async () => {
+              startLoading();
               const res = await startFreeTrialForUser();
 
               if (res) {
                 const details = await checkSubscription(SERVICE_ID, authToken);
-
+                stopLoading();
                 if (details?.activeSubscription) {
                   if (serviceName === "export-costing") {
                     router.replace(`/${serviceName}`);
