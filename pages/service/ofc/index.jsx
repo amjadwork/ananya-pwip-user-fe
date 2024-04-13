@@ -416,7 +416,7 @@ function OFCService() {
 
                       <div className="inline-flex items-center justify-end w-auto h-full">
                         <span className="text-base font-semibold text-pwip-green-800">
-                          ₹{ofcResultData?.ofcCharge}/mt
+                          ₹{ofcResultData?.ofcCharge}/container
                         </span>
                       </div>
                     </div>
