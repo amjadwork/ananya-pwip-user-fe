@@ -479,7 +479,6 @@ function Home() {
                       key={items?.name + index}
                       className="inline-flex flex-col items-center justify-center space-y-[10px]"
                       onClick={() => {
-                        // dispatch(searchScreenFailure());
                         dispatch(
                           fetchCategoryRequest({
                             productCategory: {

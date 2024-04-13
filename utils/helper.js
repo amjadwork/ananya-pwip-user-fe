@@ -17,6 +17,10 @@ export async function checkSubscription(serviceId, token) {
   }
 }
 
+export function toKebabCase(inputString) {
+  return inputString?.toLowerCase().replace(/\s+/g, "-");
+}
+
 export function inrToUsd(inrAmount, exchangeRate) {
   return (inrAmount / exchangeRate).toFixed(2);
 }

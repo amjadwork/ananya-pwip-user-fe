@@ -29,12 +29,69 @@ import {
   getPlansRequest,
 } from "@/redux/actions/subscription.action";
 
-import { razorpayKey, checkSubscription } from "@/utils/helper";
+import { razorpayKey, toKebabCase } from "@/utils/helper";
 import { apiStagePaymentBeUrl } from "@/utils/helper";
 import paymentSuccessful from "../../theme/lottie/payment-success.json";
 import { nextArrow } from "../../theme/icon";
+import { apiBaseURL } from "utils/helper";
 
 const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
+
+function generateEventData(userDetails, serviceName) {
+  const SERVICE_NAME = serviceName || "";
+  const USER_ID = userDetails ? userDetails._id : "";
+
+  // Generate random UUID for eventId
+  const eventId = uuidv4();
+
+  // Generate random alphanumeric string for responseId, submissionId, respondentId, and formId
+  const responseId = generateRandomId();
+  const submissionId = USER_ID;
+  const respondentId = USER_ID;
+  const formId = generateRandomId();
+
+  // Current timestamp in ISO format for createdAt
+  const createdAt = new Date().toISOString();
+
+  // Data object with mapped values
+  const data = {
+    responseId,
+    submissionId,
+    respondentId,
+    formId,
+    formName: "Exporters' Community by PWIP",
+    createdAt,
+    fields: [
+      {
+        key: "question_D4a7Al",
+        label: "Name",
+        type: "INPUT_TEXT",
+        value: SERVICE_NAME,
+      },
+    ],
+  };
+
+  return {
+    eventId,
+    eventType: "FORM_RESPONSE",
+    createdAt,
+    data,
+  };
+}
+
+// Function to generate a random alphanumeric string
+function generateRandomId() {
+  return Math.random().toString(36).substr(2, 6);
+}
+
+// Function to generate a random UUID
+function uuidv4() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 const featuresExportOrders = [
   {
@@ -93,8 +150,7 @@ const featuresEXIM = [
 
 const WaitingList = (props) => {
   const authToken = useSelector((state) => state.auth?.token);
-  // const userDetails = useSelector((state) => state.auth?.user);
-
+  const userDetails = useSelector((state) => state.auth?.user);
   const router = useRouter();
   // const videoRef = useRef();
   const dispatch = useDispatch();
@@ -108,7 +164,7 @@ const WaitingList = (props) => {
   const [showDefaultThumbnail, setShowDefaultThumbnail] = useState(true);
   const [videoDuration, setVideoDuration] = useState(0);
   const [videoProgressInPercent, setVideoProgressInPercent] = useState(0);
-  const [videoVolume, setVideoVolume] = useState(0);
+  const [showJoinList, setShowJoinList] = useState(false);
 
   const [showFixedButton, setShowFixedButton] = useState(false);
   const [features, setFeatures] = useState([]);
@@ -116,6 +172,42 @@ const WaitingList = (props) => {
     title: "",
     desc: "",
   });
+
+  const handleJoinWaitlist = async () => {
+    const formBody = generateEventData(userDetails, router?.query?._s);
+    const endpoint = apiBaseURL + "api/webhook/tally";
+
+    try {
+      const response = await axios.post(
+        endpoint,
+        {
+          ...formBody,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            "tally-signature": "F75Uzjp9RWlsP9qThF+7C2iNawJjKYrnkWvWuXe4PAw=",
+          },
+        }
+      );
+
+      if (response?.status === 200) {
+        localStorage.setItem(toKebabCase(router?.query?._s), true);
+        setShowJoinList(true);
+
+        openToastMessage({
+          type: "success",
+          message: "You have joined the waitlist",
+          // autoHide: false,
+        });
+      } else {
+        localStorage.setItem(toKebabCase(router?.query?._s), false);
+        setShowJoinList(false);
+      }
+    } catch (err) {
+      console.error("err", err);
+    }
+  };
 
   const handleScroll = useCallback(() => {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -153,6 +245,19 @@ const WaitingList = (props) => {
       };
 
       setPageTitle(obj);
+    }
+
+    const hasJoinedWaitlist = localStorage.getItem(
+      toKebabCase(router?.query?._s)
+    );
+
+    if (
+      (hasJoinedWaitlist && hasJoinedWaitlist === "true") ||
+      (hasJoinedWaitlist && hasJoinedWaitlist === true)
+    ) {
+      setShowJoinList(true);
+    } else {
+      setShowJoinList(false);
     }
   }, [router]);
 
@@ -192,6 +297,13 @@ const WaitingList = (props) => {
           >
             <div className="relative w-full">
               <div className="inline-flex flex-col w-[90%] space-y-3">
+                <div className="h-auto w-full rounded-lg inline-flex justify-start">
+                  <div className="inline-flex h-auto w-auto items-center justify-center py-[1px] rounded-tr-lg rounded-bl-lg px-2 bg-pwip-v2-yellow-100">
+                    <span className="animate-text bg-gradient-to-r from-teal-500 via-purple-500 to-orange-500 bg-clip-text text-transparent text-center text-sm font-semibold">
+                      Coming Soon
+                    </span>
+                  </div>
+                </div>
                 <span className="text-pwip-black-600 text-[20px] font-bold leading-6">
                   {pageTitle?.title}
                 </span>
@@ -202,16 +314,20 @@ const WaitingList = (props) => {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex h-full w-full flex-col justify-center">
-                  <Button
-                    type="primary"
-                    label="Join"
-                    maxHeight="!max-h-[38px]"
-                    minHeight="!min-h-[38px]"
-                    maxWidth="!w-auto !max-w-[70%]"
-                    onClick={async () => {
-                      //
-                    }}
-                  />
+                  {showJoinList ? (
+                    <span>Hey! We have recieved your access request.</span>
+                  ) : (
+                    <Button
+                      type="primary"
+                      label="Join"
+                      maxHeight="!max-h-[38px]"
+                      minHeight="!min-h-[38px]"
+                      maxWidth="!w-auto !max-w-[70%]"
+                      onClick={async () => {
+                        handleJoinWaitlist();
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="inline-flex w-full justify-end">
@@ -269,22 +385,25 @@ const WaitingList = (props) => {
         </div>
 
         {/* Fixed button */}
-        <div
-          className={`${
-            showFixedButton
-              ? "translate-y-0 opacity-1"
-              : "translate-y-20 opacity-1"
-          } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
-        >
+
+        {!showJoinList ? (
           <div
-            className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
-            onClick={async () => {
-              //
-            }}
+            className={`${
+              showFixedButton
+                ? "translate-y-0 opacity-1"
+                : "translate-y-20 opacity-1"
+            } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
           >
-            Join the waitlist
+            <div
+              className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
+              onClick={async () => {
+                handleJoinWaitlist();
+              }}
+            >
+              Join the waitlist
+            </div>
           </div>
-        </div>
+        ) : null}
       </AppLayout>
     </React.Fragment>
   );
