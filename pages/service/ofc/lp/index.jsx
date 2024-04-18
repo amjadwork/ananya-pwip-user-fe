@@ -102,7 +102,7 @@ function lp() {
             <LandingPage
               serviceName="ofc"
               SERVICE_ID={SERVICE_ID}
-              title="Reduce your hastle for finding the OFC."
+              title="Reduce your hassle for finding the OFC."
               titleImgSrc="/assets/images/services/lp/riceLP1.svg"
               pickYourPlan={pickYourPlan}
               features={ofcLpFeatures}
