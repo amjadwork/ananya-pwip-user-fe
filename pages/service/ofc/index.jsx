@@ -20,7 +20,13 @@ import { Button } from "@/components/Button";
 
 import SearchAndFilter from "@/containers/rice-price/SearchAndFilter";
 
-import { api, checkSubscription, ofcServiceId } from "@/utils/helper";
+import {
+  api,
+  checkSubscription,
+  ofcServiceId,
+  inrToUsd,
+  formatNumberWithCommas,
+} from "@/utils/helper";
 
 import {
   fetchVariantPriceRequest,
@@ -75,6 +81,8 @@ function OFCService() {
   } = useOverlayContext();
 
   const router = useRouter();
+
+  const forexRate = useSelector((state) => state.utils.forexRate);
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
   const variantPriceList =
@@ -407,16 +415,26 @@ function OFCService() {
                       </div>
                     </div>
 
-                    <div className="inline-flex items-center justify-between w-full pt-4">
+                    <div className="inline-flex items-start justify-between w-full pt-4">
                       <div className="inline-flex items-center justify-start w-auto h-full">
                         <span className="text-base font-semibold text-pwip-black-500">
                           Charges
                         </span>
                       </div>
 
-                      <div className="inline-flex items-center justify-end w-auto h-full">
+                      <div className="inline-flex flex-col items-end justify-end w-auto h-full">
                         <span className="text-base font-semibold text-pwip-green-800">
-                          ₹{ofcResultData?.ofcCharge}/container
+                          $
+                          {inrToUsd(ofcResultData?.ofcCharge, forexRate?.USD) ||
+                            0}
+                          /container
+                        </span>
+
+                        <span className="text-xs font-semibold text-right text-pwip-black-600">
+                          ₹
+                          {formatNumberWithCommas(ofcResultData?.ofcCharge) ||
+                            0}
+                          /container
                         </span>
                       </div>
                     </div>

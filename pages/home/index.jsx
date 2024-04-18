@@ -321,18 +321,55 @@ function Home() {
 
   const fetchEXIMTrend = async () => {
     try {
-      const response = await axios.get(
-        apiBaseURL +
-          "api" +
-          "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      // const response = await axios.get(
+      //   apiBaseURL +
+      //     "api" +
+      //     "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${authToken}`,
+      //     },
+      //   }
+      // );
 
-      const eximDataFromResponse = response?.data;
+      const eximDataFromResponse = {
+        totalVolume: 5337910.098269986,
+        topDestination: { destination: "Dammam", qty: 414727.90800000005 },
+        topHSN: { hsn: "10063020", qty: 2465851.543499979 },
+        chart: [
+          {
+            label: "10062000",
+            color: "#165BAA",
+            data: [
+              { primary: "Nov", secondary: 185.276 },
+              { primary: "Feb", secondary: 67045.65400000001 },
+              { primary: "Dec", secondary: 48163.305 },
+              { primary: "Jan", secondary: 76400.76599999999 },
+            ],
+          },
+          {
+            label: "10063010",
+            color: "#3988FF",
+            data: [
+              { primary: "Nov", secondary: 139959.3256 },
+              { primary: "Feb", secondary: 844749.2024500016 },
+              { primary: "Dec", secondary: 452178.91036999953 },
+              { primary: "Jan", secondary: 910264.526809999 },
+            ],
+          },
+          {
+            label: "10063020",
+            color: "#6DC4FD",
+            data: [
+              { primary: "Nov", secondary: 490625.61448400014 },
+              { primary: "Feb", secondary: 681787.6215580027 },
+              { primary: "Dec", secondary: 622079.0872000027 },
+              { primary: "Jan", secondary: 671359.2202580011 },
+            ],
+          },
+        ],
+        units: "MTS",
+      };
 
       let eximData = transformData(eximDataFromResponse?.chart);
 
@@ -916,7 +953,17 @@ function Home() {
                     Top 3 exported HSN in last 6 months
                   </span>
 
-                  <div className="text-pwip-v2-gray-400 inline-flex items-center justify-center h-auto w-auto">
+                  <div
+                    onClick={() => {
+                      openToastMessage({
+                        type: "info",
+                        message:
+                          "We only consider sea as mode of medium for calculating the analytics from EXIM data.",
+                        // autoHide: false,
+                      });
+                    }}
+                    className="text-pwip-v2-gray-400 inline-flex items-center justify-center h-auto w-auto"
+                  >
                     {infoIcon}
                   </div>
                 </div>

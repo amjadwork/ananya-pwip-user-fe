@@ -835,50 +835,50 @@ function CostingOverview() {
 
   const handleDownload = () => {
     openToastMessage({
-      type: "loading",
-      message: "Downloading ...",
+      type: "info",
+      message: "Download feature will be available soon",
       // autoHide: false,
     });
     closeBottomSheet();
-    axios
-      .post(
-        apiBaseURL + "api/generateCostingSheet/download",
-        {
-          historyId: generatedCostingData?._id,
-        },
-        {
-          responseType: "arraybuffer",
-          headers: {
-            Authorization: "Bearer " + session?.accessToken,
-            "Content-Type": "application/json",
-            Accept: "application/pdf",
-          },
-        }
-      )
-      .then((response) => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute(
-          "download",
-          generatedCostingData?.costingName + ".pdf"
-        ); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+    // axios
+    //   .post(
+    //     apiBaseURL + "api/generateCostingSheet/download",
+    //     {
+    //       historyId: generatedCostingData?._id,
+    //     },
+    //     {
+    //       responseType: "arraybuffer",
+    //       headers: {
+    //         Authorization: "Bearer " + session?.accessToken,
+    //         "Content-Type": "application/json",
+    //         Accept: "application/pdf",
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     const url = window.URL.createObjectURL(new Blob([response.data]));
+    //     const link = document.createElement("a");
+    //     link.href = url;
+    //     link.setAttribute(
+    //       "download",
+    //       generatedCostingData?.costingName + ".pdf"
+    //     ); //or any other extension
+    //     document.body.appendChild(link);
+    //     link.click();
+    //     link.remove();
 
-        closeToastMessage();
-      })
-      .catch((error) => {
-        closeToastMessage();
-        openToastMessage({
-          type: "error",
-          message:
-            error?.response?.message ||
-            error?.response?.data?.message ||
-            "Something went wrong",
-        });
-      });
+    //     closeToastMessage();
+    //   })
+    //   .catch((error) => {
+    //     closeToastMessage();
+    //     openToastMessage({
+    //       type: "error",
+    //       message:
+    //         error?.response?.message ||
+    //         error?.response?.data?.message ||
+    //         "Something went wrong",
+    //     });
+    //   });
   };
 
   return (
