@@ -314,7 +314,7 @@ function Home() {
   const dispatch = useDispatch();
   const authToken = useSelector((state) => state.auth?.token);
 
-  const { openBottomSheet, closeBottomSheet, stopLoading, startLoading } =
+  const { openBottomSheet, openToastMessage, stopLoading, startLoading } =
     useOverlayContext();
 
   const [eximTrendsData, setEximTrendsData] = React.useState(null);
