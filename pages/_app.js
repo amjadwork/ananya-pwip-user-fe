@@ -37,11 +37,11 @@ function DesktopWarning() {
         on your mobile device.
       </h3>
 
-      <p className="mt-8 text-pwip-gray-800 text-sm">
+      {/* <p className="mt-8 text-pwip-gray-800 text-sm">
         <strong>Note</strong>: On the desktop, you can use the app from the
         frame <br />
         given on the right side.
-      </p>
+      </p> */}
     </div>
   );
 }
