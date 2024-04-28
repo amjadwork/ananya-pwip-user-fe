@@ -206,7 +206,7 @@ function PWIPPrimeLP({ authToken }) {
           message: "Something went while creating your order, try again",
           // autoHide: false,
         });
-        console.log(err);
+        console.error(err);
       }
     },
     [Razorpay]
@@ -295,7 +295,8 @@ function transformData(inputArray) {
   const colorCodes = ["#165BAA", "#3988FF", "#6DC4FD"];
 
   inputArray.forEach((item) => {
-    const label = item.HSN;
+    console.log("eximData 4", item);
+    const label = item.HSN || item.label;
     const color = colorCodes[inputArray.findIndex((i) => i.HSN === item.HSN)];
 
     const dataToAdd = item.data.map(({ primary, secondary }) => ({
@@ -374,7 +375,8 @@ function Home() {
       let eximData = transformData(eximDataFromResponse?.chart);
 
       const eximTrends = {
-        ...response?.data,
+        // ...response?.data,
+        ...eximDataFromResponse,
         chart: eximData || [],
       };
 
@@ -384,7 +386,7 @@ function Home() {
 
       stopLoading();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       stopLoading();
     }
   };
@@ -968,6 +970,7 @@ function Home() {
                   </div>
                 </div>
                 <span className="text-pwip-v2-primary text-2xl font-semibold">
+                  {console.log("eximData 3", eximTrendsData)}
                   {formatNumberWithCommas(
                     eximTrendsData?.totalVolume?.toFixed(0) || 0
                   )}{" "}
