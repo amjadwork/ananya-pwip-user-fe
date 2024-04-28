@@ -295,7 +295,6 @@ function transformData(inputArray) {
   const colorCodes = ["#165BAA", "#3988FF", "#6DC4FD"];
 
   inputArray.forEach((item) => {
-    console.log("eximData 4", item);
     const label = item.HSN || item.label;
     const color = colorCodes[inputArray.findIndex((i) => i.HSN === item.HSN)];
 
@@ -970,7 +969,6 @@ function Home() {
                   </div>
                 </div>
                 <span className="text-pwip-v2-primary text-2xl font-semibold">
-                  {console.log("eximData 3", eximTrendsData)}
                   {formatNumberWithCommas(
                     eximTrendsData?.totalVolume?.toFixed(0) || 0
                   )}{" "}
