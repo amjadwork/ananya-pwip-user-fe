@@ -64,7 +64,7 @@ const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
 
 // Import Layouts
 
-function PWIPPrimeLP({ authToken }) {
+function PWIPPrimeLP({ authToken, getUsersSubscriptionDetails }) {
   const [Razorpay] = useRazorpay();
   const router = useRouter();
 
@@ -136,12 +136,14 @@ function PWIPPrimeLP({ authToken }) {
               };
               const responseVerify = await verifyPayment(paymentVerifyPayload);
 
-              const details = await checkSubscription(SERVICE_ID, authToken);
+              // const details = await checkSubscription(SERVICE_ID, authToken);
 
-              if (details?.activeSubscription) {
-                closeBottomSheet();
-                router.replace(`/home`);
-              }
+              // if (details?.activeSubscription) {
+              //   closeBottomSheet();
+              //   router.replace(`/home`);
+              // }
+
+              await getUsersSubscriptionDetails();
 
               if (responseVerify?.result === "Payment Success") {
                 const content = (
@@ -283,7 +285,7 @@ function PWIPPrimeLP({ authToken }) {
             handlePayment(plan);
           }}
         >
-          Pay and Subscribe
+          Pay ₹1,499 and subscribe
         </div>
       </div>
     </div>
@@ -318,6 +320,28 @@ function Home() {
     useOverlayContext();
 
   const [eximTrendsData, setEximTrendsData] = React.useState(null);
+  const [showPrime, setShowPrime] = React.useState(false);
+  // const [usersSubscriptionData, setUsersSubscriptionData] =
+  //   React.useState(null);
+
+  const checkUserSubscriptionDetails = async (planId) => {
+    try {
+      let endpoint = "/get-user-subscription";
+
+      if (planId) {
+        endpoint = "/get-user-subscription" + `?planId=${planId}`;
+      }
+
+      const response = await axios.get(apiBaseURL + "api" + endpoint, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      return response.data;
+    } catch (err) {
+      return err;
+    }
+  };
 
   const fetchEXIMTrend = async () => {
     try {
@@ -402,6 +426,22 @@ function Home() {
       }
     }
   }, [authToken]);
+
+  const getUsersSubscriptionDetails = async () => {
+    const response = await checkUserSubscriptionDetails(pwipPrimePlanId);
+
+    if (response?.status === 404) {
+      setShowPrime(true);
+    }
+
+    if (response?.length) {
+      setShowPrime(false);
+    }
+  };
+
+  useLayoutEffect(() => {
+    getUsersSubscriptionDetails();
+  }, []);
 
   const primaryAxis = React.useMemo(
     () => ({
@@ -649,49 +689,56 @@ function Home() {
               })}
             </div>
 
-            <div
-              onClick={async () => {
-                const content = <PWIPPrimeLP authToken={authToken} />;
+            {showPrime ? (
+              <div
+                onClick={async () => {
+                  const content = (
+                    <PWIPPrimeLP
+                      authToken={authToken}
+                      getUsersSubscriptionDetails={getUsersSubscriptionDetails}
+                    />
+                  );
 
-                openBottomSheet(content);
-              }}
-              className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative"
-            >
-              <div className="inline-flex flex-col space-y-5 h-full cols-span-10">
-                <div className="inline-flex flex-col space-y-1">
-                  <span className="text-sm font-bold text-pwip-black-600 text-left whitespace-nowrap">
-                    Curated for Exporter's.
-                  </span>
-                  <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
-                    Upgrade to all-in-one plan at{" "}
-                    <span className="font-semibold text-pwip-v2-green-900">
-                      ₹1499/-
-                    </span>{" "}
-                    and get all the benefits.
-                  </span>
+                  openBottomSheet(content);
+                }}
+                className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-pwip-v2-green-200 rounded-lg relative"
+              >
+                <div className="inline-flex flex-col space-y-5 h-full cols-span-10">
+                  <div className="inline-flex flex-col space-y-1">
+                    <span className="text-sm font-bold text-pwip-black-600 text-left whitespace-nowrap">
+                      Curated for Exporter's.
+                    </span>
+                    <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
+                      Upgrade to all-in-one plan at{" "}
+                      <span className="font-semibold text-pwip-v2-green-900">
+                        ₹1499/-
+                      </span>{" "}
+                      and get all the benefits.
+                    </span>
+                  </div>
+
+                  <div className="relative w-full">
+                    <Button
+                      type="white"
+                      label="Know more"
+                      rounded="!rounded-md"
+                      maxHeight="!max-h-[26px]"
+                      minHeight="!min-h-[26px]"
+                      fontSize="!text-xs"
+                      maxWidth="max-w-[60%]"
+                    />
+                  </div>
                 </div>
 
-                <div className="relative w-full">
-                  <Button
-                    type="white"
-                    label="Know more"
-                    rounded="!rounded-md"
-                    maxHeight="!max-h-[26px]"
-                    minHeight="!min-h-[26px]"
-                    fontSize="!text-xs"
-                    maxWidth="max-w-[60%]"
+                <div className="h-full cols-span-2">
+                  <img
+                    src="/assets/images/home_main/container.svg"
+                    alt="container"
+                    className="absolute top-0 right-0 h-full"
                   />
                 </div>
               </div>
-
-              <div className="h-full cols-span-2">
-                <img
-                  src="/assets/images/home_main/container.svg"
-                  alt="container"
-                  className="absolute top-0 right-0 h-full"
-                />
-              </div>
-            </div>
+            ) : null}
           </div>
 
           <div className="inline-flex flex-col w-full relative">
