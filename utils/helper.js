@@ -11,9 +11,9 @@ export async function checkSubscription(serviceId, token) {
     );
     return await response.json();
   } catch (err) {
+    // Handle error
     console.error(err);
     return err;
-    // Handle error
   }
 }
 

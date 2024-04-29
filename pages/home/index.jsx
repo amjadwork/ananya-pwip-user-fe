@@ -434,6 +434,10 @@ function Home() {
       setShowPrime(true);
     }
 
+    if (!response?.length) {
+      setShowPrime(true);
+    }
+
     if (response?.length) {
       setShowPrime(false);
     }
