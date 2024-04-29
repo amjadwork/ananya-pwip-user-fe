@@ -285,7 +285,7 @@ function PWIPPrimeLP({ authToken, getUsersSubscriptionDetails }) {
             handlePayment(plan);
           }}
         >
-          Pay and Subscribe
+          Pay ₹1,499 and subscribe
         </div>
       </div>
     </div>
