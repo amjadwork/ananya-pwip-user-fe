@@ -17,3 +17,4 @@ workbox-*.js.map
 **/public/.DS_Store
 # Sentry Config File
 .sentryclirc
+.DS_Store
