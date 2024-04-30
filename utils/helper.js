@@ -80,6 +80,13 @@ export const auth0BaseURL = process.env.NEXT_PUBLIC_AUTH0_ISSUER_BASE_URL;
 export const auth0ClientId = process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID;
 export const auth0ClientSecret = process.env.NEXT_PUBLIC_AUTH0_CLIENT_SECRET;
 
+export const universalLogoutUrl =
+  auth0BaseURL +
+  "/v2/logout?" +
+  `client_id=${auth0ClientId}` +
+  `&returnTo=${process.env.NEXT_PUBLIC_AUTH0_REDIRECT_UI}` +
+  `&post_logout_redirect_uri=${process.env.NEXT_PUBLIC_AUTH0_REDIRECT_UI}`;
+
 export let api = axios.create({
   baseURL: apiBaseURL + "api", // Replace with your API base URL
   timeout: 5000,

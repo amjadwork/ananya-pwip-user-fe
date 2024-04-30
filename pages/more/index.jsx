@@ -13,7 +13,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 import { Header } from "@/components/Header";
 import { chevronRight } from "theme/icon";
 import { moreSettingOptions } from "@/constants/moreSettingOptions";
-import Cookies from "js-cookie";
+import { universalLogoutUrl } from "@/utils/helper";
 
 // Import Containers
 
@@ -155,11 +155,16 @@ function More() {
             </div>
           </div>
           <div
-            onClick={() => {
+            onClick={async () => {
               localStorage.removeItem("persist:root");
-              Cookies.set("lastVisitedPage", "/export-costing", { expires: 7 }); // Set expiry as needed
+              // Cookies.set("lastVisitedPage", "/export-costing", { expires: 7 }); // Set expiry as needed
 
-              signOut();
+              await signOut({
+                redirect: false,
+                callbackUrl: window.location.origin,
+              });
+
+              window.location.href = universalLogoutUrl;
             }}
             className="inline-flex items-center justify-between pb-6 cursor-pointer"
           >
