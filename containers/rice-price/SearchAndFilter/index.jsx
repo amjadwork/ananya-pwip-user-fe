@@ -548,15 +548,18 @@ function SearchAndFilter({ title, filterByState = "", fromSearch = false }) {
                       {item?.source?.changeDir === "-" ? (
                         <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
                           {item?.source?.changeDir}₹
-                          {`${item?.source?.changeInPrice}`.split("-")
-                            .length === 2
-                            ? `${item?.source?.changeInPrice}`.split("-")[1]
+                          {`${item?.source?.changeInPrice?.toFixed(2)}`.split(
+                            "-"
+                          ).length === 2
+                            ? `${item?.source?.changeInPrice?.toFixed(
+                                2
+                              )}`.split("-")[1]
                             : 0}
                         </span>
                       ) : (
                         <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
                           {item?.source?.changeDir}₹
-                          {item?.source?.changeInPrice || 0}
+                          {item?.source?.changeInPrice?.toFixed(2) || 0}
                         </span>
                       )}
                     </div>

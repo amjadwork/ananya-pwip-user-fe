@@ -347,14 +347,18 @@ function Watchlist() {
                       <div className="flex justify-between">
                         {item?.source?.changeDir === "+" ? (
                           <span className="text-xs font-normal text-pwip-green-800">
-                            {item?.source?.changeDir}₹{item?.changeInPrice || 0}
+                            {item?.source?.changeDir}₹
+                            {item?.changeInPrice?.toFixed(2) || 0}
                           </span>
                         ) : (
                           <span className="text-xs font-normal text-pwip-red-700">
                             {item?.source?.changeDir}₹
-                            {`${item?.source?.changeInPrice}`.split("-")
-                              .length === 2
-                              ? `${item?.source?.changeInPrice}`.split("-")[1]
+                            {`${item?.source?.changeInPrice?.toFixed(2)}`.split(
+                              "-"
+                            ).length === 2
+                              ? `${item?.source?.changeInPrice?.toFixed(
+                                  2
+                                )}`.split("-")[1]
                               : 0}
                           </span>
                         )}

@@ -415,8 +415,10 @@ function RicePriceDetail() {
                     <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
                       <span className="text-pwip-gray-550 text-xs font-regular">
                         Last price: ₹
-                        {selectedVariantPriceDetail?.source?.price -
-                          selectedVariantPriceDetail?.source?.changeInPrice}
+                        {(
+                          selectedVariantPriceDetail?.source?.price -
+                          selectedVariantPriceDetail?.source?.changeInPrice
+                        )?.toFixed(2)}
                       </span>
                       {/* <span className="text-pwip-gray-400 text-xs font-regular mb-[3.5px]">
                       (23rd Mar)
@@ -427,17 +429,19 @@ function RicePriceDetail() {
                   {selectedVariantPriceDetail?.source?.changeDir === "+" ? (
                     <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
                       {selectedVariantPriceDetail?.source?.changeDir}₹
-                      {selectedVariantPriceDetail?.source?.changeInPrice || 0}
+                      {selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                        2
+                      ) || 0}
                     </span>
                   ) : (
                     <span className="text-pwip-red-700 text-xs font-semibold mb-[3.5px]">
                       {selectedVariantPriceDetail?.source?.changeDir}₹
-                      {`${selectedVariantPriceDetail?.source?.changeInPrice}`.split(
-                        "-"
-                      ).length === 2
-                        ? `${selectedVariantPriceDetail?.source?.changeInPrice}`.split(
-                            "-"
-                          )[1]
+                      {`${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                        2
+                      )}`.split("-").length === 2
+                        ? `${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                            2
+                          )}`.split("-")[1]
                         : 0}
                     </span>
                   )}
