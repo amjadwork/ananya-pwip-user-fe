@@ -22,7 +22,8 @@ export function toKebabCase(inputString) {
 }
 
 export function inrToUsd(inrAmount, exchangeRate) {
-  return (inrAmount / exchangeRate).toFixed(2);
+  const rate = exchangeRate ? exchangeRate : 82;
+  return (inrAmount / rate).toFixed(2);
 }
 
 export function formatNumberWithCommas(input) {

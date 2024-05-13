@@ -1211,7 +1211,7 @@ function CostingOverviewContainer() {
               onClick={() => {
                 handleOpenUnitSelectBottomSheet();
               }}
-              className="w-full inline-flex items-center justify-start space-x-3 text-white text-[11px] border-r-[1px] border-r-white border-opacity-[0.42]"
+              className="w-full inline-flex items-center justify-start space-x-3 text-white text-xs border-r-[1px] border-r-white border-opacity-[0.42]"
             >
               <span>{selectedUnit?.label}</span>
               {chevronDown}
@@ -1221,7 +1221,7 @@ function CostingOverviewContainer() {
               onClick={() => {
                 handleOpenShipmentTermSelectBottomSheet();
               }}
-              className="w-full inline-flex items-center justify-center space-x-3 text-white text-[11px] border-r-[1px] border-r-white border-opacity-[0.42]"
+              className="w-full inline-flex items-center justify-center space-x-3 text-white text-xs border-r-[1px] border-r-white border-opacity-[0.42]"
             >
               <span>{shipmentTerm}</span>
 
@@ -1232,9 +1232,9 @@ function CostingOverviewContainer() {
               onClick={() => {
                 openModal(forexRate?.USD || 0);
               }}
-              className="w-full inline-flex items-center justify-end space-x-3 text-white text-[11px]"
+              className="w-full inline-flex items-center justify-end space-x-3 text-white text-xs"
             >
-              <span>USD = ₹{forexRate?.USD}</span>
+              <span>USD = ₹{router?.query?.id ? 82 : forexRate?.USD}</span>
               {pencilIcon}
             </div>
           </div>
