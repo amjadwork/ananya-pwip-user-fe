@@ -710,7 +710,7 @@ function Home() {
                 <div className="inline-flex flex-col space-y-5 h-full cols-span-10">
                   <div className="inline-flex flex-col space-y-1">
                     <span className="text-sm font-bold text-pwip-black-600 text-left whitespace-nowrap">
-                      Curated for Exporter's.
+                      Become a Prime member
                     </span>
                     <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
                       Upgrade to all-in-one plan at{" "}
@@ -729,7 +729,7 @@ function Home() {
                       maxHeight="!max-h-[26px]"
                       minHeight="!min-h-[26px]"
                       fontSize="!text-xs"
-                      maxWidth="max-w-[60%]"
+                      maxWidth="max-w-[70%]"
                     />
                   </div>
                 </div>
