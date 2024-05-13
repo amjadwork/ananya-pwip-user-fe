@@ -81,6 +81,7 @@ export function Header(props) {
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
   );
+  const authToken = useSelector((state) => state.auth?.token);
 
   const hideLogo = props.hideLogo || false;
   const showLogoForPreview = props.showLogoForPreview || false;
@@ -100,8 +101,6 @@ export function Header(props) {
       dispatch(resetCustomCostingSelection());
     }
 
-    // console.log("here i am", router, window.history);
-
     if (window.history.length <= 2) {
       router.push("/home");
     } else {
@@ -119,7 +118,11 @@ export function Header(props) {
         setActiveServiceRoute("");
       }
 
-      setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
+      if (splitedRoutes[splitedRoutes.length - 3] === "preview") {
+        setActiveRoute(splitedRoutes[splitedRoutes.length - 3]);
+      } else {
+        setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
+      }
     }
   }, []);
 
@@ -196,6 +199,16 @@ export function Header(props) {
               <div
                 className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
                 onClick={() => {
+                  if (
+                    ["export-costing", "ofc", "rice-price"].includes(
+                      activeRoute
+                    )
+                  ) {
+                    router.replace("/home");
+
+                    return;
+                  }
+
                   if (!searchScreenActive) {
                     handleBack();
                   }
@@ -220,19 +233,24 @@ export function Header(props) {
             )}
         </div>
         <div className="text-pwip-black-600 inline-flex items-center justify-center">
-          {["more", "costing"].includes(activeRoute) && (
+          {["more", "costing", "preview"].includes(activeRoute) && (
             <div
               className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-2 text-sm"
               onClick={async () => {
-                if (router?.query?.id) {
+                if (activeRoute === "preview" && !authToken) {
                   openToastMessage({
                     type: "info",
                     message: "You need to login",
                     // autoHide: false,
                   });
+
+                  return;
                 }
 
-                if (activeRoute === "costing" && !router?.query?.id) {
+                if (
+                  (activeRoute === "costing" && authToken) ||
+                  (activeRoute === "preview" && authToken)
+                ) {
                   await dispatch(resetCustomCostingSelection());
 
                   router.push("/export-costing/costing/edit");
@@ -257,6 +275,7 @@ export function Header(props) {
             "costing",
             "waitlist",
             "lp",
+            "preview",
           ].includes(activeRoute) && (
             <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
               <button

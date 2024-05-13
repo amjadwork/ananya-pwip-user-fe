@@ -3,6 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { useDispatch, useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
 
 import { BottomNavBar } from "@/components/BottomNavBar";
 
@@ -24,6 +25,7 @@ const hideBottomBarAtRoutes = [
 const AppLayout = ({ children }) => {
   const router = useRouter();
   const dispatch = useDispatch();
+  const { data: session, status } = useSession();
 
   const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const toastOverlay = useSelector((state) => state.toastOverlay);
@@ -68,12 +70,14 @@ const AppLayout = ({ children }) => {
   }, [toastOverlay]);
 
   React.useEffect(() => {
-    dispatch(
-      forexRateRequest({
-        usd: forexRate && forexRate?.USD ? forexRate?.USD : 82,
-      })
-    );
-  }, []);
+    if (session?.accessToken && status === "authenticated" && !forexRate?.USD) {
+      dispatch(
+        forexRateRequest({
+          usd: forexRate && forexRate?.USD ? forexRate?.USD : 82,
+        })
+      );
+    }
+  }, [session, status]);
 
   // Debounce function to limit the rate of execution
   const debounce = (func, delay) => {
