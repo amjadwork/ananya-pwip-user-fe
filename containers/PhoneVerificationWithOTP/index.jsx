@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
 import { useOverlayContext } from "@/context/OverlayContext";
-import { useSession, signIn } from "next-auth/react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 
 import ProfileDetailForm from "@/components/ProfileDetailForm";
