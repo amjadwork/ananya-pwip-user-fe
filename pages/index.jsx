@@ -30,7 +30,7 @@ import {
 import Lottie from "lottie-react";
 import ContainerShip from "../theme/lottie/container-ship.json";
 
-//  import ProfileDetailForm from "@/components/ProfileDetailForm";
+import PhoneVerificationWithOTP from "@/containers/PhoneVerificationWithOTP";
 
 export default function Home() {
   const router = useRouter();
@@ -42,74 +42,76 @@ export default function Home() {
   const profileObject = useSelector((state) => state.profile);
   const userObject = useSelector((state) => state.user);
 
-  const [eximTrendsData, setEximTrendsData] = React.useState(null);
+  const userDetails = useSelector((state) => state.auth.user);
 
-  const fetchEXIMTrend = async () => {
-    try {
-      // const response = await axios.get(
-      //   apiBaseURL +
-      //     "api" +
-      //     "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${authToken}`,
-      //     },
-      //   }
-      // );
+  // const [eximTrendsData, setEximTrendsData] = React.useState(null);
 
-      const eximDataFromResponse = {
-        totalVolume: 5337910.098269986,
-        topDestination: { destination: "Dammam", qty: 414727.90800000005 },
-        topHSN: { hsn: "10063020", qty: 2465851.543499979 },
-        chart: [
-          {
-            label: "10062000",
-            color: "#165BAA",
-            data: [
-              { primary: "Nov", secondary: 185.276 },
-              { primary: "Feb", secondary: 67045.65400000001 },
-              { primary: "Dec", secondary: 48163.305 },
-              { primary: "Jan", secondary: 76400.76599999999 },
-            ],
-          },
-          {
-            label: "10063010",
-            color: "#3988FF",
-            data: [
-              { primary: "Nov", secondary: 139959.3256 },
-              { primary: "Feb", secondary: 844749.2024500016 },
-              { primary: "Dec", secondary: 452178.91036999953 },
-              { primary: "Jan", secondary: 910264.526809999 },
-            ],
-          },
-          {
-            label: "10063020",
-            color: "#6DC4FD",
-            data: [
-              { primary: "Nov", secondary: 490625.61448400014 },
-              { primary: "Feb", secondary: 681787.6215580027 },
-              { primary: "Dec", secondary: 622079.0872000027 },
-              { primary: "Jan", secondary: 671359.2202580011 },
-            ],
-          },
-        ],
-        units: "MTS",
-      };
+  // const fetchEXIMTrend = async () => {
+  //   try {
+  //     // const response = await axios.get(
+  //     //   apiBaseURL +
+  //     //     "api" +
+  //     //     "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
+  //     //   {
+  //     //     headers: {
+  //     //       Authorization: `Bearer ${authToken}`,
+  //     //     },
+  //     //   }
+  //     // );
 
-      let eximData = transformData(eximDataFromResponse?.chart);
+  //     const eximDataFromResponse = {
+  //       totalVolume: 5337910.098269986,
+  //       topDestination: { destination: "Dammam", qty: 414727.90800000005 },
+  //       topHSN: { hsn: "10063020", qty: 2465851.543499979 },
+  //       chart: [
+  //         {
+  //           label: "10062000",
+  //           color: "#165BAA",
+  //           data: [
+  //             { primary: "Nov", secondary: 185.276 },
+  //             { primary: "Feb", secondary: 67045.65400000001 },
+  //             { primary: "Dec", secondary: 48163.305 },
+  //             { primary: "Jan", secondary: 76400.76599999999 },
+  //           ],
+  //         },
+  //         {
+  //           label: "10063010",
+  //           color: "#3988FF",
+  //           data: [
+  //             { primary: "Nov", secondary: 139959.3256 },
+  //             { primary: "Feb", secondary: 844749.2024500016 },
+  //             { primary: "Dec", secondary: 452178.91036999953 },
+  //             { primary: "Jan", secondary: 910264.526809999 },
+  //           ],
+  //         },
+  //         {
+  //           label: "10063020",
+  //           color: "#6DC4FD",
+  //           data: [
+  //             { primary: "Nov", secondary: 490625.61448400014 },
+  //             { primary: "Feb", secondary: 681787.6215580027 },
+  //             { primary: "Dec", secondary: 622079.0872000027 },
+  //             { primary: "Jan", secondary: 671359.2202580011 },
+  //           ],
+  //         },
+  //       ],
+  //       units: "MTS",
+  //     };
 
-      const eximTrends = {
-        ...response?.data,
-        chart: eximData || [],
-      };
+  //     let eximData = transformData(eximDataFromResponse?.chart);
 
-      localStorage.setItem("eximTrends", JSON.stringify(eximTrends));
+  //     const eximTrends = {
+  //       ...response?.data,
+  //       chart: eximData || [],
+  //     };
 
-      setEximTrendsData(eximTrends);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //     localStorage.setItem("eximTrends", JSON.stringify(eximTrends));
+
+  //     // setEximTrendsData(eximTrends);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   const {
     openBottomSheet,
@@ -122,24 +124,17 @@ export default function Home() {
   // const [activeSlide, setActiveSlide] = useState(0);
   // const [showUserDetailForm, setShowUserDetailForm] = useState(false);
 
-  // const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
-  //   const content = (
-  //     <React.Fragment>
-  //       <ProfileDetailForm
-  //         token={token}
-  //         fields={fields}
-  //         fieldHeading={{
-  //           heading: fieldHeading,
-  //         }}
-  //         professionOptions={[]}
-  //         userObject={{ userData: userDetails }}
-  //         profileObject={{}}
-  //         isStandalone={true}
-  //       />
-  //     </React.Fragment>
-  //   );
-  //   openBottomSheet(content, () => null, true, true);
-  // };
+  const handleFormFieldBottomSheet = (fields, fieldHeading, token) => {
+    const content = (
+      <PhoneVerificationWithOTP
+        token={token}
+        fields={fields}
+        fieldHeading={fieldHeading}
+        userDetails={userDetails}
+      />
+    );
+    openBottomSheet(content, () => null, true, true);
+  };
 
   const handleNavigation = (path) => {
     router.push(path);
@@ -208,45 +203,42 @@ export default function Home() {
         //   fetchEXIMTrend();
         // }
 
-        redirectToApp();
+        // redirectToApp();
       }
     }
   }, [profileObject, userObject]);
 
-  // useEffect(() => {
-  //   if (session) {
-  //     if (
-  //       (userDetails && !userDetails.phone) ||
-  //       (userDetails && !userDetails.email)
-  //     ) {
-  //       stopLoading();
+  useEffect(() => {
+    if (session) {
+      if (
+        (userDetails && !userDetails.phone) ||
+        (userDetails && !userDetails.email)
+      ) {
+        stopLoading();
 
-  //       let fields = [...contactFields];
+        let fields = [...contactFields];
 
-  //       if (!userDetails?.email) {
-  //         fields = [...contactFields].filter((f) => f.type !== "phone");
-  //       }
+        if (!userDetails?.email) {
+          fields = [...contactFields].filter((f) => f.type !== "phone");
+        }
 
-  //       if (!userDetails?.phone) {
-  //         fields = [...contactFields].filter((f) => f.type !== "email");
-  //       }
+        if (!userDetails?.phone) {
+          fields = [...contactFields].filter((f) => f.type !== "email");
+        }
 
-  //       handleFormFieldBottomSheet(
-  //         fields,
-  //         "We need a few details",
-  //         session?.accessToken
-  //       );
-  //     }
+        handleFormFieldBottomSheet(
+          fields,
+          "We need a few details",
+          session?.accessToken
+        );
+      }
 
-  //     if (userDetails?.phone && userDetails?.email) {
-  //       closeBottomSheet();
-  //       redirectToApp();
-  //     }
-  //   }
-  // }, [userDetails]);
-  // const style = {
-  //   height: 180,
-  // };
+      if (userDetails?.phone && userDetails?.email) {
+        closeBottomSheet();
+        redirectToApp();
+      }
+    }
+  }, [userDetails]);
 
   return (
     <React.Fragment>

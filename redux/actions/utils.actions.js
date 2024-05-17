@@ -10,6 +10,11 @@ import {
   SET_SEARCH_SCREEN_REQUEST,
   SET_SEARCH_SCREEN_SUCCESS,
   SET_SEARCH_SCREEN_FAILURE,
+
+  // SEND
+  SET_OTP_SEND_REQUEST,
+  SET_OTP_RECEIVED_SUCCESS,
+  SET_OTP_RECEIVED_FAILURE,
 } from "./types/utils.types";
 
 // loader
@@ -61,4 +66,23 @@ export const searchScreenSuccess = (action) => {
 
 export const searchScreenFailure = () => ({
   type: SET_SEARCH_SCREEN_FAILURE,
+});
+
+// SEND OTP AND VERIFY
+export const sendOTPRequest = (phone) => {
+  return {
+    type: SET_OTP_SEND_REQUEST,
+    payload: phone,
+  };
+};
+
+export const otpRecievedSuccess = (action) => {
+  return {
+    type: SET_OTP_RECEIVED_SUCCESS,
+    payload: action.payload,
+  };
+};
+
+export const otpRecievedFailure = () => ({
+  type: SET_OTP_RECEIVED_FAILURE,
 });
