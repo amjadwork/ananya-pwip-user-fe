@@ -9,7 +9,7 @@ import { useOverlayContext } from "@/context/OverlayContext";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { apiBaseURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
+import { apiUtilsURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
 
 import {
   generateQuickCostingRequest,
@@ -849,49 +849,55 @@ function CostingOverviewContainer() {
   const handleDownload = () => {
     openToastMessage({
       type: "info",
-      message: "Download feature will be available soon",
-      // autoHide: false,
+      message: "Downloading...",
     });
-    closeBottomSheet();
-    // axios
-    //   .post(
-    //     apiBaseURL + "api/generateCostingSheet/download",
-    //     {
-    //       historyId: generatedCostingData?._id,
-    //     },
-    //     {
-    //       responseType: "arraybuffer",
-    //       headers: {
-    //         Authorization: "Bearer " + session?.accessToken,
-    //         "Content-Type": "application/json",
-    //         Accept: "application/pdf",
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     const url = window.URL.createObjectURL(new Blob([response.data]));
-    //     const link = document.createElement("a");
-    //     link.href = url;
-    //     link.setAttribute(
-    //       "download",
-    //       generatedCostingData?.costingName + ".pdf"
-    //     ); //or any other extension
-    //     document.body.appendChild(link);
-    //     link.click();
-    //     link.remove();
 
-    //     closeToastMessage();
-    //   })
-    //   .catch((error) => {
-    //     closeToastMessage();
-    //     openToastMessage({
-    //       type: "error",
-    //       message:
-    //         error?.response?.message ||
-    //         error?.response?.data?.message ||
-    //         "Something went wrong",
-    //     });
-    //   });
+    axios
+      .post(
+        apiUtilsURL + "api/generateCostingSheet/download",
+        {
+          historyId: generatedCostingData?._id,
+        },
+        {
+          responseType: "arraybuffer",
+          headers: {
+            Authorization: "Bearer " + session?.accessToken,
+            "Content-Type": "application/json",
+            Accept: "application/pdf",
+          },
+        }
+      )
+      .then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute(
+          "download",
+          generatedCostingData?.costingName + ".pdf"
+        ); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        openToastMessage({
+          type: "success",
+          message: "Downloaded",
+        });
+
+        setTimeout(() => {
+          closeToastMessage();
+        }, 2000);
+      })
+      .catch((error) => {
+        closeToastMessage();
+        openToastMessage({
+          type: "error",
+          message:
+            error?.response?.message ||
+            error?.response?.data?.message ||
+            "Something went wrong",
+        });
+      });
   };
 
   return (
