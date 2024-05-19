@@ -7,6 +7,14 @@ import {
   SET_FOREX_RATE_FAILURE,
   SET_SEARCH_SCREEN_SUCCESS,
   SET_SEARCH_SCREEN_FAILURE,
+
+  // OTP & Verify
+  SET_OTP_RECEIVED_SUCCESS,
+  SET_OTP_RECEIVED_FAILURE,
+
+  // verify
+  SET_VERIFY_OTP_RESPONSE_SUCCESS,
+  SET_VERIFY_OTP_RESPONSE_FAILURE,
 } from "../actions/types/utils.types";
 
 const initialState = {
@@ -15,6 +23,8 @@ const initialState = {
     USD: 0,
   },
   searchScreenActive: false,
+  otpDetails: null,
+  verifyOTPResponse: null,
 };
 
 const utilsReducer = (state = initialState, action) => {
@@ -56,6 +66,30 @@ const utilsReducer = (state = initialState, action) => {
       return {
         ...state,
         searchScreenActive: false,
+      };
+
+    // otp & verify
+    case SET_OTP_RECEIVED_SUCCESS:
+      return {
+        ...state,
+        otpDetails: action.payload,
+      };
+    case SET_OTP_RECEIVED_FAILURE:
+      return {
+        ...state,
+        otpDetails: null,
+      };
+
+    // verify
+    case SET_VERIFY_OTP_RESPONSE_SUCCESS:
+      return {
+        ...state,
+        verifyOTPResponse: action.payload,
+      };
+    case SET_VERIFY_OTP_RESPONSE_FAILURE:
+      return {
+        ...state,
+        verifyOTPResponse: null,
       };
 
     default:

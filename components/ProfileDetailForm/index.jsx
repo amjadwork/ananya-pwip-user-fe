@@ -107,6 +107,7 @@ const ProfileDetailForm = ({
   profileObject,
   isStandalone,
   overwriteHandleFormSubmit,
+  phoneForOTP,
 }) => {
   const formik = useRef();
   const dispatch = useDispatch();
@@ -121,6 +122,12 @@ const ProfileDetailForm = ({
       dispatch(fetchUserRequest());
     }
   }, [token]);
+
+  useEffect(() => {
+    if (phoneForOTP && formik?.current) {
+      formik.current.setFieldValue("phone", phoneForOTP);
+    }
+  }, [phoneForOTP, formik?.current]);
 
   const { closeBottomSheet, openToastMessage } = useOverlayContext();
 
@@ -197,25 +204,32 @@ const ProfileDetailForm = ({
         requiredUserPayload,
         formValues.data
       );
-      const profileFormValues = intersectObjects(
-        requiredProfilePayload,
-        formValues.data
-      );
-
       const userPayload = getChangedPropertiesFromObject(
         userObject.userData,
         userFormValues
+      );
+
+      if (overwriteHandleFormSubmit) {
+        let otpPayload = { ...userPayload };
+
+        if (!Object?.keys(userPayload)?.length) {
+          otpPayload = {
+            phone: userObject?.userData?.phone,
+          };
+        }
+
+        overwriteHandleFormSubmit(otpPayload);
+        return;
+      }
+
+      const profileFormValues = intersectObjects(
+        requiredProfilePayload,
+        formValues.data
       );
       const profilePayload = getChangedPropertiesFromObject(
         profileObject.profileData,
         profileFormValues
       );
-
-      if (overwriteHandleFormSubmit) {
-        console.log("here overwriteHandleFormSubmit");
-        overwriteHandleFormSubmit(userPayload);
-        return;
-      }
 
       const requestAction = null;
 
@@ -473,11 +487,11 @@ const ProfileDetailForm = ({
                 ))}
               </div>
 
-              <div className="absolute left-0 bottom-0 w-full bg-white px-4 pb-8">
+              <div className="relative w-full bg-white mt-8">
                 <div className="w-full mb-4">
                   <p className="text-left text-xs text-gray-500">
                     Verify your phone using OTP recieved on your{" "}
-                    <span className="text-[#25D366]">WhatsApp</span>
+                    <span className="text-[#25D366]">WhatsApp</span>.
                     {/* {" "}
                     <span className="font-medium text-pwip-v2-primary-700">
                       {values?.phone?.toString()?.length === 10
@@ -501,11 +515,23 @@ const ProfileDetailForm = ({
                       },
                       values
                     );
+
                     if (
                       !Object.keys(errors).length &&
-                      Object.keys(changes).length
+                      Object.keys(changes).length &&
+                      !overwriteHandleFormSubmit
                     ) {
                       handleFormSubmit();
+                      return;
+                    }
+
+                    // for otp screen
+                    if (
+                      !Object.keys(errors).length &&
+                      overwriteHandleFormSubmit
+                    ) {
+                      handleFormSubmit();
+                      return;
                     }
                   }}
                 />

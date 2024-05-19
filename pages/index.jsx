@@ -228,12 +228,16 @@ export default function Home() {
 
         handleFormFieldBottomSheet(
           fields,
-          "We need a few details",
+          `Track rice market on the go! Enter phone for alerts.`,
           session?.accessToken
         );
       }
 
-      if (userDetails?.phone && userDetails?.email) {
+      if (
+        userDetails?.phone &&
+        userDetails?.is_phone_verified &&
+        userDetails?.email
+      ) {
         closeBottomSheet();
         redirectToApp();
       }
