@@ -24,6 +24,10 @@ import {
   fetchMyCostingFailure,
   updateCostingFailure,
 } from "@/redux/actions/myCosting.actions";
+import {
+  setTermsOfShipmentRequest,
+  // setTermsOfShipmentFailure,
+} from "@/redux/actions/shipmentTerms.actions";
 
 import { pencilIcon } from "../../../theme/icon";
 
@@ -81,7 +85,18 @@ function SelectPortOfDestination() {
   const [isGenerated, setIsGenerated] = React.useState(false);
 
   async function handleSaveCosting() {
-    const saveHistoryPayload = getCostingToSaveHistoryPayload(generatedCosting);
+    const saveHistoryPayload = getCostingToSaveHistoryPayload(
+      generatedCosting,
+      shipmentTerm
+    );
+
+    if (shipmentTerm) {
+      const action = {
+        selected: shipmentTerm || "FOB",
+        showShipmentTermDropdown: false,
+      };
+      dispatch(setTermsOfShipmentRequest(action));
+    }
 
     const payloadBody = {
       ...saveHistoryPayload,

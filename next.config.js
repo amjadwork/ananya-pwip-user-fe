@@ -11,7 +11,7 @@ const withPWA = require("next-pwa")({
 });
 
 const nextConfig = withPWA({
-  reactStrictMode: false,
+  reactStrictMode: true,
   poweredByHeader: false,
 });
 
