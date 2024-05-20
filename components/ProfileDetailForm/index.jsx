@@ -453,6 +453,13 @@ const ProfileDetailForm = ({
                               name={field.name}
                               value={values[field.name]}
                               disabled={field.name === "email" || field.disable}
+                              inputMode={
+                                field?.name === "phone"
+                                  ? "numeric"
+                                  : field?.name === "email"
+                                  ? "email"
+                                  : "text"
+                              }
                               onChange={handleChange}
                               onBlur={handleBlur}
                               style={{
