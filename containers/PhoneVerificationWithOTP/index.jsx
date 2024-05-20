@@ -204,8 +204,9 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
             containerStyle={`w-full !inline-flex justify-between`}
             renderSeparator=""
             renderInput={(props) => (
-              <input pattern="[0-9]*" inputMode="numeric" {...props} />
+              <input {...props} pattern="[0-9]*" inputMode="numeric" />
             )}
+            inputType="number"
             inputStyle={`block min-w-12 h-12 p-2 text-sm text-gray-900 border border-[#e3ebf0] rounded-md`}
           />
         </div>
