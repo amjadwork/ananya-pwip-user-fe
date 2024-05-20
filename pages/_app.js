@@ -53,7 +53,7 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
       (typeof window !== "undefined" &&
         window?.location?.origin === "https://app.pwip.co")
     ) {
-      console.log("here", window.location.origin);
+      console.log("hotjar initialized", window.location.origin);
 
       hotjar.initialize("3801647", 6);
     }

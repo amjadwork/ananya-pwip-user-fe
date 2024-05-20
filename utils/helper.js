@@ -61,6 +61,8 @@ export function abbreviateNumber(input) {
 export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-stage.pwip.co/";
 export const apiStagePaymentBeUrl =
   process.env.NEXT_PUBLIC_API_STAGE_PAYMENT_BE_URL;
+export const apiUtilsURL = process.env.NEXT_PUBLIC_UTILS_API_URL; //|| "https://api-stage.pwip.co/";
+
 export const exportCostingServiceId =
   process.env.NEXT_PUBLIC_API_EXPORT_COSTING_SERVICE_ID;
 
@@ -100,7 +102,7 @@ api.interceptors.response.use(
   }
 );
 
-export function getCostingToSaveHistoryPayload(inputJson) {
+export function getCostingToSaveHistoryPayload(inputJson, shipmentTerm) {
   return {
     costingName:
       inputJson?.costingName ||
@@ -130,7 +132,7 @@ export function getCostingToSaveHistoryPayload(inputJson) {
       inputJson?.details?.ofcObject?.chaContainerObject?.weight,
     isExportDuty: inputJson?.constants?.exportDutyCharge ? true : false,
     isPwipFullfillment: inputJson?.constants?.pwipFullfillment ? true : false,
-    termOfAgreement: inputJson?.grandTotalFob ? "FOB" : "CIF",
+    termOfAgreement: shipmentTerm || "FOB",
     costOfRice: inputJson?.costing?.exmillPrice,
     bagPrice: inputJson?.costing?.package,
     transportation: inputJson?.costing?.transportCharge,

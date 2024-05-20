@@ -106,6 +106,8 @@ const ProfileDetailForm = ({
   userObject,
   profileObject,
   isStandalone,
+  overwriteHandleFormSubmit,
+  phoneForOTP,
 }) => {
   const formik = useRef();
   const dispatch = useDispatch();
@@ -120,6 +122,12 @@ const ProfileDetailForm = ({
       dispatch(fetchUserRequest());
     }
   }, [token]);
+
+  useEffect(() => {
+    if (phoneForOTP && formik?.current) {
+      formik.current.setFieldValue("phone", phoneForOTP);
+    }
+  }, [phoneForOTP, formik?.current]);
 
   const { closeBottomSheet, openToastMessage } = useOverlayContext();
 
@@ -196,14 +204,27 @@ const ProfileDetailForm = ({
         requiredUserPayload,
         formValues.data
       );
-      const profileFormValues = intersectObjects(
-        requiredProfilePayload,
-        formValues.data
-      );
-
       const userPayload = getChangedPropertiesFromObject(
         userObject.userData,
         userFormValues
+      );
+
+      if (overwriteHandleFormSubmit) {
+        let otpPayload = { ...userPayload };
+
+        if (!Object?.keys(userPayload)?.length) {
+          otpPayload = {
+            phone: userObject?.userData?.phone,
+          };
+        }
+
+        overwriteHandleFormSubmit(otpPayload);
+        return;
+      }
+
+      const profileFormValues = intersectObjects(
+        requiredProfilePayload,
+        formValues.data
       );
       const profilePayload = getChangedPropertiesFromObject(
         profileObject.profileData,
@@ -273,11 +294,11 @@ const ProfileDetailForm = ({
               handleSubmit();
             }}
           >
-            <div className="w-full h-auto p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
+            <div className="w-full h-full p-7 text-[#003559]font-sans font-bold text-xl text-left text-[#003559] bg-[url('/assets/images/bg-profile.png')]  bg-cover">
               {fieldHeading.heading}
             </div>
-            <div className="mx-7 py-4">
-              <div className="pb-7">
+            <div className="mx-7 py-4 h-full">
+              <div className="pb-7 h-full">
                 {fields.map((field, index) => (
                   <div className="relative mb-2 mt-2">
                     <label
@@ -299,7 +320,7 @@ const ProfileDetailForm = ({
                               textAlign: "left",
                             }}
                             value={formik?.current?.values[field.name]}
-                            className={`block w-full h-60 p-1 mt-4 text-sm text-gray-900 rounded-md border ${
+                            className={`block w-full h-60 p-1 px-3 mt-4 text-sm text-gray-900 rounded-md border ${
                               errors[field.name] && touched[field.name]
                                 ? "border-red-300"
                                 : "border-[#006EB4]"
@@ -373,7 +394,7 @@ const ProfileDetailForm = ({
                             onBlur={handleBlur}
                             disabled={field.name === "country" ? true : false}
                             value={formik?.current?.values[field.name]}
-                            className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
+                            className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 rounded-md border ${
                               errors[field.name] && touched[field.name]
                                 ? "border-red-300"
                                 : "border-[#006EB4]"
@@ -414,31 +435,57 @@ const ProfileDetailForm = ({
                         </div>
                       ) : (
                         <div className="overflow-x-auto">
-                          <input
-                            type={field.type}
-                            id={field.name}
-                            name={field.name}
-                            value={values[field.name]}
-                            disabled={field.name === "email" || field.disable}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            style={{
-                              textAlign: "left",
-                            }}
-                            className={`block w-full h-9 p-1 text-sm text-gray-900 rounded-md border ${
-                              errors[field.name] && touched[field.name]
-                                ? "border-red-300"
-                                : "border-[#006EB4]"
-                            } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                            placeholder={field.placeholder}
-                          />
+                          <div className="inline-flex items-center w-full">
+                            {field?.name === "phone" ? (
+                              <div
+                                className={`inline-flex items-center justify-center text-center h-[40px] min-w-[40px] text-sm rounded-l-md border border-r-[#e3ebf0] ${
+                                  errors[field.name] && touched[field.name]
+                                    ? "border-red-300"
+                                    : "border-[#006EB4]"
+                                }`}
+                              >
+                                +91
+                              </div>
+                            ) : null}
+                            <input
+                              type={field.type}
+                              id={field.name}
+                              name={field.name}
+                              value={values[field.name]}
+                              disabled={field.name === "email" || field.disable}
+                              inputMode={
+                                field?.name === "phone"
+                                  ? "numeric"
+                                  : field?.name === "email"
+                                  ? "email"
+                                  : "text"
+                              }
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              style={{
+                                textAlign: "left",
+                              }}
+                              className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border ${
+                                field?.name === "phone"
+                                  ? "rounded-r-md border-l-[#e3ebf0]"
+                                  : "rounded-md"
+                              }  ${
+                                errors[field.name] && touched[field.name]
+                                  ? "border-red-300"
+                                  : "border-[#006EB4]"
+                              } appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                              placeholder={field.placeholder}
+                            />
+                          </div>
                           {errors[field.name] ? (
-                            <span
-                              className="absolute text-red-400 text-xs mt-1"
-                              style={{ top: "100%" }}
-                            >
-                              {errors[field.name]}
-                            </span>
+                            <div className="w-full text-left">
+                              <span
+                                className="absolute text-red-400 text-xs mt-1"
+                                style={{ top: "100%" }}
+                              >
+                                {errors[field.name]}
+                              </span>
+                            </div>
                           ) : null}
                         </div>
                       )}
@@ -447,16 +494,27 @@ const ProfileDetailForm = ({
                 ))}
               </div>
 
-              <div className=" bottom-0 w-full bg-white">
+              <div className="relative w-full bg-white mt-8">
+                <div className="w-full mb-4">
+                  <p className="text-left text-xs text-gray-500">
+                    Verify your phone using OTP recieved on your{" "}
+                    <span className="text-[#25D366]">WhatsApp</span>.
+                    {/* {" "}
+                    <span className="font-medium text-pwip-v2-primary-700">
+                      {values?.phone?.toString()?.length === 10
+                        ? `+91 ${values?.phone}`
+                        : ``}
+                    </span> */}
+                  </p>
+                </div>
                 <Button
                   type="primary"
                   buttonType="submit"
-                  label={isStandalone ? "Save & continue" : "Update changes"}
+                  label={isStandalone ? "Continue" : "Update changes"}
                   // disabled={
                   //   Object.keys(errors).length || isSubmitting ? false : true
                   // }
                   onClick={() => {
-                    console.log("here", errors);
                     const changes = getChangedPropertiesFromObject(
                       {
                         ...userObject.userData,
@@ -464,11 +522,23 @@ const ProfileDetailForm = ({
                       },
                       values
                     );
+
                     if (
                       !Object.keys(errors).length &&
-                      Object.keys(changes).length
+                      Object.keys(changes).length &&
+                      !overwriteHandleFormSubmit
                     ) {
                       handleFormSubmit();
+                      return;
+                    }
+
+                    // for otp screen
+                    if (
+                      !Object.keys(errors).length &&
+                      overwriteHandleFormSubmit
+                    ) {
+                      handleFormSubmit();
+                      return;
                     }
                   }}
                 />

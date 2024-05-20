@@ -539,10 +539,13 @@ function EditCosting() {
   }, [selectedMyCostingFromHistory, pageConstructedForInitialization]);
 
   async function saveCustomCostingToHistory() {
-    const saveHistoryPayload = getCostingToSaveHistoryPayload({
-      ...generatedCosting,
-      costingName: formik.current.values.costingName,
-    });
+    const saveHistoryPayload = getCostingToSaveHistoryPayload(
+      {
+        ...generatedCosting,
+        costingName: formik.current.values.costingName,
+      },
+      shipmentTerm
+    );
 
     let payloadBody = {
       ...saveHistoryPayload,

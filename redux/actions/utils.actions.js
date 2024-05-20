@@ -10,6 +10,16 @@ import {
   SET_SEARCH_SCREEN_REQUEST,
   SET_SEARCH_SCREEN_SUCCESS,
   SET_SEARCH_SCREEN_FAILURE,
+
+  // SEND
+  SET_OTP_SEND_REQUEST,
+  SET_OTP_RECEIVED_SUCCESS,
+  SET_OTP_RECEIVED_FAILURE,
+
+  // VERIFY
+  SET_VERIFY_OTP_RESPONSE_REQUEST,
+  SET_VERIFY_OTP_RESPONSE_SUCCESS,
+  SET_VERIFY_OTP_RESPONSE_FAILURE,
 } from "./types/utils.types";
 
 // loader
@@ -61,4 +71,44 @@ export const searchScreenSuccess = (action) => {
 
 export const searchScreenFailure = () => ({
   type: SET_SEARCH_SCREEN_FAILURE,
+});
+
+// SEND OTP AND VERIFY
+export const sendOTPRequest = (phone) => {
+  return {
+    type: SET_OTP_SEND_REQUEST,
+    payload: {
+      phone,
+    },
+  };
+};
+
+export const otpRecievedSuccess = (data) => {
+  return {
+    type: SET_OTP_RECEIVED_SUCCESS,
+    payload: data,
+  };
+};
+
+export const otpRecievedFailure = () => ({
+  type: SET_OTP_RECEIVED_FAILURE,
+});
+
+// VERIFY
+export const verifyOTPResponseRequest = (payload) => {
+  return {
+    type: SET_VERIFY_OTP_RESPONSE_REQUEST,
+    payload: payload,
+  };
+};
+
+export const verifyOTPResponseSuccess = (data) => {
+  return {
+    type: SET_VERIFY_OTP_RESPONSE_SUCCESS,
+    payload: data,
+  };
+};
+
+export const verifyOTPResponseFailure = () => ({
+  type: SET_VERIFY_OTP_RESPONSE_FAILURE,
 });
