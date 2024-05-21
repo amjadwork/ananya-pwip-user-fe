@@ -76,6 +76,7 @@ function OFCService() {
     openBottomSheet,
     closeBottomSheet,
     openToastMessage,
+    closeToastMessage,
     isBottomSheetOpen,
     stopLoading,
   } = useOverlayContext();
@@ -282,6 +283,19 @@ function OFCService() {
 
                   <div
                     onClick={() => {
+                      if (!selectedPOL?.portName) {
+                        openToastMessage({
+                          type: "info",
+                          message: "Please select a port of loading (POL)",
+                          autoHide: true,
+                        });
+
+                        setTimeout(() => {
+                          closeToastMessage();
+                        }, 2500);
+                        return;
+                      }
+
                       setOFCResultData(null);
                       const content = (
                         <div>
@@ -416,25 +430,35 @@ function OFCService() {
                     </div>
 
                     <div className="inline-flex items-start justify-between w-full pt-4">
-                      <div className="inline-flex items-center justify-start w-auto h-full">
+                      <div className="inline-flex flex-col space-y-1 items-start justify-start w-auto h-full">
                         <span className="text-base font-semibold text-pwip-black-500">
                           Charges
                         </span>
+                        <span className="text-xs font-normal text-pwip-gray-600">
+                          <span className="font-bold text-pwip-primary">
+                            Note:
+                          </span>{" "}
+                          Prices are shown <br /> per container
+                        </span>
                       </div>
 
-                      <div className="inline-flex flex-col items-end justify-end w-auto h-full">
+                      <div className="inline-flex flex-col space-y-1 items-end justify-end w-auto h-full">
                         <span className="text-base font-semibold text-pwip-green-800">
                           $
-                          {inrToUsd(ofcResultData?.ofcCharge, forexRate?.USD) ||
-                            0}
-                          /container
+                          {Math.ceil(
+                            Number(
+                              inrToUsd(ofcResultData?.ofcCharge, forexRate?.USD)
+                            )
+                          ) || 0}
+                          {/* /container */}
                         </span>
 
                         <span className="text-xs font-semibold text-right text-pwip-black-600">
                           ₹
-                          {formatNumberWithCommas(ofcResultData?.ofcCharge) ||
-                            0}
-                          /container
+                          {formatNumberWithCommas(
+                            Math.ceil(ofcResultData?.ofcCharge)
+                          ) || 0}
+                          {/* /container */}
                         </span>
                       </div>
                     </div>
@@ -442,7 +466,7 @@ function OFCService() {
                 </div>
               ) : null}
 
-              <div className="w-auto z-0 bg-white">
+              <div className="w-auto z-0 bg-white pb-8">
                 <Lottie animationData={ShipOFC} style={style} />
               </div>
             </div>
