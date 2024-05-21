@@ -173,6 +173,8 @@ export function Header(props) {
     setServiceLogoRoute(serviceLogoRouteObject);
   }, [activeServiceRoute, activeRoute, router]);
 
+  const rootServicePages = ["export-costing", "ofc", "rice-price"];
+
   return (
     <header
       className={`inline-flex items-center w-full h-[56px] px-5 py-4 space-x-4 ${backgroundColor} fixed top-0 z-10`}
@@ -199,11 +201,7 @@ export function Header(props) {
               <div
                 className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
                 onClick={() => {
-                  if (
-                    ["export-costing", "ofc", "rice-price"].includes(
-                      activeRoute
-                    )
-                  ) {
+                  if (rootServicePages.includes(activeRoute)) {
                     router.replace("/home");
 
                     return;
@@ -228,7 +226,11 @@ export function Header(props) {
                 }}
               >
                 {arrowLeftBackIcon}
-                <span>Back</span>
+                <span>
+                  {rootServicePages.includes(activeRoute)
+                    ? "Back to home"
+                    : "Back"}
+                </span>
               </div>
             )}
         </div>
