@@ -434,15 +434,15 @@ function OFCService() {
                         <span className="text-base font-semibold text-pwip-black-500">
                           Charges
                         </span>
-                        <span className="text-xs font-normal text-pwip-gray-500">
-                          <span className="font-bold text-pwip-primary-700">
+                        <span className="text-xs font-normal text-pwip-gray-600">
+                          <span className="font-bold text-pwip-primary">
                             Note:
                           </span>{" "}
                           Prices are shown <br /> per container
                         </span>
                       </div>
 
-                      <div className="inline-flex flex-col items-end justify-end w-auto h-full">
+                      <div className="inline-flex flex-col space-y-1 items-end justify-end w-auto h-full">
                         <span className="text-base font-semibold text-pwip-green-800">
                           $
                           {Math.ceil(
@@ -466,7 +466,7 @@ function OFCService() {
                 </div>
               ) : null}
 
-              <div className="w-auto z-0 bg-white">
+              <div className="w-auto z-0 bg-white pb-8">
                 <Lottie animationData={ShipOFC} style={style} />
               </div>
             </div>
