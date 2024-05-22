@@ -302,7 +302,7 @@ function DataTableForAllFilter({ column, row }) {
               <th
                 key={th?.columnLabel + "_" + i}
                 className={`p-2 whitespace-nowrap ${
-                  i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
+                  i === 0 ? "sticky left-0 z-0 bg-gray-50" : ""
                 }`}
                 style={{
                   boxShadow: i === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
@@ -322,7 +322,7 @@ function DataTableForAllFilter({ column, row }) {
               <td
                 key={col?.key + "_" + j}
                 className={`p-2 whitespace-pre-wrap ${
-                  j === 0 ? "sticky left-0 z-10 bg-white" : ""
+                  j === 0 ? "sticky left-0 z-0 bg-white" : ""
                 }`}
                 style={{
                   boxShadow: j === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
@@ -353,7 +353,7 @@ function DataTableForAnnualViewFilter({ column = [], row = [] }) {
             return (
               <th
                 className={`text-xs p-2 whitespace-nowrap ${
-                  i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
+                  i === 0 ? "sticky left-0 z-0 bg-gray-50" : ""
                 }`}
                 style={{
                   boxShadow: i === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
@@ -373,7 +373,7 @@ function DataTableForAnnualViewFilter({ column = [], row = [] }) {
           return (
             <tr>
               <td
-                className={`p-2 whitespace-nowrap sticky left-0 z-10 bg-white`}
+                className={`p-2 whitespace-nowrap sticky left-0 z-0 bg-white`}
                 style={{
                   boxShadow: `inset -1px 0px 0px #d2d2d2`,
                 }}
@@ -693,9 +693,12 @@ function EXIMService() {
         <Header hideLogo={true} />
 
         <div
-          className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-100 z-0 space-y-2 pb-12`}
+          className={`h-full w-full bg-pwip-v2-gray-100 space-y-2 pb-12 relative`}
         >
-          <div className="fixed top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100">
+          <div
+            id="selectOptionHSN"
+            className="sticky top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100"
+          >
             <div className="flex flex-col w-full space-y-1 px-5">
               <div
                 onClick={() => {
@@ -741,7 +744,7 @@ function EXIMService() {
             </div>
           </div>
 
-          <div className="bg-white w-full py-4 px-5 relative space-y-9 top-[86px]">
+          <div className="bg-white w-full py-4 px-5 pt-[54px] space-y-9">
             <div className="w-full h-auto">
               <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
                 <div className="flex flex-nowrap space-x-3">
@@ -819,104 +822,108 @@ function EXIMService() {
                 );
               })}
             </div>
+          </div>
+          {/* table */}
 
-            {/* table */}
+          <div className="w-full h-auto px-5 py-3 sticky bg-white z-20 top-[142px] !mb-0 !mt-0">
+            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] w-full">
+              <div className="flex flex-nowrap space-x-3">
+                <div
+                  onClick={() => {
+                    const content = (
+                      <ViewMode
+                        handleSelect={(selectedMode) => {
+                          setSelectedViewMode(selectedMode);
+                        }}
+                        selectedViewMode={selectedViewMode}
+                      />
+                    );
+                    openBottomSheet(content);
+                  }}
+                  className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
+                >
+                  <span className="text-pwip-v2-primary-700">
+                    {eyePreviewIcon}
+                  </span>
+                  <div className="inline-flex items-center justify-between space-x-10">
+                    <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
+                      {selectedViewMode?.label}
+                    </span>
+                    {chevronDown}
+                  </div>
+                </div>
 
-            <div className="inline-flex w-full flex-col h-auto">
-              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full mb-4">
-                <div className="flex flex-nowrap space-x-3">
+                {selectedViewMode?.value !== "all" ? (
                   <div
                     onClick={() => {
                       const content = (
-                        <ViewMode
+                        <LocationViewMode
                           handleSelect={(selectedMode) => {
-                            setSelectedViewMode(selectedMode);
+                            setSelectedLocationViewMode(selectedMode);
                           }}
-                          selectedViewMode={selectedViewMode}
+                          selectedViewMode={selectedLocationViewMode}
                         />
                       );
                       openBottomSheet(content);
                     }}
-                    className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
+                    className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
                   >
-                    <span className="text-pwip-v2-primary-700">
-                      {eyePreviewIcon}
-                    </span>
                     <div className="inline-flex items-center justify-between space-x-10">
                       <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
-                        {selectedViewMode?.label}
+                        {selectedLocationViewMode?.label}
                       </span>
                       {chevronDown}
                     </div>
                   </div>
+                ) : null}
 
-                  {selectedViewMode?.value !== "all" ? (
-                    <div
-                      onClick={() => {
-                        const content = (
-                          <LocationViewMode
-                            handleSelect={(selectedMode) => {
-                              setSelectedLocationViewMode(selectedMode);
-                            }}
-                            selectedViewMode={selectedLocationViewMode}
-                          />
-                        );
-                        openBottomSheet(content);
-                      }}
-                      className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
-                    >
-                      <div className="inline-flex items-center justify-between space-x-10">
-                        <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
-                          {selectedLocationViewMode?.label}
-                        </span>
-                        {chevronDown}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {selectedViewMode?.value === "all" ? (
-                    <React.Fragment>
-                      {[2019, 2020, 2021, 2022, 2023]
-                        .map((d, i) => {
-                          return (
-                            <div
-                              key={d * i}
-                              onClick={() => {
-                                setSelectedYear(d);
-                              }}
-                              className={`inline-flex items-center px-3 py-2 rounded-lg border ${
-                                selectedYear === d
-                                  ? "border-pwip-v2-primary-700 text-pwip-v2-primary-700"
-                                  : "border-pwip-v2-gray-350 text-pwip-gray-800"
-                              }`}
-                            >
-                              <div className="inline-flex items-center justify-between space-x-10">
-                                <span className="text-sm whitespace-nowrap">
-                                  {d}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })
-                        .reverse()}
-                    </React.Fragment>
-                  ) : null}
-                </div>
-              </div>
-
-              <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
                 {selectedViewMode?.value === "all" ? (
-                  <DataTableForAllFilter
-                    column={allEximTableData?.columns}
-                    row={allEximTableData?.rows}
-                  />
-                ) : (
-                  <DataTableForAnnualViewFilter
-                    column={modelBasedEximTableData?.columns}
-                    row={modelBasedEximTableData?.rows}
-                  />
-                )}
+                  <React.Fragment>
+                    {[2019, 2020, 2021, 2022, 2023]
+                      .map((d, i) => {
+                        return (
+                          <div
+                            key={d * i}
+                            onClick={() => {
+                              setSelectedYear(d);
+                            }}
+                            className={`inline-flex items-center px-3 py-2 rounded-lg border ${
+                              selectedYear === d
+                                ? "border-pwip-v2-primary-700 text-pwip-v2-primary-700"
+                                : "border-pwip-v2-gray-350 text-pwip-gray-800"
+                            }`}
+                          >
+                            <div className="inline-flex items-center justify-between space-x-10">
+                              <span className="text-sm whitespace-nowrap">
+                                {d}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })
+                      .reverse()}
+                  </React.Fragment>
+                ) : null}
               </div>
+            </div>
+          </div>
+
+          <div
+            id="tableSection"
+            className="inline-flex w-full flex-col h-screen px-5 !mt-0 bg-white"
+          >
+            <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
+              {selectedViewMode?.value === "all" ? (
+                <DataTableForAllFilter
+                  column={allEximTableData?.columns}
+                  row={allEximTableData?.rows}
+                />
+              ) : (
+                <DataTableForAnnualViewFilter
+                  column={modelBasedEximTableData?.columns}
+                  row={modelBasedEximTableData?.rows}
+                />
+              )}
             </div>
           </div>
         </div>
