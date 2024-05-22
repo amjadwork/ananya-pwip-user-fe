@@ -20,7 +20,96 @@ import {
 // Import Components
 import { Header } from "@/components/Header";
 
+import { apiAnalyticsURL } from "@/utils/helper";
+
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
+
+function transformAnalysisData(input) {
+  const output = [];
+
+  // Mapping the input to the output structure
+  if (input.MostExportedDestinationName) {
+    output.push({
+      title: "Most exported to port",
+      value: input.MostExportedDestinationName.destinationName,
+      key: "MostExportedDestinationName",
+    });
+  }
+
+  // Placeholder values for "Most exported to country" since the input does not contain this key
+  output.push({
+    title: "Most exported to country",
+    value: "Emirates", // Default or placeholder value
+    key: "MostExportedDestinationCountry",
+  });
+
+  if (input.MostExportedYear) {
+    output.push({
+      title: "Most exported in year",
+      value: input.MostExportedYear.year,
+      key: "MostExportedYear",
+    });
+  }
+
+  if (input.MostExportedOriginPortName) {
+    output.push({
+      title: "Most exported from port",
+      value: input.MostExportedOriginPortName.OriginPortName,
+      key: "MostExportedOriginPortName",
+    });
+  }
+
+  if (input.lifetimeTotalVol !== undefined) {
+    output.push({
+      title: "Total volume exported",
+      value: formatVolume(input.lifetimeTotalVol),
+      key: "lifetimeTotalVol",
+    });
+  }
+
+  if (input.lifetimeTotalExportPriceValue !== undefined) {
+    output.push({
+      title: "Total FOB exported",
+      value: formatCurrency(input.lifetimeTotalExportPriceValue),
+      key: "lifetimeTotalExportPriceValue",
+    });
+  }
+
+  return output;
+}
+
+// Helper functions to format volume and currency values
+function checkNumberSign(number) {
+  if (number > 0) {
+    return "positive";
+  } else if (number < 0) {
+    return "negative";
+  } else {
+    return "positive";
+  }
+}
+
+function formatVolume(value) {
+  if (value >= 1e9) {
+    return (value / 1e9).toFixed(1) + "B";
+  } else if (value >= 1e6) {
+    return (value / 1e6).toFixed(1) + "M";
+  } else if (value >= 1e3) {
+    return (value / 1e3).toFixed(1) + "K";
+  }
+  return value.toString();
+}
+
+function formatCurrency(value) {
+  if (value >= 1e9) {
+    return "$" + (value / 1e9).toFixed(1) + "B";
+  } else if (value >= 1e6) {
+    return "$" + (value / 1e6).toFixed(1) + "M";
+  } else if (value >= 1e3) {
+    return "$" + (value / 1e3).toFixed(1) + "K";
+  }
+  return "$" + value.toFixed(1);
+}
 
 function HSNList({ handleSelect, list = [], selectedHSN }) {
   const {
@@ -215,6 +304,9 @@ function DataTableForAllFilter({ column, row }) {
                 className={`p-2 whitespace-nowrap ${
                   i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
                 }`}
+                style={{
+                  boxShadow: i === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
+                }}
               >
                 <div className="font-semibold text-left">{th?.columnLabel}</div>
               </th>
@@ -232,6 +324,9 @@ function DataTableForAllFilter({ column, row }) {
                 className={`p-2 whitespace-pre-wrap ${
                   j === 0 ? "sticky left-0 z-10 bg-white" : ""
                 }`}
+                style={{
+                  boxShadow: j === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
+                }}
               >
                 <div
                   className={
@@ -260,6 +355,9 @@ function DataTableForAnnualViewFilter({ column = [], row = [] }) {
                 className={`text-xs p-2 whitespace-nowrap ${
                   i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
                 }`}
+                style={{
+                  boxShadow: i === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
+                }}
               >
                 <div className="font-semibold text-left">
                   {th?.columnLabel || ""}
@@ -276,6 +374,9 @@ function DataTableForAnnualViewFilter({ column = [], row = [] }) {
             <tr>
               <td
                 className={`p-2 whitespace-nowrap sticky left-0 z-10 bg-white`}
+                style={{
+                  boxShadow: `inset -1px 0px 0px #d2d2d2`,
+                }}
               >
                 <div className="flex items-center">
                   <div className="font-medium text-gray-800">{tr?.label}</div>
@@ -421,6 +522,51 @@ function EXIMService() {
   const [allEximTableData, setAllEximTableData] = useState(null);
   const [hsnListData, setHSNListData] = useState([]);
   const [activeHSN, setActiveHSN] = useState(null);
+  const [topStats, setTopStats] = useState([]);
+  const [demandStats, setDemandStats] = useState({});
+
+  async function getEximAnalyticsData(hsnCode) {
+    let url =
+      apiAnalyticsURL +
+      `api/service/rice-price/exim-analysis?hsn_code=${hsnCode}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      if (response?.data) {
+        setDemandStats({
+          inflationPercentage: response?.data?.inflationPercentage || 0,
+          demandPercentage: response?.data?.demandPercentage || 0,
+        });
+        const formatedData = transformAnalysisData(response.data);
+        if (formatedData?.length) {
+          setTopStats(formatedData);
+        }
+      } else {
+        openToastMessage({
+          type: "error",
+          message: "Something went wrong, please refresh",
+        });
+
+        setTimeout(() => {
+          closeToastMessage();
+        }, 2500);
+      }
+    } catch (err) {
+      openToastMessage({
+        type: "error",
+        message: "Something went wrong, please refresh",
+      });
+
+      setTimeout(() => {
+        closeToastMessage();
+      }, 2500);
+    }
+  }
 
   async function getEximTableData(
     hsnCode,
@@ -431,7 +577,9 @@ function EXIMService() {
     pageSize = 10
   ) {
     // &year=2023
-    let url = `https://api-analytics-stage.pwip.co/api/service/rice-price/exim-table?hsn_code=${hsnCode}&valueType=${valueType}&portType=${portType}&page=${page}&limit=${pageSize}`;
+    let url =
+      apiAnalyticsURL +
+      `api/service/rice-price/exim-table?hsn_code=${hsnCode}&valueType=${valueType}&portType=${portType}&page=${page}&limit=${pageSize}`;
 
     if (valueType?.toLowerCase() === "all" && year) {
       url = url + `&year=${year}`;
@@ -446,10 +594,6 @@ function EXIMService() {
 
       if (response?.data) {
         if (valueType?.toLowerCase() === "all") {
-          console.log(
-            "transformArrayToTableData",
-            transformArrayToTableData(response?.data)
-          );
           const requiredColRowData = transformArrayToTableData(response?.data);
 
           setAllEximTableData(requiredColRowData);
@@ -481,6 +625,12 @@ function EXIMService() {
   }
 
   useEffect(() => {
+    if (authToken && activeHSN?.HSNCode) {
+      getEximAnalyticsData(activeHSN?.HSNCode);
+    }
+  }, [authToken, activeHSN?.HSNCode]);
+
+  useEffect(() => {
     if (
       authToken &&
       selectedLocationViewMode &&
@@ -488,14 +638,13 @@ function EXIMService() {
       selectedYear &&
       activeHSN
     ) {
-      console.log("activeHSN", activeHSN);
       getEximTableData(
         activeHSN?.HSNCode,
         selectedViewMode?.value?.toUpperCase(),
         selectedLocationViewMode?.value?.toUpperCase(),
         selectedYear,
         1,
-        15
+        20
       );
     }
   }, [
@@ -546,7 +695,7 @@ function EXIMService() {
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-100 z-0 space-y-2 pb-12`}
         >
-          <div className="sticky top-0 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100">
+          <div className="fixed top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100">
             <div className="flex flex-col w-full space-y-1 px-5">
               <div
                 onClick={() => {
@@ -592,41 +741,11 @@ function EXIMService() {
             </div>
           </div>
 
-          <div className="bg-white w-full py-4 px-5 relative space-y-9">
+          <div className="bg-white w-full py-4 px-5 relative space-y-9 top-[86px]">
             <div className="w-full h-auto">
               <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
                 <div className="flex flex-nowrap space-x-3">
-                  {[
-                    {
-                      title: "Most exported to port",
-                      value: "Abu dhabi",
-                    },
-
-                    {
-                      title: "Most exported to country",
-                      value: "Emirates",
-                    },
-
-                    {
-                      title: "Most exported in year",
-                      value: "2017",
-                    },
-
-                    {
-                      title: "Most exported from port",
-                      value: "Kolkata",
-                    },
-
-                    {
-                      title: "Total volume exported",
-                      value: "54M",
-                    },
-
-                    {
-                      title: "Total FOB exported",
-                      value: "$392k",
-                    },
-                  ].map((d, i) => (
+                  {topStats.map((d, i) => (
                     <div
                       key={d?.title + "_" + i}
                       className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
@@ -648,26 +767,18 @@ function EXIMService() {
             </div>
 
             <div className="w-full h-auto space-y-7">
-              {[
-                {
-                  type: "up",
-                },
-                {
-                  type: "up",
-                },
-                {
-                  type: "down",
-                },
-              ].map((d, i) => {
+              {Object.keys(demandStats)?.map((d, i) => {
+                const sign = checkNumberSign(demandStats[d]);
+
                 return (
                   <div
-                    key={d?.type + "_" + i}
+                    key={d + "_" + i}
                     className="w-full inline-flex items-start justify-start space-x-4"
                   >
-                    {d?.type === "up" ? (
+                    {sign === "positive" ? (
                       <div
-                        className={`h-6 w-6 ${
-                          d?.type === "up"
+                        className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
+                          sign === "positive"
                             ? "text-pwip-v2-green-600 bg-pwip-green-200"
                             : ""
                         } rounded-full inline-flex items-center justify-center`}
@@ -675,18 +786,33 @@ function EXIMService() {
                         {increaseUpIcon}
                       </div>
                     ) : (
-                      <div className="min-h-6 min-w-6 max-h-6 max-w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
+                      <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
                         {decreaseDownIcon}
                       </div>
                     )}
 
                     <div className="inline-flex flex-col space-y-1">
                       <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                        Increasing demand
+                        {sign === "positive"
+                          ? "Increasing demand"
+                          : "Decreasing demand"}
                       </span>
                       <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
-                        Over the last 5 years, market demand has increased to
-                        4.85%
+                        {sign === "positive" && d === "inflationPercentage"
+                          ? `Over the last 5 years, inflation has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                          : sign === "negative" && d === "inflationPercentage"
+                          ? `Over the last 5 years, inflation has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                          : ""}
+
+                        {sign === "positive" && d === "demandPercentage"
+                          ? `Over the last 5 years, market demand has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                          : sign === "negative" && d === "demandPercentage"
+                          ? `Over the last 5 years, market demand has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                          : ""}
                       </p>
                     </div>
                   </div>
