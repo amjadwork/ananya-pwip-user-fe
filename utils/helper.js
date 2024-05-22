@@ -62,6 +62,7 @@ export const apiBaseURL = process.env.NEXT_PUBLIC_API_URL; //|| "https://api-sta
 export const apiStagePaymentBeUrl =
   process.env.NEXT_PUBLIC_API_STAGE_PAYMENT_BE_URL;
 export const apiUtilsURL = process.env.NEXT_PUBLIC_UTILS_API_URL; //|| "https://api-stage.pwip.co/";
+export const apiAnalyticsURL = process.env.NEXT_PUBLIC_ANALYTICS_API_URL; //|| "https://api-stage.pwip.co/";
 
 export const exportCostingServiceId =
   process.env.NEXT_PUBLIC_API_EXPORT_COSTING_SERVICE_ID;

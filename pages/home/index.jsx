@@ -47,6 +47,7 @@ import { Header } from "@/components/Header";
 import axios from "axios";
 import {
   apiBaseURL,
+  apiAnalyticsURL,
   apiStagePaymentBeUrl,
   formatNumberWithCommas,
   pwipPrimeServiceId,
@@ -345,16 +346,18 @@ function Home() {
 
   const fetchEXIMTrend = async () => {
     try {
-      // const response = await axios.get(
-      //   apiBaseURL +
-      //     "api" +
-      //     "/service/rice-price/exim-trend?ToDate=01-04-2024&rangeInMonths=6",
-      //   {
-      //     headers: {
-      //       Authorization: `Bearer ${authToken}`,
-      //     },
-      //   }
-      // );
+      const response = await axios.get(
+        apiAnalyticsURL +
+          "api" +
+          "/service/rice-price/exim-trend?ToDate=21-05-2024&rangeInMonths=6",
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        }
+      );
+
+      console.log("response", response);
 
       const eximDataFromResponse = {
         totalVolume: 5337910.098269986,
