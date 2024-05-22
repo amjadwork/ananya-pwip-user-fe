@@ -1,15 +1,10 @@
 import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
-import dynamic from "next/dynamic";
 import { useOverlayContext } from "@/context/OverlayContext";
-import Slider from "react-slick";
-
-const Chart = dynamic(() => import("react-charts").then((mod) => mod.Chart), {
-  ssr: false,
-});
 
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -24,34 +19,55 @@ import {
 
 // Import Components
 import { Header } from "@/components/Header";
-import { Button } from "@/components/Button";
-import { getStateAbbreviation, getDateRangeByPeriod } from "@/utils/helper";
 
-import {
-  fetchProductDetailRequest,
-  fetchProductDetailFailure,
-} from "@/redux/actions/products.actions";
-import {
-  fetchVariantPriceRequest,
-  setSelectedVariantForDetailRequest,
-  fetchVariantPriceHistoryRequest,
-  addVariantToWatchlistRequest,
-  fetchAllWatchlistForVariantRequest,
-} from "@/redux/actions/variant-prices.actions";
+import { fetchProductsRequest } from "@/redux/actions/products.actions";
 
-import { fetchVariantProfileRequest } from "@/redux/actions/variant-profile.actions";
+function HSNList({ handleSelect, list = [], selectedHSN }) {
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    closeToastMessage,
+    isBottomSheetOpen,
+  } = useOverlayContext();
 
-import {
-  graphPeriod,
-  propertyData,
-} from "@/constants/variantProfile.constants";
+  const [selectedOption, setSelectionOption] = useState(null);
 
-import moment from "moment";
+  useEffect(() => {
+    if (selectedHSN) setSelectionOption(selectedHSN);
+  }, [selectedHSN]);
 
-import {
-  setCostingSelection,
-  // setCustomCostingSelection,
-} from "@/redux/actions/costing.actions.js";
+  return (
+    <div className="inline-flex w-full flex-col pb-20">
+      <div className="w-full px-6 pt-6 pb-4 mb-3">
+        <span className="font-medium text-base">Choose an HSN code</span>
+      </div>
+      {list?.map((d, i) => {
+        return (
+          <div
+            key={d?.HSNCode + "_" + i}
+            onClick={() => {
+              handleSelect(d);
+              setSelectionOption(d?.HSNCode);
+              closeBottomSheet();
+            }}
+            className={`inline-flex items-center justify-between w-full px-6 py-4 ${
+              i !== list.length - 1 ? "border-b border-b-pwip-v2-gray-350" : ""
+            } ${selectedOption === d?.HSNCode ? "bg-pwip-v2-gray-100" : ""}`}
+          >
+            <div className="inline-flex items-center space-x-2 text-pwip-v2-primary-700">
+              <span className="text-pwip-black-500 text-sm">{d?.HSNCode}</span>
+            </div>
+
+            {selectedOption === d?.HSNCode ? (
+              <span className="text-pwip-v2-primary-500">{checkIcon}</span>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 function ViewMode({ handleSelect, selectedViewMode }) {
   const {
@@ -187,351 +203,192 @@ function LocationViewMode({ handleSelect, selectedViewMode }) {
   );
 }
 
-function DataTableForAllFilter() {
+function DataTableForAllFilter({ column, row }) {
   return (
     <table className="table-auto w-full">
       <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
         <tr>
-          <th className="p-2 whitespace-nowrap sticky left-0 z-10 bg-gray-50">
-            <div className="font-semibold text-left">Product Description</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-left">Exporter</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-left">Foreign Port</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Foreign Country</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Quantity</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Unit</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Value_FC</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Indian Port</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Mode</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Date</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Buyer</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Rate_FC</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">IEC</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Exporter Address1</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Exporter Address2</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Exporter City</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Currency</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">FOB</div>
-          </th>
-
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">Rate</div>
-          </th>
+          {column?.map((th, i) => {
+            return (
+              <th
+                key={th?.columnLabel + "_" + i}
+                className={`p-2 whitespace-nowrap ${
+                  i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
+                }`}
+              >
+                <div className="font-semibold text-left">{th?.columnLabel}</div>
+              </th>
+            );
+          })}
         </tr>
       </thead>
 
-      <tbody className="text-sm divide-y divide-gray-100">
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Alex Shatov</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">alexshatov@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,890.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇺🇸</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Philip Harbach</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">philip.h@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,767.04
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇩🇪</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Mirko Fisuk</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">mirkofisuk@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,996.00
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇫🇷</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Olga Semklo</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">olga.s@cool.design</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $1,220.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇮🇹</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Burak Long</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">longburak@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $1,890.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇬🇧</div>
-          </td>
-        </tr>
+      <tbody className="text-xs divide-y divide-gray-100 text-gray-500">
+        {row?.map((tr, i) => (
+          <tr key={i}>
+            {column.map((col, j) => (
+              <td
+                key={col?.key + "_" + j}
+                className={`p-2 whitespace-pre-wrap ${
+                  j === 0 ? "sticky left-0 z-10 bg-white" : ""
+                }`}
+              >
+                <div
+                  className={
+                    j === 0 ? "font-medium text-gray-500" : "text-left"
+                  }
+                >
+                  {tr[col.key]}
+                </div>
+              </td>
+            ))}
+          </tr>
+        ))}
       </tbody>
     </table>
   );
 }
 
-function DataTableForAnnualViewFilter() {
+function DataTableForAnnualViewFilter({ column = [], row = [] }) {
   return (
     <table className="table-auto w-full">
       <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
         <tr>
-          <th className="p-2 whitespace-nowrap sticky left-0 z-10 bg-gray-50">
-            <div className="font-semibold text-left">Year</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-left">2020</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-left">2021</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-left">2022</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">2023</div>
-          </th>
-          <th className="p-2 whitespace-nowrap">
-            <div className="font-semibold text-center">2024</div>
-          </th>
+          {column?.map((th, i) => {
+            return (
+              <th
+                className={`text-xs p-2 whitespace-nowrap ${
+                  i === 0 ? "sticky left-0 z-10 bg-gray-50" : ""
+                }`}
+              >
+                <div className="font-semibold text-left">
+                  {th?.columnLabel || ""}
+                </div>
+              </th>
+            );
+          })}
         </tr>
       </thead>
 
-      <tbody className="text-sm divide-y divide-gray-100">
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Alex Shatov</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">alexshatov@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,890.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇺🇸</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Philip Harbach</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">philip.h@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,767.04
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇩🇪</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Mirko Fisuk</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">mirkofisuk@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $2,996.00
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇫🇷</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Olga Semklo</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">olga.s@cool.design</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $1,220.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇮🇹</div>
-          </td>
-        </tr>
-        <tr>
-          <td className="p-2 whitespace-nowrap sticky left-0 z-10 bg-white">
-            <div className="flex items-center">
-              <div className="font-medium text-gray-800">Burak Long</div>
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left">longburak@gmail.com</div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-left font-medium text-green-500">
-              $1,890.66
-            </div>
-          </td>
-          <td className="p-2 whitespace-nowrap">
-            <div className="text-lg text-center">🇬🇧</div>
-          </td>
-        </tr>
+      <tbody className="text-xs divide-y divide-gray-100">
+        {row?.map((tr, i) => {
+          return (
+            <tr>
+              <td
+                className={`p-2 whitespace-nowrap sticky left-0 z-10 bg-white`}
+              >
+                <div className="flex items-center">
+                  <div className="font-medium text-gray-800">{tr?.label}</div>
+                </div>
+              </td>
+              {column.slice(1).map((col, index) => (
+                <td key={index} className="p-2 whitespace-nowrap">
+                  <div className="text-left font-normal text-gray-500">
+                    {tr[col.columnLabel] !== undefined
+                      ? tr[col.columnLabel]
+                      : 0}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
 }
 
-function compareArrays(arr, obj) {
-  return arr.map((property) => {
-    const { key } = property;
-    const value = obj[key];
+function transformData(input) {
+  const { totalVolume, tableData } = input;
+  const columns = [{ columnLabel: "Year" }];
+  const rows = [];
 
-    if (typeof value === "string") {
-      return {
-        ...property,
-        value: value,
-        isString: true,
-        showOnlyRangeTo: false,
-      };
-    } else if (typeof value === "object") {
-      const { rangeFrom, rangeTo, unit, notes } = value;
-      if (rangeFrom === 0 && rangeTo === 0) {
-        return {
-          ...property,
-          value: notes,
-          isString: false,
-          showOnlyRangeTo: true,
-        };
-      } else if (rangeFrom === 0) {
-        return {
-          ...property,
-          value: `${rangeTo} ${unit}`,
-          isString: false,
-          showOnlyRangeTo: true,
-        };
-      } else {
-        return {
-          ...property,
-          value: `${rangeFrom} - ${rangeTo} ${unit}`,
-          isString: false,
-          showOnlyRangeTo: false,
-        };
-      }
-    } else {
-      return property;
-    }
+  // Extract years from totalVolume
+  const years = Object.keys(totalVolume);
+  years.forEach((year) => columns.push({ columnLabel: year }));
+
+  // Add totalVolume to rows
+  const totalVolumeRow = { label: "Total volume" };
+  years.forEach((year) => {
+    totalVolumeRow[year] = totalVolume[year];
   });
-}
+  rows.push(totalVolumeRow);
 
-function generateSliderArr(inputArray) {
-  let resultArray = [];
-  let currentSubArray = [];
-
-  for (let i = 0; i < inputArray.length; i++) {
-    currentSubArray.push(inputArray[i]);
-
-    if ((i + 1) % 3 === 0 || i === inputArray.length - 1) {
-      resultArray.push([...currentSubArray]);
-      currentSubArray = [];
+  // Transform tableData into rows
+  for (const location in tableData) {
+    if (location !== "Null") {
+      const row = { label: location };
+      years.forEach((year) => {
+        row[year] = tableData[location][year] || 0; // If year data is missing, set it to 0
+      });
+      rows.push(row);
     }
   }
 
-  return resultArray;
+  return { columns, rows };
+}
+
+function transformArrayToTableData(inputArray) {
+  if (!inputArray.length) return { columns: [], rows: [] };
+
+  // Specify the fields to include in the output, in the desired order
+  const includedFields = [
+    "productDescription",
+    "exporter",
+    "foreignPortName",
+    "foreignCountry",
+    "quantity",
+    "unit",
+    "value_fc",
+    "indianPort",
+    "mode",
+    "date",
+    "buyer",
+    "rate_fc",
+    "IEC",
+    "exporterAddress_1",
+    "exporterAddress_2",
+    "exporterCity",
+    "currency",
+    "fob",
+    "ratePerTonne",
+  ];
+
+  // Create columns based on the included fields
+  const columns = includedFields.map((field) => {
+    return {
+      columnLabel: field
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, (str) => str.toUpperCase()),
+      key: field,
+    };
+  });
+
+  // Create rows by mapping each object in the input array
+  const rows = inputArray.map((obj) => {
+    const row = {};
+    columns.forEach((col) => {
+      row[col.key] = obj[col.key];
+    });
+    return row;
+  });
+
+  return { columns, rows };
+}
+
+function groupByHSNCode(data) {
+  return data.reduce((acc, item) => {
+    const { HSNCode } = item;
+    if (HSNCode && HSNCode.trim()) {
+      const existingGroup = acc.find((group) => group.HSNCode === HSNCode);
+      if (existingGroup) {
+        existingGroup.items.push(item);
+      } else {
+        acc.push({ HSNCode, items: [item] });
+      }
+    }
+    return acc;
+  }, []);
 }
 
 function EXIMService() {
@@ -546,7 +403,8 @@ function EXIMService() {
     isBottomSheetOpen,
   } = useOverlayContext();
 
-  //   const variantDetail = useSelector((state) => state.products?.variantDetail);
+  const authToken = useSelector((state) => state.auth?.token);
+  const products = useSelector((state) => state?.products?.products); // Use api reducer slice
 
   const [selectedViewMode, setSelectedViewMode] = useState({
     label: "Annual volume view",
@@ -557,6 +415,114 @@ function EXIMService() {
     label: "Foreign ports",
     value: "pod",
   });
+
+  const [selectedYear, setSelectedYear] = useState(2023);
+  const [modelBasedEximTableData, setModelBasedEximTableData] = useState(null);
+  const [allEximTableData, setAllEximTableData] = useState(null);
+  const [hsnListData, setHSNListData] = useState([]);
+  const [activeHSN, setActiveHSN] = useState(null);
+
+  async function getEximTableData(
+    hsnCode,
+    valueType,
+    portType,
+    year,
+    page = 1,
+    pageSize = 10
+  ) {
+    // &year=2023
+    let url = `https://api-analytics-stage.pwip.co/api/service/rice-price/exim-table?hsn_code=${hsnCode}&valueType=${valueType}&portType=${portType}&page=${page}&limit=${pageSize}`;
+
+    if (valueType?.toLowerCase() === "all" && year) {
+      url = url + `&year=${year}`;
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      if (response?.data) {
+        if (valueType?.toLowerCase() === "all") {
+          console.log(
+            "transformArrayToTableData",
+            transformArrayToTableData(response?.data)
+          );
+          const requiredColRowData = transformArrayToTableData(response?.data);
+
+          setAllEximTableData(requiredColRowData);
+          return;
+        }
+
+        const requiredColRowData = transformData(response?.data);
+        setModelBasedEximTableData(requiredColRowData);
+      } else {
+        openToastMessage({
+          type: "error",
+          message: "Something went wrong, please refresh",
+        });
+
+        setTimeout(() => {
+          closeToastMessage();
+        }, 2500);
+      }
+    } catch (err) {
+      openToastMessage({
+        type: "error",
+        message: "Something went wrong, please refresh",
+      });
+
+      setTimeout(() => {
+        closeToastMessage();
+      }, 2500);
+    }
+  }
+
+  useEffect(() => {
+    if (
+      authToken &&
+      selectedLocationViewMode &&
+      selectedViewMode &&
+      selectedYear &&
+      activeHSN
+    ) {
+      console.log("activeHSN", activeHSN);
+      getEximTableData(
+        activeHSN?.HSNCode,
+        selectedViewMode?.value?.toUpperCase(),
+        selectedLocationViewMode?.value?.toUpperCase(),
+        selectedYear,
+        1,
+        15
+      );
+    }
+  }, [
+    authToken,
+    selectedLocationViewMode,
+    selectedViewMode,
+    selectedYear,
+    activeHSN,
+  ]);
+
+  useEffect(() => {
+    if (products) {
+      const groupedByHSN = groupByHSNCode(products);
+
+      if (groupedByHSN?.length) {
+        setActiveHSN(groupedByHSN[0]);
+
+        setHSNListData(groupedByHSN);
+      }
+    }
+  }, [products]);
+
+  useLayoutEffect(() => {
+    if (authToken) {
+      dispatch(fetchProductsRequest());
+    }
+  }, [authToken]);
 
   return (
     <React.Fragment>
@@ -570,15 +536,8 @@ function EXIMService() {
 
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        {/*<meta
-          name="apple-mobile-web-app-status-bar-style"
-          content="black-translucent"
-        />
-        */}
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-        {/* <link rel="manifest" href="/manifest.json" /> */}
-        {/* <link rel="icon" href="/favicon.ico" /> */}
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </Head>
 
       <AppLayout>
@@ -590,6 +549,18 @@ function EXIMService() {
           <div className="sticky top-0 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100">
             <div className="flex flex-col w-full space-y-1 px-5">
               <div
+                onClick={() => {
+                  const content = (
+                    <HSNList
+                      handleSelect={(opt) => {
+                        setActiveHSN(opt);
+                      }}
+                      list={hsnListData}
+                      selectedHSN={activeHSN?.HSNCode}
+                    />
+                  );
+                  openBottomSheet(content);
+                }}
                 style={{
                   filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
                 }}
@@ -612,7 +583,7 @@ function EXIMService() {
                 </button>
 
                 <span className="w-full bg-white pl-[18px] text-sm font-sans outline-none border-none text-pwip-v2-gray-500">
-                  Search for a HSN
+                  {activeHSN?.HSNCode || "Search for a HSN"}
                 </span>
                 <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
                   {chevronDown}
@@ -753,35 +724,71 @@ function EXIMService() {
                     </div>
                   </div>
 
-                  <div
-                    onClick={() => {
-                      const content = (
-                        <LocationViewMode
-                          handleSelect={(selectedMode) => {
-                            setSelectedLocationViewMode(selectedMode);
-                          }}
-                          selectedViewMode={selectedLocationViewMode}
-                        />
-                      );
-                      openBottomSheet(content);
-                    }}
-                    className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
-                  >
-                    <div className="inline-flex items-center justify-between space-x-10">
-                      <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
-                        {selectedLocationViewMode?.label}
-                      </span>
-                      {chevronDown}
+                  {selectedViewMode?.value !== "all" ? (
+                    <div
+                      onClick={() => {
+                        const content = (
+                          <LocationViewMode
+                            handleSelect={(selectedMode) => {
+                              setSelectedLocationViewMode(selectedMode);
+                            }}
+                            selectedViewMode={selectedLocationViewMode}
+                          />
+                        );
+                        openBottomSheet(content);
+                      }}
+                      className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
+                    >
+                      <div className="inline-flex items-center justify-between space-x-10">
+                        <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
+                          {selectedLocationViewMode?.label}
+                        </span>
+                        {chevronDown}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
+
+                  {selectedViewMode?.value === "all" ? (
+                    <React.Fragment>
+                      {[2019, 2020, 2021, 2022, 2023]
+                        .map((d, i) => {
+                          return (
+                            <div
+                              key={d * i}
+                              onClick={() => {
+                                setSelectedYear(d);
+                              }}
+                              className={`inline-flex items-center px-3 py-2 rounded-lg border ${
+                                selectedYear === d
+                                  ? "border-pwip-v2-primary-700 text-pwip-v2-primary-700"
+                                  : "border-pwip-v2-gray-350 text-pwip-gray-800"
+                              }`}
+                            >
+                              <div className="inline-flex items-center justify-between space-x-10">
+                                <span className="text-sm whitespace-nowrap">
+                                  {d}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })
+                        .reverse()}
+                    </React.Fragment>
+                  ) : null}
                 </div>
               </div>
 
               <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
                 {selectedViewMode?.value === "all" ? (
-                  <DataTableForAllFilter />
+                  <DataTableForAllFilter
+                    column={allEximTableData?.columns}
+                    row={allEximTableData?.rows}
+                  />
                 ) : (
-                  <DataTableForAnnualViewFilter />
+                  <DataTableForAnnualViewFilter
+                    column={modelBasedEximTableData?.columns}
+                    row={modelBasedEximTableData?.rows}
+                  />
                 )}
               </div>
             </div>
