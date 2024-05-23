@@ -17,6 +17,7 @@ import {
   exportCostingServiceId,
   checkSubscription,
   ofcServiceId,
+  eximServiceId,
   pwipPrimePlanId,
   getUniqueObjectsBySourceId,
 } from "@/utils/helper";
@@ -619,9 +620,10 @@ function Home() {
                 },
                 {
                   name: "EXIM",
-                  comingSoon: true,
                   icon: "/assets/images/home_main/exim.png",
-                  url: "/service/exim",
+                  subscribedUrl: "/service/exim",
+                  url: "/service/exim/lp",
+                  serviceId: Number(eximServiceId),
                 },
                 {
                   name: "Community",

@@ -65,6 +65,11 @@ const serviceLogoRoutes = [
     logo: "/assets/images/services/exim-service-logo.png",
   },
   {
+    route: "exim",
+    query: "EXIM",
+    logo: "/assets/images/services/exim-service-logo.png",
+  },
+  {
     route: "ofc",
     query: "",
     logo: "/assets/images/services/ofc-service-logo.png",

@@ -29,6 +29,10 @@ import { nextArrow } from "../../theme/icon";
 
 const API_STAGE_PAYMENT_BE = apiStagePaymentBeUrl;
 
+const style = {
+  height: 80,
+};
+
 const LandingPage = (props) => {
   const {
     serviceName,
@@ -39,6 +43,8 @@ const LandingPage = (props) => {
     videoContent,
     SERVICE_ID,
     videoUrl,
+    showAnimationOnTitleImage,
+    animateData,
   } = props;
 
   const authToken = useSelector((state) => state.auth?.token);
@@ -292,7 +298,12 @@ const LandingPage = (props) => {
     <React.Fragment>
       <div className="text-[#1B1B1B] text-[20px] font-bold mb-8 flex justify-between items-center">
         <span>{title}</span>
-        <img className="h-12 w-36" src={titleImgSrc} />
+
+        {showAnimationOnTitleImage ? (
+          <Lottie animationData={animateData} style={style} />
+        ) : (
+          <img className="h-12 w-36" src={titleImgSrc} />
+        )}
       </div>
 
       {pickYourPlan
