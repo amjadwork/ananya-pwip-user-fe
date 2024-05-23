@@ -85,7 +85,7 @@ function transformAnalysisData(input) {
   // Placeholder values for "Most exported to country" since the input does not contain this key
   output.push({
     title: "Most exported to country",
-    value: "Emirates", // Default or placeholder value
+    value: input?.MostExportedDestinationCountry?.destinationCountryName, // Default or placeholder value
     key: "MostExportedDestinationCountry",
     icon: "/assets/images/services/exim/countries.png",
   });
