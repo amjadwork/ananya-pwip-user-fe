@@ -1074,7 +1074,7 @@ function EXIMService() {
               </div>
 
               <div className="w-full h-auto !mt-3">
-                <span className="text-xs text-gray-600">
+                <span className="text-xs text-gray-600 line-clamp-2 leading-6">
                   <span className="font-semibold text-pwip-v2-primary-700">
                     Rice found:{" "}
                   </span>
@@ -1277,7 +1277,7 @@ function EXIMService() {
 
           <div
             id="tableSection"
-            className="inline-flex w-full flex-col h-[calc(100vh-266px)] px-5 !mt-0 bg-white pb-12"
+            className="inline-flex w-full flex-col h-[calc(100vh-266px)] px-5 !mt-0 bg-white pb-6"
           >
             <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
               {selectedViewMode?.value === "all" ? (
