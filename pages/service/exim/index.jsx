@@ -550,7 +550,58 @@ function DataTableForAllFilter({
   );
 }
 
-function DataTableForAnnualViewFilter({ column = [], row = [] }) {
+function DataTableForAnnualViewFilter({
+  column = [],
+  row = [],
+  fetchRows,
+  pageNumber,
+  isLoading,
+  applyingFilter,
+  handleSettingApplyFilter,
+}) {
+  const observer = useRef();
+  const [loading, setLoading] = useState(false);
+  const [rows, setRows] = useState([]);
+
+  async function loadMoreRows(item = []) {
+    setLoading(true);
+
+    const newRows = [...item];
+    if (newRows && newRows.length > 0) {
+      if (applyingFilter) {
+        setRows([...newRows]);
+      } else {
+        setRows((prevRows) => [...prevRows, ...newRows]);
+      }
+      handleSettingApplyFilter(false);
+    } else {
+      observer.current?.disconnect();
+    }
+    setLoading(false);
+  }
+
+  const lastRowRef = useCallback(
+    (node) => {
+      if (loading || isLoading) return;
+
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          let count = pageNumber + 1;
+          fetchRows(count);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, isLoading]
+  );
+
+  useEffect(() => {
+    loadMoreRows(row);
+  }, [row]);
+
   return (
     <table className="table-auto w-full">
       <thead className="sticky top-0 z-10 text-xs font-semibold uppercase text-gray-400 bg-gray-50">
@@ -575,9 +626,9 @@ function DataTableForAnnualViewFilter({ column = [], row = [] }) {
       </thead>
 
       <tbody className="text-xs divide-y divide-gray-100">
-        {row?.map((tr, i) => {
+        {rows?.map((tr, i) => {
           return (
-            <tr>
+            <tr ref={i === rows.length - 1 ? lastRowRef : null}>
               <td
                 className={`p-2 whitespace-nowrap sticky left-0 z-0 bg-white`}
                 style={{
@@ -1206,6 +1257,16 @@ function EXIMService() {
                 <DataTableForAnnualViewFilter
                   column={modelBasedEximTableData?.columns}
                   row={modelBasedEximTableData?.rows}
+                  // for infinite load
+                  pageNumber={pageNumber}
+                  isLoading={isLoading}
+                  fetchRows={(num) => {
+                    setPageNumber(num);
+                  }}
+                  applyingFilter={applyingFilter}
+                  handleSettingApplyFilter={() => {
+                    setApplyingFilter(false);
+                  }}
                 />
               )}
             </div>
