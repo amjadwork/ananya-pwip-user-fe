@@ -151,6 +151,15 @@ function getVariantNamesString(items) {
   return resultString;
 }
 
+function formatNumberWithCommas(number) {
+  return (
+    number
+      // ?.toFixed(2)
+      // .toString()
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  );
+}
+
 function formatVolume(value) {
   if (value >= 1e9) {
     return (value / 1e9).toFixed(1) + "B";
@@ -656,7 +665,7 @@ function DataTableForAnnualViewFilter({
   );
 }
 
-function transformData(input) {
+function transformData(input, compareData) {
   const { totalVolume, tableData } = input;
   const columns = [{ columnLabel: "Year" }];
   const rows = [];
@@ -666,18 +675,28 @@ function transformData(input) {
   years.forEach((year) => columns.push({ columnLabel: year }));
 
   // Add totalVolume to rows
-  const totalVolumeRow = { label: "Total volume" };
-  years.forEach((year) => {
-    totalVolumeRow[year] = totalVolume[year];
-  });
-  rows.push(totalVolumeRow);
+  if (
+    !compareData &&
+    !compareData?.rows?.find((f) => f?.label === "Total volume")
+  ) {
+    const totalVolumeRow = { label: "Total volume" };
+    years.forEach((year) => {
+      totalVolumeRow[year] = formatVolume(totalVolume[year]);
+    });
+    rows.push(totalVolumeRow);
+  }
 
   // Transform tableData into rows
   for (const location in tableData) {
     if (location !== "Null") {
       const row = { label: location };
       years.forEach((year) => {
-        row[year] = tableData[location][year] || 0; // If year data is missing, set it to 0
+        row[year] =
+          typeof tableData[location][year] === "number"
+            ? formatNumberWithCommas(tableData[location][year]?.toFixed(2))
+            : tableData[location][year]
+            ? formatNumberWithCommas(tableData[location][year]?.toFixed(2))
+            : null; // If year data is missing, set it to 0
       });
       rows.push(row);
     }
@@ -876,7 +895,10 @@ function EXIMService() {
           return;
         }
 
-        const requiredColRowData = transformData(response?.data);
+        const requiredColRowData = transformData(
+          response?.data,
+          modelBasedEximTableData
+        );
         setModelBasedEximTableData(requiredColRowData);
       } else {
         openToastMessage({
