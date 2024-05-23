@@ -452,6 +452,8 @@ function DataTableForAllFilter({
   fetchRows,
   pageNumber,
   isLoading,
+  applyingFilter,
+  handleSettingApplyFilter,
 }) {
   const observer = useRef();
   const [loading, setLoading] = useState(false);
@@ -463,7 +465,12 @@ function DataTableForAllFilter({
 
     const newRows = [...item];
     if (newRows && newRows.length > 0) {
-      setRows((prevRows) => [...prevRows, ...newRows]);
+      if (applyingFilter) {
+        setRows([...newRows]);
+      } else {
+        setRows((prevRows) => [...prevRows, ...newRows]);
+      }
+      handleSettingApplyFilter(false);
     } else {
       observer.current?.disconnect();
     }
@@ -480,7 +487,6 @@ function DataTableForAllFilter({
         if (entries[0].isIntersecting) {
           let count = pageNumber + 1;
           fetchRows(count);
-          // setPage(count);
         }
       });
 
@@ -729,6 +735,8 @@ function EXIMService() {
   const [demandStats, setDemandStats] = useState({});
   const [pageNumber, setPageNumber] = useState(1);
 
+  const [applyingFilter, setApplyingFilter] = useState(false);
+
   async function getEximAnalyticsData(hsnCode) {
     let url =
       apiAnalyticsURL +
@@ -853,8 +861,6 @@ function EXIMService() {
   }, [authToken, activeHSN?.HSNCode]);
 
   useEffect(() => {
-    console.log("here trigger", pageNumber);
-
     if (
       authToken &&
       selectedLocationViewMode &&
@@ -867,8 +873,6 @@ function EXIMService() {
       if (isLoading === false) {
         startLoading();
       }
-
-      console.log("here pageNumber", pageNumber);
 
       getEximTableData(
         activeHSN?.HSNCode,
@@ -939,6 +943,8 @@ function EXIMService() {
                     <HSNList
                       handleSelect={(opt) => {
                         setActiveHSN(opt);
+                        setApplyingFilter(true);
+                        setPageNumber(1);
                       }}
                       list={hsnListData}
                       selectedHSN={activeHSN?.HSNCode}
@@ -1078,6 +1084,8 @@ function EXIMService() {
                       <ViewMode
                         handleSelect={(selectedMode) => {
                           setSelectedViewMode(selectedMode);
+                          setApplyingFilter(true);
+                          setPageNumber(1);
                         }}
                         selectedViewMode={selectedViewMode}
                       />
@@ -1104,6 +1112,8 @@ function EXIMService() {
                         <LocationViewMode
                           handleSelect={(selectedMode) => {
                             setSelectedLocationViewMode(selectedMode);
+                            setApplyingFilter(true);
+                            setPageNumber(1);
                           }}
                           selectedViewMode={selectedLocationViewMode}
                         />
@@ -1134,6 +1144,8 @@ function EXIMService() {
                                   handleSelect={(opt) => {
                                     setSelectedMonth(opt);
                                     setSelectedYear(d);
+                                    setApplyingFilter(true);
+                                    setPageNumber(1);
                                   }}
                                   selectedMonth={selectedMonth}
                                   selectedYear={selectedYear}
@@ -1184,7 +1196,10 @@ function EXIMService() {
                   isLoading={isLoading}
                   fetchRows={(num) => {
                     setPageNumber(num);
-                    console.log("here fetching next page", num);
+                  }}
+                  applyingFilter={applyingFilter}
+                  handleSettingApplyFilter={() => {
+                    setApplyingFilter(false);
                   }}
                 />
               ) : (
