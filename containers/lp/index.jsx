@@ -297,7 +297,9 @@ const LandingPage = (props) => {
   return (
     <React.Fragment>
       <div className="text-[#1B1B1B] text-[20px] font-bold mb-8 flex justify-between items-center">
-        <span>{title}</span>
+        <div className="w-[70%]">
+          <span>{title}</span>
+        </div>
 
         {showAnimationOnTitleImage ? (
           <Lottie animationData={animateData} style={style} />
