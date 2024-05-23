@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useCallback,
+} from "react";
 import { useOverlayContext } from "@/context/OverlayContext";
 
 import Head from "next/head";
@@ -434,7 +440,53 @@ function LocationViewMode({ handleSelect, selectedViewMode }) {
   );
 }
 
-function DataTableForAllFilter({ column, row }) {
+function DataTableForAllFilter({
+  column,
+  row,
+  fetchRows,
+  pageNumber,
+  isLoading,
+}) {
+  const observer = useRef();
+  const [loading, setLoading] = useState(false);
+  const [rows, setRows] = useState([]);
+  // const [page, setPage] = useState(1);
+
+  async function loadMoreRows(item = []) {
+    setLoading(true);
+
+    const newRows = [...item];
+    if (newRows && newRows.length > 0) {
+      setRows((prevRows) => [...prevRows, ...newRows]);
+    } else {
+      observer.current?.disconnect();
+    }
+    setLoading(false);
+  }
+
+  const lastRowRef = useCallback(
+    (node) => {
+      if (loading || isLoading) return;
+
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          let count = pageNumber + 1;
+          fetchRows(count);
+          // setPage(count);
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, isLoading]
+  );
+
+  useEffect(() => {
+    loadMoreRows(row);
+  }, [row]);
+
   return (
     <table className="table-auto w-full">
       <thead className="sticky top-0 z-10 text-xs font-semibold uppercase text-gray-400 bg-gray-50">
@@ -458,8 +510,8 @@ function DataTableForAllFilter({ column, row }) {
       </thead>
 
       <tbody className="text-xs divide-y divide-gray-100 text-gray-500">
-        {row?.map((tr, i) => (
-          <tr key={i}>
+        {rows?.map((tr, i) => (
+          <tr key={i} ref={i === rows.length - 1 ? lastRowRef : null}>
             {column.map((col, j) => (
               <td
                 key={col?.key + "_" + j}
@@ -669,6 +721,7 @@ function EXIMService() {
   const [activeHSN, setActiveHSN] = useState(null);
   const [topStats, setTopStats] = useState([]);
   const [demandStats, setDemandStats] = useState({});
+  const [pageNumber, setPageNumber] = useState(1);
 
   async function getEximAnalyticsData(hsnCode) {
     let url =
@@ -748,8 +801,6 @@ function EXIMService() {
         },
       });
 
-      console.log("am i here to stop loading");
-
       stopLoading();
 
       if (response?.data) {
@@ -796,17 +847,22 @@ function EXIMService() {
   }, [authToken, activeHSN?.HSNCode]);
 
   useEffect(() => {
+    console.log("here trigger", pageNumber);
+
     if (
       authToken &&
       selectedLocationViewMode &&
       selectedViewMode &&
       selectedYear &&
       activeHSN &&
-      !isBottomSheetOpen
+      !isBottomSheetOpen &&
+      pageNumber
     ) {
       if (isLoading === false) {
         startLoading();
       }
+
+      console.log("here pageNumber", pageNumber);
 
       getEximTableData(
         activeHSN?.HSNCode,
@@ -814,7 +870,7 @@ function EXIMService() {
         selectedLocationViewMode?.value?.toUpperCase(),
         selectedYear,
         selectedMonth?.toLowerCase(),
-        1,
+        pageNumber,
         20
       );
     }
@@ -825,6 +881,7 @@ function EXIMService() {
     selectedYear,
     activeHSN,
     selectedMonth,
+    pageNumber,
   ]);
 
   useEffect(() => {
@@ -1115,6 +1172,12 @@ function EXIMService() {
                 <DataTableForAllFilter
                   column={allEximTableData?.columns}
                   row={allEximTableData?.rows}
+                  pageNumber={pageNumber}
+                  isLoading={isLoading}
+                  fetchRows={(num) => {
+                    setPageNumber(num);
+                    console.log("here fetching next page", num);
+                  }}
                 />
               ) : (
                 <DataTableForAnnualViewFilter
