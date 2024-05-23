@@ -19,6 +19,7 @@ const hideBottomBarAtRoutes = [
   "rice-price",
   "export-costing",
   "ofc",
+  "exim",
   "waitlist",
 ];
 

@@ -24,6 +24,44 @@ import { apiAnalyticsURL } from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
 
+function getMonthAbbreviation(month) {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthAbbreviations = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const index = monthNames.indexOf(month);
+  if (index !== -1) {
+    return monthAbbreviations[index];
+  } else {
+    return null; // or you can return an error message or handle it as needed
+  }
+}
+
 function transformAnalysisData(input) {
   const output = [];
 
@@ -121,6 +159,84 @@ function formatCurrency(value) {
     return "$" + (value / 1e3).toFixed(1) + "K";
   }
   return "$" + value.toFixed(1);
+}
+
+const months = [
+  "Full year",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+function MonthList({ handleSelect, selectedMonth, selectedYear, clickedYear }) {
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    openToastMessage,
+    closeToastMessage,
+    isBottomSheetOpen,
+  } = useOverlayContext();
+
+  const [selectedOption, setSelectionOption] = useState(null);
+
+  useEffect(() => {
+    if (selectedMonth && selectedYear === clickedYear) {
+      setSelectionOption(selectedMonth);
+    }
+  }, [selectedMonth, selectedYear, clickedYear]);
+
+  return (
+    <div className="inline-flex w-full flex-col pb-20 relative top-0">
+      <div className="w-full px-6 pt-4 pb-4 fixed top-[22px] z-10 left-0 bg-white">
+        <span className="font-medium text-base">
+          See full year data or choose a month
+        </span>
+      </div>
+      <div className="relative top-[56px] z-0">
+        {months?.map((d, i) => {
+          return (
+            <div key={d + "_" + i} className="w-full h-auto">
+              <div
+                onClick={() => {
+                  handleSelect(d);
+                  setSelectionOption(d);
+                  closeBottomSheet();
+                }}
+                className={`w-full px-6 py-4 ${
+                  i !== months.length - 1
+                    ? "border-b border-b-pwip-v2-gray-350"
+                    : ""
+                } ${selectedOption === d ? "bg-pwip-v2-gray-100" : ""}`}
+              >
+                <div className="inline-flex items-center justify-between w-full">
+                  <div className="inline-flex items-center space-x-2 text-pwip-v2-primary-700">
+                    <span className="text-pwip-v2-primary-800 text-sm font-normal">
+                      {d}
+                    </span>
+                  </div>
+
+                  {selectedOption === d ? (
+                    <span className="text-pwip-v2-primary-500">
+                      {checkIcon}
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function HSNList({ handleSelect, list = [], selectedHSN }) {
@@ -524,7 +640,9 @@ function EXIMService() {
 
   const {
     openBottomSheet,
-    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    isLoading,
     openToastMessage,
     closeToastMessage,
     isBottomSheetOpen,
@@ -543,7 +661,8 @@ function EXIMService() {
     value: "pod",
   });
 
-  const [selectedYear, setSelectedYear] = useState(2023);
+  const [selectedYear, setSelectedYear] = useState(2024);
+  const [selectedMonth, setSelectedMonth] = useState("Full year");
   const [modelBasedEximTableData, setModelBasedEximTableData] = useState(null);
   const [allEximTableData, setAllEximTableData] = useState(null);
   const [hsnListData, setHSNListData] = useState([]);
@@ -562,6 +681,8 @@ function EXIMService() {
           Authorization: `Bearer ${authToken}`,
         },
       });
+
+      stopLoading();
 
       if (response?.data) {
         setDemandStats({
@@ -583,6 +704,7 @@ function EXIMService() {
         }, 2500);
       }
     } catch (err) {
+      stopLoading();
       openToastMessage({
         type: "error",
         message: "Something went wrong, please refresh",
@@ -599,10 +721,10 @@ function EXIMService() {
     valueType,
     portType,
     year,
+    month,
     page = 1,
     pageSize = 10
   ) {
-    // &year=2023
     let url =
       apiAnalyticsURL +
       `api/service/rice-price/exim-table?hsn_code=${hsnCode}&valueType=${valueType}&portType=${portType}&page=${page}&limit=${pageSize}`;
@@ -611,12 +733,24 @@ function EXIMService() {
       url = url + `&year=${year}`;
     }
 
+    if (
+      valueType?.toLowerCase() === "all" &&
+      month &&
+      month?.toLowerCase() !== "full year"
+    ) {
+      url = url + `&month=${month}`;
+    }
+
     try {
       const response = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
       });
+
+      console.log("am i here to stop loading");
+
+      stopLoading();
 
       if (response?.data) {
         if (valueType?.toLowerCase() === "all") {
@@ -639,6 +773,7 @@ function EXIMService() {
         }, 2500);
       }
     } catch (err) {
+      stopLoading();
       openToastMessage({
         type: "error",
         message: "Something went wrong, please refresh",
@@ -652,6 +787,10 @@ function EXIMService() {
 
   useEffect(() => {
     if (authToken && activeHSN?.HSNCode) {
+      if (isLoading === false) {
+        startLoading();
+      }
+
       getEximAnalyticsData(activeHSN?.HSNCode);
     }
   }, [authToken, activeHSN?.HSNCode]);
@@ -662,13 +801,19 @@ function EXIMService() {
       selectedLocationViewMode &&
       selectedViewMode &&
       selectedYear &&
-      activeHSN
+      activeHSN &&
+      !isBottomSheetOpen
     ) {
+      if (isLoading === false) {
+        startLoading();
+      }
+
       getEximTableData(
         activeHSN?.HSNCode,
         selectedViewMode?.value?.toUpperCase(),
         selectedLocationViewMode?.value?.toUpperCase(),
         selectedYear,
+        selectedMonth?.toLowerCase(),
         1,
         20
       );
@@ -679,6 +824,7 @@ function EXIMService() {
     selectedViewMode,
     selectedYear,
     activeHSN,
+    selectedMonth,
   ]);
 
   useEffect(() => {
@@ -918,7 +1064,19 @@ function EXIMService() {
                           <div
                             key={d * i}
                             onClick={() => {
-                              setSelectedYear(d);
+                              const content = (
+                                <MonthList
+                                  handleSelect={(opt) => {
+                                    setSelectedMonth(opt);
+                                    setSelectedYear(d);
+                                  }}
+                                  selectedMonth={selectedMonth}
+                                  selectedYear={selectedYear}
+                                  clickedYear={d}
+                                />
+                              );
+
+                              openBottomSheet(content);
                             }}
                             className={`inline-flex items-center px-3 py-2 rounded-lg border ${
                               selectedYear === d
@@ -928,8 +1086,15 @@ function EXIMService() {
                           >
                             <div className="inline-flex items-center justify-between space-x-10">
                               <span className="text-sm whitespace-nowrap">
+                                {selectedMonth !== "Full year" &&
+                                selectedYear === d
+                                  ? getMonthAbbreviation(selectedMonth)
+                                  : selectedYear === d
+                                  ? "Year"
+                                  : ""}{" "}
                                 {d}
                               </span>
+                              {chevronDown}
                             </div>
                           </div>
                         );
