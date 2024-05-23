@@ -29,6 +29,7 @@ import { Header } from "@/components/Header";
 import { apiAnalyticsURL } from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
+import moment from "moment";
 
 function getMonthAbbreviation(month) {
   const monthNames = [
@@ -149,6 +150,10 @@ function getVariantNamesString(items) {
   }
 
   return resultString;
+}
+
+function formatDateToDDMMYYYY(date) {
+  return moment(date).format("DD-MM-YYYY");
 }
 
 function formatNumberWithCommas(number) {
@@ -536,9 +541,11 @@ function DataTableForAllFilter({
             {column.map((col, j) => (
               <td
                 key={col?.key + "_" + j}
-                className={`p-2 whitespace-pre-wrap ${
-                  j === 0 ? "sticky left-0 z-0 bg-white" : ""
-                }`}
+                className={`p-2 ${
+                  col?.key === "date"
+                    ? "whitespace-nowrap"
+                    : "whitespace-pre-wrap"
+                } ${j === 0 ? "sticky left-0 z-0 bg-white" : ""}`}
                 style={{
                   boxShadow: j === 0 ? `inset -1px 0px 0px #d2d2d2` : "unset",
                 }}
@@ -744,9 +751,21 @@ function transformArrayToTableData(inputArray) {
   // Create rows by mapping each object in the input array
   const rows = inputArray.map((obj) => {
     const row = {};
+    // columns.forEach((col) => {
+    //   row[col.key] = obj[col.key];
+    // });
+
     columns.forEach((col) => {
-      row[col.key] = obj[col.key];
+      let value = obj[col.key];
+      if (col?.key === "date" && value) {
+        value = formatDateToDDMMYYYY(value);
+      }
+      if (typeof value === "number" && value) {
+        value = formatNumberWithCommas(value?.toFixed(2));
+      }
+      row[col.key] = value;
     });
+
     return row;
   });
 
