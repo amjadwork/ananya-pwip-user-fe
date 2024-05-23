@@ -89,6 +89,18 @@ function checkNumberSign(number) {
   }
 }
 
+function getVariantNamesString(items) {
+  const variantNames = items.map((item) => item.variantName);
+  const uniqueVariantNames = [...new Set(variantNames)]; // Ensure unique variant names
+
+  let resultString = uniqueVariantNames.slice(0, 5).join(", ");
+  if (uniqueVariantNames.length > 5) {
+    resultString += ", etc";
+  }
+
+  return resultString;
+}
+
 function formatVolume(value) {
   if (value >= 1e9) {
     return (value / 1e9).toFixed(1) + "B";
@@ -133,24 +145,38 @@ function HSNList({ handleSelect, list = [], selectedHSN }) {
       </div>
       {list?.map((d, i) => {
         return (
-          <div
-            key={d?.HSNCode + "_" + i}
-            onClick={() => {
-              handleSelect(d);
-              setSelectionOption(d?.HSNCode);
-              closeBottomSheet();
-            }}
-            className={`inline-flex items-center justify-between w-full px-6 py-4 ${
-              i !== list.length - 1 ? "border-b border-b-pwip-v2-gray-350" : ""
-            } ${selectedOption === d?.HSNCode ? "bg-pwip-v2-gray-100" : ""}`}
-          >
-            <div className="inline-flex items-center space-x-2 text-pwip-v2-primary-700">
-              <span className="text-pwip-black-500 text-sm">{d?.HSNCode}</span>
-            </div>
+          <div key={d?.HSNCode + "_" + i} className="w-full h-auto">
+            <div
+              onClick={() => {
+                handleSelect(d);
+                setSelectionOption(d?.HSNCode);
+                closeBottomSheet();
+              }}
+              className={`w-full px-6 py-4 ${
+                i !== list.length - 1
+                  ? "border-b border-b-pwip-v2-gray-350"
+                  : ""
+              } ${selectedOption === d?.HSNCode ? "bg-pwip-v2-gray-100" : ""}`}
+            >
+              <div className="inline-flex items-center justify-between w-full">
+                <div className="inline-flex items-center space-x-2 text-pwip-v2-primary-700">
+                  <span className="text-pwip-v2-primary-800 text-sm font-semibold">
+                    {d?.HSNCode}
+                  </span>
+                </div>
 
-            {selectedOption === d?.HSNCode ? (
-              <span className="text-pwip-v2-primary-500">{checkIcon}</span>
-            ) : null}
+                {selectedOption === d?.HSNCode ? (
+                  <span className="text-pwip-v2-primary-500">{checkIcon}</span>
+                ) : null}
+              </div>
+
+              <div className="w-full h-auto !mt-3">
+                <span className="text-xs text-gray-600">
+                  <span className="font-semibold">Rice found: </span>
+                  {getVariantNamesString(d?.items || [])}
+                </span>
+              </div>
+            </div>
           </div>
         );
       })}
@@ -295,7 +321,7 @@ function LocationViewMode({ handleSelect, selectedViewMode }) {
 function DataTableForAllFilter({ column, row }) {
   return (
     <table className="table-auto w-full">
-      <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+      <thead className="sticky top-0 z-10 text-xs font-semibold uppercase text-gray-400 bg-gray-50">
         <tr>
           {column?.map((th, i) => {
             return (
@@ -347,7 +373,7 @@ function DataTableForAllFilter({ column, row }) {
 function DataTableForAnnualViewFilter({ column = [], row = [] }) {
   return (
     <table className="table-auto w-full">
-      <thead className="text-xs font-semibold uppercase text-gray-400 bg-gray-50">
+      <thead className="sticky top-0 z-10 text-xs font-semibold uppercase text-gray-400 bg-gray-50">
         <tr>
           {column?.map((th, i) => {
             return (
@@ -508,8 +534,8 @@ function EXIMService() {
   const products = useSelector((state) => state?.products?.products); // Use api reducer slice
 
   const [selectedViewMode, setSelectedViewMode] = useState({
-    label: "Annual volume view",
-    value: "volume",
+    label: "See all data",
+    value: "all",
   });
 
   const [selectedLocationViewMode, setSelectedLocationViewMode] = useState({
@@ -692,9 +718,7 @@ function EXIMService() {
       <AppLayout>
         <Header hideLogo={true} />
 
-        <div
-          className={`h-full w-full bg-pwip-v2-gray-100 space-y-2 pb-12 relative`}
-        >
+        <div className={`h-full w-full bg-pwip-v2-gray-100 space-y-2 relative`}>
           <div
             id="selectOptionHSN"
             className="sticky top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100"
@@ -740,6 +764,15 @@ function EXIMService() {
                 <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
                   {chevronDown}
                 </button>
+              </div>
+
+              <div className="w-full h-auto !mt-3">
+                <span className="text-xs text-gray-600">
+                  <span className="font-semibold text-pwip-v2-primary-700">
+                    Rice found:{" "}
+                  </span>
+                  {getVariantNamesString(activeHSN?.items || [])}
+                </span>
               </div>
             </div>
           </div>
@@ -825,7 +858,7 @@ function EXIMService() {
           </div>
           {/* table */}
 
-          <div className="w-full h-auto px-5 py-3 sticky bg-white z-20 top-[142px] !mb-0 !mt-0">
+          <div className="w-full h-auto px-5 py-3 sticky bg-white z-20 top-[202px] !mb-0 !mt-0">
             <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] w-full">
               <div className="flex flex-nowrap space-x-3">
                 <div
@@ -910,7 +943,7 @@ function EXIMService() {
 
           <div
             id="tableSection"
-            className="inline-flex w-full flex-col h-screen px-5 !mt-0 bg-white"
+            className="inline-flex w-full flex-col h-[calc(100vh-266px)] px-5 !mt-0 bg-white pb-12"
           >
             <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
               {selectedViewMode?.value === "all" ? (
