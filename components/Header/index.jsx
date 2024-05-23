@@ -178,7 +178,7 @@ export function Header(props) {
     setServiceLogoRoute(serviceLogoRouteObject);
   }, [activeServiceRoute, activeRoute, router]);
 
-  const rootServicePages = ["export-costing", "ofc", "rice-price"];
+  const rootServicePages = ["export-costing", "ofc", "rice-price", "exim"];
 
   return (
     <header
