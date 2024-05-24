@@ -1138,24 +1138,30 @@ function EXIMService() {
 
                     <div className="inline-flex flex-col space-y-1">
                       <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                        {sign === "positive"
+                        {sign === "positive" && d === "inflationPercentage"
+                          ? "Increasing inflation"
+                          : sign === "positive" && d === "demandPercentage"
                           ? "Increasing demand"
-                          : "Decreasing demand"}
+                          : sign === "negative" && d === "inflationPercentage"
+                          ? "Decreasing demand"
+                          : sign === "negative" && d === "demandPercentage"
+                          ? "Decreasing demand"
+                          : ""}
                       </span>
                       <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
                         {sign === "positive" && d === "inflationPercentage"
-                          ? `Over the last 5 years, inflation has increased to
+                          ? `Over the last 3 years, inflation has increased to
                         ${demandStats[d]?.toFixed(2)}%`
                           : sign === "negative" && d === "inflationPercentage"
-                          ? `Over the last 5 years, inflation has decreaded to
+                          ? `Over the last 3 years, inflation has decreaded to
                           ${demandStats[d]?.toFixed(2)}%`
                           : ""}
 
                         {sign === "positive" && d === "demandPercentage"
-                          ? `Over the last 5 years, market demand has increased to
+                          ? `Over the last 2 years, market demand has increased to
                         ${demandStats[d]?.toFixed(2)}%`
                           : sign === "negative" && d === "demandPercentage"
-                          ? `Over the last 5 years, market demand has decreaded to
+                          ? `Over the last 2 years, market demand has decreaded to
                           ${demandStats[d]?.toFixed(2)}%`
                           : ""}
                       </p>
