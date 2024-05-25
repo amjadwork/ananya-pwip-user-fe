@@ -21,6 +21,7 @@ import {
   decreaseDownIcon,
   eyePreviewIcon,
   checkIcon,
+  filterIcon,
 } from "../../../theme/icon";
 
 // Import Components
@@ -30,6 +31,23 @@ import { apiAnalyticsURL } from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
 import moment from "moment";
+
+const yearList = [2021, 2022, 2023, 2024];
+
+function FilterOptionList() {
+  return (
+    <div className="inline-flex w-full h-full flex-col px-5">
+      <div className="inline-flex w-full">
+        <h3 className="text-pwip-black-600 font-semibold text-base">Filter</h3>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 w-full h-full">
+        <div className="h-full py-8 bg-red-500"></div>
+        <div className="col-span-2 py-8 h-full bg-green-500"></div>
+      </div>
+    </div>
+  );
+}
 
 function getMonthAbbreviation(month) {
   const monthNames = [
@@ -203,37 +221,60 @@ const months = [
   "December",
 ];
 
-function MonthList({ handleSelect, selectedMonth, selectedYear, clickedYear }) {
-  const {
-    openBottomSheet,
-    closeBottomSheet,
-    openToastMessage,
-    closeToastMessage,
-    isBottomSheetOpen,
-  } = useOverlayContext();
+function MonthList({ handleSelect, selectedMonth, selectedYear }) {
+  const { closeBottomSheet } = useOverlayContext();
 
   const [selectedOption, setSelectionOption] = useState(null);
+  const [selectedYearOption, setSelectedYearOption] = useState(2024);
 
   useEffect(() => {
-    if (selectedMonth && selectedYear === clickedYear) {
+    if (selectedMonth && selectedYear) {
       setSelectionOption(selectedMonth);
+      setSelectedYearOption(selectedYear);
     }
-  }, [selectedMonth, selectedYear, clickedYear]);
+  }, [selectedMonth, selectedYear]);
 
   return (
     <div className="inline-flex w-full flex-col pb-20 relative top-0">
       <div className="w-full px-6 pt-4 pb-4 fixed top-[22px] z-10 left-0 bg-white">
-        <span className="font-medium text-base">
-          See full year data or choose a month
-        </span>
+        <span className="font-medium text-base">Filter by year and month</span>
       </div>
-      <div className="relative top-[56px] z-0">
+      <div className="fixed top-[78px] left-0 w-full z-10 py-4 px-5 bg-white">
+        <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] w-full">
+          <div className="flex flex-nowrap space-x-3">
+            {yearList
+              .map((y, i) => {
+                return (
+                  <div
+                    key={y + "_" + i}
+                    onClick={() => {
+                      setSelectedYearOption(y);
+                      handleSelect(null, y);
+                      setSelectionOption(null);
+                    }}
+                    className={`inline-flex items-center px-3 py-2 rounded-lg border ${
+                      selectedYearOption === y
+                        ? "border-pwip-v2-primary-700 text-pwip-v2-primary-700"
+                        : "border-pwip-v2-gray-350 text-pwip-gray-800"
+                    }`}
+                  >
+                    <div className="inline-flex items-center justify-between space-x-10">
+                      <span className="text-sm whitespace-nowrap">{y}</span>
+                    </div>
+                  </div>
+                );
+              })
+              ?.reverse()}
+          </div>
+        </div>
+      </div>
+      <div className="relative w-full h-full pb-10 top-[130px] z-0">
         {months?.map((d, i) => {
           return (
             <div key={d + "_" + i} className="w-full h-auto">
               <div
                 onClick={() => {
-                  handleSelect(d);
+                  handleSelect(d, selectedYearOption);
                   setSelectionOption(d);
                   closeBottomSheet();
                 }}
@@ -775,8 +816,10 @@ function transformArrayToTableData(inputArray) {
 function groupByHSNCode(data) {
   return data.reduce((acc, item) => {
     const { HSNCode } = item;
-    if (HSNCode && HSNCode.trim()) {
-      const existingGroup = acc.find((group) => group.HSNCode === HSNCode);
+    if (HSNCode) {
+      const existingGroup = acc.find(
+        (group) => group.HSNCode.trim() === HSNCode.trim()
+      );
       if (existingGroup) {
         existingGroup.items.push(item);
       } else {
@@ -990,6 +1033,8 @@ function EXIMService() {
     if (products) {
       const groupedByHSN = groupByHSNCode(products);
 
+      console.log("here groupedByHSN", groupedByHSN);
+
       if (groupedByHSN?.length) {
         setActiveHSN(groupedByHSN[0]);
 
@@ -999,9 +1044,18 @@ function EXIMService() {
   }, [products]);
 
   useLayoutEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    console.log("here signal 0", signal);
+
     if (authToken) {
-      dispatch(fetchProductsRequest());
+      dispatch(fetchProductsRequest(signal));
     }
+
+    return () => {
+      controller.abort();
+    };
   }, [authToken]);
 
   return (
@@ -1231,50 +1285,60 @@ function EXIMService() {
 
                 {selectedViewMode?.value === "all" ? (
                   <React.Fragment>
-                    {[2021, 2022, 2023, 2024]
-                      .map((d, i) => {
-                        return (
-                          <div
-                            key={d * i}
-                            onClick={() => {
-                              const content = (
-                                <MonthList
-                                  handleSelect={(opt) => {
-                                    setSelectedMonth(opt);
-                                    setSelectedYear(d);
-                                    setApplyingFilter(true);
-                                    setPageNumber(1);
-                                  }}
-                                  selectedMonth={selectedMonth}
-                                  selectedYear={selectedYear}
-                                  clickedYear={d}
-                                />
-                              );
-
-                              openBottomSheet(content);
+                    <div
+                      onClick={() => {
+                        const content = (
+                          <MonthList
+                            handleSelect={(mo, y) => {
+                              setSelectedMonth(mo);
+                              setSelectedYear(y);
+                              setApplyingFilter(true);
+                              setPageNumber(1);
                             }}
-                            className={`inline-flex items-center px-3 py-2 rounded-lg border ${
-                              selectedYear === d
-                                ? "border-pwip-v2-primary-700 text-pwip-v2-primary-700"
-                                : "border-pwip-v2-gray-350 text-pwip-gray-800"
-                            }`}
-                          >
-                            <div className="inline-flex items-center justify-between space-x-10">
-                              <span className="text-sm whitespace-nowrap">
-                                {selectedMonth !== "Full year" &&
-                                selectedYear === d
-                                  ? getMonthAbbreviation(selectedMonth)
-                                  : selectedYear === d
-                                  ? "Year"
-                                  : ""}{" "}
-                                {d}
-                              </span>
-                              {chevronDown}
-                            </div>
-                          </div>
+                            selectedMonth={selectedMonth}
+                            selectedYear={selectedYear}
+                          />
                         );
-                      })
-                      .reverse()}
+
+                        openBottomSheet(content);
+                      }}
+                      className={`inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800`}
+                    >
+                      <div className="inline-flex items-center justify-between space-x-10">
+                        <span className="text-sm whitespace-nowrap">
+                          {selectedMonth !== "Full year"
+                            ? getMonthAbbreviation(selectedMonth)
+                            : selectedMonth === "Full year"
+                            ? "Year"
+                            : ""}{" "}
+                          {selectedYear}
+                        </span>
+                        {chevronDown}
+                      </div>
+                    </div>
+
+                    <div
+                      onClick={() => {
+                        const content = (
+                          <FilterOptionList
+                          //
+                          />
+                        );
+
+                        openBottomSheet(content);
+                      }}
+                      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800`}
+                    >
+                      <span className="text-pwip-v2-primary-700">
+                        {filterIcon}
+                      </span>
+                      <div className="inline-flex items-center justify-between space-x-10">
+                        <span className="text-sm whitespace-nowrap">
+                          Filter
+                        </span>
+                        {chevronDown}
+                      </div>
+                    </div>
                   </React.Fragment>
                 ) : null}
               </div>
