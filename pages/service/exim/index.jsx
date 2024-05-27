@@ -215,7 +215,7 @@ function FilterOptionList({
             );
           })}
         </div>
-        <div className="pb-[92px] relative h-auto col-span-2 inline-flex w-full flex-col overflow-y-auto hide-scroll-bar">
+        <div className="pb-[92px] relative h-full col-span-2 inline-flex w-full flex-col overflow-y-scroll hide-scroll-bar">
           <div className="bg-white w-full py-4 px-5 mb-0 sticky top-0 left-0">
             <div className="inline-flex w-full border border-gray-200 rounded-md px-3 py-2">
               <input
