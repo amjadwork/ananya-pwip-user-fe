@@ -22,10 +22,12 @@ import {
   eyePreviewIcon,
   checkIcon,
   filterIcon,
+  closeXmark,
 } from "../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
+import { Button } from "@/components/Button";
 
 import { apiAnalyticsURL } from "@/utils/helper";
 
@@ -33,18 +35,263 @@ import { fetchProductsRequest } from "@/redux/actions/products.actions";
 import moment from "moment";
 
 const yearList = [2021, 2022, 2023, 2024];
+const filterOpt = [
+  {
+    label: "Country",
+    key: "foreignCountry",
+  },
+  {
+    label: "Foreign port",
+    key: "foreignPortName",
+  },
+  {
+    label: "Indian port",
+    key: "indianPort",
+  },
+  {
+    label: "Exporter",
+    key: "exporter",
+  },
+  {
+    label: "Mode",
+    key: "mode",
+  },
+  {
+    label: "IEC",
+    key: "IEC",
+  },
+];
 
-function FilterOptionList() {
+function objectToQueryString(params) {
+  const queryString = Object.keys(params)
+    .map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    )
+    .join("&");
+  return queryString;
+}
+
+function FilterOptionList({
+  selectedHSN,
+  type,
+  selectedYear,
+  selectedMonth,
+  handleApply,
+  appliedFilterData,
+}) {
+  const { closeBottomSheet } = useOverlayContext();
+
+  const authToken = useSelector((state) => state.auth?.token);
+
+  const [filterData, setFilterData] = useState(null);
+  const [activeFilterOpt, setActiveFilterOpt] = useState([]);
+  const [selectedFilterOptKey, setSelectedFilterOptKey] =
+    useState("foreignCountry");
+  const [selectedFilterItem, setSelectedFilterItem] = useState(null);
+  const [searchString, setSearchString] = useState("");
+
+  function clearOrResetStats() {
+    setFilterData(null);
+    setActiveFilterOpt([]);
+    setSelectedFilterOptKey("foreignCountry");
+    setSelectedFilterItem(null);
+  }
+
+  async function getEximFilterOptions(hsnCode, valueType, year, month) {
+    let url =
+      apiAnalyticsURL +
+      `api/service/rice-price/exim-table/filter-values?hsn_code=${hsnCode}`;
+
+    if (valueType?.toLowerCase() === "all" && year) {
+      url = url + `&year=${year}`;
+    }
+
+    if (
+      valueType?.toLowerCase() === "all" &&
+      month &&
+      month?.toLowerCase() !== "full year"
+    ) {
+      url = url + `&month=${month}`;
+    }
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      if (response?.data) {
+        setFilterData(response?.data);
+      }
+    } catch (err) {
+      console.error("here err", err);
+    }
+  }
+
+  useEffect(() => {
+    if (selectedHSN && type?.value && selectedYear && selectedMonth) {
+      getEximFilterOptions(
+        selectedHSN,
+        type?.value,
+        selectedYear,
+        selectedMonth
+      );
+    }
+  }, [selectedHSN, type, selectedYear, selectedMonth]);
+
+  useEffect(() => {
+    if (selectedFilterOptKey && filterData && !searchString) {
+      setActiveFilterOpt(filterData[selectedFilterOptKey]);
+    }
+  }, [selectedFilterOptKey, filterData, searchString]);
+
+  useEffect(() => {
+    if (searchString && filterData && selectedFilterOptKey) {
+      let dataToFilter = filterData[selectedFilterOptKey];
+
+      const searchLower = searchString.toLowerCase();
+      let matchingData = [];
+
+      for (const item of dataToFilter) {
+        const itemName = item.toLowerCase();
+
+        if (itemName.includes(searchLower)) {
+          matchingData.push(item);
+        }
+      }
+
+      setActiveFilterOpt(matchingData);
+    }
+  }, [searchString, filterData, selectedFilterOptKey]);
+
+  useEffect(() => {
+    if (appliedFilterData && Object?.keys(appliedFilterData)?.length) {
+      setSelectedFilterItem(appliedFilterData);
+    }
+  }, [appliedFilterData]);
+
   return (
-    <div className="inline-flex w-full h-full flex-col px-5">
-      <div className="inline-flex w-full">
+    <div className="inline-flex w-full h-[calc(100vh-320px)] flex-col">
+      <div className="inline-flex w-full items-center justify-between px-5 border-b-gray-800 py-3">
         <h3 className="text-pwip-black-600 font-semibold text-base">Filter</h3>
+
+        <div
+          onClick={async () => {
+            await clearOrResetStats();
+            closeBottomSheet();
+          }}
+          className="inline-flex items-center justify-center w-auto h-auto"
+        >
+          {closeXmark}
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 w-full h-full">
-        <div className="h-full py-8 bg-red-500"></div>
-        <div className="col-span-2 py-8 h-full bg-green-500"></div>
+      <div className="grid grid-cols-3 gap-1 w-full h-full">
+        <div className="h-full col-span-1 py-4 inline-flex flex-col overflow-y-auto hide-scroll-bar">
+          {filterOpt?.map((d, i) => {
+            return (
+              <div
+                key={d?.key + "_" + i}
+                onClick={() => {
+                  setActiveFilterOpt(filterData[d?.key]);
+                  setSelectedFilterOptKey(d?.key);
+                }}
+                className={`px-5 inline-flex items-center relative w-full text-pwip-black-500 ${
+                  i !== filterOpt?.length - 1
+                    ? "border-b border-b-gray-200"
+                    : ""
+                } ${
+                  selectedFilterOptKey === d?.key
+                    ? "bg-pwip-v2-primary-100 !text-pwip-v2-primary-500"
+                    : ""
+                } py-3`}
+              >
+                {selectedFilterOptKey === d?.key ? (
+                  <div className="h-full w-[4px] bg-pwip-v2-primary-500 absolute z-0 top-0 left-0" />
+                ) : null}
+                <span className="text-sm font-medium">{d?.label}</span>
+              </div>
+            );
+          })}
+        </div>
+        <div className="pb-[92px] relative h-auto col-span-2 inline-flex w-full flex-col overflow-y-auto hide-scroll-bar">
+          <div className="bg-white w-full py-4 px-5 mb-0 sticky top-0 left-0">
+            <div className="inline-flex w-full border border-gray-200 rounded-md px-3 py-2">
+              <input
+                type="text"
+                placeholder="Search"
+                className="h-full w-full outline-none"
+                value={searchString}
+                onChange={(e) => {
+                  setSearchString(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+          {activeFilterOpt.map((d, i) => {
+            return (
+              <div
+                key={d + "_" + i}
+                className={`px-5 w-full py-3 inline-flex items-center space-x-3`}
+                onClick={() => {
+                  const obj = {
+                    [selectedFilterOptKey]: d,
+                  };
+                  if (!selectedFilterItem) {
+                    setSelectedFilterItem(obj);
+                  } else {
+                    setSelectedFilterItem({
+                      ...selectedFilterItem,
+                      ...obj,
+                    });
+                  }
+                }}
+              >
+                <input
+                  checked={
+                    selectedFilterItem &&
+                    selectedFilterItem[selectedFilterOptKey] === d
+                      ? "true"
+                      : false
+                  }
+                  type="radio"
+                  className=""
+                  onChange={() => null}
+                />
+                <span className="text-sm font-medium text-pwip-black-500">
+                  {d}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
+
+      {selectedFilterItem ? (
+        <div className="inline-flex items-center w-full fixed bottom-0 left-0 py-3 px-5 space-x-3 bg-white">
+          <Button
+            type="outline"
+            label="Clear filters"
+            minHeight="!min-h-[42px]"
+            onClick={async () => {
+              await clearOrResetStats();
+              handleApply({});
+              closeBottomSheet();
+            }}
+          />
+          <Button
+            type="primary"
+            label="Apply filter"
+            minHeight="!min-h-[42px]"
+            onClick={async () => {
+              handleApply(selectedFilterItem);
+              // await clearOrResetStats();
+              closeBottomSheet();
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -869,6 +1116,10 @@ function EXIMService() {
 
   const [applyingFilter, setApplyingFilter] = useState(false);
 
+  const [appliedFilterData, setAppliedFilterData] = useState({});
+
+  // appliedFilters
+
   async function getEximAnalyticsData(hsnCode) {
     let url =
       apiAnalyticsURL +
@@ -922,7 +1173,8 @@ function EXIMService() {
     year,
     month,
     page = 1,
-    pageSize = 10
+    pageSize = 10,
+    filters = null
   ) {
     let url =
       apiAnalyticsURL +
@@ -938,6 +1190,10 @@ function EXIMService() {
       month?.toLowerCase() !== "full year"
     ) {
       url = url + `&month=${month}`;
+    }
+
+    if (filters && Object?.keys(filters)?.length) {
+      url = url + `&` + objectToQueryString(filters);
     }
 
     try {
@@ -1016,7 +1272,8 @@ function EXIMService() {
         selectedYear,
         selectedMonth?.toLowerCase(),
         pageNumber,
-        20
+        20,
+        appliedFilterData
       );
     }
   }, [
@@ -1027,13 +1284,12 @@ function EXIMService() {
     activeHSN,
     selectedMonth,
     pageNumber,
+    appliedFilterData,
   ]);
 
   useEffect(() => {
     if (products) {
       const groupedByHSN = groupByHSNCode(products);
-
-      console.log("here groupedByHSN", groupedByHSN);
 
       if (groupedByHSN?.length) {
         setActiveHSN(groupedByHSN[0]);
@@ -1044,18 +1300,9 @@ function EXIMService() {
   }, [products]);
 
   useLayoutEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    console.log("here signal 0", signal);
-
     if (authToken) {
-      dispatch(fetchProductsRequest(signal));
+      dispatch(fetchProductsRequest());
     }
-
-    return () => {
-      controller.abort();
-    };
   }, [authToken]);
 
   return (
@@ -1319,15 +1566,32 @@ function EXIMService() {
 
                     <div
                       onClick={() => {
+                        // selectedHSN, type, selectedYear, selectedMonth
                         const content = (
                           <FilterOptionList
-                          //
+                            selectedHSN={activeHSN?.HSNCode}
+                            selectedMonth={selectedMonth}
+                            selectedYear={selectedYear}
+                            type={selectedViewMode}
+                            appliedFilterData={appliedFilterData}
+                            handleApply={(item) => {
+                              startLoading();
+
+                              setTimeout(() => {
+                                setAppliedFilterData(item);
+                                setApplyingFilter(true);
+                              }, 1000);
+                            }}
                           />
                         );
 
                         openBottomSheet(content);
                       }}
-                      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800`}
+                      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800 ${
+                        Object.keys(appliedFilterData)?.length
+                          ? "!border-pwip-v2-primary-700 !text-pwip-v2-primary-700"
+                          : ""
+                      }`}
                     >
                       <span className="text-pwip-v2-primary-700">
                         {filterIcon}
