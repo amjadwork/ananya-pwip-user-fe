@@ -1093,7 +1093,7 @@ function Home() {
           </div>
           <div
             onClick={() => {
-              router.push("/waitlist?_s=EXIM");
+              router.push("/service/exim/lp");
             }}
             className="bg-pwip-v2-primary-100 inline-flex w-full h-auto items-center justify-center text-pwip-v2-primary-600 font-semibold space-x-2 py-5 border-t-[1px] border-t-pwip-v2-gray-200 cursor-pointer"
           >
