@@ -209,10 +209,10 @@ export default function Home() {
   }, [profileObject, userObject]);
 
   useEffect(() => {
-    console.log("here", userDetails);
     if (session) {
       if (
         userDetails?.phone &&
+        userDetails?.phone?.toString()?.length === 10 &&
         userDetails?.is_phone_verified &&
         userDetails?.email
       ) {
