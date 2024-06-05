@@ -232,8 +232,6 @@ const LandingPage = (props) => {
     startLoading();
     const details = await checkSubscription(SERVICE_ID, authToken);
 
-    console.log("here details", details);
-
     if (typeof details === "object") {
       setSubscriptionData(details);
     }

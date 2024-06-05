@@ -209,7 +209,8 @@ export default function Home() {
   }, [profileObject, userObject]);
 
   useEffect(() => {
-    if (session) {
+    console.log("here userDetails", userDetails, session, status);
+    if (session && status === "authenticated") {
       if (
         (userDetails && !userDetails.phone) ||
         (userDetails && !userDetails.email)
@@ -242,7 +243,7 @@ export default function Home() {
         redirectToApp();
       }
     }
-  }, [userDetails]);
+  }, [userDetails, status]);
 
   return (
     <React.Fragment>

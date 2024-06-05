@@ -55,8 +55,6 @@ const WatchlistBottomSheet = ({
     }
   }, [variantWatchList, variantPriceList]);
 
-  console.log("filteredVariantPriceListData", filteredVariantPriceListData);
-
   return (
     <React.Fragment>
       <div div className="w-full inline-flex flex-col hide-scroll-bar">

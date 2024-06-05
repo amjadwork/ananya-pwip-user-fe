@@ -347,18 +347,16 @@ function Home() {
 
   const fetchEXIMTrend = async () => {
     try {
-      const response = await axios.get(
-        apiAnalyticsURL +
-          "api" +
-          "/service/rice-price/exim-trend?ToDate=21-05-2024&rangeInMonths=6",
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      console.log("response", response);
+      // const response = await axios.get(
+      //   apiAnalyticsURL +
+      //     "api" +
+      //     "/service/rice-price/exim-trend?ToDate=21-05-2024&rangeInMonths=6",
+      //   {
+      //     headers: {
+      //       Authorization: `Bearer ${authToken}`,
+      //     },
+      //   }
+      // );
 
       const eximDataFromResponse = {
         totalVolume: 5337910.098269986,
