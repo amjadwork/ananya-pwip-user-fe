@@ -209,8 +209,17 @@ export default function Home() {
   }, [profileObject, userObject]);
 
   useEffect(() => {
-    console.log("here userDetails", userDetails, session, status);
-    if (session && status === "authenticated") {
+    console.log("here", userDetails);
+    if (session) {
+      if (
+        userDetails?.phone &&
+        userDetails?.is_phone_verified &&
+        userDetails?.email
+      ) {
+        closeBottomSheet();
+        redirectToApp();
+      }
+
       if (
         (userDetails && !userDetails.phone) ||
         (userDetails && !userDetails.email)
@@ -233,17 +242,8 @@ export default function Home() {
           session?.accessToken
         );
       }
-
-      if (
-        userDetails?.phone &&
-        userDetails?.is_phone_verified &&
-        userDetails?.email
-      ) {
-        closeBottomSheet();
-        redirectToApp();
-      }
     }
-  }, [userDetails, status]);
+  }, [userDetails]);
 
   return (
     <React.Fragment>
