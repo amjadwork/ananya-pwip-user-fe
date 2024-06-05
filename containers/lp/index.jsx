@@ -232,6 +232,8 @@ const LandingPage = (props) => {
     startLoading();
     const details = await checkSubscription(SERVICE_ID, authToken);
 
+    console.log("here details", details);
+
     if (typeof details === "object") {
       setSubscriptionData(details);
     }
@@ -311,7 +313,9 @@ const LandingPage = (props) => {
       {pickYourPlan
         .filter(
           (plan) =>
-            plan.is_free && plan.applicable_services.includes(SERVICE_ID)
+            plan.is_free &&
+            plan.applicable_services.includes(SERVICE_ID) &&
+            plan.show_for_user
         )
         .map((plan, planIndex) => {
           return (
