@@ -45,6 +45,22 @@ function DesktopWarning() {
   );
 }
 
+function InitializeHotJarUserIdentifier() {
+  const userDetails = useSelector((state) => state.auth.user);
+
+  useEffect(() => {
+    if (userDetails?._id) {
+      // Check if Hotjar has been initialized before calling its methods
+      if (hotjar.initialized()) {
+        console.log("Hotjar initialized");
+        hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
+      }
+    }
+  }, [userDetails?._id]);
+
+  return <></>;
+}
+
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
   useEffect(() => {
     if (
@@ -53,8 +69,6 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
       (typeof window !== "undefined" &&
         window?.location?.origin === "https://app.pwip.co")
     ) {
-      console.log("hotjar initialized", window.location.origin);
-
       const options = {
         id: 3801647, // Replace with your actual Hotjar site ID
         sv: 6, // Optional: Specify the snippet version if needed
@@ -106,6 +120,8 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
             <div className="xl:hidden">
               <Component {...pageProps} />
             </div>
+
+            <InitializeHotJarUserIdentifier />
           </OverlayProvider>
         </SessionProvider>
       </PersistGate>
