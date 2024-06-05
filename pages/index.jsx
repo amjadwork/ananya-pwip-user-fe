@@ -221,7 +221,7 @@ export default function Home() {
       }
 
       if (
-        (userDetails && !userDetails.phone) ||
+        (userDetails && userDetails.phone === null) ||
         (userDetails && !userDetails.email)
       ) {
         stopLoading();
