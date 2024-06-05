@@ -55,7 +55,13 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
     ) {
       console.log("hotjar initialized", window.location.origin);
 
-      hotjar.initialize("3801647", 6);
+      const options = {
+        id: 3801647, // Replace with your actual Hotjar site ID
+        sv: 6, // Optional: Specify the snippet version if needed
+        debug: false, // Disable debug mode by default
+      };
+
+      hotjar.initialize(options);
     }
   }, []);
 
