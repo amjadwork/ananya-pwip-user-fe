@@ -46,20 +46,48 @@ function DesktopWarning() {
   );
 }
 
-function InitializeHotJarUserIdentifier() {
+function InitializeAnalytics() {
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (userDetails?._id) {
       // Check if Hotjar has been initialized before calling its methods
       if (hotjar.initialized()) {
-        console.log("Hotjar initialized");
         hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
       }
     }
   }, [userDetails?._id]);
 
-  return <></>;
+  return (
+    <>
+      {/* google analytics */}
+      <Script
+        strategy="lazyOnload"
+        src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
+      />
+
+      <Script id="" strategy="lazyOnload">
+        {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+
+              gtag('config', 'G-MC3H87LJ8J');
+          `}
+      </Script>
+
+      {/* google tag manager */}
+      <Script id="gtm" strategy="afterInteractive">
+        {`
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-PSZLRSLG');
+              `}
+      </Script>
+    </>
+  );
 }
 
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
@@ -99,15 +127,9 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
 
               {/* <link rel="icon" href="/favicon.ico" /> */}
             </Head>
-            <Script id="gtm" strategy="afterInteractive">
-              {`
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-PSZLRSLG');
-      `}
-            </Script>
+
+            <InitializeAnalytics />
+
             <div className="relative w-full h-full grid grid-cols-2 gap-8 px-[72px] z-[110] max-xl:hidden bg-white overflow-hidden">
               <div className="h-full w-full mt-[30%] pl-12">
                 <DesktopWarning />
@@ -130,8 +152,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <div className="xl:hidden">
               <Component {...pageProps} />
             </div>
-
-            <InitializeHotJarUserIdentifier />
           </OverlayProvider>
         </SessionProvider>
       </PersistGate>
