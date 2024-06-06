@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { Provider, useSelector } from "react-redux";
 import { hotjar } from "react-hotjar";
@@ -98,6 +99,15 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
 
               {/* <link rel="icon" href="/favicon.ico" /> */}
             </Head>
+            <Script id="gtm" strategy="afterInteractive">
+              {`
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-PSZLRSLG');
+      `}
+            </Script>
             <div className="relative w-full h-full grid grid-cols-2 gap-8 px-[72px] z-[110] max-xl:hidden bg-white overflow-hidden">
               <div className="h-full w-full mt-[30%] pl-12">
                 <DesktopWarning />
