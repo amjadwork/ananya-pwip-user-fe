@@ -72,7 +72,10 @@ function InitializeAnalytics() {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
 
-              gtag('config', 'G-MC3H87LJ8J');
+              gtag('config', 'G-MC3H87LJ8J', {
+                page_path: ${window.location.pathname},
+                user_id: ${userDetails?._id}
+              });
           `}
       </Script>
 
