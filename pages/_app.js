@@ -73,10 +73,10 @@ function InitializeAnalytics() {
               gtag('js', new Date());
 
               gtag('config', 'G-MC3H87LJ8J', {
-                page_path: ${window.location.pathname},
-                user_id: ${userDetails?._id}
+                page_path: '${window.location.pathname}',
+                user_id: '${userDetails?._id}'
               });
-          `}
+           `}
       </Script>
 
       {/* google tag manager */}
