@@ -50,11 +50,20 @@ function InitializeAnalytics() {
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (userDetails?._id) {
+    if (userDetails?._id && typeof window !== undefined) {
       // Check if Hotjar has been initialized before calling its methods
       if (hotjar.initialized()) {
         hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
       }
+
+      window.dataLayer = window.dataLayer || [];
+
+      window.dataLayer.push({
+        event: "login",
+        user_id: userDetails?._id || undefined,
+      });
+
+      console.log("GA4 pushed");
     }
   }, [userDetails?._id]);
 
@@ -66,7 +75,7 @@ function InitializeAnalytics() {
         src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
       />
 
-      <Script id="" strategy="lazyOnload">
+      <Script id="google-analytics" strategy="lazyOnload">
         {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
@@ -75,6 +84,11 @@ function InitializeAnalytics() {
               gtag('config', 'G-MC3H87LJ8J', {
                 page_path: '${window.location.pathname}',
                 user_id: '${userDetails?._id}'
+              });
+
+              window.dataLayer.push({
+                event: 'login',
+                user_id: '${userDetails?._id || undefined}'
               });
            `}
       </Script>
@@ -89,6 +103,8 @@ function InitializeAnalytics() {
                 })(window,document,'script','dataLayer','GTM-PSZLRSLG');
               `}
       </Script>
+
+      <Script id="dataLayer">{}</Script>
     </>
   );
 }
