@@ -157,7 +157,32 @@ export default function Home() {
   const redirectToApp = async () => {
     try {
       stopLoading();
-      handleNavigation("/home");
+
+      const queries = router.query;
+
+      const requiredUTMParams = [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_id",
+        "utm_term",
+        "utm_content",
+      ];
+
+      // Filter the UTM parameters that are present in the queries
+      const availableUTMParams = requiredUTMParams.filter(
+        (key) => queries[key]
+      );
+
+      // Construct the URL with the available UTM parameters
+      const targetURL =
+        availableUTMParams.length > 0
+          ? `/home/?${availableUTMParams
+              .map((key) => `${key}=${queries[key]}`)
+              .join("&")}`
+          : "/home";
+
+      handleNavigation(targetURL);
     } catch (error) {
       stopLoading();
       console.error("Error during login:", error);
@@ -189,22 +214,23 @@ export default function Home() {
         ...userObject?.userData,
       };
       dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
-      if (userPayload?.newUser) {
-        stopLoading();
-        handleNavigation("/onboarding");
-      } else {
-        stopLoading();
+      stopLoading();
+      // if (userPayload?.newUser) {
+      //   stopLoading();
+      //   handleNavigation("/onboarding");
+      // } else {
+      //   stopLoading();
 
-        // const eximTrends = localStorage.getItem("eximTrends");
+      //   // const eximTrends = localStorage.getItem("eximTrends");
 
-        // if (eximTrends) {
-        //   setEximTrendsData(JSON.parse(eximTrends));
-        // } else {
-        //   fetchEXIMTrend();
-        // }
+      //   // if (eximTrends) {
+      //   //   setEximTrendsData(JSON.parse(eximTrends));
+      //   // } else {
+      //   //   fetchEXIMTrend();
+      //   // }
 
-        // redirectToApp();
-      }
+      //   // redirectToApp();
+      // }
     }
   }, [profileObject, userObject]);
 
