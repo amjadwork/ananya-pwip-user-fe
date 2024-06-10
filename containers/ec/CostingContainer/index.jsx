@@ -839,7 +839,7 @@ function CostingOverviewContainer() {
           } ($${inrToUsd(generatedCostingData?.grandTotal, forexRate.USD)})`,
           url:
             window.location.origin +
-            `/preview/costing/${generatedCostingData?._id}`,
+            `/preview/costing/${generatedCostingData?._id}/?utm_source=share&utm_campaign=share_via&utm_content=costing&utm_medium=web_app`,
         })
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
