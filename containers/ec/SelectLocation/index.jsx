@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useMemo } from "react";
 import { call, select, put } from "redux-saga/effects";
 import { useRouter } from "next/router";
 import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
@@ -13,6 +13,7 @@ import {
   setSelectedPOLForOFCRequest,
   setSelectedPODForOFCRequest,
 } from "@/redux/actions/ofc.actions";
+import { Country, State, City } from "country-state-city";
 
 import {
   searchIcon,
@@ -27,6 +28,103 @@ import {
   setCostingSelection,
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
+
+function PortRequestForm() {
+  const { closeBottomSheet, startLoading, stopLoading } = useOverlayContext();
+
+  const countryList = useMemo(() => Country.getAllCountries(), []);
+
+  return (
+    <div className="inline-flex flex-col w-full h-auto px-5 py-4 pb-12">
+      <h3 className="font-semibold text-base text-pwip-black-600">
+        Tell us the port you want us to add
+      </h3>
+      <p className="text-pwip-gray-500 text-xs mt-1">
+        Enter the Port name or port code along with the country that you would
+        like to see on PWIP App.
+      </p>
+
+      <div className="w-full inline-flex flex-col mt-5 space-y-4">
+        {[
+          {
+            type: "text",
+            label: "Port name",
+            placeholder: "Enter port name",
+          },
+          {
+            type: "text",
+            label: "Port code",
+            placeholder: "Enter port code",
+          },
+          {
+            type: "select",
+            label: "Country",
+            placeholder: "Select a country",
+          },
+        ].map((m, i) => {
+          if (m?.type === "select") {
+            return (
+              <div
+                key={m?.label + "_" + i}
+                className="w-full inline-flex flex-col space-y-1"
+              >
+                <label className="text-sm text-pwip-black-500">
+                  {m?.label}
+                </label>
+                <select
+                  className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                >
+                  <option className="text-sm text-gray-500"></option>
+                  {countryList?.map((country, index) => {
+                    return (
+                      <option
+                        key={country?.name + "_" + index}
+                        className="text-sm text-gray-500"
+                      >
+                        {country?.flag} {country?.name} ({country?.isoCode})
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            );
+          }
+
+          return (
+            <div
+              key={m?.label + "_" + i}
+              className="w-full inline-flex flex-col space-y-1"
+            >
+              <label className="text-sm text-pwip-black-500">{m?.label}</label>
+              <input
+                type={m?.type}
+                className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                placeholder={m?.placeholder}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="w-full mt-5">
+        <button
+          onClick={() => {
+            startLoading();
+
+            // API call here
+
+            closeBottomSheet();
+
+            stopLoading();
+          }}
+          className="w-full outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-3 px-5 rounded-lg mt-3"
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const FilterSection = ({
   locationType,
@@ -198,7 +296,8 @@ const SelectLocationContainer = (props) => {
   const formValues = props.formValues;
   const shipmentTerm = props.shipmentTerm;
 
-  const { closeBottomSheet, openBottomSheet } = useOverlayContext();
+  const { closeBottomSheet, openBottomSheet, startLoading, stopLoading } =
+    useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -874,16 +973,32 @@ const SelectLocationContainer = (props) => {
               {!listDestinationData?.length && searchStringValue ? (
                 <div className="inline-flex flex-col justify-center items-center w-full h-full p-[5px] px-5">
                   <img
-                    className="w-auto h-[260px]"
+                    className="w-auto h-[120px]"
                     src="/assets/images/no-state/no-result.svg"
                   />
-                  <h2 className="text-xl text-center text-pwip-v2-primary font-[700] mt-8">
+                  <h2 className="text-lg text-center text-pwip-v2-primary font-[700] mt-4">
                     No Results
                   </h2>
-                  <p className="text-base text-center text-pwip-v2-gray-500 font-[500] mt-5">
-                    Sorry, there is no result for this search, let’s try another
-                    phrase
+                  <p className="text-sm text-center text-pwip-v2-gray-500 font-[500] mt-2">
+                    Sorry, there is no result for this search, <br />
+                    let’s try another phrase
                   </p>
+                  <button
+                    onClick={() => {
+                      startLoading();
+                      closeBottomSheet();
+
+                      const content = <PortRequestForm />;
+
+                      setTimeout(() => {
+                        openBottomSheet(content);
+                        stopLoading();
+                      }, 1000);
+                    }}
+                    className="outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-2 px-3 rounded-lg mt-3"
+                  >
+                    Request a port
+                  </button>
                 </div>
               ) : null}
             </div>
