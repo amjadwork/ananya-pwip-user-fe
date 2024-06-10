@@ -17,6 +17,52 @@ export async function checkSubscription(serviceId, token) {
   }
 }
 
+export function openFullscreen(elementId) {
+  // Get the element based on the provided ID
+  const element = document.getElementById(elementId);
+
+  // Check if the element exists before proceeding
+  if (!element) return;
+
+  // Request fullscreen mode for the element (if supported)
+  if (element.requestFullscreen) {
+    element.requestFullscreen();
+  } else if (element.webkitRequestFullscreen) {
+    // For Safari
+    element.webkitRequestFullscreen();
+  } else if (element.mozRequestFullScreen) {
+    // For old Mozilla
+    element.mozRequestFullScreen();
+  } else {
+    console.error("Fullscreen API not supported by your browser.");
+  }
+}
+
+export function closeFullscreen() {
+  // Check if the document is currently in fullscreen mode
+  if (document.fullscreenElement) {
+    // Use the standard exitFullscreen() method (if supported)
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      // For Safari
+      document.webkitExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      // For old Mozilla
+      document.mozCancelFullScreen();
+    } else {
+      console.error("Fullscreen API not supported by your browser.");
+    }
+  } else {
+    console.warn("Fullscreen mode is not currently active.");
+  }
+}
+
+export function isFullscreenMode() {
+  // Check for the existence of the fullscreenElement property
+  return !!document.fullscreenElement;
+}
+
 export function toKebabCase(inputString) {
   return inputString?.toLowerCase().replace(/\s+/g, "-");
 }

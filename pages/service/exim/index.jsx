@@ -23,13 +23,19 @@ import {
   checkIcon,
   filterIcon,
   closeXmark,
+  expandIcon,
+  collapseIcon,
 } from "../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
 
-import { apiAnalyticsURL } from "@/utils/helper";
+import {
+  apiAnalyticsURL,
+  openFullscreen,
+  closeFullscreen,
+} from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
 import moment from "moment";
@@ -1117,6 +1123,7 @@ function EXIMService() {
   const [applyingFilter, setApplyingFilter] = useState(false);
 
   const [appliedFilterData, setAppliedFilterData] = useState({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   // appliedFilters
 
@@ -1305,6 +1312,8 @@ function EXIMService() {
     }
   }, [authToken]);
 
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
   return (
     <React.Fragment>
       <Head>
@@ -1474,176 +1483,210 @@ function EXIMService() {
           </div>
           {/* table */}
 
-          <div className="w-full h-auto px-5 py-3 sticky bg-white z-20 top-[202px] !mb-0 !mt-0">
-            <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] w-full">
-              <div className="flex flex-nowrap space-x-3">
-                <div
-                  onClick={() => {
-                    const content = (
-                      <ViewMode
-                        handleSelect={(selectedMode) => {
-                          setSelectedViewMode(selectedMode);
-                          setApplyingFilter(true);
-                          setPageNumber(1);
-                        }}
-                        selectedViewMode={selectedViewMode}
-                      />
-                    );
-                    openBottomSheet(content);
-                  }}
-                  className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
-                >
-                  <span className="text-pwip-v2-primary-700">
-                    {eyePreviewIcon}
-                  </span>
-                  <div className="inline-flex items-center justify-between space-x-10">
-                    <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
-                      {selectedViewMode?.label}
-                    </span>
-                    {chevronDown}
-                  </div>
-                </div>
-
-                {selectedViewMode?.value !== "all" ? (
+          <div id="fullScreen">
+            <div
+              className={`w-full h-auto px-5 py-3 sticky bg-white z-20 ${
+                isFullscreen ? "top-0" : "top-[202px]"
+              } !mb-0 !mt-0`}
+            >
+              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] w-full">
+                <div className="flex flex-nowrap space-x-3">
                   <div
                     onClick={() => {
                       const content = (
-                        <LocationViewMode
+                        <ViewMode
                           handleSelect={(selectedMode) => {
-                            setSelectedLocationViewMode(selectedMode);
+                            setSelectedViewMode(selectedMode);
                             setApplyingFilter(true);
                             setPageNumber(1);
                           }}
-                          selectedViewMode={selectedLocationViewMode}
+                          selectedViewMode={selectedViewMode}
                         />
                       );
                       openBottomSheet(content);
                     }}
-                    className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
+                    className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
                   >
+                    <span className="text-pwip-v2-primary-700">
+                      {eyePreviewIcon}
+                    </span>
                     <div className="inline-flex items-center justify-between space-x-10">
                       <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
-                        {selectedLocationViewMode?.label}
+                        {selectedViewMode?.label}
                       </span>
                       {chevronDown}
                     </div>
                   </div>
-                ) : null}
 
-                {selectedViewMode?.value === "all" ? (
-                  <React.Fragment>
+                  {selectedViewMode?.value !== "all" ? (
                     <div
                       onClick={() => {
                         const content = (
-                          <MonthList
-                            handleSelect={(mo, y) => {
-                              setSelectedMonth(mo);
-                              setSelectedYear(y);
+                          <LocationViewMode
+                            handleSelect={(selectedMode) => {
+                              setSelectedLocationViewMode(selectedMode);
                               setApplyingFilter(true);
                               setPageNumber(1);
                             }}
-                            selectedMonth={selectedMonth}
-                            selectedYear={selectedYear}
+                            selectedViewMode={selectedLocationViewMode}
                           />
                         );
-
                         openBottomSheet(content);
                       }}
-                      className={`inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800`}
+                      className="inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350"
                     >
                       <div className="inline-flex items-center justify-between space-x-10">
-                        <span className="text-sm whitespace-nowrap">
-                          {selectedMonth !== "Full year"
-                            ? getMonthAbbreviation(selectedMonth)
-                            : selectedMonth === "Full year"
-                            ? "Year"
-                            : ""}{" "}
-                          {selectedYear}
+                        <span className="text-sm text-pwip-gray-800 whitespace-nowrap">
+                          {selectedLocationViewMode?.label}
                         </span>
                         {chevronDown}
                       </div>
                     </div>
+                  ) : null}
 
-                    <div
-                      onClick={() => {
-                        // selectedHSN, type, selectedYear, selectedMonth
-                        const content = (
-                          <FilterOptionList
-                            selectedHSN={activeHSN?.HSNCode}
-                            selectedMonth={selectedMonth}
-                            selectedYear={selectedYear}
-                            type={selectedViewMode}
-                            appliedFilterData={appliedFilterData}
-                            handleApply={(item) => {
-                              startLoading();
-
-                              setTimeout(() => {
-                                setAppliedFilterData(item);
+                  {selectedViewMode?.value === "all" ? (
+                    <React.Fragment>
+                      <div
+                        onClick={() => {
+                          const content = (
+                            <MonthList
+                              handleSelect={(mo, y) => {
+                                setSelectedMonth(mo);
+                                setSelectedYear(y);
                                 setApplyingFilter(true);
-                              }, 1000);
-                            }}
-                          />
-                        );
+                                setPageNumber(1);
+                              }}
+                              selectedMonth={selectedMonth}
+                              selectedYear={selectedYear}
+                            />
+                          );
 
-                        openBottomSheet(content);
-                      }}
-                      className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800 ${
-                        Object.keys(appliedFilterData)?.length
-                          ? "!border-pwip-v2-primary-700 !text-pwip-v2-primary-700"
-                          : ""
-                      }`}
-                    >
-                      <span className="text-pwip-v2-primary-700">
-                        {filterIcon}
-                      </span>
-                      <div className="inline-flex items-center justify-between space-x-10">
-                        <span className="text-sm whitespace-nowrap">
-                          Filter
-                        </span>
-                        {chevronDown}
+                          openBottomSheet(content);
+                        }}
+                        className={`inline-flex items-center px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800`}
+                      >
+                        <div className="inline-flex items-center justify-between space-x-10">
+                          <span className="text-sm whitespace-nowrap">
+                            {selectedMonth !== "Full year"
+                              ? getMonthAbbreviation(selectedMonth)
+                              : selectedMonth === "Full year"
+                              ? "Year"
+                              : ""}{" "}
+                            {selectedYear}
+                          </span>
+                          {chevronDown}
+                        </div>
                       </div>
-                    </div>
-                  </React.Fragment>
-                ) : null}
+
+                      <div
+                        onClick={() => {
+                          // selectedHSN, type, selectedYear, selectedMonth
+                          const content = (
+                            <FilterOptionList
+                              selectedHSN={activeHSN?.HSNCode}
+                              selectedMonth={selectedMonth}
+                              selectedYear={selectedYear}
+                              type={selectedViewMode}
+                              appliedFilterData={appliedFilterData}
+                              handleApply={(item) => {
+                                startLoading();
+
+                                setTimeout(() => {
+                                  setAppliedFilterData(item);
+                                  setApplyingFilter(true);
+                                }, 1000);
+                              }}
+                            />
+                          );
+
+                          openBottomSheet(content);
+                        }}
+                        className={`inline-flex items-center space-x-2 px-3 py-2 rounded-lg border border-pwip-v2-gray-350 text-pwip-gray-800 ${
+                          Object.keys(appliedFilterData)?.length
+                            ? "!border-pwip-v2-primary-700 !text-pwip-v2-primary-700"
+                            : ""
+                        }`}
+                      >
+                        <span className="text-pwip-v2-primary-700">
+                          {filterIcon}
+                        </span>
+                        <div className="inline-flex items-center justify-between space-x-10">
+                          <span className="text-sm whitespace-nowrap">
+                            Filter
+                          </span>
+                          {chevronDown}
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ) : null}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div
-            id="tableSection"
-            className="inline-flex w-full flex-col h-[calc(100vh-266px)] px-5 !mt-0 bg-white pb-6"
-          >
-            <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
-              {selectedViewMode?.value === "all" ? (
-                <DataTableForAllFilter
-                  column={allEximTableData?.columns}
-                  row={allEximTableData?.rows}
-                  pageNumber={pageNumber}
-                  isLoading={isLoading}
-                  fetchRows={(num) => {
-                    setPageNumber(num);
-                  }}
-                  applyingFilter={applyingFilter}
-                  handleSettingApplyFilter={() => {
-                    setApplyingFilter(false);
-                  }}
-                />
-              ) : (
-                <DataTableForAnnualViewFilter
-                  column={modelBasedEximTableData?.columns}
-                  row={modelBasedEximTableData?.rows}
-                  // for infinite load
-                  pageNumber={pageNumber}
-                  isLoading={isLoading}
-                  fetchRows={(num) => {
-                    setPageNumber(num);
-                  }}
-                  applyingFilter={applyingFilter}
-                  handleSettingApplyFilter={() => {
-                    setApplyingFilter(false);
-                  }}
-                />
-              )}
+            <div
+              id="tableSection"
+              className={`inline-flex w-full flex-col ${
+                isFullscreen ? "h-[calc(100vh-64px)]" : "h-[calc(100vh-266px)]"
+              } px-5 !mt-0 bg-white pb-6`}
+            >
+              {!isIOS ? (
+                <React.Fragment>
+                  {!isFullscreen ? (
+                    <button
+                      onClick={() => {
+                        openFullscreen("fullScreen");
+                        setIsFullscreen(true);
+                      }}
+                      className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-4 right-2"
+                    >
+                      {expandIcon} <span>See in full screen</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        closeFullscreen("fullScreen");
+                        setIsFullscreen(false);
+                      }}
+                      className="inline-flex items-center justify-center px-3 py-2 h-8 space-x-2 w-auto z-20 rounded-md border-[1px] border-pwip-v2-primary-500 backdrop-blur-[2px] text-pwip-v2-primary-500 text-center text-xs absolute bottom-4 right-2"
+                    >
+                      {collapseIcon} <span>Close full screen</span>
+                    </button>
+                  )}
+                </React.Fragment>
+              ) : null}
+
+              <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
+                {selectedViewMode?.value === "all" ? (
+                  <DataTableForAllFilter
+                    column={allEximTableData?.columns}
+                    row={allEximTableData?.rows}
+                    pageNumber={pageNumber}
+                    isLoading={isLoading}
+                    fetchRows={(num) => {
+                      setPageNumber(num);
+                    }}
+                    applyingFilter={applyingFilter}
+                    handleSettingApplyFilter={() => {
+                      setApplyingFilter(false);
+                    }}
+                  />
+                ) : (
+                  <DataTableForAnnualViewFilter
+                    column={modelBasedEximTableData?.columns}
+                    row={modelBasedEximTableData?.rows}
+                    // for infinite load
+                    pageNumber={pageNumber}
+                    isLoading={isLoading}
+                    fetchRows={(num) => {
+                      setPageNumber(num);
+                    }}
+                    applyingFilter={applyingFilter}
+                    handleSettingApplyFilter={() => {
+                      setApplyingFilter(false);
+                    }}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
