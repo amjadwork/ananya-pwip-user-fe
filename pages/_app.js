@@ -88,7 +88,7 @@ function InitializeAnalytics() {
 
               window.dataLayer.push({
                 event: 'login',
-                user_id: '${userDetails?._id || undefined}'
+                user_id: '${userDetails?._id || "Explorer"}'
               });
            `}
       </Script>
