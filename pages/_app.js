@@ -4,7 +4,7 @@ import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { Provider, useSelector } from "react-redux";
 import { hotjar } from "react-hotjar";
-import Frame from "react-frame-component";
+// import Frame from "react-frame-component";
 
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";

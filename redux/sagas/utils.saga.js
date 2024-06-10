@@ -84,6 +84,7 @@ function* verifyOTPforPhone(action) {
   try {
     const payload = {
       ...action?.payload,
+      is_phone_verified: 1,
     };
 
     const response = yield call(
