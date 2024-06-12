@@ -67,6 +67,10 @@ function InitializeAnalytics() {
     }
   }, [userDetails?._id]);
 
+  if (!userDetails) {
+    return <></>;
+  }
+
   return (
     <>
       {/* google analytics */}
@@ -83,7 +87,7 @@ function InitializeAnalytics() {
 
               gtag('config', 'G-MC3H87LJ8J', {
                 page_path: '${window.location.pathname}',
-                user_id: '${userDetails?._id}'
+                user_id: '${userDetails?._id || "Explorer"}'
               });
 
               window.dataLayer.push({
@@ -103,8 +107,6 @@ function InitializeAnalytics() {
                 })(window,document,'script','dataLayer','GTM-PSZLRSLG');
               `}
       </Script>
-
-      <Script id="dataLayer">{}</Script>
     </>
   );
 }
