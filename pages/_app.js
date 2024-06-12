@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
@@ -50,20 +50,11 @@ function InitializeAnalytics() {
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (userDetails?._id && typeof window !== undefined) {
+    if (userDetails?._id) {
       // Check if Hotjar has been initialized before calling its methods
       if (hotjar.initialized()) {
         hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
       }
-
-      window.dataLayer = window.dataLayer || [];
-
-      window.dataLayer.push({
-        event: "login",
-        user_id: userDetails?._id || undefined,
-      });
-
-      console.log("GA4 pushed");
     }
   }, [userDetails?._id]);
 
@@ -83,7 +74,7 @@ function InitializeAnalytics() {
 
               gtag('config', 'G-MC3H87LJ8J', {
                 page_path: '${window.location.pathname}',
-                user_id: '${userDetails?._id}'
+                user_id: '${userDetails?._id || "Explorer"}'
               });
 
               window.dataLayer.push({
@@ -103,8 +94,6 @@ function InitializeAnalytics() {
                 })(window,document,'script','dataLayer','GTM-PSZLRSLG');
               `}
       </Script>
-
-      <Script id="dataLayer">{}</Script>
     </>
   );
 }
