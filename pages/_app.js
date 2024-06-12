@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
@@ -50,65 +50,56 @@ function InitializeAnalytics() {
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (userDetails?._id && typeof window !== undefined) {
+    if (userDetails?._id) {
       // Check if Hotjar has been initialized before calling its methods
       if (hotjar.initialized()) {
         hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
       }
-
-      window.dataLayer = window.dataLayer || [];
-
-      window.dataLayer.push({
-        event: "login",
-        user_id: userDetails?._id || undefined,
-      });
-
-      console.log("GA4 pushed");
     }
   }, [userDetails?._id]);
 
-  if (!userDetails) {
-    return <></>;
-  }
+  const memoized = useMemo(() => {
+    return (
+      <>
+        {/* google analytics */}
+        <Script
+          strategy="lazyOnload"
+          src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
+        />
 
-  return (
-    <>
-      {/* google analytics */}
-      <Script
-        strategy="lazyOnload"
-        src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
-      />
+        <Script id="google-analytics" strategy="lazyOnload">
+          {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+  
+                gtag('config', 'G-MC3H87LJ8J', {
+                  page_path: '${window.location.pathname}',
+                  user_id: '${userDetails?._id || "Explorer"}'
+                });
+  
+                window.dataLayer.push({
+                  event: 'login',
+                  user_id: '${userDetails?._id || "Explorer"}'
+                });
+             `}
+        </Script>
 
-      <Script id="google-analytics" strategy="lazyOnload">
-        {`
-              window.dataLayer = window.dataLayer || [];
-              function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
+        {/* google tag manager */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`
+                  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                  })(window,document,'script','dataLayer','GTM-PSZLRSLG');
+                `}
+        </Script>
+      </>
+    );
+  }, [userDetails?._id]);
 
-              gtag('config', 'G-MC3H87LJ8J', {
-                page_path: '${window.location.pathname}',
-                user_id: '${userDetails?._id || "Explorer"}'
-              });
-
-              window.dataLayer.push({
-                event: 'login',
-                user_id: '${userDetails?._id || "Explorer"}'
-              });
-           `}
-      </Script>
-
-      {/* google tag manager */}
-      <Script id="gtm" strategy="afterInteractive">
-        {`
-                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-PSZLRSLG');
-              `}
-      </Script>
-    </>
-  );
+  return memoized;
 }
 
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
