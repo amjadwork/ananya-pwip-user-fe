@@ -58,48 +58,44 @@ function InitializeAnalytics() {
     }
   }, [userDetails?._id]);
 
-  const memoized = useMemo(() => {
-    return (
-      <>
-        {/* google analytics */}
-        <Script
-          strategy="lazyOnload"
-          src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
-        />
+  return (
+    <>
+      {/* google analytics */}
+      <Script
+        strategy="lazyOnload"
+        src={`https://www.googletagmanager.com/gtag/js?id=G-MC3H87LJ8J`}
+      />
 
-        <Script id="google-analytics" strategy="lazyOnload">
-          {`
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-  
-                gtag('config', 'G-MC3H87LJ8J', {
-                  page_path: '${window.location.pathname}',
-                  user_id: '${userDetails?._id || "Explorer"}'
-                });
-  
-                window.dataLayer.push({
-                  event: 'login',
-                  user_id: '${userDetails?._id || "Explorer"}'
-                });
-             `}
-        </Script>
+      <Script id="google-analytics" strategy="lazyOnload">
+        {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
 
-        {/* google tag manager */}
-        <Script id="gtm" strategy="afterInteractive">
-          {`
-                  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                  })(window,document,'script','dataLayer','GTM-PSZLRSLG');
-                `}
-        </Script>
-      </>
-    );
-  }, [userDetails?._id]);
+              gtag('config', 'G-MC3H87LJ8J', {
+                page_path: '${window.location.pathname}',
+                user_id: '${userDetails?._id || "Explorer"}'
+              });
 
-  return memoized;
+              window.dataLayer.push({
+                event: 'login',
+                user_id: '${userDetails?._id || "Explorer"}'
+              });
+           `}
+      </Script>
+
+      {/* google tag manager */}
+      <Script id="gtm" strategy="afterInteractive">
+        {`
+                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                })(window,document,'script','dataLayer','GTM-PSZLRSLG');
+              `}
+      </Script>
+    </>
+  );
 }
 
 function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
