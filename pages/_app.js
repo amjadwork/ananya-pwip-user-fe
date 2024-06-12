@@ -4,7 +4,7 @@ import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { Provider, useSelector } from "react-redux";
 import { hotjar } from "react-hotjar";
-import Frame from "react-frame-component";
+import { useRouter } from "next/router";
 
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -46,7 +46,17 @@ function DesktopWarning() {
   );
 }
 
+const requiredUTMParams = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_id",
+  "utm_term",
+  "utm_content",
+];
+
 function InitializeAnalytics() {
+  const router = useRouter();
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
@@ -72,14 +82,34 @@ function InitializeAnalytics() {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
 
+              function getQueryParams(queryString) {
+                  if (!queryString) {
+                      return {};
+                  }
+                  return queryString
+                      .substring(1)
+                      .split('&')
+                      .reduce((acc, param) => {
+                          const [key, value] = param.split('=');
+                          acc[decodeURIComponent(key)] = decodeURIComponent(value);
+                          return acc;
+                      }, {});
+              }
+
+              const utmParams = getQueryParams(window?.location?.search);
+
               gtag('config', 'G-MC3H87LJ8J', {
                 page_path: '${window.location.pathname}',
-                user_id: '${userDetails?._id || "Explorer"}'
+                user_id: '${userDetails?._id || "Explorer"}',
+                // Add captured UTM parameters dynamically
+                ...utmParams,
               });
 
               window.dataLayer.push({
                 event: 'login',
-                user_id: '${userDetails?._id || "Explorer"}'
+                user_id: '${userDetails?._id || "Explorer"}',
+                // Add captured UTM parameters dynamically
+                ...utmParams,
               });
            `}
       </Script>
