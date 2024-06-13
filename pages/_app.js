@@ -4,7 +4,6 @@ import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { Provider, useSelector } from "react-redux";
 import { hotjar } from "react-hotjar";
-import { useRouter } from "next/router";
 
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -56,7 +55,6 @@ const requiredUTMParams = [
 ];
 
 function InitializeAnalytics() {
-  const router = useRouter();
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
