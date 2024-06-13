@@ -182,7 +182,8 @@ export default function Home() {
               .join("&")}`
           : "/home";
 
-      handleNavigation(targetURL);
+      window.location.href = targetURL;
+      // handleNavigation(targetURL);
     } catch (error) {
       stopLoading();
       console.error("Error during login:", error);

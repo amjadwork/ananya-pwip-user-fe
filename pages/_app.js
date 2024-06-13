@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Head from "next/head";
 import Script from "next/script";
 import { SessionProvider } from "next-auth/react";
 import { Provider, useSelector } from "react-redux";
 import { hotjar } from "react-hotjar";
-// import Frame from "react-frame-component";
 
 import store, { persistor } from "@/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -46,24 +45,24 @@ function DesktopWarning() {
   );
 }
 
+const requiredUTMParams = [
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_id",
+  "utm_term",
+  "utm_content",
+];
+
 function InitializeAnalytics() {
   const userDetails = useSelector((state) => state.auth.user);
 
   useEffect(() => {
-    if (userDetails?._id && typeof window !== undefined) {
+    if (userDetails?._id) {
       // Check if Hotjar has been initialized before calling its methods
       if (hotjar.initialized()) {
         hotjar.identify("USER_ID", { userProperty: `${userDetails?._id}` });
       }
-
-      window.dataLayer = window.dataLayer || [];
-
-      window.dataLayer.push({
-        event: "login",
-        user_id: userDetails?._id || undefined,
-      });
-
-      console.log("GA4 pushed");
     }
   }, [userDetails?._id]);
 
@@ -81,14 +80,34 @@ function InitializeAnalytics() {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
 
+              function getQueryParams(queryString) {
+                  if (!queryString) {
+                      return {};
+                  }
+                  return queryString
+                      .substring(1)
+                      .split('&')
+                      .reduce((acc, param) => {
+                          const [key, value] = param.split('=');
+                          acc[decodeURIComponent(key)] = decodeURIComponent(value);
+                          return acc;
+                      }, {});
+              }
+
+              const utmParams = getQueryParams(window?.location?.search);
+
               gtag('config', 'G-MC3H87LJ8J', {
                 page_path: '${window.location.pathname}',
-                user_id: '${userDetails?._id}'
+                user_id: '${userDetails?._id || "Explorer"}',
+                // Add captured UTM parameters dynamically
+                ...utmParams,
               });
 
               window.dataLayer.push({
                 event: 'login',
-                user_id: '${userDetails?._id || "Explorer"}'
+                user_id: '${userDetails?._id || "Explorer"}',
+                // Add captured UTM parameters dynamically
+                ...utmParams,
               });
            `}
       </Script>
@@ -103,8 +122,6 @@ function InitializeAnalytics() {
                 })(window,document,'script','dataLayer','GTM-PSZLRSLG');
               `}
       </Script>
-
-      <Script id="dataLayer">{}</Script>
     </>
   );
 }
