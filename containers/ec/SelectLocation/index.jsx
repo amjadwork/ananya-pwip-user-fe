@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo } from "react";
 // import { call, select, put } from "redux-saga/effects";
 import { useRouter } from "next/router";
 // import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
@@ -29,9 +29,24 @@ import {
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
 
-function PortRequestForm() {
-  const { closeBottomSheet, startLoading, stopLoading } = useOverlayContext();
+import { postNewPortRequest } from "@/redux/actions/portRequest.actions.js";
 
+function PortRequestForm({ callback }) {
+  const {
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
+
+  const [portName, setPortName] = useState("");
+  const [portCode, setPortCode] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+
+  const dispatch = useDispatch();
+
+  // Assuming countryList is obtained from somewhere
   const countryList = useMemo(() => Country.getAllCountries(), []);
 
   return (
@@ -50,72 +65,85 @@ function PortRequestForm() {
             type: "text",
             label: "Port name",
             placeholder: "Enter port name",
+            value: portName,
+            onChange: setPortName,
           },
           {
             type: "text",
             label: "Port code",
             placeholder: "Enter port code",
+            value: portCode,
+            onChange: setPortCode,
           },
           {
             type: "select",
             label: "Country",
             placeholder: "Select a country",
+            value: selectedCountry,
+            onChange: setSelectedCountry,
           },
-        ].map((m, i) => {
-          if (m?.type === "select") {
-            return (
-              <div
-                key={m?.label + "_" + i}
-                className="w-full inline-flex flex-col space-y-1"
-              >
-                <label className="text-sm text-pwip-black-500">
-                  {m?.label}
-                </label>
-                <select
-                  className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                >
-                  <option className="text-sm text-gray-500"></option>
-                  {countryList?.map((country, index) => {
-                    return (
-                      <option
-                        key={country?.name + "_" + index}
-                        className="text-sm text-gray-500"
-                      >
-                        {country?.flag} {country?.name} ({country?.isoCode})
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-            );
-          }
-
-          return (
-            <div
-              key={m?.label + "_" + i}
-              className="w-full inline-flex flex-col space-y-1"
-            >
-              <label className="text-sm text-pwip-black-500">{m?.label}</label>
-              <input
-                type={m?.type}
+        ].map((m, i) => (
+          <div
+            key={m?.label + "_" + i}
+            className="w-full inline-flex flex-col space-y-1"
+          >
+            <label className="text-sm text-pwip-black-500">{m?.label}</label>
+            {m?.type === "select" ? (
+              <select
                 className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
-                placeholder={m?.placeholder}
+                value={m.value}
+                onChange={(e) => m.onChange(e.target.value)}
+              >
+                <option value="" className="text-sm text-gray-500"></option>
+                {countryList?.map((country, index) => (
+                  <option
+                    key={country?.name + "_" + index}
+                    value={country?.isoCode}
+                    className="text-sm text-gray-500"
+                  >
+                    {country?.flag} {country?.name} ({country?.isoCode})
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={m.type}
+                value={m.value}
+                onChange={(e) => m.onChange(e.target.value)}
+                className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                placeholder={m.placeholder}
               />
-            </div>
-          );
-        })}
+            )}
+          </div>
+        ))}
       </div>
 
       <div className="w-full mt-5">
         <button
-          onClick={() => {
+          onClick={async () => {
             startLoading();
-
-            // API call here
-
+            const payload = {
+              portName: portName,
+              portCode: portCode,
+              country: selectedCountry,
+            };
+            await dispatch(postNewPortRequest(payload));
             closeBottomSheet();
-
             stopLoading();
+
+            callback();
+
+            openToastMessage({
+              type: "success",
+              message: `We have recieved your request to add ${
+                portName || portCode
+              }, we will notify you once port is available for use.`,
+              autoHide: true,
+            });
+
+            setTimeout(() => {
+              closeToastMessage();
+            }, 2500);
           }}
           className="w-full outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-3 px-5 rounded-lg mt-3"
         >
@@ -983,22 +1011,34 @@ const SelectLocationContainer = (props) => {
                     Sorry, there is no result for this search, <br />
                     let’s try another phrase
                   </p>
-                  <button
-                    onClick={() => {
-                      startLoading();
-                      closeBottomSheet();
 
-                      const content = <PortRequestForm />;
+                  {locationType === "destination" ? (
+                    <button
+                      onClick={() => {
+                        startLoading();
+                        closeBottomSheet();
 
-                      setTimeout(() => {
-                        openBottomSheet(content);
-                        stopLoading();
-                      }, 1000);
-                    }}
-                    className="outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-2 px-3 rounded-lg mt-3"
-                  >
-                    Request a port
-                  </button>
+                        const content = (
+                          <PortRequestForm
+                            callback={() => {
+                              setSearchStringValue("");
+                              setListDestinationData([
+                                ...locationsData.locations.destinations,
+                              ]);
+                            }}
+                          />
+                        );
+
+                        setTimeout(() => {
+                          openBottomSheet(content);
+                          stopLoading();
+                        }, 1000);
+                      }}
+                      className="outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-2 px-3 rounded-lg mt-3"
+                    >
+                      Request a port
+                    </button>
+                  ) : null}
                 </div>
               ) : null}
             </div>
