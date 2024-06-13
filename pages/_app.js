@@ -144,8 +144,6 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
     }
   }, []);
 
-  console.log("here", process.env.NEXT_PUBLIC_ENV);
-
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
