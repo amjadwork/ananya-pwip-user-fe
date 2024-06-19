@@ -1,6 +1,6 @@
 {
-  "name": "PWIP App",
-  "short_name": "PWIP App",
+  "name": "PWIP Exports",
+  "short_name": "PWIP Exports",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#ffffff",
