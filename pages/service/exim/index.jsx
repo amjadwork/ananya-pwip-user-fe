@@ -1648,7 +1648,7 @@ function EXIMService() {
                     setIsFullscreen(true);
                     lockScreenOrientation("landscape");
                   }}
-                  className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-4 right-2"
+                  className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-8 right-4"
                 >
                   {expandIcon} <span>See in full screen</span>
                 </button>
