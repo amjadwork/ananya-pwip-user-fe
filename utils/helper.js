@@ -22,12 +22,10 @@ export function lockScreenOrientation(orientation) {
     screen.orientation.lock(orientation).catch(function (error) {
       console.error("Error locking screen orientation:", error);
 
-      return error;
       // Handle the error or notify the user
     });
   } else {
     console.warn("Screen orientation lock is not supported on this device.");
-    return error;
     // Handle the unsupported feature or notify the user
   }
 }

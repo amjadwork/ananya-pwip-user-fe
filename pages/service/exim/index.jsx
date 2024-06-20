@@ -1636,16 +1636,22 @@ function EXIMService() {
                 isFullscreen ? "h-[calc(100vh-64px)]" : "h-[calc(100vh-266px)]"
               } px-5 !mt-0 bg-white pb-6`}
             >
-              {/* {!isIOS ? (
-                <React.Fragment>
-                  
-                </React.Fragment>
-              ) : null} */}
-
               {!isFullscreen ? (
                 <button
                   onClick={() => {
                     setIsFullscreen(true);
+                    if (isIOS) {
+                      openToastMessage(
+                        {
+                          type: "info",
+                          autoHide: false,
+                          message:
+                            "For best experience, rotate your screen to landscape mode",
+                        },
+                        "top"
+                      );
+                    }
+
                     lockScreenOrientation("landscape");
                   }}
                   className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-8 right-4"
@@ -1656,6 +1662,18 @@ function EXIMService() {
                 <button
                   onClick={() => {
                     setIsFullscreen(false);
+                    if (isIOS) {
+                      openToastMessage(
+                        {
+                          type: "info",
+                          autoHide: false,
+                          message:
+                            "For best experience, rotate your screen to portrait mode",
+                        },
+                        "top"
+                      );
+                    }
+
                     lockScreenOrientation("portrait");
                   }}
                   className="inline-flex items-center justify-center px-3 py-2 h-8 space-x-2 w-auto z-20 rounded-md border-[1px] border-pwip-v2-primary-500 backdrop-blur-[2px] text-pwip-v2-primary-500 text-center text-xs absolute bottom-4 right-2"
