@@ -19,6 +19,7 @@ import tagsReducer from "./tags.reducers";
 import variantPriceReducer from "./variant-prices.reducers";
 import variantProfileReducer from "./variant-profile.reducers";
 import ofcReducer from "./ofc.reducers";
+import portRequestReducer from "./portRequest.reducers";
 
 const rootReducer = combineReducers({
   auth: authReducer,
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
   variantPriceList: variantPriceReducer,
   variantProfile: variantProfileReducer,
   ofc: ofcReducer,
+  portRequest: portRequestReducer,
 });
 
 export default rootReducer;

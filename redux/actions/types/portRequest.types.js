@@ -1,0 +1,6 @@
+/** @format */
+
+export const POST_NEW_PORT_REQUEST = "POST_NEW_PORT_REQUEST";
+export const POST_NEW_PORT_SUCCESS = "POST_NEW_PORT_SUCCESS";
+export const POST_NEW_PORT_FAILURE = "POST_NEW_PORT_FAILURE";
+
