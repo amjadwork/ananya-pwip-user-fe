@@ -15,6 +15,7 @@ const hideBottomBarAtRoutes = [
   "costing",
   "edit",
   "detail",
+  "select-pod",
   "lp",
   "rice-price",
   "export-costing",

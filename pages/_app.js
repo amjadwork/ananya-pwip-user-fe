@@ -164,7 +164,10 @@ function MyPWIPApp({ Component, pageProps: { session, ...pageProps } }) {
               {/* <link rel="icon" href="/favicon.ico" /> */}
             </Head>
 
-            <InitializeAnalytics />
+            {process.env.NEXT_PUBLIC_ENV === "prod" ||
+            process.env.NEXT_PUBLIC_ENV === "production" ? (
+              <InitializeAnalytics />
+            ) : null}
 
             <div className="relative w-full h-full grid grid-cols-2 gap-8 px-[72px] z-[110] max-xl:hidden bg-white overflow-hidden">
               <div className="h-full w-full mt-[30%] pl-12">
