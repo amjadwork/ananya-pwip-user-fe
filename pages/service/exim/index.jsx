@@ -179,7 +179,9 @@ function FilterOptionList({
   }, [appliedFilterData]);
 
   return (
-    <div className={`inline-flex w-full h-[calc(100vh-140px)] flex-col`}>
+    <div
+      className={`inline-flex w-full h-[calc(100vh-140px)] overflow-hidden flex-col`}
+    >
       <div className="inline-flex w-full items-center justify-between px-5 border-b-gray-800 py-3">
         <h3 className="text-pwip-black-600 font-semibold text-base">Filter</h3>
 
@@ -194,7 +196,7 @@ function FilterOptionList({
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-1 w-full h-full">
+      <div className="grid grid-cols-3 gap-1 w-full h-full overflow-auto">
         <div className="h-full col-span-1 py-4 inline-flex flex-col overflow-y-auto hide-scroll-bar">
           {filterOpt?.map((d, i) => {
             return (
