@@ -45,6 +45,7 @@ const LandingPage = (props) => {
     videoUrl,
     showAnimationOnTitleImage,
     animateData,
+    excludeService,
   } = props;
 
   const authToken = useSelector((state) => state.auth?.token);
@@ -222,7 +223,7 @@ const LandingPage = (props) => {
           message: "Something went while creating your order, try again",
           // autoHide: false,
         });
-        console.log(err);
+        console.error(err);
       }
     },
     [Razorpay]
@@ -230,9 +231,7 @@ const LandingPage = (props) => {
 
   async function initPage() {
     startLoading();
-    const details = await checkSubscription(SERVICE_ID, authToken);
-
-    console.log("here details", details);
+    const details = null; //await checkSubscription(SERVICE_ID, authToken);
 
     if (typeof details === "object") {
       setSubscriptionData(details);
@@ -453,12 +452,16 @@ const LandingPage = (props) => {
         </p>
         <div>
           {pickYourPlan
-            .filter(
-              (plan) =>
+            .filter((plan) => {
+              if (
                 !plan.is_free &&
                 plan.show_for_user &&
-                plan.applicable_services.includes(SERVICE_ID)
-            ) // Exclude the Free Trial plan
+                plan.applicable_services.includes(SERVICE_ID) &&
+                !plan.applicable_services.includes(excludeService)
+              ) {
+                return plan;
+              }
+            }) // Exclude the Free Trial plan
             .map((plan, index) => (
               <div
                 key={plan?.id + index * 73}

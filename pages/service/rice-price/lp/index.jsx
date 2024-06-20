@@ -9,7 +9,7 @@ import AppLayout from "@/layouts/appLayout.jsx";
 
 // Import Components
 import { Header } from "@/components/Header";
-import { ricePriceServiceId } from "@/utils/helper";
+import { ricePriceServiceId, exportCostingServiceId } from "@/utils/helper";
 
 import { features } from "@/constants/riceLpFeatures";
 import LandingPage from "@/containers/lp";
@@ -108,6 +108,7 @@ function lp() {
               features={features}
               videoContent={true}
               videoUrl={videoUrl}
+              excludeService={Number(exportCostingServiceId)}
             />
           </div>
         </div>
