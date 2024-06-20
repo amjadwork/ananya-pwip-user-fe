@@ -35,6 +35,7 @@ import {
   apiAnalyticsURL,
   openFullscreen,
   closeFullscreen,
+  lockScreenOrientation,
 } from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
@@ -1334,153 +1335,159 @@ function EXIMService() {
         <Header hideLogo={true} />
 
         <div className={`h-full w-full bg-pwip-v2-gray-100 space-y-2 relative`}>
-          <div
-            id="selectOptionHSN"
-            className="sticky top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100"
-          >
-            <div className="flex flex-col w-full space-y-1 px-5">
+          {!isFullscreen ? (
+            <>
               <div
-                onClick={() => {
-                  const content = (
-                    <HSNList
-                      handleSelect={(opt) => {
-                        setActiveHSN(opt);
-                        setApplyingFilter(true);
-                        setPageNumber(1);
-                      }}
-                      list={hsnListData}
-                      selectedHSN={activeHSN?.HSNCode}
-                    />
-                  );
-                  openBottomSheet(content);
-                }}
-                style={{
-                  filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
-                }}
-                className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
+                id="selectOptionHSN"
+                className="sticky top-[56px] z-20 w-full h-auto pt-3 pb-4 bg-pwip-v2-gray-100"
               >
-                <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
-                  <svg
-                    width="38"
-                    height="17"
-                    viewBox="0 0 38 17"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
+                <div className="flex flex-col w-full space-y-1 px-5">
+                  <div
+                    onClick={() => {
+                      const content = (
+                        <HSNList
+                          handleSelect={(opt) => {
+                            setActiveHSN(opt);
+                            setApplyingFilter(true);
+                            setPageNumber(1);
+                          }}
+                          list={hsnListData}
+                          selectedHSN={activeHSN?.HSNCode}
+                        />
+                      );
+                      openBottomSheet(content);
+                    }}
+                    style={{
+                      filter: "drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.12))",
+                    }}
+                    className="h-[48px] mt-[10px] w-full rounded-md bg-white text-base font-sans inline-flex items-center px-[18px]"
                   >
-                    <rect width="38" height="17" rx="4" fill="#878D96" />
-                    <path
-                      d="M8.79901 12V4.72727H9.89631V7.88778H13.522V4.72727H14.6229V12H13.522V8.82884H9.89631V12H8.79901ZM20.1875 6.63778C20.1496 6.30161 19.9934 6.04119 19.7188 5.85653C19.4441 5.66951 19.0985 5.57599 18.6818 5.57599C18.3835 5.57599 18.1255 5.62334 17.9077 5.71804C17.6899 5.81037 17.5206 5.93821 17.3999 6.10156C17.2815 6.26255 17.2223 6.44602 17.2223 6.65199C17.2223 6.82481 17.2625 6.97396 17.343 7.09943C17.4259 7.22491 17.5336 7.33026 17.6662 7.41548C17.8011 7.49834 17.9455 7.56818 18.0994 7.625C18.2533 7.67945 18.4013 7.72443 18.5433 7.75994L19.2536 7.9446C19.4856 8.00142 19.7235 8.07836 19.9673 8.17543C20.2112 8.27249 20.4373 8.40033 20.6456 8.55895C20.8539 8.71757 21.022 8.91406 21.1499 9.14844C21.2801 9.38281 21.3452 9.66335 21.3452 9.99006C21.3452 10.402 21.2386 10.7678 21.0256 11.0874C20.8149 11.407 20.5083 11.6591 20.1058 11.8438C19.7057 12.0284 19.2216 12.1207 18.6534 12.1207C18.1089 12.1207 17.6378 12.0343 17.2401 11.8615C16.8423 11.6887 16.531 11.4437 16.3061 11.1264C16.0812 10.8068 15.9569 10.428 15.9332 9.99006H17.0341C17.0554 10.2528 17.1406 10.4718 17.2898 10.647C17.4413 10.8198 17.6342 10.9489 17.8686 11.0341C18.1054 11.117 18.3646 11.1584 18.6463 11.1584C18.9564 11.1584 19.2322 11.1098 19.4737 11.0128C19.7176 10.9134 19.9093 10.776 20.049 10.6009C20.1887 10.4233 20.2585 10.2161 20.2585 9.9794C20.2585 9.76397 20.197 9.58759 20.0739 9.45028C19.9531 9.31297 19.7886 9.19934 19.5803 9.10938C19.3743 9.01941 19.1411 8.9401 18.8807 8.87145L18.0213 8.63707C17.4389 8.47846 16.9773 8.24527 16.6364 7.9375C16.2978 7.62973 16.1286 7.22254 16.1286 6.71591C16.1286 6.29687 16.2422 5.93111 16.4695 5.61861C16.6967 5.30611 17.0045 5.06345 17.3928 4.89062C17.781 4.71544 18.219 4.62784 18.7067 4.62784C19.1991 4.62784 19.6335 4.71425 20.0099 4.88707C20.3887 5.0599 20.687 5.29782 20.9048 5.60085C21.1226 5.90151 21.2363 6.24716 21.2457 6.63778H20.1875ZM28.5265 4.72727V12H27.5179L23.8212 6.66619H23.7537V12H22.6564V4.72727H23.6721L27.3723 10.0682H27.4398V4.72727H28.5265Z"
-                      fill="#F3F7F9"
-                    />
-                  </svg>
-                </button>
+                    <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
+                      <svg
+                        width="38"
+                        height="17"
+                        viewBox="0 0 38 17"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect width="38" height="17" rx="4" fill="#878D96" />
+                        <path
+                          d="M8.79901 12V4.72727H9.89631V7.88778H13.522V4.72727H14.6229V12H13.522V8.82884H9.89631V12H8.79901ZM20.1875 6.63778C20.1496 6.30161 19.9934 6.04119 19.7188 5.85653C19.4441 5.66951 19.0985 5.57599 18.6818 5.57599C18.3835 5.57599 18.1255 5.62334 17.9077 5.71804C17.6899 5.81037 17.5206 5.93821 17.3999 6.10156C17.2815 6.26255 17.2223 6.44602 17.2223 6.65199C17.2223 6.82481 17.2625 6.97396 17.343 7.09943C17.4259 7.22491 17.5336 7.33026 17.6662 7.41548C17.8011 7.49834 17.9455 7.56818 18.0994 7.625C18.2533 7.67945 18.4013 7.72443 18.5433 7.75994L19.2536 7.9446C19.4856 8.00142 19.7235 8.07836 19.9673 8.17543C20.2112 8.27249 20.4373 8.40033 20.6456 8.55895C20.8539 8.71757 21.022 8.91406 21.1499 9.14844C21.2801 9.38281 21.3452 9.66335 21.3452 9.99006C21.3452 10.402 21.2386 10.7678 21.0256 11.0874C20.8149 11.407 20.5083 11.6591 20.1058 11.8438C19.7057 12.0284 19.2216 12.1207 18.6534 12.1207C18.1089 12.1207 17.6378 12.0343 17.2401 11.8615C16.8423 11.6887 16.531 11.4437 16.3061 11.1264C16.0812 10.8068 15.9569 10.428 15.9332 9.99006H17.0341C17.0554 10.2528 17.1406 10.4718 17.2898 10.647C17.4413 10.8198 17.6342 10.9489 17.8686 11.0341C18.1054 11.117 18.3646 11.1584 18.6463 11.1584C18.9564 11.1584 19.2322 11.1098 19.4737 11.0128C19.7176 10.9134 19.9093 10.776 20.049 10.6009C20.1887 10.4233 20.2585 10.2161 20.2585 9.9794C20.2585 9.76397 20.197 9.58759 20.0739 9.45028C19.9531 9.31297 19.7886 9.19934 19.5803 9.10938C19.3743 9.01941 19.1411 8.9401 18.8807 8.87145L18.0213 8.63707C17.4389 8.47846 16.9773 8.24527 16.6364 7.9375C16.2978 7.62973 16.1286 7.22254 16.1286 6.71591C16.1286 6.29687 16.2422 5.93111 16.4695 5.61861C16.6967 5.30611 17.0045 5.06345 17.3928 4.89062C17.781 4.71544 18.219 4.62784 18.7067 4.62784C19.1991 4.62784 19.6335 4.71425 20.0099 4.88707C20.3887 5.0599 20.687 5.29782 20.9048 5.60085C21.1226 5.90151 21.2363 6.24716 21.2457 6.63778H20.1875ZM28.5265 4.72727V12H27.5179L23.8212 6.66619H23.7537V12H22.6564V4.72727H23.6721L27.3723 10.0682H27.4398V4.72727H28.5265Z"
+                          fill="#F3F7F9"
+                        />
+                      </svg>
+                    </button>
 
-                <span className="w-full bg-white pl-[18px] text-sm font-sans outline-none border-none text-pwip-v2-gray-500">
-                  {activeHSN?.HSNCode || "Search for a HSN"}
-                </span>
-                <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
-                  {chevronDown}
-                </button>
-              </div>
+                    <span className="w-full bg-white pl-[18px] text-sm font-sans outline-none border-none text-pwip-v2-gray-500">
+                      {activeHSN?.HSNCode || "Search for a HSN"}
+                    </span>
+                    <button className="outline-none border-none bg-transparent inline-flex items-center justify-center">
+                      {chevronDown}
+                    </button>
+                  </div>
 
-              <div className="w-full h-auto !mt-3">
-                <span className="text-xs text-gray-600 line-clamp-2 leading-6">
-                  <span className="font-semibold text-pwip-v2-primary-700">
-                    Rice found:{" "}
-                  </span>
-                  {getVariantNamesString(activeHSN?.items || [])}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white w-full py-4 px-5 pt-[54px] space-y-9">
-            <div className="w-full h-auto">
-              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
-                <div className="flex flex-nowrap space-x-3">
-                  {topStats.map((d, i) => (
-                    <div
-                      key={d?.title + "_" + i}
-                      className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
-                    >
-                      <div className="h-8 w-8 min-h-8 min-w-8 inline-flex items-center justify-center rounded-full bg-gray-100">
-                        <img src={d?.icon} className="h-4 w-4" />
-                      </div>
-                      <div className="inline-flex flex-col space-y-1">
-                        <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                          {d?.title}
-                        </span>
-
-                        <span className="font-normal text-pwip-gray-550 text-sm whitespace-nowrap">
-                          {d?.value}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                  <div className="w-full h-auto !mt-3">
+                    <span className="text-xs text-gray-600 line-clamp-2 leading-6">
+                      <span className="font-semibold text-pwip-v2-primary-700">
+                        Rice found:{" "}
+                      </span>
+                      {getVariantNamesString(activeHSN?.items || [])}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="w-full h-auto space-y-7">
-              {Object.keys(demandStats)?.map((d, i) => {
-                const sign = checkNumberSign(demandStats[d]);
+              <div className="bg-white w-full py-4 px-5 pt-[54px] space-y-9">
+                <div className="w-full h-auto">
+                  <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
+                    <div className="flex flex-nowrap space-x-3">
+                      {topStats.map((d, i) => (
+                        <div
+                          key={d?.title + "_" + i}
+                          className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
+                        >
+                          <div className="h-8 w-8 min-h-8 min-w-8 inline-flex items-center justify-center rounded-full bg-gray-100">
+                            <img src={d?.icon} className="h-4 w-4" />
+                          </div>
+                          <div className="inline-flex flex-col space-y-1">
+                            <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                              {d?.title}
+                            </span>
 
-                return (
-                  <div
-                    key={d + "_" + i}
-                    className="w-full inline-flex items-start justify-start space-x-4"
-                  >
-                    {sign === "positive" ? (
-                      <div
-                        className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
-                          sign === "positive"
-                            ? "text-pwip-v2-green-600 bg-pwip-green-200"
-                            : ""
-                        } rounded-full inline-flex items-center justify-center`}
-                      >
-                        {increaseUpIcon}
-                      </div>
-                    ) : (
-                      <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
-                        {decreaseDownIcon}
-                      </div>
-                    )}
-
-                    <div className="inline-flex flex-col space-y-1">
-                      <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                        {sign === "positive" && d === "inflationPercentage"
-                          ? "Increasing inflation"
-                          : sign === "positive" && d === "demandPercentage"
-                          ? "Increasing demand"
-                          : sign === "negative" && d === "inflationPercentage"
-                          ? "Decreasing demand"
-                          : sign === "negative" && d === "demandPercentage"
-                          ? "Decreasing demand"
-                          : ""}
-                      </span>
-                      <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
-                        {sign === "positive" && d === "inflationPercentage"
-                          ? `Over the last 3 years, inflation has increased to
-                        ${demandStats[d]?.toFixed(2)}%`
-                          : sign === "negative" && d === "inflationPercentage"
-                          ? `Over the last 3 years, inflation has decreaded to
-                          ${demandStats[d]?.toFixed(2)}%`
-                          : ""}
-
-                        {sign === "positive" && d === "demandPercentage"
-                          ? `Over the last 2 years, market demand has increased to
-                        ${demandStats[d]?.toFixed(2)}%`
-                          : sign === "negative" && d === "demandPercentage"
-                          ? `Over the last 2 years, market demand has decreaded to
-                          ${demandStats[d]?.toFixed(2)}%`
-                          : ""}
-                      </p>
+                            <span className="font-normal text-pwip-gray-550 text-sm whitespace-nowrap">
+                              {d?.value}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                </div>
+
+                <div className="w-full h-auto space-y-7">
+                  {Object.keys(demandStats)?.map((d, i) => {
+                    const sign = checkNumberSign(demandStats[d]);
+
+                    return (
+                      <div
+                        key={d + "_" + i}
+                        className="w-full inline-flex items-start justify-start space-x-4"
+                      >
+                        {sign === "positive" ? (
+                          <div
+                            className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
+                              sign === "positive"
+                                ? "text-pwip-v2-green-600 bg-pwip-green-200"
+                                : ""
+                            } rounded-full inline-flex items-center justify-center`}
+                          >
+                            {increaseUpIcon}
+                          </div>
+                        ) : (
+                          <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
+                            {decreaseDownIcon}
+                          </div>
+                        )}
+
+                        <div className="inline-flex flex-col space-y-1">
+                          <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                            {sign === "positive" && d === "inflationPercentage"
+                              ? "Increasing inflation"
+                              : sign === "positive" && d === "demandPercentage"
+                              ? "Increasing demand"
+                              : sign === "negative" &&
+                                d === "inflationPercentage"
+                              ? "Decreasing demand"
+                              : sign === "negative" && d === "demandPercentage"
+                              ? "Decreasing demand"
+                              : ""}
+                          </span>
+                          <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
+                            {sign === "positive" && d === "inflationPercentage"
+                              ? `Over the last 3 years, inflation has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                              : sign === "negative" &&
+                                d === "inflationPercentage"
+                              ? `Over the last 3 years, inflation has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                              : ""}
+
+                            {sign === "positive" && d === "demandPercentage"
+                              ? `Over the last 2 years, market demand has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                              : sign === "negative" && d === "demandPercentage"
+                              ? `Over the last 2 years, market demand has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                              : ""}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          ) : null}
           {/* table */}
 
           <div id="fullScreen">
@@ -1629,31 +1636,33 @@ function EXIMService() {
                 isFullscreen ? "h-[calc(100vh-64px)]" : "h-[calc(100vh-266px)]"
               } px-5 !mt-0 bg-white pb-6`}
             >
-              {!isIOS ? (
+              {/* {!isIOS ? (
                 <React.Fragment>
-                  {!isFullscreen ? (
-                    <button
-                      onClick={() => {
-                        openFullscreen("fullScreen");
-                        setIsFullscreen(true);
-                      }}
-                      className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-4 right-2"
-                    >
-                      {expandIcon} <span>See in full screen</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => {
-                        closeFullscreen("fullScreen");
-                        setIsFullscreen(false);
-                      }}
-                      className="inline-flex items-center justify-center px-3 py-2 h-8 space-x-2 w-auto z-20 rounded-md border-[1px] border-pwip-v2-primary-500 backdrop-blur-[2px] text-pwip-v2-primary-500 text-center text-xs absolute bottom-4 right-2"
-                    >
-                      {collapseIcon} <span>Close full screen</span>
-                    </button>
-                  )}
+                  
                 </React.Fragment>
-              ) : null}
+              ) : null} */}
+
+              {!isFullscreen ? (
+                <button
+                  onClick={() => {
+                    lockScreenOrientation("landscape");
+                    setIsFullscreen(true);
+                  }}
+                  className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-4 right-2"
+                >
+                  {expandIcon} <span>See in full screen</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    lockScreenOrientation("portrait");
+                    setIsFullscreen(false);
+                  }}
+                  className="inline-flex items-center justify-center px-3 py-2 h-8 space-x-2 w-auto z-20 rounded-md border-[1px] border-pwip-v2-primary-500 backdrop-blur-[2px] text-pwip-v2-primary-500 text-center text-xs absolute bottom-4 right-2"
+                >
+                  {collapseIcon} <span>Close full screen</span>
+                </button>
+              )}
 
               <div className="w-full h-auto overflow-x-scroll hide-scroll-bar">
                 {selectedViewMode?.value === "all" ? (

@@ -17,6 +17,21 @@ export async function checkSubscription(serviceId, token) {
   }
 }
 
+export function lockScreenOrientation(orientation) {
+  if (screen.orientation && typeof screen.orientation.lock === "function") {
+    screen.orientation.lock(orientation).catch(function (error) {
+      console.error("Error locking screen orientation:", error);
+
+      return error;
+      // Handle the error or notify the user
+    });
+  } else {
+    console.warn("Screen orientation lock is not supported on this device.");
+    return error;
+    // Handle the unsupported feature or notify the user
+  }
+}
+
 export function openFullscreen(elementId) {
   // Get the element based on the provided ID
   const element = document.getElementById(elementId);
