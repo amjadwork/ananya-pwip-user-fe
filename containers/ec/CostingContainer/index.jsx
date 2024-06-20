@@ -1314,6 +1314,16 @@ function CostingOverviewContainer() {
                   </svg>
                 }
                 onClick={() => {
+                  if (!session?.accessToken) {
+                    openToastMessage({
+                      type: "info",
+                      message: "You need to login",
+                      // autoHide: false,
+                    });
+
+                    return;
+                  }
+
                   handleDownload();
                 }}
               />

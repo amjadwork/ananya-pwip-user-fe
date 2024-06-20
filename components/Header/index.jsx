@@ -259,7 +259,12 @@ export function Header(props) {
                   (activeRoute === "preview" && authToken)
                 ) {
                   await dispatch(resetCustomCostingSelection());
-
+                  if (activeRoute === "preview") {
+                    sessionStorage.setItem(
+                      "previewCostingId",
+                      router?.query?.id
+                    );
+                  }
                   router.push("/export-costing/costing/edit");
                 }
 

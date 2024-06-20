@@ -175,12 +175,26 @@ export default function Home() {
       );
 
       // Construct the URL with the available UTM parameters
-      const targetURL =
+      let targetURL =
         availableUTMParams.length > 0
           ? `/home/?${availableUTMParams
               .map((key) => `${key}=${queries[key]}`)
               .join("&")}`
           : "/home";
+
+      const fromPreviewNotLoggedIn = sessionStorage.getItem("previewURL");
+      if (fromPreviewNotLoggedIn) {
+        targetURL =
+          availableUTMParams.length > 0
+            ? fromPreviewNotLoggedIn +
+              "/?" +
+              availableUTMParams
+                .map((key) => `${key}=${queries[key]}`)
+                .join("&")
+            : fromPreviewNotLoggedIn;
+      }
+
+      sessionStorage.removeItem("previewURL");
 
       window.location.href = targetURL;
       // handleNavigation(targetURL);

@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 
 // import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -9,6 +11,19 @@ import CostingOverviewContainer from "@/containers/ec/CostingContainer";
 // import axios from "axios";
 
 function CostingPreview() {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (router && !session?.accessToken) {
+      sessionStorage.setItem("previewURL", router.asPath);
+    }
+
+    if (session?.accessToken) {
+      sessionStorage.removeItem("previewURL");
+    }
+  }, [router, session]);
+
   return (
     <React.Fragment>
       <Head>
