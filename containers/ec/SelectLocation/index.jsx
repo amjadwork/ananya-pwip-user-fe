@@ -90,7 +90,7 @@ function PortRequestForm({ callback }) {
             <label className="text-sm text-pwip-black-500">{m?.label}</label>
             {m?.type === "select" ? (
               <select
-                className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                className={`bg-white block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
                 value={m.value}
                 onChange={(e) => m.onChange(e.target.value)}
               >
@@ -110,7 +110,7 @@ function PortRequestForm({ callback }) {
                 type={m.type}
                 value={m.value}
                 onChange={(e) => m.onChange(e.target.value)}
-                className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                className={`bg-white block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
                 placeholder={m.placeholder}
               />
             )}
@@ -120,7 +120,16 @@ function PortRequestForm({ callback }) {
 
       <div className="w-full mt-5">
         <button
+          disabled={(!portName && !portCode) || !selectedCountry}
           onClick={async () => {
+            if (!portName && !portCode) {
+              return;
+            }
+
+            if (!selectedCountry) {
+              return;
+            }
+
             startLoading();
             const payload = {
               portName: portName,
@@ -145,7 +154,9 @@ function PortRequestForm({ callback }) {
               closeToastMessage();
             }, 2500);
           }}
-          className="w-full outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-3 px-5 rounded-lg mt-3"
+          className={`w-full outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-3 px-5 rounded-lg mt-3 ${
+            (!portName && !portCode) || !selectedCountry ? "opacity-[0.5]" : ""
+          }`}
         >
           Submit
         </button>
@@ -525,7 +536,7 @@ const SelectLocationContainer = (props) => {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, [searchScreenActive]);
+  }, [searchScreenActive, listDestinationData?.length]);
 
   function handleSearch(searchString) {
     const dataToFilter = [...destinationList];
@@ -749,51 +760,62 @@ const SelectLocationContainer = (props) => {
           </div>
         ) : null}
 
-        <FilterSection
-          locationType={locationType}
-          isFromEdit={isFromEdit}
-          isFromOtherService={isFromOtherService}
-          inFixedBar={true}
-          filterOptions={filterOptions}
-          selectedFilter={selectedFilter}
-          handleFilterSelect={(item) => {
-            if (selectedFilter?.name === item?.name) {
-              setSelectedFilter(null);
-              setListDestinationData([...locationsData.locations.destinations]);
-              return null;
-            } else {
-              setSelectedFilter(item);
-            }
-
-            if (locationType === "destination") {
-              const dataToFilterOrSort = [
-                ...locationsData.locations.destinations,
-              ];
-
-              const filteredData = dataToFilterOrSort.filter((d) => {
-                if (d.country.toLowerCase().includes(item.name.toLowerCase())) {
-                  return d;
+        {listDestinationData?.length ? (
+          <FilterSection
+            locationType={locationType}
+            isFromEdit={isFromEdit}
+            isFromOtherService={isFromOtherService}
+            inFixedBar={true}
+            filterOptions={filterOptions}
+            selectedFilter={selectedFilter}
+            handleFilterSelect={(item) => {
+              if (selectedFilter?.name === item?.name) {
+                setSelectedFilter(null);
+                if (locationType === "origin") {
+                  setListDestinationData([...locationsData.locations.origin]);
                 }
-              });
 
-              setListDestinationData([...filteredData]);
-            }
-
-            if (locationType === "origin") {
-              const dataToFilterOrSort = [...locationsData.locations.origin];
-
-              const filteredData = dataToFilterOrSort.filter((d) => {
-                if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
-                  return d;
+                if (locationType === "destination") {
+                  setListDestinationData([
+                    ...locationsData.locations.destinations,
+                  ]);
                 }
-              });
+                return null;
+              } else {
+                setSelectedFilter(item);
+              }
 
-              setListDestinationData([...filteredData]);
-            }
-          }}
-        />
+              if (locationType === "destination") {
+                const dataToFilterOrSort = [
+                  ...locationsData.locations.destinations,
+                ];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (
+                    d.country.toLowerCase().includes(item.name.toLowerCase())
+                  ) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+
+              if (locationType === "origin") {
+                const dataToFilterOrSort = [...locationsData.locations.origin];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+            }}
+          />
+        ) : null}
       </div>
-
       <div
         className={`min-h-screen h-full w-full bg-white ${
           !noPaddingBottom ? "pb-[172px]" : "pb-0"
@@ -804,9 +826,11 @@ const SelectLocationContainer = (props) => {
             : window.innerWidth >= 1280
             ? "136px"
             : isFromOtherService
-            ? mainContainerHeight + "px"
-            : searchScreenActive
+            ? mainContainerHeight - 34 + "px"
+            : searchScreenActive && listDestinationData?.length
             ? mainContainerHeight + 22 + "px"
+            : !listDestinationData?.length && searchScreenActive
+            ? 160 + "px"
             : 162 + "px",
         }}
       >
