@@ -179,7 +179,7 @@ function FilterOptionList({
   }, [appliedFilterData]);
 
   return (
-    <div className="inline-flex w-full h-[calc(100vh-320px)] flex-col">
+    <div className={`inline-flex w-full h-[calc(100vh-140px)] flex-col`}>
       <div className="inline-flex w-full items-center justify-between px-5 border-b-gray-800 py-3">
         <h3 className="text-pwip-black-600 font-semibold text-base">Filter</h3>
 
