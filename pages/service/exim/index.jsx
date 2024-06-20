@@ -1645,8 +1645,8 @@ function EXIMService() {
               {!isFullscreen ? (
                 <button
                   onClick={() => {
-                    lockScreenOrientation("landscape");
                     setIsFullscreen(true);
+                    lockScreenOrientation("landscape");
                   }}
                   className="inline-flex px-3 py-2 h-8 space-x-2 w-auto rounded-md border-[1px] border-pwip-v2-primary-500 text-pwip-v2-primary-500 backdrop-blur-[2px] text-center text-xs absolute bottom-4 right-2"
                 >
@@ -1655,8 +1655,8 @@ function EXIMService() {
               ) : (
                 <button
                   onClick={() => {
-                    lockScreenOrientation("portrait");
                     setIsFullscreen(false);
+                    lockScreenOrientation("portrait");
                   }}
                   className="inline-flex items-center justify-center px-3 py-2 h-8 space-x-2 w-auto z-20 rounded-md border-[1px] border-pwip-v2-primary-500 backdrop-blur-[2px] text-pwip-v2-primary-500 text-center text-xs absolute bottom-4 right-2"
                 >
