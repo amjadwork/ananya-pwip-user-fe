@@ -64,6 +64,7 @@ function PortRequestForm({ callback }) {
           {
             type: "text",
             label: "Port name",
+            optional: false,
             placeholder: "Enter port name",
             value: portName,
             onChange: setPortName,
@@ -71,6 +72,7 @@ function PortRequestForm({ callback }) {
           {
             type: "text",
             label: "Port code",
+            optional: true,
             placeholder: "Enter port code",
             value: portCode,
             onChange: setPortCode,
@@ -78,6 +80,7 @@ function PortRequestForm({ callback }) {
           {
             type: "select",
             label: "Country",
+            optional: false,
             placeholder: "Select a country",
             value: selectedCountry,
             onChange: setSelectedCountry,
@@ -87,7 +90,12 @@ function PortRequestForm({ callback }) {
             key={m?.label + "_" + i}
             className="w-full inline-flex flex-col space-y-1"
           >
-            <label className="text-sm text-pwip-black-500">{m?.label}</label>
+            <label className="text-sm text-pwip-black-500">
+              {m?.label}{" "}
+              {m?.optional ? (
+                <span className="text-gray-400">(Optional)</span>
+              ) : null}
+            </label>
             {m?.type === "select" ? (
               <select
                 className={`bg-white block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
