@@ -39,6 +39,11 @@ import {
   fetchOriginRequest,
 } from "@/redux/actions/location.actions";
 
+import {
+  setSelectedPOLForOFCFailure,
+  setSelectedPODForOFCFailure,
+} from "@/redux/actions/ofc.actions";
+
 import { productStateList } from "@/constants/stateList";
 
 import ShipOFC from "../../../theme/lottie/ofc-ship.json";
@@ -161,6 +166,9 @@ function OFCService() {
 
     if (splashScreen) {
       updateProgressValue();
+
+      dispatch(setSelectedPOLForOFCFailure());
+      dispatch(setSelectedPODForOFCFailure());
 
       // Reset progress value after given seconds
       setTimeout(() => {

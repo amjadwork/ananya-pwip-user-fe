@@ -1,7 +1,7 @@
-import React, { useRef, useCallback } from "react";
-import { call, select, put } from "redux-saga/effects";
+import React, { useState, useRef, useMemo } from "react";
+// import { call, select, put } from "redux-saga/effects";
 import { useRouter } from "next/router";
-import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
+// import { dummyRemoveMeCityIcon, pencilIcon } from "../../../theme/icon";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { api } from "@/utils/helper";
@@ -13,6 +13,7 @@ import {
   setSelectedPOLForOFCRequest,
   setSelectedPODForOFCRequest,
 } from "@/redux/actions/ofc.actions";
+import { Country } from "country-state-city";
 
 import {
   searchIcon,
@@ -21,12 +22,148 @@ import {
 } from "../../../theme/icon";
 
 import { debounce } from "lodash";
-const { flag } = require("country-emoji");
+// const { flag } = require("country-emoji");
 
 import {
   setCostingSelection,
   setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
+
+import { postNewPortRequest } from "@/redux/actions/portRequest.actions.js";
+
+function PortRequestForm({ callback }) {
+  const {
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
+
+  const [portName, setPortName] = useState("");
+  const [portCode, setPortCode] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
+
+  const dispatch = useDispatch();
+
+  // Assuming countryList is obtained from somewhere
+  const countryList = useMemo(() => Country.getAllCountries(), []);
+
+  return (
+    <div className="inline-flex flex-col w-full h-auto px-5 py-4 pb-12">
+      <h3 className="font-semibold text-base text-pwip-black-600">
+        Tell us the port you want us to add
+      </h3>
+      <p className="text-pwip-gray-500 text-xs mt-1">
+        Enter the Port name or port code along with the country that you would
+        like to see on PWIP App.
+      </p>
+
+      <div className="w-full inline-flex flex-col mt-5 space-y-4">
+        {[
+          {
+            type: "text",
+            label: "Port name",
+            placeholder: "Enter port name",
+            value: portName,
+            onChange: setPortName,
+          },
+          {
+            type: "text",
+            label: "Port code",
+            placeholder: "Enter port code",
+            value: portCode,
+            onChange: setPortCode,
+          },
+          {
+            type: "select",
+            label: "Country",
+            placeholder: "Select a country",
+            value: selectedCountry,
+            onChange: setSelectedCountry,
+          },
+        ].map((m, i) => (
+          <div
+            key={m?.label + "_" + i}
+            className="w-full inline-flex flex-col space-y-1"
+          >
+            <label className="text-sm text-pwip-black-500">{m?.label}</label>
+            {m?.type === "select" ? (
+              <select
+                className={`bg-white block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                value={m.value}
+                onChange={(e) => m.onChange(e.target.value)}
+              >
+                <option value="" className="text-sm text-gray-500"></option>
+                {countryList?.map((country, index) => (
+                  <option
+                    key={country?.name + "_" + index}
+                    value={country?.isoCode}
+                    className="text-sm text-gray-500"
+                  >
+                    {country?.flag} {country?.name} ({country?.isoCode})
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <input
+                type={m.type}
+                value={m.value}
+                onChange={(e) => m.onChange(e.target.value)}
+                className={`bg-white block w-full h-10 p-1 px-3 text-sm text-gray-900 border rounded-md appearance-none focus:outline-none focus:ring-2 focus:border-pwip-primary peer`}
+                placeholder={m.placeholder}
+              />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="w-full mt-5">
+        <button
+          disabled={(!portName && !portCode) || !selectedCountry}
+          onClick={async () => {
+            if (!portName && !portCode) {
+              return;
+            }
+
+            if (!selectedCountry) {
+              return;
+            }
+
+            startLoading();
+            const payload = {
+              portName: portName,
+              portCode: portCode,
+              country: selectedCountry,
+            };
+            await dispatch(postNewPortRequest(payload));
+            closeBottomSheet();
+            stopLoading();
+
+            callback();
+
+            openToastMessage({
+              type: "success",
+              message: `We have recieved your request to add ${
+                portName || portCode
+              }, we will notify you once port is available for use.`,
+              autoHide: true,
+            });
+
+            setTimeout(() => {
+              closeToastMessage();
+            }, 2500);
+          }}
+          className={`w-full outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-3 px-5 rounded-lg mt-3 ${
+            (!portName && !portCode) || !selectedCountry ? "opacity-[0.5]" : ""
+          }`}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const FilterSection = ({
   locationType,
@@ -198,7 +335,8 @@ const SelectLocationContainer = (props) => {
   const formValues = props.formValues;
   const shipmentTerm = props.shipmentTerm;
 
-  const { closeBottomSheet, openBottomSheet } = useOverlayContext();
+  const { closeBottomSheet, openBottomSheet, startLoading, stopLoading } =
+    useOverlayContext();
   const router = useRouter();
   const dispatch = useDispatch();
   const selectedCosting = useSelector((state) => state.costing); // Use api reducer slice
@@ -398,7 +536,7 @@ const SelectLocationContainer = (props) => {
       const height = element.offsetHeight;
       setMainContainerHeight(height);
     }
-  }, [searchScreenActive]);
+  }, [searchScreenActive, listDestinationData?.length]);
 
   function handleSearch(searchString) {
     const dataToFilter = [...destinationList];
@@ -622,51 +760,62 @@ const SelectLocationContainer = (props) => {
           </div>
         ) : null}
 
-        <FilterSection
-          locationType={locationType}
-          isFromEdit={isFromEdit}
-          isFromOtherService={isFromOtherService}
-          inFixedBar={true}
-          filterOptions={filterOptions}
-          selectedFilter={selectedFilter}
-          handleFilterSelect={(item) => {
-            if (selectedFilter?.name === item?.name) {
-              setSelectedFilter(null);
-              setListDestinationData([...locationsData.locations.destinations]);
-              return null;
-            } else {
-              setSelectedFilter(item);
-            }
-
-            if (locationType === "destination") {
-              const dataToFilterOrSort = [
-                ...locationsData.locations.destinations,
-              ];
-
-              const filteredData = dataToFilterOrSort.filter((d) => {
-                if (d.country.toLowerCase().includes(item.name.toLowerCase())) {
-                  return d;
+        {listDestinationData?.length ? (
+          <FilterSection
+            locationType={locationType}
+            isFromEdit={isFromEdit}
+            isFromOtherService={isFromOtherService}
+            inFixedBar={true}
+            filterOptions={filterOptions}
+            selectedFilter={selectedFilter}
+            handleFilterSelect={(item) => {
+              if (selectedFilter?.name === item?.name) {
+                setSelectedFilter(null);
+                if (locationType === "origin") {
+                  setListDestinationData([...locationsData.locations.origin]);
                 }
-              });
 
-              setListDestinationData([...filteredData]);
-            }
-
-            if (locationType === "origin") {
-              const dataToFilterOrSort = [...locationsData.locations.origin];
-
-              const filteredData = dataToFilterOrSort.filter((d) => {
-                if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
-                  return d;
+                if (locationType === "destination") {
+                  setListDestinationData([
+                    ...locationsData.locations.destinations,
+                  ]);
                 }
-              });
+                return null;
+              } else {
+                setSelectedFilter(item);
+              }
 
-              setListDestinationData([...filteredData]);
-            }
-          }}
-        />
+              if (locationType === "destination") {
+                const dataToFilterOrSort = [
+                  ...locationsData.locations.destinations,
+                ];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (
+                    d.country.toLowerCase().includes(item.name.toLowerCase())
+                  ) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+
+              if (locationType === "origin") {
+                const dataToFilterOrSort = [...locationsData.locations.origin];
+
+                const filteredData = dataToFilterOrSort.filter((d) => {
+                  if (d.state.toLowerCase().includes(item.name.toLowerCase())) {
+                    return d;
+                  }
+                });
+
+                setListDestinationData([...filteredData]);
+              }
+            }}
+          />
+        ) : null}
       </div>
-
       <div
         className={`min-h-screen h-full w-full bg-white ${
           !noPaddingBottom ? "pb-[172px]" : "pb-0"
@@ -677,9 +826,11 @@ const SelectLocationContainer = (props) => {
             : window.innerWidth >= 1280
             ? "136px"
             : isFromOtherService
-            ? mainContainerHeight + "px"
-            : searchScreenActive
+            ? mainContainerHeight - 34 + "px"
+            : searchScreenActive && listDestinationData?.length
             ? mainContainerHeight + 22 + "px"
+            : !listDestinationData?.length && searchScreenActive
+            ? 160 + "px"
             : 162 + "px",
         }}
       >
@@ -874,16 +1025,44 @@ const SelectLocationContainer = (props) => {
               {!listDestinationData?.length && searchStringValue ? (
                 <div className="inline-flex flex-col justify-center items-center w-full h-full p-[5px] px-5">
                   <img
-                    className="w-auto h-[260px]"
+                    className="w-auto h-[120px]"
                     src="/assets/images/no-state/no-result.svg"
                   />
-                  <h2 className="text-xl text-center text-pwip-v2-primary font-[700] mt-8">
+                  <h2 className="text-lg text-center text-pwip-v2-primary font-[700] mt-4">
                     No Results
                   </h2>
-                  <p className="text-base text-center text-pwip-v2-gray-500 font-[500] mt-5">
-                    Sorry, there is no result for this search, let’s try another
-                    phrase
+                  <p className="text-sm text-center text-pwip-v2-gray-500 font-[500] mt-2">
+                    Sorry, there is no result for this search, <br />
+                    let’s try another phrase
                   </p>
+
+                  {locationType === "destination" ? (
+                    <button
+                      onClick={() => {
+                        startLoading();
+                        closeBottomSheet();
+
+                        const content = (
+                          <PortRequestForm
+                            callback={() => {
+                              setSearchStringValue("");
+                              setListDestinationData([
+                                ...locationsData.locations.destinations,
+                              ]);
+                            }}
+                          />
+                        );
+
+                        setTimeout(() => {
+                          openBottomSheet(content);
+                          stopLoading();
+                        }, 1000);
+                      }}
+                      className="outline-none border-none bg-pwip-v2-primary-600 text-center text-sm text-white py-2 px-3 rounded-lg mt-3"
+                    >
+                      Request a port
+                    </button>
+                  ) : null}
                 </div>
               ) : null}
             </div>

@@ -189,7 +189,7 @@ function SelectPortOfDestination() {
           showSelectedVariant={true}
         />
         <div
-          className="w-full rounded-t-lg fixed bottom-0 h-auto px-[24px] py-4 bg-white z-[1000]"
+          className="w-full rounded-t-lg fixed bottom-0 h-auto px-[24px] py-4 bg-white z-10"
           style={{
             boxShadow: "0px -8px 16px 0px rgba(0, 0, 0, 0.08)",
           }}

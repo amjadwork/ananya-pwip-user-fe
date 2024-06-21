@@ -81,6 +81,7 @@ module.exports = {
     "text-blue-200",
     "bg-blue-800",
     "bottom-[82px]",
+    "top-[32px]",
     "h-screen",
     "w-screen",
     "bg-black",

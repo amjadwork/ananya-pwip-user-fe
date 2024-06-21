@@ -30,6 +30,7 @@ export function OverlayProvider({ children }) {
   const [bottomSheetChildren, setBottomSheetChildren] = useState(null);
 
   const [autoHideToast, setAutoHideToast] = useState(true);
+  const [toastPosition, setToastPosition] = useState("bottom");
   const [usdValue, setUSDValue] = useState(0);
   const [usdInputValue, setUSDInputValue] = useState(0);
   const [initialFocusRef, setInitialFocusRef] = useState(false);
@@ -83,10 +84,15 @@ export function OverlayProvider({ children }) {
   const startLoading = () => setIsLoading(true);
   const stopLoading = () => setIsLoading(false);
 
-  const openToastMessage = (contentObj) => {
+  const openToastMessage = (contentObj, position) => {
     setShowToast(true);
-    if (contentObj?.autoHide) {
-      setAutoHideToast(false);
+
+    if (position) {
+      setToastPosition(position);
+    }
+
+    if (contentObj?.autoHide === true || contentObj?.autoHide === false) {
+      setAutoHideToast(contentObj?.autoHide);
     }
 
     setToastContent(contentObj);
@@ -182,7 +188,11 @@ export function OverlayProvider({ children }) {
       )}
       {isBottomSheetOpen ? bottomSheet : null}
       {showToast && (
-        <div className="w-full h-auto left-0 bottom-[82px] fixed inline-flex items-center justify-center z-[1000] px-6">
+        <div
+          className={`w-full h-auto left-0 ${
+            toastPosition === "top" ? "top-[32px]" : "bottom-[82px]"
+          } fixed inline-flex items-center justify-center z-[1000] px-6`}
+        >
           <div
             id="toast-danger"
             className="flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800"
