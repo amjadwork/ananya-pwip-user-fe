@@ -4,6 +4,7 @@ import {
   mySubscriptionsIcon,
   notificationsIcon,
   supportIcon,
+  requestAPortIcon,
 } from "theme/icon";
 
 export const moreSettingOptions = [
@@ -40,5 +41,13 @@ export const moreSettingOptions = [
     icon: supportIcon,
     backgroundColor: "#FFEADB66",
     path: "https://api.whatsapp.com/send?phone=918105632544&text=Hi",
+  },
+
+  {
+    label: "Request a destination port",
+    icon: requestAPortIcon,
+    backgroundColor: "#d9e5f166",
+    type: "in-app",
+    component: "PortRequestForm",
   },
 ];
