@@ -23,25 +23,25 @@ import {
 //   return randomId;
 // }
 
-const startFreeTrialForUser = async (authToken) => {
-  try {
-    const response = await axios.post(
-      apiStagePaymentBeUrl +
-        "api" +
-        "/start-free-trial?serviceId=" +
-        Number(exportCostingServiceId),
-      null,
-      {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
-    return response.data;
-  } catch (err) {
-    return err;
-  }
-};
+// const startFreeTrialForUser = async (authToken) => {
+//   try {
+//     const response = await axios.post(
+//       apiStagePaymentBeUrl +
+//         "api" +
+//         "/start-free-trial?serviceId=" +
+//         Number(exportCostingServiceId),
+//       null,
+//       {
+//         headers: {
+//           Authorization: `Bearer ${authToken}`,
+//         },
+//       }
+//     );
+//     return response.data;
+//   } catch (err) {
+//     return err;
+//   }
+// };
 
 // const createSubscription = async (body, authToken) => {
 //   try {
@@ -114,9 +114,9 @@ function* handleAuthSuccessAndFailure(action) {
           )
         );
 
-        if (response?.data?.newUser) {
-          startFreeTrialForUser(token);
-        }
+        // if (response?.data?.newUser) {
+        //   startFreeTrialForUser(token);
+        // }
       }
     }
   } catch (error) {
