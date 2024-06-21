@@ -584,6 +584,21 @@ function CostingOverviewContainer() {
     }
   }
 
+  // save preview data to costing for a new user;
+  // useEffect(() => {
+  //   if (currentCostingFromHistory?.length && router?.query?.id) {
+  //     const givenData = currentCostingFromHistory[0];
+  //     let payload = extractCustomCostingPayload({
+  //       ...givenData,
+  //     });
+  //     payload.currentUnit = givenData?.unit || "mt";
+
+  //     if (session?.accessToken) {
+  //       dispatch(generateCustomCostingRequest(payload));
+  //     }
+  //   }
+  // }, [router?.query?.id, session?.accessToken]);
+
   useEffect(() => {
     constructPage();
   }, [router]);
@@ -1215,6 +1230,16 @@ function CostingOverviewContainer() {
           >
             <div
               onClick={() => {
+                if (!session?.accessToken) {
+                  openToastMessage({
+                    type: "info",
+                    message: "You need to login",
+                    // autoHide: false,
+                  });
+
+                  return;
+                }
+
                 handleOpenUnitSelectBottomSheet();
               }}
               className="w-full inline-flex items-center justify-start space-x-3 text-white text-xs border-r-[1px] border-r-white border-opacity-[0.42]"
@@ -1225,6 +1250,16 @@ function CostingOverviewContainer() {
 
             <div
               onClick={() => {
+                if (!session?.accessToken) {
+                  openToastMessage({
+                    type: "info",
+                    message: "You need to login",
+                    // autoHide: false,
+                  });
+
+                  return;
+                }
+
                 handleOpenShipmentTermSelectBottomSheet();
               }}
               className="w-full inline-flex items-center justify-center space-x-3 text-white text-xs border-r-[1px] border-r-white border-opacity-[0.42]"
@@ -1236,6 +1271,16 @@ function CostingOverviewContainer() {
 
             <div
               onClick={() => {
+                if (!session?.accessToken) {
+                  openToastMessage({
+                    type: "info",
+                    message: "You need to login",
+                    // autoHide: false,
+                  });
+
+                  return;
+                }
+
                 openModal(forexRate?.USD || 0);
               }}
               className="w-full inline-flex items-center justify-end space-x-3 text-white text-xs"
