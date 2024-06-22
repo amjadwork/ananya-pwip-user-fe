@@ -1980,7 +1980,13 @@ export const mySubscriptionsIcon = (
 );
 
 export const requestAPortIcon = (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="ship">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32"
+    id="ship"
+    width="20"
+    height="20"
+  >
     <g>
       <path
         fill="#1852aa"
