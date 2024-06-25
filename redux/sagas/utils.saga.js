@@ -26,6 +26,8 @@ import {
 } from "../actions/utils.actions";
 import { makeApiCall } from "./_commonFunctions.saga";
 
+import { apiStagePaymentBeUrl } from "@/utils/helper";
+
 function* setLoaderUtil(data) {
   try {
     yield put(showLoaderSuccess(data));
@@ -95,7 +97,16 @@ function* verifyOTPforPhone(action) {
     );
 
     if (response?.data) {
-      yield put(verifyOTPResponseSuccess(response?.data));
+      const res = yield call(
+        makeApiCall,
+        apiStagePaymentBeUrl + "api/check-for-invitation",
+        "post",
+        {}
+      );
+
+      if (res) {
+        yield put(verifyOTPResponseSuccess(response?.data));
+      }
     }
   } catch (error) {
     yield put(verifyOTPResponseSuccess(error?.response?.data));
