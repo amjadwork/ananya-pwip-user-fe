@@ -191,6 +191,10 @@ module.exports = {
           },
         },
       },
+
+      screens: {
+        xs: "375px", // Custom breakpoint
+      },
     },
     // colors: {
     //   transparent: "transparent",

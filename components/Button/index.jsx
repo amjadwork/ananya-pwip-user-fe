@@ -78,7 +78,9 @@ export function Button(props) {
       onClick={onClick}
       disabled={disabled}
     >
-      <span className="font-sans text-center font-[400]">{label}</span>
+      <span className="font-sans text-center font-[400] whitespace-nowrap">
+        {label}
+      </span>
     </button>
   );
 }

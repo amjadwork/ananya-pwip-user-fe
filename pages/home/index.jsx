@@ -718,10 +718,10 @@ function Home() {
               >
                 <div className="inline-flex flex-col space-y-5 h-full cols-span-10">
                   <div className="inline-flex flex-col space-y-1">
-                    <span className="text-sm font-bold text-pwip-black-600 text-left whitespace-nowrap">
+                    <span className="text-sm max-xs:text-[11px] font-bold text-pwip-black-600 text-left whitespace-nowrap">
                       Become a Prime member
                     </span>
-                    <span className="text-xs font-normal text-pwip-black-500 text-left leading-[18px]">
+                    <span className="text-xs max-xs:text-[10px] font-normal text-pwip-black-500 text-left leading-[18px] max-xs:leading-[12px]">
                       Upgrade to all-in-one plan at{" "}
                       <span className="font-semibold text-pwip-v2-green-900">
                         ₹1499/-
@@ -730,10 +730,10 @@ function Home() {
                     </span>
                   </div>
 
-                  <div className="relative w-full">
+                  <div className="relative z-10 w-full">
                     <Button
                       type="white"
-                      label="Know more"
+                      label="Subscribe"
                       rounded="!rounded-md"
                       maxHeight="!max-h-[26px]"
                       minHeight="!min-h-[26px]"
@@ -747,7 +747,7 @@ function Home() {
                   <img
                     src="/assets/images/home_main/container.svg"
                     alt="container"
-                    className="absolute top-0 right-0 h-full"
+                    className="absolute z-0 top-0 right-0 h-full"
                   />
                 </div>
               </div>

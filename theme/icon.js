@@ -6791,7 +6791,7 @@ export const nextArrow = (
   >
     <path
       d="M9.27198 1L11.4488 3.11869M11.4488 3.11869L9.27198 5.23738M11.4488 3.11869H1"
-      stroke="#2072AB"
+      stroke="currentColor"
       stroke-linecap="round"
       stroke-linejoin="round"
     />

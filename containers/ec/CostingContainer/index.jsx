@@ -1254,6 +1254,7 @@ function CostingOverviewContainer() {
                     dispatch(saveCostingFailure());
                     setGeneratedCostingData(null);
                     dispatch(resetCostingSelection());
+                    sessionStorage.setItem("backThroughServicePage", true);
                     router.replace("/export-costing");
                   }}
                 />
