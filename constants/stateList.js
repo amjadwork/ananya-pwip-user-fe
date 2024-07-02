@@ -49,7 +49,7 @@ export const productStateList = [
   ],
   [
     {
-      name: "Chattisgarh",
+      name: "Chhattisgarh",
       imageUrl:
         "https://ik.imagekit.io/qeoc0zl3c/states/chattisgarh.png?updatedAt=1711323994048",
     },
