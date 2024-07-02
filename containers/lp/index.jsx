@@ -325,7 +325,7 @@ const LandingPage = (props) => {
                   subscriptionData?.userSubscriptionHistory?.length) ||
                 subscriptionData?.isSubscriptionExhausted
                   ? "bg-red-100"
-                  : "bg-[#FFF8E9]"
+                  : "bg-[#e4f5f9]"
               } p-5 rounded-lg`}
             >
               {!subscriptionData?.activeSubscription &&
@@ -411,7 +411,7 @@ const LandingPage = (props) => {
                     {plan?.description}
                   </p>
                   <div
-                    className="font-normal text-sm text-[#2072AB] mt-3.5 flex items-center"
+                    className="font-normal bg-pwip-v2-primary-600 min-w-[110px] max-w-[148px] py-2 px-2 rounded-md text-xs text-white mt-3.5 inline-flex items-center justify-center"
                     onClick={async () => {
                       startLoading();
                       const res = await startFreeTrialForUser();
@@ -437,7 +437,7 @@ const LandingPage = (props) => {
                       }
                     }}
                   >
-                    Start now &nbsp;{nextArrow}
+                    Start free trial &nbsp;{nextArrow}
                   </div>
                 </React.Fragment>
               )}
@@ -501,7 +501,7 @@ const LandingPage = (props) => {
                       handlePayment(plan);
                     }}
                   >
-                    <span>Start now</span>
+                    <span>Subscribe now</span>
                   </div>
                 </div>
               </div>
@@ -607,7 +607,7 @@ const LandingPage = (props) => {
             showFixedButton
               ? "translate-y-0 opacity-1"
               : "translate-y-20 opacity-1"
-          } container fixed bottom-0 left-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
+          } container fixed w-full min-w-full bottom-0 right-0 bg-white p-2 px-5 pb-4 transition-transform`}
         >
           <div
             className=" bg-[#006EB4] text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg"
@@ -631,7 +631,7 @@ const LandingPage = (props) => {
               }
             }}
           >
-            Unlock Free Trial
+            Start Free Trial
           </div>
         </div>
       ) : null}

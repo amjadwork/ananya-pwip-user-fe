@@ -46,6 +46,8 @@ function ExportCosting() {
       "backThroughServicePage"
     );
 
+    console.log("here", backThroughServicePage);
+
     if (backThroughServicePage || backThroughServicePage === "true") {
       setSplashScreen(false);
     } else {
