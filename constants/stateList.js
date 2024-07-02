@@ -30,7 +30,7 @@ export const productStateList = [
         "https://ik.imagekit.io/qeoc0zl3c/states/bihar.png?updatedAt=1711323994658",
     },
     {
-      name: "Gujrat",
+      name: "Gujarat",
       imageUrl:
         "https://ik.imagekit.io/qeoc0zl3c/states/gujrat.png?updatedAt=1711323994488",
     },
