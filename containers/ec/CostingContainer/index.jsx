@@ -45,6 +45,7 @@ import {
   // handlingAndInspectionIcon,
   // otherChargesIcon,
   pencilIcon,
+  infoIcon,
   // downloadIcon,
   // shareIcon,
 } from "../../../theme/icon";
@@ -215,6 +216,10 @@ function updateCharges(response, chargesToUpdate, forex, shipmentTerm) {
           ...rowItem,
           inr: updatedInr,
           usd: inrToUsd(updatedInr || 0, forex.USD) || 0,
+          isfactoryStuffing:
+            rowItem?.label === "Transportation"
+              ? response?.details?.transportObject?.isfactoryStuffing
+              : false,
         };
       });
 
@@ -402,6 +407,8 @@ function CostingOverviewContainer() {
   const [isFixed, setIsFixed] = useState(false);
   const [lastScrollTop, setLastScrollTop] = React.useState(0);
   const [scrollDirection, setScrollDirection] = React.useState("down");
+  const [showFactoryStuffingInfoTooptip, setShowFactoryStuffingInfoTooptip] =
+    useState(false);
 
   // Debounce function to limit the rate of execution
   const debounce = (func, delay) => {
@@ -536,6 +543,8 @@ function CostingOverviewContainer() {
     }
   }, [breakupArr, generatedCosting]);
 
+  let timeoutTooltip;
+
   useEffect(() => {
     if (
       currentCostingFromHistory &&
@@ -558,6 +567,15 @@ function CostingOverviewContainer() {
       const selected = unitOptions.find((u) => u.value === sheet.unit);
 
       setSelectedUnit(selected);
+
+      if (
+        currentCostingFromHistory[0]?.details?.transportObject
+          ?.isfactoryStuffing
+      ) {
+        timeoutTooltip = setTimeout(() => {
+          setShowFactoryStuffingInfoTooptip(true);
+        }, 500);
+      }
 
       if (updatedCharges) {
         setBreakupChargesData(updatedCharges);
@@ -583,6 +601,16 @@ function CostingOverviewContainer() {
       // await dispatch(setTermsOfShipmentRequest(action));
     }
   }
+
+  useEffect(() => {
+    if (showFactoryStuffingInfoTooptip) {
+      timeoutTooltip = setTimeout(() => {
+        setShowFactoryStuffingInfoTooptip(false);
+      }, 7500);
+    }
+
+    return () => clearTimeout(timeoutTooltip);
+  }, [showFactoryStuffingInfoTooptip]);
 
   useEffect(() => {
     constructPage();
@@ -1104,7 +1132,7 @@ function CostingOverviewContainer() {
                             }
                             return (
                               <React.Fragment key={row.label + rowIndex}>
-                                <div className="w-full px-5">
+                                <div className="w-full px-5 relative">
                                   <div
                                     className={`inline-flex items-start w-full ${
                                       rowIndex === item.rowItems.length - 1
@@ -1116,9 +1144,41 @@ function CostingOverviewContainer() {
                                       className={`w-full pt-4 ${paddingBottom} inline-flex items-start space-x-5 overflow-hidden`}
                                     >
                                       {row?.icon}
-                                      <span className="text-pwip-black-600 text-sm font-[600] line-clamp-1">
-                                        {row.label}
-                                      </span>
+                                      <div className="inline-flex items-center space-x-2">
+                                        <span className="text-pwip-black-600 text-sm font-[600] line-clamp-1 whitespace-nowrap">
+                                          {row.label}{" "}
+                                        </span>
+                                        <div
+                                          onClick={() => {
+                                            if (
+                                              !showFactoryStuffingInfoTooptip
+                                            ) {
+                                              setShowFactoryStuffingInfoTooptip(
+                                                true
+                                              );
+                                            }
+                                          }}
+                                          className="text-gray-400"
+                                        >
+                                          {row?.isfactoryStuffing
+                                            ? infoIcon
+                                            : null}
+                                        </div>
+
+                                        <div
+                                          className={`transition-opacity duration-300 opacity-0 ${
+                                            row?.isfactoryStuffing &&
+                                            showFactoryStuffingInfoTooptip
+                                              ? "!opacity-100"
+                                              : ""
+                                          } inline-flex text-gray-200 bg-gray-800 z-10 rounded-lg drop-shadow-lg px-3 py-2 absolute top-10 left-[52px] text-xs after:content-[''] after:absolute after:w-0 after:h-0 after:border-4 after:border-gray-800 after:z-0 after:top-[-4px] after:right-1/3 after:-translate-x-1/2 after:rotate-45`}
+                                        >
+                                          Transportation cost is 0 because{" "}
+                                          <br />
+                                          this port allows factory stuffing.
+                                          <div data-popper-arrow></div>
+                                        </div>
+                                      </div>
                                     </div>
                                     <div
                                       className={`w-full max-w-[36%] text-right pt-4 ${paddingBottom} inline-flex flex-col space-y-[6px]`}
