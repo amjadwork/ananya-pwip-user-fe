@@ -1437,7 +1437,7 @@ function CostingOverviewContainer() {
           </div>
         </div>
 
-        <div className="bg-white fixed -bottom-6 w-full h-6" />
+        <div className="bg-white fixed -bottom-7 w-full h-7" />
       </div>
     </React.Fragment>
   );
