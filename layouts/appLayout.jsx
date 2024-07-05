@@ -111,7 +111,7 @@ const AppLayout = ({ children }) => {
 
     // Update the last scroll position
     setLastScrollTop(currentScrollTop);
-  }, 10); // Adjust the delay as needed // Adjust the delay as needed
+  }, 8.5); // Adjust the delay as needed // Adjust the delay as needed
 
   React.useEffect(() => {
     // Attach the debounced scroll event listener
