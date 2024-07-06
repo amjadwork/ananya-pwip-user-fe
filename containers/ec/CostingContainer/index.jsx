@@ -1143,9 +1143,12 @@ function CostingOverviewContainer() {
                                     <div
                                       className={`w-full pt-4 ${paddingBottom} inline-flex items-start space-x-5 overflow-hidden`}
                                     >
-                                      {row?.icon}
+                                      <div className="h-[32px] w-[32px] inline-flex items-center justify-center">
+                                        {row?.icon}
+                                      </div>
+
                                       <div className="inline-flex items-center space-x-2">
-                                        <span className="text-pwip-black-600 text-sm font-[600] line-clamp-1 whitespace-nowrap">
+                                        <span className="text-pwip-black-600 text-sm font-[600] line-clamp-2 whitespace-normal">
                                           {row.label}{" "}
                                         </span>
                                         <div
