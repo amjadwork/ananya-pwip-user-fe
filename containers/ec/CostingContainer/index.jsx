@@ -1174,7 +1174,7 @@ function CostingOverviewContainer() {
                                             showFactoryStuffingInfoTooptip
                                               ? "!opacity-100"
                                               : ""
-                                          } inline-flex text-gray-200 bg-gray-800 rounded-lg drop-shadow-lg px-3 py-2 absolute top-10 left-[52px] text-xs after:content-[''] after:absolute after:w-0 after:h-0 after:border-4 after:border-gray-800 after:top-[-4px] after:right-1/3 after:-translate-x-1/2 after:rotate-45`}
+                                          } inline-flex text-gray-200 bg-gray-800 rounded-lg drop-shadow-lg px-3 py-2 absolute top-10 left-[48px] text-xs after:content-[''] after:absolute after:w-0 after:h-0 after:border-4 after:border-gray-800 after:top-[-4px] after:right-1/3 after:-translate-x-1/2 after:rotate-45`}
                                         >
                                           Transportation cost is 0 because{" "}
                                           <br />
