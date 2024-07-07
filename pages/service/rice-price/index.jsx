@@ -168,6 +168,7 @@ function RicePrice() {
     useSelector((state) => state.variantPriceList.variantWithPriceList) || [];
   const variantWatchList =
     useSelector((state) => state.variantPriceList.variantWatchList) || [];
+  const forexRate = useSelector((state) => state.utils.forexRate);
 
   const [isFixed, setIsFixed] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("All");
@@ -181,6 +182,7 @@ function RicePrice() {
 
   const [splashScreen, setSplashScreen] = React.useState(false);
   const [progressValue, setProgressValue] = React.useState(0); // State for progress value
+  const [activeCurrency, setActiveCurrency] = React.useState("inr");
 
   const handleRemoveFromWatchlist = (item) => {
     if (
@@ -378,7 +380,11 @@ function RicePrice() {
       </Head>
 
       <AppLayout>
-        <Header />
+        <Header
+          handleCurrencyDropdownChange={(value) => {
+            setActiveCurrency(value);
+          }}
+        />
 
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-white-100 z-0 ${
@@ -444,9 +450,21 @@ function RicePrice() {
                         </div>
 
                         <div className="w-auto inline-flex items-center justify-end">
-                          <span className="text-sm font-bold text-pwip-v2-primary whitespace-nowrap">
-                            ₹{item?.source?.price}/{item?.unit}
-                          </span>
+                          {activeCurrency === "inr" ? (
+                            <span className="text-sm font-bold text-pwip-v2-primary whitespace-nowrap">
+                              ₹{item?.source?.price}/{item?.unit}
+                            </span>
+                          ) : null}
+
+                          {activeCurrency === "usd" ? (
+                            <span className="text-sm font-bold text-pwip-v2-primary whitespace-nowrap">
+                              $
+                              {(
+                                item?.source?.price / (forexRate?.USD || 83)
+                              )?.toFixed(2)}
+                              /{item?.source?.unit}
+                            </span>
+                          ) : null}
                         </div>
                       </div>
                       <div className="inline-flex justify-between w-full">
@@ -455,21 +473,54 @@ function RicePrice() {
                         </span>
 
                         {item?.source?.changeDir === "+" ? (
-                          <span className="text-xs font-normal text-pwip-green-800">
-                            {item?.source?.changeDir}₹
-                            {item?.changeInPrice?.toFixed(2) || 0}
-                          </span>
+                          <React.Fragment>
+                            {activeCurrency === "inr" ? (
+                              <span className="text-xs font-normal text-pwip-green-800">
+                                {item?.source?.changeDir}₹
+                                {item?.changeInPrice?.toFixed(2) || 0}
+                              </span>
+                            ) : null}
+
+                            {activeCurrency === "usd" ? (
+                              <span className="text-xs font-normal text-pwip-green-800">
+                                {item?.source?.changeDir}$
+                                {(
+                                  (item?.changeInPrice || 0) /
+                                  (forexRate?.USD || 83)
+                                )?.toFixed(2) || 0}
+                              </span>
+                            ) : null}
+                          </React.Fragment>
                         ) : (
-                          <span className="text-xs font-normal text-pwip-red-700">
-                            {item?.source?.changeDir}₹
-                            {`${item?.source?.changeInPrice?.toFixed(2)}`.split(
-                              "-"
-                            ).length === 2
-                              ? `${item?.source?.changeInPrice?.toFixed(
+                          <React.Fragment>
+                            {activeCurrency === "inr" ? (
+                              <span className="text-xs font-normal text-pwip-red-700">
+                                {item?.source?.changeDir}₹
+                                {`${item?.source?.changeInPrice?.toFixed(
                                   2
-                                )}`.split("-")[1]
-                              : 0}
-                          </span>
+                                )}`.split("-").length === 2
+                                  ? `${item?.source?.changeInPrice?.toFixed(
+                                      2
+                                    )}`.split("-")[1]
+                                  : 0}
+                              </span>
+                            ) : null}
+
+                            {activeCurrency === "usd" ? (
+                              <span className="text-xs font-normal text-pwip-red-700">
+                                {item?.source?.changeDir}$
+                                {`${(
+                                  item?.source?.changeInPrice /
+                                  (forexRate?.USD || 83)
+                                )?.toFixed(2)}`.split("-").length === 2
+                                  ? `${(
+                                      item?.source?.changeInPrice /
+                                      (forexRate?.USD || 83)
+                                    )?.toFixed(2)}`.split("-")[1]
+                                  : 0}
+                              </span>
+                            ) : null}
+                          </React.Fragment>
                         )}
                       </div>
                     </div>
@@ -713,26 +764,71 @@ function RicePrice() {
                         className="w-full inline-flex justify-between"
                       >
                         <div className="inline-flex items-end space-x-3">
-                          <span className="text-pwip-black-600 text-sm font-bold">
-                            ₹{item?.source?.price}/{item?.source?.unit}
-                          </span>
+                          {activeCurrency === "inr" ? (
+                            <span className="text-pwip-black-600 text-sm font-bold">
+                              ₹{item?.source?.price}/{item?.source?.unit}
+                            </span>
+                          ) : null}
+
+                          {activeCurrency === "usd" ? (
+                            <span className="text-pwip-black-600 text-sm font-bold">
+                              $
+                              {(
+                                item?.source?.price / (forexRate?.USD || 83)
+                              )?.toFixed(2)}
+                              /{item?.source?.unit}
+                            </span>
+                          ) : null}
 
                           {item?.source?.changeDir === "-" ? (
-                            <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
-                              {item?.source?.changeDir}₹
-                              {`${item?.source?.changeInPrice?.toFixed(
-                                2
-                              )}`.split("-").length === 2
-                                ? `${item?.source?.changeInPrice?.toFixed(
+                            <React.Fragment>
+                              {activeCurrency === "inr" ? (
+                                <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
+                                  {item?.source?.changeDir}₹
+                                  {`${item?.source?.changeInPrice?.toFixed(
                                     2
-                                  )}`.split("-")[1]
-                                : 0}
-                            </span>
+                                  )}`.split("-").length === 2
+                                    ? `${item?.source?.changeInPrice?.toFixed(
+                                        2
+                                      )}`.split("-")[1]
+                                    : 0}
+                                </span>
+                              ) : null}
+
+                              {activeCurrency === "usd" ? (
+                                <span className="text-pwip-red-700 text-xs mb-[1px] font-medium">
+                                  {item?.source?.changeDir}$
+                                  {`${(
+                                    item?.source?.changeInPrice /
+                                    (forexRate?.USD || 83)
+                                  )?.toFixed(2)}`.split("-").length === 2
+                                    ? `${(
+                                        item?.source?.changeInPrice /
+                                        (forexRate?.USD || 83)
+                                      )?.toFixed(2)}`.split("-")[1]
+                                    : 0}
+                                </span>
+                              ) : null}
+                            </React.Fragment>
                           ) : (
-                            <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
-                              {item?.source?.changeDir}₹
-                              {item?.source?.changeInPrice?.toFixed(2) || 0}
-                            </span>
+                            <React.Fragment>
+                              {activeCurrency === "inr" ? (
+                                <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
+                                  {item?.source?.changeDir}₹
+                                  {item?.source?.changeInPrice?.toFixed(2) || 0}
+                                </span>
+                              ) : null}
+
+                              {activeCurrency === "usd" ? (
+                                <span className="text-pwip-v2-green-800 text-xs mb-[1px] font-medium">
+                                  {item?.source?.changeDir}$
+                                  {(
+                                    (item?.source?.changeInPrice || 0) /
+                                    (forexRate?.USD || 83)
+                                  )?.toFixed(2) || 0}
+                                </span>
+                              ) : null}
+                            </React.Fragment>
                           )}
                         </div>
 

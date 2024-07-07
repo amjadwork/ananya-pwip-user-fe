@@ -7,8 +7,8 @@ import { useOverlayContext } from "@/context/OverlayContext";
 import { resetCostingSelection } from "@/redux/actions/costing.actions";
 
 import {
-  // chevronDown,
   arrowLeftBackIcon,
+  chevronDown,
   pencilIcon,
   // editIcon,
 } from "../../theme/icon";
@@ -25,6 +25,17 @@ import {
   // fetchCategoryRequest,
   fetchCategoryFailure,
 } from "@/redux/actions/category.actions";
+
+const currencyArray = [
+  {
+    label: "🇺🇸  USD ($)",
+    value: "usd",
+  },
+  {
+    label: "🇮🇳  INR (₹)",
+    value: "inr",
+  },
+];
 
 const atRoutes = [
   "export-costing",
@@ -81,7 +92,7 @@ export function Header(props) {
   const dispatch = useDispatch();
   const { openModal, openToastMessage } = useOverlayContext();
 
-  const shipmentTerms = useSelector((state) => state.shipmentTerm);
+  // const shipmentTerms = useSelector((state) => state.shipmentTerm);
   const forexRate = useSelector((state) => state.utils.forexRate);
   const searchScreenActive = useSelector(
     (state) => state.utils.searchScreenActive
@@ -95,11 +106,14 @@ export function Header(props) {
   // const handleClickEdit = props.handleClickEdit || null;
   const backgroundColor = props.backgroundColor || "bg-white";
 
+  const handleCurrencyDropdownChange =
+    props.handleCurrencyDropdownChange || null;
+
   const [activeRoute, setActiveRoute] = React.useState("");
   const [activeServiceRoute, setActiveServiceRoute] = React.useState("");
   const [serviceLogoRoute, setServiceLogoRoute] = React.useState(null);
-  // const [environmentBasedclassNamees, setEnvironmentBasedclassNamees] =
-  //   React.useState("");
+  const [openCurrencyDropdown, setOpenCurrencyDropdown] = React.useState(false);
+  const [activeCurrency, setActiveCurrency] = React.useState(1);
 
   const handleBack = () => {
     if (activeRoute === "edit") {
@@ -125,6 +139,11 @@ export function Header(props) {
 
       if (splitedRoutes[splitedRoutes.length - 3] === "preview") {
         setActiveRoute(splitedRoutes[splitedRoutes.length - 3]);
+      } else if (
+        splitedRoutes[splitedRoutes.length - 2] === "detail" &&
+        splitedRoutes[splitedRoutes.length - 3] === "rice-price"
+      ) {
+        setActiveRoute(splitedRoutes[splitedRoutes.length - 2]);
       } else {
         setActiveRoute(splitedRoutes[splitedRoutes.length - 1]);
       }
@@ -177,6 +196,24 @@ export function Header(props) {
 
     setServiceLogoRoute(serviceLogoRouteObject);
   }, [activeServiceRoute, activeRoute, router]);
+
+  useEffect(() => {
+    if (
+      handleCurrencyDropdownChange &&
+      typeof handleCurrencyDropdownChange === "function"
+    ) {
+      handleCurrencyDropdownChange(currencyArray[activeCurrency]?.value);
+    }
+  }, [activeCurrency]);
+
+  useEffect(() => {
+    const activeCurrencyKey = localStorage.getItem("activeCurrencyKey");
+
+    if (activeCurrencyKey) {
+      const activeCurrencyKeyIndex = parseInt(activeCurrencyKey);
+      setActiveCurrency(activeCurrencyKeyIndex);
+    }
+  }, [localStorage]);
 
   const rootServicePages = ["export-costing", "ofc", "rice-price", "exim"];
 
@@ -272,7 +309,6 @@ export function Header(props) {
               {pencilIcon}
             </div>
           )}
-
           {![
             "subscriptions",
             "subscription-details",
@@ -283,6 +319,8 @@ export function Header(props) {
             "waitlist",
             "lp",
             "preview",
+            "rice-price",
+            "detail",
           ].includes(activeRoute) && (
             <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center space-x-2">
               <button
@@ -299,6 +337,29 @@ export function Header(props) {
             </div>
           )}
 
+          {["rice-price", "detail"].includes(activeRoute) && (
+            <div className="h-full w-auto font-sans text-pwip-black-600 text-sm inline-flex items-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setOpenCurrencyDropdown(!openCurrencyDropdown);
+                }}
+                className="h-full min-w-[50.15px] w-auto outline-none bg-transparent border-none inline-flex items-center justify-between space-x-3 cursor-pointer"
+              >
+                <div className="inline-flex items-center space-x-2">
+                  <span>{currencyArray[activeCurrency]?.label}</span>
+                </div>
+                <span
+                  className={`${
+                    openCurrencyDropdown ? "rotate-180" : ""
+                  } transition-all`}
+                >
+                  {chevronDown}
+                </span>
+              </button>
+            </div>
+          )}
+
           {["lp", "waitlist"].includes(activeRoute) ? (
             <img
               src={serviceLogoRoute?.logo || ""}
@@ -308,6 +369,35 @@ export function Header(props) {
           ) : null}
         </div>
       </div>
+
+      {/* Currency picker */}
+
+      {openCurrencyDropdown ? (
+        <div className="absolute top-10 right-4 rounded-lg inline-flex flex-col w-auto bg-white drop-shadow-xl">
+          {currencyArray.map((d, i) => {
+            return (
+              <div
+                className={`px-5 py-2 w-full ${
+                  i !== currencyArray?.length - 1
+                    ? "border-b-[1px] border-b-gray-200"
+                    : ""
+                } cursor-pointer text-sm text-pwip-black-500 ${
+                  i === activeCurrency ? "bg-pwip-v2-primary-200" : "bg-white"
+                } ${i === 0 ? "rounded-t-lg" : ""} ${
+                  i === currencyArray?.length - 1 ? "rounded-b-lg" : ""
+                }`}
+                onClick={() => {
+                  setActiveCurrency(i);
+                  setOpenCurrencyDropdown(false);
+                  localStorage.setItem("activeCurrencyKey", i);
+                }}
+              >
+                {d?.label}
+              </div>
+            );
+          })}
+        </div>
+      ) : null}
     </header>
   );
 }
