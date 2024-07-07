@@ -14,7 +14,8 @@ import axios from "axios";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
-
+import Lottie from "lottie-react";
+import ServiceSplashLottie from "../../../theme/lottie/service-splash.json";
 import {
   chevronDown,
   increaseUpIcon,
@@ -1127,8 +1128,8 @@ function EXIMService() {
 
   const [appliedFilterData, setAppliedFilterData] = useState({});
   const [isFullscreen, setIsFullscreen] = useState(false);
-
-  // appliedFilters
+  const [splashScreen, setSplashScreen] = React.useState(false);
+  const [progressValue, setProgressValue] = React.useState(0); // State for progress value
 
   async function getEximAnalyticsData(hsnCode) {
     let url =
@@ -1314,6 +1315,59 @@ function EXIMService() {
       dispatch(fetchProductsRequest());
     }
   }, [authToken]);
+
+  useEffect(() => {
+    const backThroughServicePage = sessionStorage.getItem(
+      "backThroughServicePage"
+    );
+
+    if (backThroughServicePage || backThroughServicePage === "true") {
+      setSplashScreen(false);
+    } else {
+      setSplashScreen(true);
+    }
+
+    stopLoading();
+  }, []);
+
+  React.useEffect(() => {
+    // Update progress value using requestAnimationFrame
+    const updateProgressValue = () => {
+      const duration = 2000;
+      const startTime = Date.now();
+      const endTime = startTime + duration;
+
+      const updateProgress = () => {
+        const now = Date.now();
+        const elapsedTime = now - startTime;
+        const progress = (elapsedTime / duration) * 100;
+
+        const currentValue = progress > 100 ? 100 : progress; // Limit progress to 100%
+        setProgressValue(currentValue);
+
+        if (now < endTime) {
+          requestAnimationFrame(updateProgress);
+        }
+      };
+
+      requestAnimationFrame(updateProgress);
+    };
+
+    if (splashScreen) {
+      updateProgressValue();
+
+      // Reset progress value after given seconds
+      setTimeout(() => {
+        stopLoading();
+        setProgressValue(0);
+        setSplashScreen(false);
+      }, 2300);
+    }
+  }, [splashScreen]);
+
+  const style = {
+    height: 180,
+  };
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -1717,6 +1771,48 @@ function EXIMService() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+
+        <div
+          className={`h-screen w-screen fixed top-0 left-0 transition-all bg-white inline-flex flex-col justify-between ${
+            splashScreen ? "block opacity-1 z-50" : "hidden opacity-0"
+          }`}
+        >
+          <div className="inline-flex space-y-3 items-center flex-col justify-center h-full w-full px-8 relative top-[-100px]">
+            {/* Splash screen content */}
+            <div className="min-w-[310px] h-auto relative inline-flex items-center justify-center">
+              <img
+                className="h-[32px] absolute z-10"
+                src="/assets/images/services/exim-service-logo.png"
+              />
+              <div className="w-auto z-0">
+                <Lottie animationData={ServiceSplashLottie} style={style} />
+              </div>
+            </div>
+
+            <div className="inline-flex items-center flex-col justify-center">
+              <span className="text-center text-sm text-pwip-black-500 font-semibold leading-5">
+                Supercharge your Export strategy with trade trends at your
+                fingertips
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="px-5 w-full h-auto">
+              <div className="w-full h-2 rounded-full bg-pwip-v2-gray-350 !mt-12">
+                <div
+                  style={{ width: `${progressValue}%` }}
+                  className="h-2 rounded-full bg-pwip-v2-primary-500"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="inline-flex items-center flex-col justify-center px-8 pb-8">
+            <span className="text-center text-xs text-pwip-v2-gray-500 leading-5">
+              EXIM data bank, right on your screen
+            </span>
           </div>
         </div>
       </AppLayout>
