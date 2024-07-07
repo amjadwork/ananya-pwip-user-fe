@@ -704,7 +704,7 @@ function RicePrice() {
                                 ? item?.images[0]
                                 : "https://m.media-amazon.com/images/I/41RLYdZ6L4L._AC_UF1000,1000_QL80_.jpg"
                             }
-                            className="bg-cover h-[42px] w-[44px] border-[1px] border-pwip-v2-gray-100 rounded-lg object-cover"
+                            className="bg-cover max-h-[42px] max-w-[44px] min-h-[42px] min-w-[44px] border-[1px] border-pwip-v2-gray-100 rounded-lg object-cover"
                           />
 
                           <div className="inline-flex flex-col items-start justify-between w-full">
