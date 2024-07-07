@@ -742,6 +742,8 @@ function RicePriceDetail() {
             </div>
 
             <ImagePreview previewImage={previewImage} />
+
+            <div className="bg-pwip-black-600 fixed -bottom-7 w-full h-7" />
           </div>
         ) : null}
       </AppLayout>
