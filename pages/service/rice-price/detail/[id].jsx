@@ -117,6 +117,7 @@ function RicePriceDetail() {
   const variantPriceDetailById = useSelector(
     (state) => state.variantPriceList?.variantWithPriceList
   );
+  const forexRate = useSelector((state) => state.utils.forexRate);
 
   const selectedVariantPriceDetail =
     useSelector((state) => state.variantPriceList.variantDetails) || null;
@@ -140,6 +141,7 @@ function RicePriceDetail() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [variantDetailData, setVariantDetailData] = useState(null);
   const [variantProfileDetailData, setVariantProfileDetailData] = useState([]);
+  const [activeCurrency, setActiveCurrency] = React.useState("inr");
 
   const [graphData, setGraphData] = useState([
     {
@@ -282,7 +284,12 @@ function RicePriceDetail() {
       let dataToPlot = [...variantPriceHistoryData].map((d) => {
         return {
           primary: d.createdAt,
-          secondary: d.price,
+          secondary:
+            activeCurrency === "inr"
+              ? d.price
+              : activeCurrency === "usd"
+              ? d.price / (forexRate?.USD || 83)
+              : d?.price,
           radius: undefined,
         };
       });
@@ -295,7 +302,7 @@ function RicePriceDetail() {
       ];
       setGraphData(graphDataPoints);
     }
-  }, [variantPriceHistoryData]);
+  }, [variantPriceHistoryData, activeCurrency]);
 
   useEffect(() => {
     if (variantProfileData?.length) {
@@ -342,7 +349,12 @@ function RicePriceDetail() {
       </Head>
 
       <AppLayout>
-        <Header hideLogo={true} />
+        <Header
+          hideLogo={true}
+          handleCurrencyDropdownChange={(value) => {
+            setActiveCurrency(value);
+          }}
+        />
 
         <div
           className={`relative top-[56px] h-full w-full bg-pwip-v2-gray-100 z-0 space-y-2 pb-12`}
@@ -407,43 +419,108 @@ function RicePriceDetail() {
 
                 <div className="flex w-full items-end justify-between mt-4">
                   <div className="inline-flex items-end space-x-[10px]">
-                    <span className="text-pwip-v2-primary text-xl font-bold">
-                      ₹{selectedVariantPriceDetail?.source?.price}/
-                      {selectedVariantPriceDetail?.source?.unit}
-                    </span>
+                    {activeCurrency === "inr" ? (
+                      <React.Fragment>
+                        <span className="text-pwip-v2-primary text-xl font-bold">
+                          ₹{selectedVariantPriceDetail?.source?.price}/
+                          {selectedVariantPriceDetail?.source?.unit}
+                        </span>
 
-                    <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
-                      <span className="text-pwip-gray-550 text-xs font-regular">
-                        Last price: ₹
-                        {(
-                          selectedVariantPriceDetail?.source?.price -
-                          selectedVariantPriceDetail?.source?.changeInPrice
-                        )?.toFixed(2)}
-                      </span>
-                      {/* <span className="text-pwip-gray-400 text-xs font-regular mb-[3.5px]">
+                        <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
+                          <span className="text-pwip-gray-550 text-xs font-regular">
+                            Last price: ₹
+                            {(
+                              selectedVariantPriceDetail?.source?.price -
+                              selectedVariantPriceDetail?.source?.changeInPrice
+                            )?.toFixed(2)}
+                          </span>
+                          {/* <span className="text-pwip-gray-400 text-xs font-regular mb-[3.5px]">
                       (23rd Mar)
                     </span> */}
-                    </div>
+                        </div>
+                      </React.Fragment>
+                    ) : null}
+
+                    {activeCurrency === "usd" ? (
+                      <React.Fragment>
+                        <span className="text-pwip-v2-primary text-xl font-bold">
+                          $
+                          {(
+                            selectedVariantPriceDetail?.source?.price /
+                            (forexRate?.USD || 83)
+                          )?.toFixed(2)}
+                          /{selectedVariantPriceDetail?.source?.unit}
+                        </span>
+
+                        <div className="w-auto space-x-1 border-b-[1px] border-b-pwip-gray-550 border-dashed">
+                          <span className="text-pwip-gray-550 text-xs font-regular">
+                            Last price: $
+                            {(
+                              (selectedVariantPriceDetail?.source?.price -
+                                selectedVariantPriceDetail?.source
+                                  ?.changeInPrice) /
+                              (forexRate?.USD || 83)
+                            )?.toFixed(2)}
+                          </span>
+                          {/* <span className="text-pwip-gray-400 text-xs font-regular mb-[3.5px]">
+                      (23rd Mar)
+                    </span> */}
+                        </div>
+                      </React.Fragment>
+                    ) : null}
                   </div>
 
                   {selectedVariantPriceDetail?.source?.changeDir === "+" ? (
-                    <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
-                      {selectedVariantPriceDetail?.source?.changeDir}₹
-                      {selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
-                        2
-                      ) || 0}
-                    </span>
-                  ) : (
-                    <span className="text-pwip-red-700 text-xs font-semibold mb-[3.5px]">
-                      {selectedVariantPriceDetail?.source?.changeDir}₹
-                      {`${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
-                        2
-                      )}`.split("-").length === 2
-                        ? `${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                    <React.Fragment>
+                      {activeCurrency === "inr" ? (
+                        <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
+                          {selectedVariantPriceDetail?.source?.changeDir}₹
+                          {selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
                             2
-                          )}`.split("-")[1]
-                        : 0}
-                    </span>
+                          ) || 0}
+                        </span>
+                      ) : null}
+
+                      {activeCurrency === "usd" ? (
+                        <span className="text-pwip-green-600 text-xs font-semibold mb-[3.5px]">
+                          {selectedVariantPriceDetail?.source?.changeDir}$
+                          {(
+                            (selectedVariantPriceDetail?.source
+                              ?.changeInPrice || 0) / (forexRate?.USD || 83)
+                          )?.toFixed(2) || 0}
+                        </span>
+                      ) : null}
+                    </React.Fragment>
+                  ) : (
+                    <React.Fragment>
+                      {activeCurrency === "inr" ? (
+                        <span className="text-pwip-red-700 text-xs font-semibold mb-[3.5px]">
+                          {selectedVariantPriceDetail?.source?.changeDir}₹
+                          {`${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                            2
+                          )}`.split("-").length === 2
+                            ? `${selectedVariantPriceDetail?.source?.changeInPrice?.toFixed(
+                                2
+                              )}`.split("-")[1]
+                            : 0}
+                        </span>
+                      ) : null}
+
+                      {activeCurrency === "usd" ? (
+                        <span className="text-pwip-red-700 text-xs font-semibold mb-[3.5px]">
+                          {selectedVariantPriceDetail?.source?.changeDir}₹
+                          {`${(
+                            selectedVariantPriceDetail?.source?.changeInPrice /
+                            (forexRate?.USD || 83)
+                          )?.toFixed(2)}`.split("-").length === 2
+                            ? `${(
+                                selectedVariantPriceDetail?.source
+                                  ?.changeInPrice / (forexRate?.USD || 83)
+                              )?.toFixed(2)}`.split("-")[1]
+                            : 0}
+                        </span>
+                      ) : null}
+                    </React.Fragment>
                   )}
                 </div>
               </div>
