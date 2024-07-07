@@ -130,7 +130,7 @@ const ImagePreview = ({ previewImage }) => {
 };
 
 const ImageControls = () => {
-  const { zoomIn, zoomOut, resetTransform } = useControls();
+  const { zoomIn, zoomOut } = useControls();
 
   return (
     <div className="absolute bottom-0 left-0 w-full inline-flex justify-center items-center px-5 py-8 space-x-4">
