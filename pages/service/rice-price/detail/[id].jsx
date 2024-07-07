@@ -2,6 +2,11 @@ import React, { useMemo, useState, useEffect, useLayoutEffect } from "react";
 import dynamic from "next/dynamic";
 import { curveBumpX } from "d3-shape";
 import Slider from "react-slick";
+import {
+  TransformWrapper,
+  TransformComponent,
+  useControls,
+} from "react-zoom-pan-pinch";
 
 const Chart = dynamic(() => import("react-charts").then((mod) => mod.Chart), {
   ssr: false,
@@ -18,6 +23,9 @@ import {
   sharePrimaryIcon,
   bookmarkOutlineIcon,
   bookmarkFilledIcon,
+  closeXmark,
+  zoomInIcon,
+  zoomOutIcon,
 } from "../../../../theme/icon";
 
 // Import Components
@@ -109,6 +117,46 @@ function generateSliderArr(inputArray) {
   return resultArray;
 }
 
+const ImagePreview = ({ previewImage }) => {
+  return (
+    <TransformWrapper>
+      <TransformComponent>
+        <img src={previewImage} className="w-full h-auto max-h-[520px]" />
+      </TransformComponent>
+
+      <ImageControls />
+    </TransformWrapper>
+  );
+};
+
+const ImageControls = () => {
+  const { zoomIn, zoomOut } = useControls();
+
+  return (
+    <div className="absolute bottom-0 left-0 w-full inline-flex justify-center items-center px-5 py-8 space-x-4">
+      <button
+        onClick={() => {
+          zoomIn();
+        }}
+        className="inline-flex justify-center items-center space-x-2 outline-none border-none px-3 py-2 rounded-md bg-white text-pwip-black-600 text-center text-sm"
+      >
+        {zoomInIcon}
+        <span>Zoom in</span>
+      </button>
+
+      <button
+        onClick={() => {
+          zoomOut();
+        }}
+        className="inline-flex justify-center items-center space-x-2 outline-none border-none px-3 py-2 rounded-md bg-white text-pwip-black-600 text-center text-sm"
+      >
+        {zoomOutIcon}
+        <span>Zoom out</span>
+      </button>
+    </div>
+  );
+};
+
 function RicePriceDetail() {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -142,6 +190,7 @@ function RicePriceDetail() {
   const [variantDetailData, setVariantDetailData] = useState(null);
   const [variantProfileDetailData, setVariantProfileDetailData] = useState([]);
   const [activeCurrency, setActiveCurrency] = React.useState("inr");
+  const [previewImage, setPreviewImage] = React.useState(null);
 
   const [graphData, setGraphData] = useState([
     {
@@ -246,7 +295,6 @@ function RicePriceDetail() {
           (s) => s._sourceId === router?.query?._s
         ) || null;
 
-      console.log("variantDetail", detailsObj);
       setVariantDetailData(detailsObj);
     }
   }, [variantDetail]);
@@ -585,6 +633,27 @@ function RicePriceDetail() {
           </div>
 
           <div className="bg-white w-full py-4 px-5 relative">
+            <div className="inline-flex items-center overflow-auto hide-scroll-bar mb-5 space-x-3">
+              {selectedVariantPriceDetail?.images?.map((imgSrc, index) => {
+                return (
+                  <img
+                    key={imgSrc + "_" + index}
+                    src={imgSrc}
+                    onClick={() => {
+                      setPreviewImage(imgSrc);
+                    }}
+                    className="max-h-[120px] max-w-[140px] min-h-[120px] min-w-[140px] bg-cover rounded-lg border-[1px] border-gray-100 cursor-pointer"
+                  />
+                );
+              })}
+
+              {selectedVariantPriceDetail?.images?.length < 3 ? (
+                <div className="max-h-[120px] max-w-[140px] min-h-[120px] min-w-[140px] inline-flex items-center justify-center bg-gray-100 rounded-lg text-gray-400 text-center whitespace-break-spaces px-3 text-xs">
+                  More images are coming soon
+                </div>
+              ) : null}
+            </div>
+
             <h3 className="font-semibold text-lg text-pwip-black-600">
               Properties
             </h3>
@@ -658,6 +727,23 @@ function RicePriceDetail() {
             </div>
           </div>
         </div>
+
+        {previewImage ? (
+          <div className="fixed z-50 top-0 left-0 h-screen w-screen bg-pwip-black-600 overflow-hidden inline-flex items-center justify-center">
+            <div className="absolute top-0 right-0 w-full inline-flex items-center justify-end px-5 py-4">
+              <button
+                onClick={() => {
+                  setPreviewImage(null);
+                }}
+                className="outline-none border-none h-8 w-8 rounded-md bg-white text-pwip-black-600 text-center inline-flex items-center justify-center text-sm"
+              >
+                {closeXmark}
+              </button>
+            </div>
+
+            <ImagePreview previewImage={previewImage} />
+          </div>
+        ) : null}
       </AppLayout>
     </React.Fragment>
   );
