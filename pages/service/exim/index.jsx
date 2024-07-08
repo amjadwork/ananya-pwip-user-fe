@@ -462,7 +462,7 @@ function formatCurrency(value) {
   return "$" + value.toFixed(1);
 }
 
-const months = [
+const fullMonths = [
   "Full year",
   "January",
   "February",
@@ -478,11 +478,22 @@ const months = [
   "December",
 ];
 
+function getMonthsForYear(year) {
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1; // getMonth() returns 0-11
+
+  if (year === currentYear) {
+    return fullMonths.slice(0, currentMonth - 1);
+  }
+  return fullMonths;
+}
+
 function MonthList({ handleSelect, selectedMonth, selectedYear }) {
   const { closeBottomSheet } = useOverlayContext();
 
   const [selectedOption, setSelectionOption] = useState(null);
   const [selectedYearOption, setSelectedYearOption] = useState(2024);
+  const [months, setMonths] = useState(getMonthsForYear(selectedYearOption));
 
   useEffect(() => {
     if (selectedMonth && selectedYear) {
@@ -491,8 +502,14 @@ function MonthList({ handleSelect, selectedMonth, selectedYear }) {
     }
   }, [selectedMonth, selectedYear]);
 
+  useEffect(() => {
+    if (selectedYearOption) {
+      setMonths(getMonthsForYear(selectedYearOption));
+    }
+  }, [selectedYearOption]);
+
   return (
-    <div className="inline-flex w-full flex-col pb-20 relative top-0">
+    <div className="inline-flex w-full flex-col pb-[142px] relative top-0">
       <div className="w-full px-6 pt-4 pb-4 fixed top-[22px] z-10 left-0 bg-white">
         <span className="font-medium text-base">Filter by year and month</span>
       </div>
@@ -506,8 +523,7 @@ function MonthList({ handleSelect, selectedMonth, selectedYear }) {
                     key={y + "_" + i}
                     onClick={() => {
                       setSelectedYearOption(y);
-                      handleSelect(null, y);
-                      setSelectionOption(null);
+                      setSelectionOption("Full year");
                     }}
                     className={`inline-flex items-center px-3 py-2 rounded-lg border ${
                       selectedYearOption === y
@@ -531,9 +547,7 @@ function MonthList({ handleSelect, selectedMonth, selectedYear }) {
             <div key={d + "_" + i} className="w-full h-auto">
               <div
                 onClick={() => {
-                  handleSelect(d, selectedYearOption);
                   setSelectionOption(d);
-                  closeBottomSheet();
                 }}
                 className={`w-full px-6 py-4 ${
                   i !== months.length - 1
@@ -558,6 +572,25 @@ function MonthList({ handleSelect, selectedMonth, selectedYear }) {
             </div>
           );
         })}
+      </div>
+
+      <div className="w-full fixed bottom-0 bg-white px-5 py-4">
+        <button
+          className={`bg-[#006EB4] ${
+            !selectedOption || !selectedYearOption
+              ? "opacity-50"
+              : "opacity-100"
+          } w-full text-white px-4 py-3 text-center font-medium text-[16px] rounded-lg`}
+          disabled={!selectedOption || !selectedYearOption}
+          onClick={async () => {
+            if (selectedOption && selectedYearOption) {
+              handleSelect(selectedOption, selectedYearOption);
+              closeBottomSheet();
+            }
+          }}
+        >
+          Apply
+        </button>
       </div>
     </div>
   );
