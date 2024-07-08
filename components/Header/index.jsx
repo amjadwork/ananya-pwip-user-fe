@@ -108,6 +108,7 @@ export function Header(props) {
 
   const handleCurrencyDropdownChange =
     props.handleCurrencyDropdownChange || null;
+  const serviceBackRouteException = props.serviceBackRouteException || false;
 
   const [activeRoute, setActiveRoute] = React.useState("");
   const [activeServiceRoute, setActiveServiceRoute] = React.useState("");
@@ -243,7 +244,16 @@ export function Header(props) {
               <div
                 className="inline-flex items-center space-x-2 text-pwip-black-600 text-sm"
                 onClick={() => {
-                  if (rootServicePages.includes(activeRoute)) {
+                  if (serviceBackRouteException) {
+                    handleBack();
+
+                    return;
+                  }
+
+                  if (
+                    rootServicePages.includes(activeRoute) &&
+                    !serviceBackRouteException
+                  ) {
                     router.replace("/home");
 
                     return;
@@ -269,7 +279,8 @@ export function Header(props) {
               >
                 {arrowLeftBackIcon}
                 <span>
-                  {rootServicePages.includes(activeRoute)
+                  {rootServicePages.includes(activeRoute) &&
+                  !serviceBackRouteException
                     ? "Back to home"
                     : "Back"}
                 </span>

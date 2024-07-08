@@ -464,3 +464,39 @@ export function getUniqueObjectsBySourceId(inputArray) {
 
   return resultArray;
 }
+
+export function checkNumberSign(number) {
+  if (number > 0) {
+    return "positive";
+  } else if (number < 0) {
+    return "negative";
+  } else {
+    return "positive";
+  }
+}
+
+export function formatVolume(value) {
+  if (value >= 1e9) {
+    return (value / 1e9).toFixed(1) + "B";
+  } else if (value >= 1e6) {
+    return (value / 1e6).toFixed(1) + "M";
+  } else if (value >= 1e3) {
+    return (value / 1e3).toFixed(1) + "K";
+  }
+  return value.toString();
+}
+
+export function formatCurrency(value) {
+  if (value >= 1e9) {
+    return "$" + (value / 1e9).toFixed(1) + "B";
+  } else if (value >= 1e6) {
+    return "$" + (value / 1e6).toFixed(1) + "M";
+  } else if (value >= 1e3) {
+    return "$" + (value / 1e3).toFixed(1) + "K";
+  }
+  return "$" + value.toFixed(1);
+}
+
+export function formatDateToDDMMYYYY(date) {
+  return moment(date).format("DD-MM-YYYY");
+}
