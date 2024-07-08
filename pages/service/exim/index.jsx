@@ -37,6 +37,8 @@ import {
   openFullscreen,
   closeFullscreen,
   lockScreenOrientation,
+  checkSubscription,
+  eximServiceId,
 } from "@/utils/helper";
 
 import { fetchProductsRequest } from "@/redux/actions/products.actions";
@@ -1336,15 +1338,33 @@ function EXIMService() {
       const groupedByHSN = groupByHSNCode(products);
 
       if (groupedByHSN?.length) {
-        setActiveHSN(groupedByHSN[0]);
+        if (router?.query?.hsnCode && router?.query?.hsnCode !== "undefined") {
+          const hsnObject = groupedByHSN?.find(
+            (f) => f?.HSNCode === router?.query?.hsnCode
+          );
+          setActiveHSN(hsnObject);
+        } else {
+          setActiveHSN(groupedByHSN[0]);
+        }
 
         setHSNListData(groupedByHSN);
       }
     }
   }, [products]);
 
+  async function initPage() {
+    const details = await checkSubscription(eximServiceId, authToken);
+
+    if (!details?.activeSubscription) {
+      router.replace("/service/exim/lp");
+
+      return;
+    }
+  }
+
   useLayoutEffect(() => {
     if (authToken) {
+      initPage();
       dispatch(fetchProductsRequest());
     }
   }, [authToken]);
@@ -1421,7 +1441,10 @@ function EXIMService() {
       </Head>
 
       <AppLayout>
-        <Header hideLogo={true} />
+        <Header
+          hideLogo={true}
+          serviceBackRouteException={router?.query?.hsnCode ? true : false}
+        />
 
         <div className={`h-full w-full bg-pwip-v2-gray-100 space-y-2 relative`}>
           {!isFullscreen ? (

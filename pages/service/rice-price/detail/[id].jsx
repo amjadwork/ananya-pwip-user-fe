@@ -7,6 +7,7 @@ import {
   TransformComponent,
   useControls,
 } from "react-zoom-pan-pinch";
+import axios from "axios";
 
 const Chart = dynamic(() => import("react-charts").then((mod) => mod.Chart), {
   ssr: false,
@@ -26,12 +27,24 @@ import {
   closeXmark,
   zoomInIcon,
   zoomOutIcon,
+  increaseUpIcon,
+  decreaseDownIcon,
 } from "../../../../theme/icon";
 
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { getStateAbbreviation, getDateRangeByPeriod } from "@/utils/helper";
+import {
+  getStateAbbreviation,
+  getDateRangeByPeriod,
+  apiAnalyticsURL,
+  checkNumberSign,
+  formatVolume,
+  formatCurrency,
+  checkSubscription,
+  ricePriceServiceId,
+  eximServiceId,
+} from "@/utils/helper";
 
 import {
   fetchProductDetailRequest,
@@ -58,6 +71,8 @@ import {
   setCostingSelection,
   // setCustomCostingSelection,
 } from "@/redux/actions/costing.actions.js";
+
+const SERVICE_ID = ricePriceServiceId;
 
 function compareArrays(arr, obj) {
   return arr.map((property) => {
@@ -161,6 +176,7 @@ function RicePriceDetail() {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const authToken = useSelector((state) => state.auth?.token);
   const variantDetail = useSelector((state) => state.products?.variantDetail);
   const variantPriceDetailById = useSelector(
     (state) => state.variantPriceList?.variantWithPriceList
@@ -191,13 +207,105 @@ function RicePriceDetail() {
   const [variantProfileDetailData, setVariantProfileDetailData] = useState([]);
   const [activeCurrency, setActiveCurrency] = React.useState("inr");
   const [previewImage, setPreviewImage] = React.useState(null);
-
   const [graphData, setGraphData] = useState([
     {
       label: "Rice Price",
       data: [],
     },
   ]);
+  const [topStats, setTopStats] = useState([]);
+  const [demandStats, setDemandStats] = useState({});
+  const [hasActiveEXIMSubscription, setHasActiveEXIMSubscription] =
+    useState(false);
+
+  function transformAnalysisData(input) {
+    const output = [];
+
+    // Mapping the input to the output structure
+    if (input.MostExportedDestinationName) {
+      output.push({
+        title: "Most exported to port",
+        value: input.MostExportedDestinationName.destinationName,
+        key: "MostExportedDestinationName",
+        icon: "/assets/images/services/exim/destination-port.png",
+      });
+    }
+
+    // Placeholder values for "Most exported to country" since the input does not contain this key
+    output.push({
+      title: "Most exported to country",
+      value: input?.MostExportedDestinationCountry?.destinationCountryName, // Default or placeholder value
+      key: "MostExportedDestinationCountry",
+      icon: "/assets/images/services/exim/countries.png",
+    });
+
+    if (input.MostExportedYear) {
+      output.push({
+        title: "Most exported in year",
+        value: input.MostExportedYear.year,
+        key: "MostExportedYear",
+        icon: "/assets/images/services/exim/year.png",
+      });
+    }
+
+    if (input.MostExportedOriginPortName) {
+      output.push({
+        title: "Most exported from port",
+        value: input.MostExportedOriginPortName.OriginPortName,
+        key: "MostExportedOriginPortName",
+        icon: "/assets/images/services/exim/cargo-ship.png",
+      });
+    }
+
+    if (input.lifetimeTotalVol !== undefined) {
+      output.push({
+        title: "Total volume exported",
+        value: formatVolume(input.lifetimeTotalVol),
+        key: "lifetimeTotalVol",
+        icon: "/assets/images/services/exim/container-volume.png",
+      });
+    }
+
+    if (input.lifetimeTotalExportPriceValue !== undefined) {
+      output.push({
+        title: "Total FOB exported",
+        value: formatCurrency(input.lifetimeTotalExportPriceValue),
+        key: "lifetimeTotalExportPriceValue",
+        icon: "/assets/images/services/exim/money-fob.png",
+      });
+    }
+
+    return output;
+  }
+
+  async function getEximAnalyticsData(hsnCode) {
+    let url =
+      apiAnalyticsURL +
+      `api/service/rice-price/exim-analysis?hsn_code=${hsnCode}`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
+      if (response?.data) {
+        setDemandStats({
+          inflationPercentage: response?.data?.inflationPercentage || 0,
+          demandPercentage: response?.data?.demandPercentage || 0,
+        });
+
+        const formatedData = transformAnalysisData(response.data);
+
+        if (formatedData?.length) {
+          setTopStats(formatedData);
+        }
+      }
+    } catch (err) {
+      console.error("err", err);
+    }
+  }
 
   const handleShare = () => {
     if (navigator && navigator.share) {
@@ -210,7 +318,7 @@ function RicePriceDetail() {
             `${window.location.pathname}?_s=${router?.query?._s}`,
         })
         .then(() => console.log("Successful share"))
-        .catch((error) => console.log("Error sharing", error));
+        .catch((error) => console.error("Error sharing", error));
     }
   };
 
@@ -285,6 +393,12 @@ function RicePriceDetail() {
     }),
     [activeSlide]
   );
+
+  useEffect(() => {
+    if (authToken && variantDetail?.HSNCode) {
+      getEximAnalyticsData(variantDetail?.HSNCode);
+    }
+  }, [authToken, variantDetail?.HSNCode]);
 
   useEffect(() => {
     if (variantDetail) {
@@ -365,13 +479,28 @@ function RicePriceDetail() {
     }
   }, [variantProfileData]);
 
+  async function initPage() {
+    const details = await checkSubscription(SERVICE_ID, authToken);
+    const eximDetails = await checkSubscription(eximServiceId, authToken);
+
+    setHasActiveEXIMSubscription(eximDetails?.activeSubscription);
+
+    if (!details?.activeSubscription) {
+      router.replace("/service/rice-price/lp");
+
+      return;
+    }
+  }
+
   useLayoutEffect(() => {
-    if (router?.query?.id) {
+    if (router?.query?.id && authToken) {
+      initPage();
+
       dispatch(fetchProductDetailRequest(router?.query?.id));
       dispatch(fetchVariantProfileRequest(router?.query?.id));
       dispatch(fetchAllWatchlistForVariantRequest(router?.query?.id));
     }
-  }, [router?.query?.id]);
+  }, [router?.query?.id, authToken]);
 
   return (
     <React.Fragment>
@@ -695,36 +824,179 @@ function RicePriceDetail() {
           </div>
 
           <div className="inline-flex w-full px-5 py-4 !mt-[42px]">
-            <div className="relative w-full">
-              <img
-                src="/assets/images/services/ec-cta-banner.png"
-                className="w-full h-full relative z-0"
-              />
+            <div
+              onClick={async () => {
+                dispatch(
+                  setCostingSelection({
+                    product: variantDetailData,
+                  })
+                );
+                router.push("/export-costing/select-pod");
+              }}
+              className="grid grid-cols-2 w-full h-auto py-5 px-5 bg-[#CBDEF0] rounded-lg relative"
+            >
+              <div className="inline-flex flex-col justify-center items-center pt-2 space-y-4 h-full cols-span-10">
+                <div className="inline-flex flex-col space-y-1">
+                  <img
+                    src="/assets/images/services/ec-service-logo.png"
+                    className="w-[30%]"
+                  />
 
-              <div className="absolute top-0 left-0 z-10 bg-transparent w-full h-full inline-flex flex-col items-center justify-between py-[32px]">
-                <h2 className="text-center text-pwip-white-100 font-bold text-sm">
-                  <span className="opacity-[0.8]">Get</span>{" "}
-                  <span className="opacity-[1]">costing</span>{" "}
-                  <span className="opacity-[0.8]">
-                    for {variantDetailData?.variantName}
-                  </span>
-                </h2>
+                  <h2 className="text-sm font-semibold text-pwip-black-500 text-left leading-[18px] max-xs:leading-[12px] whitespace-normal">
+                    <span className="opacity-[0.8]">Generate</span>{" "}
+                    <span className="opacity-[1]">costing</span>{" "}
+                    <span className="opacity-[0.8]">
+                      for {variantDetailData?.variantName}
+                    </span>
+                  </h2>
 
-                <button
-                  onClick={() => {
-                    dispatch(
-                      setCostingSelection({
-                        product: variantDetailData,
-                      })
-                    );
-                    router.push("/export-costing/select-pod");
-                  }}
-                  className="bg-pwip-white-100 rounded-md py-2 px-5 text-center text-pwip-v2-primary text-[11px]"
-                >
-                  Generate now
-                </button>
+                  {/* <span className="text-xs max-xs:text-[10px] font-normal text-pwip-black-500 text-left leading-[18px] max-xs:leading-[12px]">
+                    Just choose your destination
+                  </span> */}
+                </div>
+
+                <div className="relative z-10 w-full">
+                  <Button
+                    type="white"
+                    label="Generate now"
+                    rounded="!rounded-md"
+                    maxHeight="!max-h-[26px]"
+                    minHeight="!min-h-[26px]"
+                    fontSize="!text-xs"
+                    maxWidth="max-w-[70%]"
+                  />
+                </div>
+              </div>
+
+              <div className="h-full cols-span-2">
+                <img
+                  src="/assets/images/services/ec-phone-frame.png"
+                  alt="container"
+                  className="absolute z-0 bottom-0 right-5 h-[90%]"
+                />
               </div>
             </div>
+          </div>
+
+          <div className="bg-white w-full py-4 px-5 pt-6 space-y-9">
+            <div className="inline-flex items-center">
+              <h3 className="font-semibold text-base text-pwip-black-600">
+                Quick analysis for HSN {variantDetail?.HSNCode}
+              </h3>
+            </div>
+            <div className="w-full h-auto !mt-4">
+              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
+                <div className="flex flex-nowrap space-x-3">
+                  {topStats.map((d, i) => (
+                    <div
+                      key={d?.title + "_" + i}
+                      className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
+                    >
+                      <div className="h-8 w-8 min-h-8 min-w-8 inline-flex items-center justify-center rounded-full bg-gray-100">
+                        <img src={d?.icon} className="h-4 w-4" />
+                      </div>
+                      <div className="inline-flex flex-col space-y-1">
+                        <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                          {d?.title}
+                        </span>
+
+                        <span
+                          className={`font-normal text-pwip-gray-550 text-sm whitespace-nowrap ${
+                            !hasActiveEXIMSubscription ? "blur-[3px]" : ""
+                          }`}
+                        >
+                          {d?.value}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full h-auto space-y-7">
+              {Object.keys(demandStats)?.map((d, i) => {
+                const sign = checkNumberSign(demandStats[d]);
+
+                return (
+                  <div
+                    key={d + "_" + i}
+                    className={`w-full inline-flex items-start justify-start space-x-4 ${
+                      !hasActiveEXIMSubscription ? "blur-sm" : ""
+                    }`}
+                  >
+                    {hasActiveEXIMSubscription ? (
+                      <React.Fragment>
+                        {sign === "positive" ? (
+                          <div
+                            className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
+                              sign === "positive"
+                                ? "text-pwip-v2-green-600 bg-pwip-green-200"
+                                : ""
+                            } rounded-full inline-flex items-center justify-center`}
+                          >
+                            {increaseUpIcon}
+                          </div>
+                        ) : (
+                          <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
+                            {decreaseDownIcon}
+                          </div>
+                        )}
+                      </React.Fragment>
+                    ) : null}
+
+                    <div className="inline-flex flex-col space-y-1">
+                      <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                        {sign === "positive" && d === "inflationPercentage"
+                          ? "Increasing inflation"
+                          : sign === "positive" && d === "demandPercentage"
+                          ? "Increasing demand"
+                          : sign === "negative" && d === "inflationPercentage"
+                          ? "Decreasing demand"
+                          : sign === "negative" && d === "demandPercentage"
+                          ? "Decreasing demand"
+                          : ""}
+                      </span>
+                      <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
+                        {sign === "positive" && d === "inflationPercentage"
+                          ? `Over the last 3 years, inflation has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                          : sign === "negative" && d === "inflationPercentage"
+                          ? `Over the last 3 years, inflation has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                          : ""}
+
+                        {sign === "positive" && d === "demandPercentage"
+                          ? `Over the last 2 years, market demand has increased to
+                        ${demandStats[d]?.toFixed(2)}%`
+                          : sign === "negative" && d === "demandPercentage"
+                          ? `Over the last 2 years, market demand has decreaded to
+                          ${demandStats[d]?.toFixed(2)}%`
+                          : ""}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <Button
+              type="outline"
+              label={
+                hasActiveEXIMSubscription
+                  ? "See EXIM Bank & Analytics"
+                  : "Subscribe to EXIM & see the analytics"
+              }
+              onClick={async () => {
+                if (!hasActiveEXIMSubscription) {
+                  router.replace("/service/exim/lp");
+
+                  return;
+                }
+
+                router.push("/service/exim?hsnCode=" + variantDetail?.HSNCode);
+              }}
+            />
           </div>
         </div>
 
