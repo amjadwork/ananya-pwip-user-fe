@@ -64,7 +64,7 @@ const InstallButton = () => {
     if (!("beforeinstallprompt" in window)) {
       setIsSupported(false);
     }
-  }, []);
+  }, [window?.navigator?.userAgent]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
