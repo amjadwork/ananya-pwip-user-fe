@@ -878,126 +878,130 @@ function RicePriceDetail() {
             </div>
           </div>
 
-          <div className="bg-white w-full py-4 px-5 pt-6 space-y-9">
-            <div className="inline-flex items-center">
-              <h3 className="font-semibold text-base text-pwip-black-600">
-                Quick analysis for HSN {variantDetail?.HSNCode}
-              </h3>
-            </div>
-            <div className="w-full h-auto !mt-4">
-              <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
-                <div className="flex flex-nowrap space-x-3">
-                  {topStats.map((d, i) => (
-                    <div
-                      key={d?.title + "_" + i}
-                      className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
-                    >
-                      <div className="h-8 w-8 min-h-8 min-w-8 inline-flex items-center justify-center rounded-full bg-gray-100">
-                        <img src={d?.icon} className="h-4 w-4" />
-                      </div>
-                      <div className="inline-flex flex-col space-y-1">
-                        <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                          {d?.title}
-                        </span>
+          {variantDetail?.HSNCode ? (
+            <div className="bg-white w-full py-4 px-5 pt-6 space-y-9">
+              <div className="inline-flex items-center">
+                <h3 className="font-semibold text-base text-pwip-black-600">
+                  Quick analysis for HSN {variantDetail?.HSNCode}
+                </h3>
+              </div>
+              <div className="w-full h-auto !mt-4">
+                <div className="flex overflow-x-scroll hide-scroll-bar py-[1px] mt-3 w-full">
+                  <div className="flex flex-nowrap space-x-3">
+                    {topStats.map((d, i) => (
+                      <div
+                        key={d?.title + "_" + i}
+                        className="px-4 py-3 rounded-lg border border-pwip-v2-gray-200 inline-flex w-full flex-col space-y-2"
+                      >
+                        <div className="h-8 w-8 min-h-8 min-w-8 inline-flex items-center justify-center rounded-full bg-gray-100">
+                          <img src={d?.icon} className="h-4 w-4" />
+                        </div>
+                        <div className="inline-flex flex-col space-y-1">
+                          <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                            {d?.title}
+                          </span>
 
-                        <span
-                          className={`font-normal text-pwip-gray-550 text-sm whitespace-nowrap ${
-                            !hasActiveEXIMSubscription ? "blur-[3px]" : ""
-                          }`}
-                        >
-                          {d?.value}
-                        </span>
+                          <span
+                            className={`font-normal text-pwip-gray-550 text-sm whitespace-nowrap ${
+                              !hasActiveEXIMSubscription ? "blur-[3px]" : ""
+                            }`}
+                          >
+                            {d?.value}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="w-full h-auto space-y-7">
-              {Object.keys(demandStats)?.map((d, i) => {
-                const sign = checkNumberSign(demandStats[d]);
+              <div className="w-full h-auto space-y-7">
+                {Object.keys(demandStats)?.map((d, i) => {
+                  const sign = checkNumberSign(demandStats[d]);
 
-                return (
-                  <div
-                    key={d + "_" + i}
-                    className={`w-full inline-flex items-start justify-start space-x-4 ${
-                      !hasActiveEXIMSubscription ? "blur-sm" : ""
-                    }`}
-                  >
-                    {hasActiveEXIMSubscription ? (
-                      <React.Fragment>
-                        {sign === "positive" ? (
-                          <div
-                            className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
-                              sign === "positive"
-                                ? "text-pwip-v2-green-600 bg-pwip-green-200"
-                                : ""
-                            } rounded-full inline-flex items-center justify-center`}
-                          >
-                            {increaseUpIcon}
-                          </div>
-                        ) : (
-                          <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
-                            {decreaseDownIcon}
-                          </div>
-                        )}
-                      </React.Fragment>
-                    ) : null}
+                  return (
+                    <div
+                      key={d + "_" + i}
+                      className={`w-full inline-flex items-start justify-start space-x-4 ${
+                        !hasActiveEXIMSubscription ? "blur-sm" : ""
+                      }`}
+                    >
+                      {hasActiveEXIMSubscription ? (
+                        <React.Fragment>
+                          {sign === "positive" ? (
+                            <div
+                              className={`min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 ${
+                                sign === "positive"
+                                  ? "text-pwip-v2-green-600 bg-pwip-green-200"
+                                  : ""
+                              } rounded-full inline-flex items-center justify-center`}
+                            >
+                              {increaseUpIcon}
+                            </div>
+                          ) : (
+                            <div className="min-h-6 min-w-6 max-h-6 max-w-6 h-6 w-6 text-pwip-v2-red-600 bg-pwip-v2-red-200 rounded-full inline-flex items-center justify-center">
+                              {decreaseDownIcon}
+                            </div>
+                          )}
+                        </React.Fragment>
+                      ) : null}
 
-                    <div className="inline-flex flex-col space-y-1">
-                      <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
-                        {sign === "positive" && d === "inflationPercentage"
-                          ? "Increasing inflation"
-                          : sign === "positive" && d === "demandPercentage"
-                          ? "Increasing demand"
-                          : sign === "negative" && d === "inflationPercentage"
-                          ? "Decreasing demand"
-                          : sign === "negative" && d === "demandPercentage"
-                          ? "Decreasing demand"
-                          : ""}
-                      </span>
-                      <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
-                        {sign === "positive" && d === "inflationPercentage"
-                          ? `Over the last 3 years, inflation has increased to
+                      <div className="inline-flex flex-col space-y-1">
+                        <span className="font-medium text-pwip-black-600 text-sm whitespace-nowrap">
+                          {sign === "positive" && d === "inflationPercentage"
+                            ? "Increasing inflation"
+                            : sign === "positive" && d === "demandPercentage"
+                            ? "Increasing demand"
+                            : sign === "negative" && d === "inflationPercentage"
+                            ? "Decreasing demand"
+                            : sign === "negative" && d === "demandPercentage"
+                            ? "Decreasing demand"
+                            : ""}
+                        </span>
+                        <p className="font-normal text-pwip-gray-550 text-sm max-w-[90%]">
+                          {sign === "positive" && d === "inflationPercentage"
+                            ? `Over the last 3 years, inflation has increased to
                         ${demandStats[d]?.toFixed(2)}%`
-                          : sign === "negative" && d === "inflationPercentage"
-                          ? `Over the last 3 years, inflation has decreaded to
+                            : sign === "negative" && d === "inflationPercentage"
+                            ? `Over the last 3 years, inflation has decreaded to
                           ${demandStats[d]?.toFixed(2)}%`
-                          : ""}
+                            : ""}
 
-                        {sign === "positive" && d === "demandPercentage"
-                          ? `Over the last 2 years, market demand has increased to
+                          {sign === "positive" && d === "demandPercentage"
+                            ? `Over the last 2 years, market demand has increased to
                         ${demandStats[d]?.toFixed(2)}%`
-                          : sign === "negative" && d === "demandPercentage"
-                          ? `Over the last 2 years, market demand has decreaded to
+                            : sign === "negative" && d === "demandPercentage"
+                            ? `Over the last 2 years, market demand has decreaded to
                           ${demandStats[d]?.toFixed(2)}%`
-                          : ""}
-                      </p>
+                            : ""}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
 
-            <Button
-              type="outline"
-              label={
-                hasActiveEXIMSubscription
-                  ? "See EXIM Bank & Analytics"
-                  : "Subscribe to EXIM & see the analytics"
-              }
-              onClick={async () => {
-                if (!hasActiveEXIMSubscription) {
-                  router.replace("/service/exim/lp");
-
-                  return;
+              <Button
+                type="outline"
+                label={
+                  hasActiveEXIMSubscription
+                    ? "See EXIM Bank & Analytics"
+                    : "Subscribe to EXIM & see the analytics"
                 }
+                onClick={async () => {
+                  if (!hasActiveEXIMSubscription) {
+                    router.replace("/service/exim/lp");
 
-                router.push("/service/exim?hsnCode=" + variantDetail?.HSNCode);
-              }}
-            />
-          </div>
+                    return;
+                  }
+
+                  router.push(
+                    "/service/exim?hsnCode=" + variantDetail?.HSNCode
+                  );
+                }}
+              />
+            </div>
+          ) : null}
         </div>
 
         {previewImage ? (
