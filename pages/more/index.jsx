@@ -21,7 +21,7 @@ import { useOverlayContext } from "@/context/OverlayContext";
 
 // Import Layouts
 
-const InstallButton = () => {
+const InstallButton = ({ isInstalled }) => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIos, setIsIos] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
@@ -30,11 +30,7 @@ const InstallButton = () => {
 
   const {
     openBottomSheet,
-    closeBottomSheet,
-    startLoading,
-    stopLoading,
-    openToastMessage,
-    closeToastMessage,
+    // closeBottomSheet,
   } = useOverlayContext();
 
   useEffect(() => {
@@ -64,7 +60,7 @@ const InstallButton = () => {
     if (!("beforeinstallprompt" in window)) {
       setIsSupported(false);
     }
-  }, [window?.navigator?.userAgent]);
+  }, [window?.navigator?.userAgent, isInstalled]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -103,6 +99,10 @@ const InstallButton = () => {
 
     openBottomSheet(content);
   };
+
+  if (isInstalled) {
+    return null;
+  }
 
   return (
     <div className="mt-6 w-full bg-[#E7F1FE] rounded-lg relative text-xs inline-flex items-center border-[1px] border-[#CBE0FE]">
@@ -146,13 +146,30 @@ function More() {
     closeBottomSheet,
     startLoading,
     stopLoading,
-    openToastMessage,
-    closeToastMessage,
+    // openToastMessage,
+    // closeToastMessage,
   } = useOverlayContext();
   const userDetails = useSelector((state) => state.auth.user);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [userData, setUserData] = React.useState(null);
+  const [isInstalled, setIsInstalled] = useState(false); // State to track if app is installed
+
+  React.useEffect(() => {
+    const checkInstallationStatus = () => {
+      // Check if app is installed by querying the PWA installation status
+      window.matchMedia("(display-mode: standalone)").addListener((e) => {
+        setIsInstalled(e.matches);
+      });
+
+      // Listen for appinstalled event to update installation status
+      window.addEventListener("appinstalled", () => {
+        setIsInstalled(true);
+      });
+    };
+
+    checkInstallationStatus();
+  }, [userData]);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -167,6 +184,8 @@ function More() {
       setUserData(userDetails);
     }
   }, [userDetails]);
+
+  console.log("here", isInstalled);
 
   return (
     <React.Fragment>
@@ -274,7 +293,8 @@ function More() {
               </div>
             );
           })}
-          <InstallButton />
+          {!isInstalled ? <InstallButton isInstalled={isInstalled} /> : null}
+
           <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
           <div
             onClick={() => {
