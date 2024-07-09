@@ -1,10 +1,11 @@
 /** @format */
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
 import { useSelector } from "react-redux";
+import Frame from "react-frame-component";
 
 import withAuth from "@/hoc/withAuth";
 import AppLayout from "@/layouts/appLayout.jsx";
@@ -20,6 +21,124 @@ import { useOverlayContext } from "@/context/OverlayContext";
 // Import Containers
 
 // Import Layouts
+
+const InstallButton = () => {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isIos, setIsIos] = useState(false);
+  const [isSupported, setIsSupported] = useState(false);
+  const [isChrome, setIsChrome] = useState(false);
+  const [isSafari, setIsSafari] = useState(false);
+
+  const {
+    openBottomSheet,
+    closeBottomSheet,
+    startLoading,
+    stopLoading,
+    openToastMessage,
+    closeToastMessage,
+  } = useOverlayContext();
+
+  useEffect(() => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
+    setIsIos(isIosDevice);
+
+    const isChromeBrowser =
+      /chrome/.test(userAgent) && !/edge|edg|opr/.test(userAgent);
+    setIsChrome(isChromeBrowser);
+
+    const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
+    setIsSafari(isSafariBrowser);
+
+    if (!isIosDevice) {
+      const handler = (e) => {
+        e.preventDefault();
+        setDeferredPrompt(e);
+        setIsSupported(true);
+      };
+
+      window.addEventListener("beforeinstallprompt", handler);
+
+      return () => window.removeEventListener("beforeinstallprompt", handler);
+    }
+
+    if (!("beforeinstallprompt" in window)) {
+      setIsSupported(false);
+    }
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === "accepted") {
+      setDeferredPrompt(null);
+    }
+  };
+
+  const HowToIframe = useCallback(
+    ({ isChromeBrowser, isSafariBrowser }) => {
+      return (
+        <div className="px-5 py-8">
+          <iframe
+            className="h-screen w-full relative"
+            src={
+              isSafariBrowser
+                ? "/safari-install/How to Install PWIP Exports App on iOS Using Safar 39c467c19e7e4de98e82ec9934f16cc2.html"
+                : isChromeBrowser
+                ? "/chrome-install/How to Install PWIP Exports App on iOS Using Chrom 39c467c19e7e4de98e82ec9934f16cc2.html"
+                : ""
+            }
+          />
+        </div>
+      );
+    },
+    [isChrome, isSafari]
+  );
+
+  const handleKnowMoreClick = async () => {
+    const content = (
+      <HowToIframe isSafariBrowser={isSafari} isChromeBrowser={isChrome} />
+    );
+
+    openBottomSheet(content);
+  };
+
+  return (
+    <div className="mt-6 w-full bg-[#E7F1FE] rounded-lg relative text-xs inline-flex items-center border-[1px] border-[#CBE0FE]">
+      <div className="inline-flex flex-col max-w-[65%] py-5 pl-5">
+        <h3 className="font-semibold text-sm text-[#052E6A]">PWIP Exports</h3>
+        <p className="!mt-1 text-[#0C326D]">
+          Get PWIP Exports app on your phone, install the app now.
+        </p>
+        {isIos || !isSupported ? (
+          <button
+            className="bg-white rounded-md outline-none border-none text-center text-pwip-black-600 px-2 py-2 mt-3 w-auto max-w-[55%] whitespace-nowrap"
+            onClick={handleKnowMoreClick}
+          >
+            Know more
+          </button>
+        ) : (
+          <button
+            className="bg-white rounded-md outline-none border-none text-center text-pwip-black-600 px-2 py-2 mt-3 w-auto max-w-[55%] whitespace-nowrap"
+            onClick={handleInstallClick}
+            disabled={!deferredPrompt}
+          >
+            Install App
+          </button>
+        )}
+      </div>
+
+      <div className="cols-span-3 absolute bottom-0 right-4 inline-flex justify-end min-w-[35%] max-w-[35%]">
+        <img
+          className="h-auto w-[90%]"
+          src="/assets/images/install-app-3d.png"
+        />
+      </div>
+    </div>
+  );
+};
 
 function More() {
   const router = useRouter();
@@ -156,7 +275,7 @@ function More() {
               </div>
             );
           })}
-
+          <InstallButton />
           <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
           <div
             onClick={() => {
