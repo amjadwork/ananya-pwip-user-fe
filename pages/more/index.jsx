@@ -122,7 +122,7 @@ const InstallButton = () => {
             className="bg-white rounded-md outline-none border-none text-center text-pwip-black-600 px-2 py-2 mt-3 w-auto max-w-[55%] whitespace-nowrap"
             onClick={handleKnowMoreClick}
           >
-            Know more
+            See the guide
           </button>
         ) : (
           <button
