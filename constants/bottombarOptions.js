@@ -43,5 +43,6 @@ export const options = [
     icon: moreBottomBarIcon,
     label: "More",
     path: "more",
+    type: "server-side-nav",
   },
 ];

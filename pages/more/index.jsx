@@ -1,6 +1,11 @@
 /** @format */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
@@ -21,17 +26,14 @@ import { useOverlayContext } from "@/context/OverlayContext";
 
 // Import Layouts
 
-const InstallButton = ({ isInstalled }) => {
+const InstallButton = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isIos, setIsIos] = useState(false);
   const [isSupported, setIsSupported] = useState(false);
   const [isChrome, setIsChrome] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
 
-  const {
-    openBottomSheet,
-    // closeBottomSheet,
-  } = useOverlayContext();
+  const { openBottomSheet } = useOverlayContext();
 
   useEffect(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
@@ -47,20 +49,23 @@ const InstallButton = ({ isInstalled }) => {
 
     if (!isIosDevice) {
       const handler = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         setDeferredPrompt(e);
+
         setIsSupported(true);
       };
 
       window.addEventListener("beforeinstallprompt", handler);
 
-      return () => window.removeEventListener("beforeinstallprompt", handler);
+      return () => {
+        window.removeEventListener("beforeinstallprompt", handler);
+      };
     }
 
     if (!("beforeinstallprompt" in window)) {
       setIsSupported(false);
     }
-  }, [window?.navigator?.userAgent, isInstalled]);
+  }, [window?.navigator?.userAgent]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -99,10 +104,6 @@ const InstallButton = ({ isInstalled }) => {
 
     openBottomSheet(content);
   };
-
-  if (isInstalled) {
-    return null;
-  }
 
   return (
     <div className="mt-6 w-full bg-[#E7F1FE] rounded-lg relative text-xs inline-flex items-center border-[1px] border-[#CBE0FE]">
@@ -169,7 +170,7 @@ function More() {
     };
 
     checkInstallationStatus();
-  }, [userData]);
+  }, []);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -184,8 +185,6 @@ function More() {
       setUserData(userDetails);
     }
   }, [userDetails]);
-
-  console.log("here", isInstalled);
 
   return (
     <React.Fragment>
@@ -293,7 +292,8 @@ function More() {
               </div>
             );
           })}
-          {!isInstalled ? <InstallButton isInstalled={isInstalled} /> : null}
+
+          {!isInstalled ? <InstallButton /> : null}
 
           <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
           <div
