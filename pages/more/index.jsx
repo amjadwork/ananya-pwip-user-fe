@@ -162,7 +162,7 @@ function More() {
   const [isInstalled, setIsInstalled] = useState(false); // State to track if app is installed
 
   React.useEffect(() => {
-    const checkInstallationStatus = () => {
+    const checkInstallationStatus = async () => {
       // Check if app is installed by querying the PWA installation status
       if (window.matchMedia("(display-mode: standalone)").matches) {
         setIsInstalled(true);
