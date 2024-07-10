@@ -40,12 +40,19 @@ const InstallButton = () => {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIos(isIosDevice);
 
+    // Check if the browser is Safari
+    const isSafariBrowser =
+      /^((?!chrome|android).)*safari/i.test(userAgent) && !isIosDevice;
+    setIsSafari(isSafariBrowser);
+
+    // Check if the browser is Chrome
     const isChromeBrowser =
-      /chrome/.test(userAgent) && !/edge|edg|opr/.test(userAgent);
+      /chrome/.test(userAgent) &&
+      !/edge|edg|opr|opera/.test(userAgent) &&
+      !isIosDevice;
     setIsChrome(isChromeBrowser);
 
-    const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
-    setIsSafari(isSafariBrowser);
+    console.log("here", isChromeBrowser, isSafariBrowser);
 
     if (!isIosDevice) {
       const handler = (e) => {
