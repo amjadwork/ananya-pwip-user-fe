@@ -1,6 +1,11 @@
 /** @format */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useSession, signOut } from "next-auth/react";
@@ -28,43 +33,44 @@ const InstallButton = () => {
   const [isChrome, setIsChrome] = useState(false);
   const [isSafari, setIsSafari] = useState(false);
 
-  const {
-    openBottomSheet,
-    closeBottomSheet,
-    startLoading,
-    stopLoading,
-    openToastMessage,
-    closeToastMessage,
-  } = useOverlayContext();
+  const { openBottomSheet } = useOverlayContext();
 
   useEffect(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIos(isIosDevice);
 
-    const isChromeBrowser =
-      /chrome/.test(userAgent) && !/edge|edg|opr/.test(userAgent);
-    setIsChrome(isChromeBrowser);
-
-    const isSafariBrowser = /^((?!chrome|android).)*safari/i.test(userAgent);
+    // Check if the browser is Safari on iOS
+    const isSafariBrowser =
+      isIosDevice &&
+      userAgent.includes("safari") &&
+      !userAgent.includes("crios");
     setIsSafari(isSafariBrowser);
+
+    // Check if the browser is Chrome on iOS or other platforms
+    const isChromeBrowser =
+      userAgent.includes("crios") || userAgent.includes("chrome");
+    setIsChrome(isChromeBrowser);
 
     if (!isIosDevice) {
       const handler = (e) => {
-        e.preventDefault();
+        e?.preventDefault();
         setDeferredPrompt(e);
+
         setIsSupported(true);
       };
 
       window.addEventListener("beforeinstallprompt", handler);
 
-      return () => window.removeEventListener("beforeinstallprompt", handler);
+      return () => {
+        window.removeEventListener("beforeinstallprompt", handler);
+      };
     }
 
     if (!("beforeinstallprompt" in window)) {
       setIsSupported(false);
     }
-  }, []);
+  }, [window?.navigator?.userAgent]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
@@ -146,13 +152,32 @@ function More() {
     closeBottomSheet,
     startLoading,
     stopLoading,
-    openToastMessage,
-    closeToastMessage,
+    // openToastMessage,
+    // closeToastMessage,
   } = useOverlayContext();
   const userDetails = useSelector((state) => state.auth.user);
 
   const [mainContainerHeight, setMainContainerHeight] = React.useState(0);
   const [userData, setUserData] = React.useState(null);
+  const [isInstalled, setIsInstalled] = useState(false); // State to track if app is installed
+
+  React.useEffect(() => {
+    const checkInstallationStatus = async () => {
+      // Check if app is installed by querying the PWA installation status
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        setIsInstalled(true);
+      } else {
+        setIsInstalled(false);
+      }
+
+      // Listen for appinstalled event to update installation status
+      window.addEventListener("appinstalled", () => {
+        setIsInstalled(true);
+      });
+    };
+
+    checkInstallationStatus();
+  }, []);
 
   React.useEffect(() => {
     const element = document.getElementById("fixedMenuSection");
@@ -274,8 +299,14 @@ function More() {
               </div>
             );
           })}
-          <InstallButton />
-          <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
+
+          {!isInstalled ? <InstallButton /> : null}
+
+          <hr
+            className={`${
+              isInstalled ? "mt-[20px]" : "mt-[60px]"
+            } mb-[20px] bg-pwip-gray-50 text-pwip-gray-50`}
+          />
           <div
             onClick={() => {
               window.open("https://pwip.co", "_blank");

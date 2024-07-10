@@ -30,6 +30,12 @@ export function BottomNavBar({ scrollDirection = "up", lastScrollTop }) {
               key={opt.label + index}
               type="button"
               onClick={() => {
+                if (opt?.type === "server-side-nav") {
+                  window.location.href =
+                    window.location.origin + "/" + opt.path;
+
+                  return;
+                }
                 router.push("/" + opt.path);
               }}
               className={`${
