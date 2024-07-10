@@ -52,8 +52,6 @@ const InstallButton = () => {
       userAgent.includes("crios") || userAgent.includes("chrome");
     setIsChrome(isChromeBrowser);
 
-    console.log("here", isChromeBrowser, isSafariBrowser);
-
     if (!isIosDevice) {
       const handler = (e) => {
         e?.preventDefault();
@@ -166,9 +164,11 @@ function More() {
   React.useEffect(() => {
     const checkInstallationStatus = () => {
       // Check if app is installed by querying the PWA installation status
-      window.matchMedia("(display-mode: standalone)").addListener((e) => {
-        setIsInstalled(e.matches);
-      });
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        setIsInstalled(true);
+      } else {
+        setIsInstalled(false);
+      }
 
       // Listen for appinstalled event to update installation status
       window.addEventListener("appinstalled", () => {
