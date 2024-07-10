@@ -302,7 +302,11 @@ function More() {
 
           {!isInstalled ? <InstallButton /> : null}
 
-          <hr className="mt-[60px] mb-[20px] bg-pwip-gray-50 text-pwip-gray-50" />
+          <hr
+            className={`${
+              isInstalled ? "mt-[20px]" : "mt-[60px]"
+            } mb-[20px] bg-pwip-gray-50 text-pwip-gray-50`}
+          />
           <div
             onClick={() => {
               window.open("https://pwip.co", "_blank");
