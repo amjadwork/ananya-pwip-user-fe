@@ -762,7 +762,7 @@ function RicePriceDetail() {
           </div>
 
           <div className="bg-white w-full py-4 px-5 relative">
-            <div className="inline-flex items-center overflow-auto hide-scroll-bar mb-5 space-x-3">
+            <div className="inline-flex items-center overflow-auto hide-scroll-bar mb-5 space-x-3 w-full">
               {selectedVariantPriceDetail?.images?.map((imgSrc, index) => {
                 return (
                   <img
