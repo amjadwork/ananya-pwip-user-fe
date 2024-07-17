@@ -65,6 +65,9 @@ function* setOTPforPhoneVerification(action) {
 
     const payload = {
       phone: action?.payload?.phone?.toString(),
+      country_code: action?.payload?.countryCode
+        ? parseInt(action?.payload?.countryCode)
+        : 91,
     };
 
     const response = yield call(

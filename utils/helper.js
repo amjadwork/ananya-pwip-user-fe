@@ -500,3 +500,30 @@ export function formatCurrency(value) {
 export function formatDateToDDMMYYYY(date) {
   return moment(date).format("DD-MM-YYYY");
 }
+
+export function processCountryData(data) {
+  const result = [];
+
+  data.forEach((country) => {
+    const { phonecode, ...rest } = country;
+
+    // Handle the case '1-787 and 1-939'
+    if (phonecode.includes(" and ")) {
+      const codes = phonecode.split(" and ");
+      codes.forEach((code) => {
+        let cleanedCode = code.replace(/\+/g, "").replace(/-/g, "");
+        result.push({ ...rest, phonecode: cleanedCode });
+      });
+    } else {
+      // Remove "+" if it exists
+      let cleanedPhonecode = phonecode.replace(/\+/g, "");
+
+      // Remove "-" and join the parts
+      cleanedPhonecode = cleanedPhonecode.replace(/-/g, "");
+
+      result.push({ ...rest, phonecode: cleanedPhonecode });
+    }
+  });
+
+  return result;
+}
