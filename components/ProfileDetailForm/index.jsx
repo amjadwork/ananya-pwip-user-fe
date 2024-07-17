@@ -81,7 +81,7 @@ const initialValues = {
 const profileValidationSchema = Yup.object().shape({
   // full_name: Yup.string().required("Please enter your full name"),
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Invalid mobile number")
+    .matches(/^[0-9]{5,20}$/, "Invalid mobile number")
     .required("Required"),
   email: Yup.string()
     .email("Invalid email")
