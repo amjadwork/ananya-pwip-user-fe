@@ -18,7 +18,8 @@ import { Header } from "@/components/Header";
 
 function SubscriptionDetails() {
   const router = useRouter();
-  const { subscriptionName, subscriptionType, subscription_id } = router.query;
+  const { subscriptionName, subscriptionType, subscription_id, expiresInDays, subscription_status } =
+    router.query;
   const authToken = useSelector((state) => state.auth?.token);
   const [subscriptionDetail, setSubscriptionDetail] = React.useState(null);
 
@@ -66,7 +67,6 @@ function SubscriptionDetails() {
     getSubscriptionDetails();
   }, []);
 
-  console.log(subscriptionDetail, "here");
   return (
     <React.Fragment>
       <Head>
@@ -103,7 +103,8 @@ function SubscriptionDetails() {
                       {subscriptionName}{" "}
                     </div>
                     <div className="text-[10px] h-5 w-14 text-white bg-[#25AF7D] px-3 flex items-center rounded-md ">
-                      {subscriptionDetail.active === 1 ? "Active" : "Inactive"}{" "}
+                      {/* {parseInt(expiresInDays, 10) > 0 ? "Active" : "Inactive"}{" "} */}
+                      {subscription_status === "active" ? "Active" : "Inactive"}{" "}
                     </div>
                   </div>
                 </div>
