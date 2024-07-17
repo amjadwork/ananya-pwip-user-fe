@@ -9,6 +9,8 @@ const SubscriptionCard = ({
   subscriptionType,
   subscriptionValidity,
   subscription_id,
+  expiresInDays,
+  subscription_status
 }) => {
   const router = useRouter();
   const isPremium = subscriptionType === "Premium";
@@ -20,6 +22,8 @@ const SubscriptionCard = ({
         subscriptionName,
         subscriptionType,
         subscription_id,
+        expiresInDays,
+        subscription_status,
       },
     });
   };

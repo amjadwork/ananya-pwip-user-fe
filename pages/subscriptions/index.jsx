@@ -171,6 +171,8 @@ function Subscription() {
                         subscriptionType={subscription.planDetail.name}
                         subscriptionValidity={subscriptionValidity}
                         subscription_id={subscription.subscription_id}
+                        expiresInDays={subscription.expiresInDays}
+                        subscription_status={subscription.subscription_status}
                       />
                     </div>
                   );
