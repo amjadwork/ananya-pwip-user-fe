@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Formik } from "formik";
 import { Country, State, City } from "country-state-city";
 import * as Yup from "yup";
@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { Button } from "@/components/Button";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { useRouter } from "next/router";
+// import { contactPhoneCode } from "@/constants/countryPhoneCode";
 
 import {
   // fetchProfileFailure,
@@ -22,6 +23,7 @@ import {
 import {
   intersectObjects,
   getChangedPropertiesFromObject,
+  processCountryData,
 } from "@/utils/helper";
 
 const requiredProfilePayload = {
@@ -51,6 +53,7 @@ const requiredUserPayload = {
   full_name: "",
   email: "",
   phone: "",
+  country_code: 91,
 };
 
 const initialValues = {
@@ -110,11 +113,15 @@ const ProfileDetailForm = ({
   phoneForOTP,
 }) => {
   const formik = useRef();
+  const selectPhoneCodeRef = React.useRef(null);
+
   const dispatch = useDispatch();
   const router = useRouter();
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [selectedCountryPhoneCode, setSelectedCountryPhoneCode] =
+    useState("91");
 
   useEffect(() => {
     if (token) {
@@ -167,6 +174,8 @@ const ProfileDetailForm = ({
         ...profileObject.profileData,
       };
 
+      setSelectedCountryPhoneCode(userObject?.userData?.country_code || "91");
+
       const statesList = State.getStatesOfCountry("IN");
       setStates([...statesList]);
 
@@ -210,11 +219,15 @@ const ProfileDetailForm = ({
       );
 
       if (overwriteHandleFormSubmit) {
-        let otpPayload = { ...userPayload };
+        let otpPayload = {
+          ...userPayload,
+          country_code: selectedCountryPhoneCode,
+        };
 
         if (!Object?.keys(userPayload)?.length) {
           otpPayload = {
             phone: userObject?.userData?.phone,
+            country_code: selectedCountryPhoneCode,
           };
         }
 
@@ -236,6 +249,7 @@ const ProfileDetailForm = ({
       if (Object.keys(userPayload)?.length) {
         const payload = {
           ...userPayload,
+          country_code: selectedCountryPhoneCode,
         };
         requestAction = await dispatch(updateUserRequest(payload));
       }
@@ -265,6 +279,11 @@ const ProfileDetailForm = ({
     }
     closeBottomSheet(true);
   };
+
+  const countryList = useMemo(
+    () => processCountryData(Country.getAllCountries()),
+    []
+  );
 
   return (
     <React.Fragment>
@@ -435,17 +454,64 @@ const ProfileDetailForm = ({
                         </div>
                       ) : (
                         <div className="overflow-x-auto">
-                          <div className="inline-flex items-center w-full">
+                          <div className="inline-flex items-center w-full country-phone-picker">
                             {field?.name === "phone" ? (
-                              <div
-                                className={`inline-flex items-center justify-center text-center h-[40px] min-w-[40px] text-sm rounded-l-md border border-r-[#e3ebf0] ${
-                                  errors[field.name] && touched[field.name]
-                                    ? "border-red-300"
-                                    : "border-[#006EB4]"
-                                }`}
-                              >
-                                +91
-                              </div>
+                              <React.Fragment>
+                                {/* <div
+                                  className={`inline-flex items-center justify-center text-center h-[40px] min-w-[40px] max-w-[80px] text-sm rounded-l-md rounded-r-none border border-r-[#e3ebf0] ${
+                                    errors[field.name] && touched[field.name]
+                                      ? "border-red-300"
+                                      : "border-[#006EB4]"
+                                  }`}
+                                  onClick={() => {
+                                    const showDropdown = function (element) {
+                                      var event;
+                                      event =
+                                        document.createEvent("MouseEvents");
+                                      event.initMouseEvent(
+                                        "mousedown",
+                                        true,
+                                        true,
+                                        window
+                                      );
+                                      element.dispatchEvent(event);
+                                    };
+
+                                    var dropdown =
+                                      document.getElementById("dropdown");
+                                    showDropdown(dropdown);
+                                  }}
+                                >
+                                  +{selectedCountryPhoneCode}
+                                </div> */}
+                                <select
+                                  id="dropdown"
+                                  value={selectedCountryPhoneCode}
+                                  ref={selectPhoneCodeRef}
+                                  className={`inline-flex items-center justify-center text-center h-[40px] min-w-[80px] max-w-[100px] w-auto text-sm rounded-l-md rounded-r-none border border-r-[#e3ebf0] ${
+                                    errors[field.name] && touched[field.name]
+                                      ? "border-red-300"
+                                      : "border-[#006EB4]"
+                                  }`}
+                                  onChange={(e) => {
+                                    setSelectedCountryPhoneCode(e.target.value);
+                                    formik.current.setFieldValue(
+                                      "country_code",
+                                      e.target.value
+                                    );
+                                  }}
+                                >
+                                  {countryList?.map((country, index) => (
+                                    <option
+                                      key={country?.name + "_" + index}
+                                      value={country?.phonecode}
+                                      className="text-sm text-gray-500"
+                                    >
+                                      {country?.flag} {country?.phonecode}
+                                    </option>
+                                  ))}
+                                </select>
+                              </React.Fragment>
                             ) : null}
                             <input
                               type={field.type}

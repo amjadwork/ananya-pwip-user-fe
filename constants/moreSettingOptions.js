@@ -40,7 +40,7 @@ export const moreSettingOptions = [
     label: "Help and support",
     icon: supportIcon,
     backgroundColor: "#FFEADB66",
-    path: "https://api.whatsapp.com/send?phone=918105632544&text=Hi",
+    path: "https://api.whatsapp.com/send?phone=918317749274&text=Hi",
   },
 
   {

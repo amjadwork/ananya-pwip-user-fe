@@ -253,7 +253,7 @@ export default function Home() {
     if (session) {
       if (
         userDetails?.phone &&
-        userDetails?.phone?.toString()?.length === 10 &&
+        userDetails?.phone?.toString()?.length > 5 &&
         userDetails?.is_phone_verified &&
         userDetails?.email
       ) {

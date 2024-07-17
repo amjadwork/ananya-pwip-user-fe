@@ -74,10 +74,11 @@ export const searchScreenFailure = () => ({
 });
 
 // SEND OTP AND VERIFY
-export const sendOTPRequest = (phone) => {
+export const sendOTPRequest = (phone, countryCode) => {
   return {
     type: SET_OTP_SEND_REQUEST,
     payload: {
+      countryCode,
       phone,
     },
   };

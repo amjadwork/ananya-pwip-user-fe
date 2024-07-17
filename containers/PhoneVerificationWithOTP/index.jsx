@@ -56,7 +56,9 @@ const ResendButton = ({ verifyOTPDetails }) => {
 
   const handleResendClick = async () => {
     if (verifyOTPDetails?.phone) {
-      await dispatch(sendOTPRequest(verifyOTPDetails?.phone));
+      await dispatch(
+        sendOTPRequest(verifyOTPDetails?.phone, verifyOTPDetails?.country_code)
+      );
       setResentText(true);
       // Reset timer for resend after clicking resend button
       setTimeout(() => setIsButtonVisible(false), 30000);
@@ -192,7 +194,7 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
           <span className="text-left text-sm text-pwip-gray-900">
             We have just sent OTP to your WhatsApp number{" "}
             <span className="text-pwip-v2-primary-700">
-              +91 {verifyOTPDetails?.phone}
+              +{verifyOTPDetails?.country_code} {verifyOTPDetails?.phone}
             </span>
           </span>
         </div>
@@ -275,7 +277,9 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
               await dispatch(updateUserRequest(payload));
             }
 
-            await dispatch(sendOTPRequest(payload?.phone));
+            await dispatch(
+              sendOTPRequest(payload?.phone, payload?.country_code)
+            );
           }
         }}
       />

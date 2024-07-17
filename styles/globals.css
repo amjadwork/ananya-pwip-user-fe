@@ -176,3 +176,10 @@ body::-webkit-scrollbar {
   font-size: 11px !important;
   color: #808080 !important;
 }
+
+.country-phone-picker select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 1px;
+  text-overflow: "";
+}
