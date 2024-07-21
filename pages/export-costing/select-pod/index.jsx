@@ -261,6 +261,12 @@ function SelectPortOfDestination() {
               const subscriptionResponse = await checkUserSubscriptionDetails();
               let currentPlan = null;
 
+              const previewCostingId = sessionStorage?.getItem("previewIdData");
+
+              if (previewCostingId) {
+                sessionStorage.removeItem("previewIdData");
+              }
+
               if (typeof subscriptionResponse === "object") {
                 currentPlan = subscriptionResponse;
               }

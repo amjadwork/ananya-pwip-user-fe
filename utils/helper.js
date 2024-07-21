@@ -214,6 +214,53 @@ export function getCostingToSaveHistoryPayload(inputJson, shipmentTerm) {
   };
 }
 
+export function getCostingToSaveHistoryPayloadForPreview(
+  inputJson,
+  shipmentTerm
+) {
+  return {
+    costingName:
+      inputJson?.costingName ||
+      `${inputJson?.details?.variantObject?.variantName} - ${inputJson?.details?.destinationObject?.portName}`,
+    brokenPercentage: inputJson?.details?.variantObject?.brokenPercentage || 0,
+    unit: "mt",
+    _variantId: inputJson?.details?.variantObject?._id,
+    _bagId:
+      inputJson?.details?.packageDetails?._id ||
+      inputJson?.details?.packageObject?._id,
+    bagSize:
+      inputJson?.details?.packageDetails?.weight ||
+      inputJson?.details?.packageObject?.weight,
+    _sourceId: inputJson?.details?.sourceObject?._id,
+    _originId: inputJson?.details?.originPortObject?._id,
+    _destinationId: inputJson?.details?.destinationObject?._id,
+    _containerId: inputJson?.details?.containerObject?._id,
+    containersCount: 1,
+    containerWeight:
+      inputJson?.details?.ofcObject?.containerObject?.weight ||
+      inputJson?.details?.ofcObject?.chaContainerObject?.weight,
+    isExportDuty: inputJson?.constants?.exportDutyCharge ? true : false,
+    isPwipFullfillment: inputJson?.constants?.pwipFullfillment ? true : false,
+    termOfAgreement: shipmentTerm || "FOB",
+    costOfRice: inputJson?.costing?.exmillPrice,
+    bagPrice: inputJson?.costing?.package,
+    transportation: inputJson?.costing?.transportCharge,
+    cfsHandling: inputJson?.costing?.cfsHandling,
+    shippingLineLocals: inputJson?.costing?.shlCost,
+    OFC: inputJson?.costing?.ofcCost || 0,
+    inspectionCost: inputJson?.constants?.inspectionCharge,
+    insurance: inputJson?.constants?.insurance,
+    financeCost: inputJson?.constants?.financeCost,
+    overhead: inputJson?.constants?.overHeadCharge,
+    margin: inputJson?.constants?.margin,
+    exportDuty: inputJson?.constants?.exportDutyCharge || 0,
+    pwipFullfillment: inputJson?.constants?.pwipFullfillment || 0,
+    FOB: inputJson?.grandTotalFob || 0,
+    CIF: inputJson?.grandTotalCif || 0,
+    grandTotal: inputJson?.grandTotal || 0,
+  };
+}
+
 export function generatePayloadForCustomCosting(givenData) {
   const payload = {
     shipmentTermType: givenData.shipmentTermType,

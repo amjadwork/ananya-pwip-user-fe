@@ -84,6 +84,10 @@ function* getMyCostingSheetById(action) {
         },
       });
 
+      if (action?.apiType === "shared") {
+        sessionStorage.setItem("previewIdData", JSON.stringify(response.data));
+      }
+
       yield put(fetchMyCostingSuccess(response.data));
     }
   } catch (error) {

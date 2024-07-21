@@ -477,8 +477,8 @@ function EditCosting() {
     }
   }, [customCostingSelectionFromSelector, customCostingSelection]);
 
-  const constructPage = async (id) => {
-    await dispatch(fetchMyCostingRequest(id || myRecentSavedCosting._id));
+  const constructPage = async () => {
+    await dispatch(fetchMyCostingRequest(myRecentSavedCosting._id));
     await dispatch(fetchPackagingBagsRequest());
     await dispatch(fetchContainersRequest());
     setPageConstructedForInitialization(true);
@@ -491,11 +491,10 @@ function EditCosting() {
   }, [myRecentSavedCosting, selectedMyCostingFromHistory, isGenerated]);
 
   useEffect(() => {
-    const previewCostingId = sessionStorage?.getItem("previewCostingId");
+    const previewCostingId = sessionStorage?.getItem("previewIdData");
 
     if (previewCostingId) {
-      constructPage(previewCostingId);
-      sessionStorage.removeItem("previewCostingId");
+      sessionStorage.removeItem("previewIdData");
     }
   }, []);
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 import { resetCostingSelection } from "@/redux/actions/costing.actions";
+import { saveCostingRequest } from "@/redux/actions/myCosting.actions";
 
 import {
   arrowLeftBackIcon,
@@ -25,6 +26,7 @@ import {
   // fetchCategoryRequest,
   fetchCategoryFailure,
 } from "@/redux/actions/category.actions";
+import { getCostingToSaveHistoryPayloadForPreview } from "@/utils/helper";
 
 const currencyArray = [
   {
@@ -307,11 +309,29 @@ export function Header(props) {
                   (activeRoute === "preview" && authToken)
                 ) {
                   await dispatch(resetCustomCostingSelection());
+
                   if (activeRoute === "preview") {
-                    sessionStorage.setItem(
-                      "previewCostingId",
-                      router?.query?.id
-                    );
+                    const fromSessionStorageECData =
+                      sessionStorage.getItem("previewIdData");
+
+                    const payloadData = JSON.parse(fromSessionStorageECData);
+                    const shipmentTerm = payloadData?.shipmentTerm || "FOB";
+
+                    const saveHistoryPayload =
+                      getCostingToSaveHistoryPayloadForPreview(
+                        {
+                          ...payloadData[0],
+                          costingName: "Shared " + payloadData[0]?.costingName,
+                        },
+                        shipmentTerm
+                      );
+
+                    const payloadBody = {
+                      ...saveHistoryPayload,
+                      isQuickCosting: false,
+                    };
+
+                    await dispatch(saveCostingRequest(payloadBody));
                   }
                   router.push("/export-costing/costing/edit");
                 }
