@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Formik } from "formik";
 import { Country, State, City } from "country-state-city";
@@ -9,22 +11,21 @@ import { useRouter } from "next/router";
 // import { contactPhoneCode } from "@/constants/countryPhoneCode";
 
 import {
-  // fetchProfileFailure,
   updateProfileRequest,
   fetchProfileRequest,
-  // updateProfileFailure,
 } from "@/redux/actions/profileEdit.actions";
 import {
-  // fetchUserFailure,
   updateUserRequest,
   fetchUserRequest,
-  // updateUserFailure,
 } from "@/redux/actions/userEdit.actions";
 import {
   intersectObjects,
   getChangedPropertiesFromObject,
   processCountryData,
 } from "@/utils/helper";
+
+import PhoneVerificationWithOTP from "@/containers/PhoneVerificationWithOTP";
+
 
 const requiredProfilePayload = {
   profile_pic: "",
@@ -79,7 +80,6 @@ const initialValues = {
 };
 
 const profileValidationSchema = Yup.object().shape({
-  // full_name: Yup.string().required("Please enter your full name"),
   phone: Yup.string()
     .matches(/^[0-9]{5,20}$/, "Invalid mobile number")
     .required("Required"),
@@ -120,6 +120,7 @@ const ProfileDetailForm = ({
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  const [phoneTouched, setPhoneTouched] = useState(false);
   const [selectedCountryPhoneCode, setSelectedCountryPhoneCode] =
     useState("91");
 
@@ -136,27 +137,9 @@ const ProfileDetailForm = ({
     }
   }, [phoneForOTP, formik?.current]);
 
-  const { closeBottomSheet, openToastMessage } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet, openToastMessage } = useOverlayContext();
 
-  // Get countries list from 'country-state-city' library
   const countries = Country.getAllCountries();
-
-  // const handleCountryChange = (value) => {
-  //   formik.current.setValues({
-  //     ...formik.current.values,
-  //     country: value,
-  //     state: "",
-  //     city: "",
-  //   });
-  // };
-
-  // const handleStateChange = (value) => {
-  //   formik.current.setValues({
-  //     ...formik.current.values,
-  //     state: value,
-  //     city: "",
-  //   });
-  // };
 
   useEffect(() => {
     if (
@@ -201,6 +184,17 @@ const ProfileDetailForm = ({
     });
   };
 
+    const handleVerifyOtpBottomSheet = (fields, fieldHeading, token) => {
+      const content = (
+        <PhoneVerificationWithOTP
+          token={token}
+          fields={fields}
+          fieldHeading={fieldHeading}
+        />
+      );
+      openBottomSheet(content, () => null, true, true);
+    };
+
   const handleFormSubmit = async () => {
     try {
       const formValues = {
@@ -244,7 +238,7 @@ const ProfileDetailForm = ({
         profileFormValues
       );
 
-      const requestAction = null;
+      let requestAction = null;
 
       if (Object.keys(userPayload)?.length) {
         const payload = {
@@ -319,7 +313,7 @@ const ProfileDetailForm = ({
             <div className="mx-7 py-4 h-full">
               <div className="pb-7 h-full">
                 {fields.map((field, index) => (
-                  <div className="relative mb-2 mt-2">
+                  <div className="relative mb-2 mt-2" key={index}>
                     <label
                       htmlFor={field.name}
                       className="w-full text-sm font-medium text-gray-900"
@@ -365,7 +359,7 @@ const ProfileDetailForm = ({
                                   formik?.current?.values[field.name] ===
                                   item.value
                                     ? "opacity-100 border border-[#006EB4]"
-                                    : "opacity-[0.45] grayscale-[50%]"
+                                    : ""
                                 }`}
                                 onClick={() =>
                                   handleProfessionSelect(item.value)
@@ -374,6 +368,7 @@ const ProfileDetailForm = ({
                                 <img
                                   className="h-full w-full object-contain"
                                   src={item.image}
+                                  alt={item.label}
                                 />
                                 <h4>{item.label}</h4>
                               </div>
@@ -526,7 +521,12 @@ const ProfileDetailForm = ({
                                   ? "email"
                                   : "text"
                               }
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                handleChange(e);
+                                if (field.name === "phone") {
+                                  setPhoneTouched(true);
+                                }
+                              }}
                               onBlur={handleBlur}
                               style={{
                                 textAlign: "left",
@@ -543,6 +543,18 @@ const ProfileDetailForm = ({
                               placeholder={field.placeholder}
                             />
                           </div>
+                          {field.name === "phone" &&
+                          phoneTouched &&
+                          values[field.name] === userObject.userData.phone ? (
+                            <div className="w-full text-left">
+                              <span
+                                className="absolute text-red-400 text-xs mt-1"
+                                style={{ top: "100%" }}
+                              >
+                                Already verified! Add a different phone number.
+                              </span>
+                            </div>
+                          ) : null}
                           {errors[field.name] ? (
                             <div className="w-full text-left">
                               <span
@@ -560,26 +572,26 @@ const ProfileDetailForm = ({
                 ))}
               </div>
 
-              <div className="relative w-full bg-white mt-8">
-                <div className="w-full mb-4">
-                  <p className="text-left text-xs text-gray-500">
-                    Verify your phone using OTP recieved on your{" "}
-                    <span className="text-[#25D366]">WhatsApp</span>.
-                    {/* {" "}
-                    <span className="font-medium text-pwip-v2-primary-700">
-                      {values?.phone?.toString()?.length === 10
-                        ? `+91 ${values?.phone}`
-                        : ``}
-                    </span> */}
-                  </p>
-                </div>
+              <div className="relative w-full bg-white mt-6">
+                {values.phone !== userObject.userData.phone ? (
+                  <div className="w-full text-left pb-1">
+                    <span
+                      className="text-gray-500 text-xs mt-1"
+                      style={{ display: "block" }}
+                    >
+                      Verify your phone using OTP received on your{" "}
+                      <span className="text-[#25D366]">WhatsApp</span>.
+                    </span>
+                  </div>
+                ) : null}
                 <Button
                   type="primary"
                   buttonType="submit"
                   label={isStandalone ? "Continue" : "Update changes"}
-                  // disabled={
-                  //   Object.keys(errors).length || isSubmitting ? false : true
-                  // }
+                  disabled={
+                    values.phone === userObject.userData.phone ||
+                    Object.keys(errors).length
+                  }
                   onClick={() => {
                     const changes = getChangedPropertiesFromObject(
                       {
@@ -594,11 +606,16 @@ const ProfileDetailForm = ({
                       Object.keys(changes).length &&
                       !overwriteHandleFormSubmit
                     ) {
-                      handleFormSubmit();
+                      
+        handleVerifyOtpBottomSheet(
+          fields,
+          `Track rice market on the go! Enter phone for alerts.`,
+          token
+        );
+                      // handleFormSubmit();
                       return;
                     }
 
-                    // for otp screen
                     if (
                       !Object.keys(errors).length &&
                       overwriteHandleFormSubmit
