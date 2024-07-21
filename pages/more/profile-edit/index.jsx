@@ -1,7 +1,10 @@
+/** @format */
+
 import React, { useState, useEffect, useRef } from "react";
 import Head from "next/head";
 
 import withAuth from "@/hoc/withAuth";
+import { useRouter } from "next/router";
 import { useSelector, useDispatch } from "react-redux";
 import { useOverlayContext } from "@/context/OverlayContext";
 import ProfileDetailForm from "@/components/ProfileDetailForm";
@@ -48,6 +51,7 @@ import {
 } from "constants/profileFormFields";
 import axios from "axios";
 import { apiBaseURL } from "@/utils/helper";
+import PhoneVerificationWithOTP from "containers/PhoneVerificationWithOTP";
 
 function ProfileEdit() {
   const profileObject = useSelector((state) => state.profile);
@@ -67,6 +71,7 @@ function ProfileEdit() {
   }, [profileObject?.profileData, userObject?.userData]);
 
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const [mainContainerHeight, setMainContainerHeight] = useState(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -83,7 +88,24 @@ function ProfileEdit() {
     { key: "youtube_url", icon: youtube },
   ];
 
-  const { openBottomSheet, openToastMessage } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet, openToastMessage } =
+    useOverlayContext();
+
+  const handleBottomSheetForOTPVerification = (fields, fieldHeading, token) => {
+    setIsBottomSheetOpen(true);
+    const content = (
+      <PhoneVerificationWithOTP
+        token={token}
+        fields={fields}
+        fieldHeading={fieldHeading}
+      />
+    );
+    if (router.route === "/more/profile-edit") {
+      openBottomSheet(content, () => null, true);
+    } else {
+      openBottomSheet(content, () => null, true, true);
+    }
+  };
 
   useEffect(() => {
     if (token) {
@@ -269,9 +291,10 @@ function ProfileEdit() {
                 Contact Details{" "}
                 <button
                   onClick={() => {
-                    handleFormFieldBottomSheet(
+                    handleBottomSheetForOTPVerification(
                       contactFields,
-                      contactFieldsHeading
+                      contactFieldsHeading.heading,
+                      token
                     );
                   }}
                 >

@@ -1,3 +1,5 @@
+/** @format */
+
 import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input";
 import { useOverlayContext } from "@/context/OverlayContext";
@@ -7,13 +9,7 @@ import { useRouter } from "next/router";
 import ProfileDetailForm from "@/components/ProfileDetailForm";
 import { Button } from "@/components/Button";
 
-import {
-  // fetchUserFailure,
-  updateUserRequest,
-  // fetchUserRequest,
-  // updateUserFailure,
-} from "@/redux/actions/userEdit.actions";
-// sendOTPRequest
+import { updateUserRequest } from "@/redux/actions/userEdit.actions";
 
 import {
   sendOTPRequest,
@@ -23,14 +19,11 @@ import {
 } from "@/redux/actions/utils.actions";
 
 import { arrowLeftBackIcon } from "../../theme/icon";
-import { useMemo } from "react";
 
 const ResendButton = ({ verifyOTPDetails }) => {
   const dispatch = useDispatch();
-
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [timerCount, setTimerCount] = useState(30);
-
   const [resentText, setResentText] = useState(false);
 
   useEffect(() => {
@@ -38,11 +31,11 @@ const ResendButton = ({ verifyOTPDetails }) => {
       if (timerCount > 0) {
         setTimerCount(timerCount - 1);
       } else {
-        clearInterval(timer); // Stop timer when counter reaches 0
+        clearInterval(timer);
       }
     }, 1000);
 
-    return () => clearInterval(timer); // Cleanup function to clear timer on unmount
+    return () => clearInterval(timer);
   }, [timerCount]);
 
   useEffect(() => {
@@ -60,7 +53,6 @@ const ResendButton = ({ verifyOTPDetails }) => {
         sendOTPRequest(verifyOTPDetails?.phone, verifyOTPDetails?.country_code)
       );
       setResentText(true);
-      // Reset timer for resend after clicking resend button
       setTimeout(() => setIsButtonVisible(false), 30000);
     }
   };
@@ -154,18 +146,29 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
       ) {
         openToastMessage({
           type: "success",
-          message: "Your phone number is verified, redirecting to home...",
+          message: "Your phone number is verified, redirecting...",
           autoHide: true,
         });
 
         startLoading();
 
-        router.replace("/home");
+        if (router.route === "/more/profile-edit") {
+          const { messageId, info, save, ...userDetailsToUpdate } =
+            verifyOTPDetails;
+          dispatch(updateUserRequest(userDetailsToUpdate));
+        }
+
+        if (router?.route !== "/more/profile-edit") {
+          router.replace("/home");
+        }
 
         dispatch(verifyOTPResponseFailure());
 
         setTimeout(() => {
           closeBottomSheet();
+          if (router?.route === "/more/profile-edit") {
+            stopLoading();
+          }
           closeToastMessage();
         }, 2500);
       }
@@ -212,19 +215,6 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
             inputStyle={`block min-w-12 h-12 p-2 text-sm text-gray-900 border border-[#e3ebf0] rounded-md`}
           />
         </div>
-        {/* <div className="inline-flex items-center text-sm space-x-2 w-full mt-3">
-          <span className="text-left text-pwip-gray-800">
-            Didn't recieve the code?{" "}
-          </span>
-          <button
-            onClick={async () => {
-              await dispatch(sendOTPRequest(verifyOTPDetails?.phone));
-            }}
-            className=""
-          >
-            <span className="text-pwip-v2-primary-700">Resend it</span>
-          </button>
-        </div> */}
 
         <ResendButton verifyOTPDetails={verifyOTPDetails} />
 
@@ -233,9 +223,6 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
             type="primary"
             buttonType="submit"
             label="Verify"
-            // disabled={
-            //   Object.keys(errors).length || isSubmitting ? false : true
-            // }
             onClick={async () => {
               if (otp) {
                 await dispatch(
@@ -270,10 +257,11 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
             setVerifyOTPDetails({
               ...payload,
             });
-
             startLoading();
-
-            if (userDetails?.phone !== payload?.phone) {
+            if (
+              router.route !== "/more/profile-edit" &&
+              userDetails?.phone !== payload?.phone
+            ) {
               await dispatch(updateUserRequest(payload));
             }
 
