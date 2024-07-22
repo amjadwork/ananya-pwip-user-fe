@@ -159,7 +159,47 @@ const PhoneVerificationWithOTP = ({ token, fields, fieldHeading }) => {
         }
 
         if (router?.route !== "/more/profile-edit") {
-          router.replace("/home");
+          const queries = router.query;
+
+          const requiredUTMParams = [
+            "utm_source",
+            "utm_medium",
+            "utm_campaign",
+            "utm_id",
+            "utm_term",
+            "utm_content",
+          ];
+
+          // Filter the UTM parameters that are present in the queries
+          const availableUTMParams = requiredUTMParams.filter(
+            (key) => queries[key]
+          );
+
+          // Construct the URL with the available UTM parameters
+          let targetURL =
+            availableUTMParams.length > 0
+              ? `/home/?${availableUTMParams
+                  .map((key) => `${key}=${queries[key]}`)
+                  .join("&")}`
+              : "/home";
+
+          const fromPreviewNotLoggedIn = sessionStorage.getItem("previewURL");
+          if (fromPreviewNotLoggedIn) {
+            targetURL =
+              availableUTMParams.length > 0
+                ? fromPreviewNotLoggedIn +
+                  "/?" +
+                  availableUTMParams
+                    .map((key) => `${key}=${queries[key]}`)
+                    .join("&")
+                : fromPreviewNotLoggedIn;
+          }
+
+          sessionStorage.removeItem("previewURL");
+
+          window.location.href = targetURL;
+
+          // router.replace("/home");
         }
 
         dispatch(verifyOTPResponseFailure());
