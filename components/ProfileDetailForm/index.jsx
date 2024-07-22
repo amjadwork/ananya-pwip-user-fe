@@ -26,7 +26,6 @@ import {
 
 import PhoneVerificationWithOTP from "@/containers/PhoneVerificationWithOTP";
 
-
 const requiredProfilePayload = {
   profile_pic: "",
   city: "",
@@ -137,7 +136,8 @@ const ProfileDetailForm = ({
     }
   }, [phoneForOTP, formik?.current]);
 
-  const { openBottomSheet, closeBottomSheet, openToastMessage } = useOverlayContext();
+  const { openBottomSheet, closeBottomSheet, openToastMessage } =
+    useOverlayContext();
 
   const countries = Country.getAllCountries();
 
@@ -184,16 +184,16 @@ const ProfileDetailForm = ({
     });
   };
 
-    const handleVerifyOtpBottomSheet = (fields, fieldHeading, token) => {
-      const content = (
-        <PhoneVerificationWithOTP
-          token={token}
-          fields={fields}
-          fieldHeading={fieldHeading}
-        />
-      );
-      openBottomSheet(content, () => null, true, true);
-    };
+  const handleVerifyOtpBottomSheet = (fields, fieldHeading, token) => {
+    const content = (
+      <PhoneVerificationWithOTP
+        token={token}
+        fields={fields}
+        fieldHeading={fieldHeading}
+      />
+    );
+    openBottomSheet(content, () => null, true, true);
+  };
 
   const handleFormSubmit = async () => {
     try {
@@ -502,7 +502,8 @@ const ProfileDetailForm = ({
                                       value={country?.phonecode}
                                       className="text-sm text-gray-500"
                                     >
-                                      {country?.flag} {country?.phonecode}
+                                      {country?.flag} {country?.name} (
+                                      {country?.phonecode})
                                     </option>
                                   ))}
                                 </select>
@@ -606,12 +607,11 @@ const ProfileDetailForm = ({
                       Object.keys(changes).length &&
                       !overwriteHandleFormSubmit
                     ) {
-                      
-        handleVerifyOtpBottomSheet(
-          fields,
-          `Track rice market on the go! Enter phone for alerts.`,
-          token
-        );
+                      handleVerifyOtpBottomSheet(
+                        fields,
+                        `Track rice market on the go! Enter phone for alerts.`,
+                        token
+                      );
                       // handleFormSubmit();
                       return;
                     }
