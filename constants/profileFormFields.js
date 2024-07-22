@@ -14,7 +14,7 @@ export const personalFields = [
     label: "Country",
     type: "select",
     placeholder: "eg. India",
-    defaultValue: "IN",
+    defaultValue: "India",
   },
   {
     name: "state",

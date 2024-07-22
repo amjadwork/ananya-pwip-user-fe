@@ -265,21 +265,21 @@ function ProfileEdit() {
                   {profileObject?.profileData?.city ? (
                     profileObject.profileData.city
                   ) : (
-                    <span>Add city,</span>
+                    <span>Add city</span>
                   )}
                 </div>
                 <div className="font-medium leading-snug">
                   {profileObject?.profileData?.state ? (
                     <span>, {profileObject.profileData.state}</span>
                   ) : (
-                    <span>Add state,</span>
+                    <span>, Add state</span>
                   )}
                 </div>
                 <div className=" font-medium leading-snug">
                   {profileObject?.profileData?.country ? (
                     <span>, {profileObject.profileData.country}</span>
                   ) : (
-                    <span>Add country</span>
+                    <span>, India</span>
                   )}
                 </div>
               </div>

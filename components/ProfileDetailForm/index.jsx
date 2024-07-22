@@ -407,7 +407,11 @@ const ProfileDetailForm = ({
                             }}
                             onBlur={handleBlur}
                             disabled={field.name === "country" ? true : false}
-                            value={formik?.current?.values[field.name]}
+                            value={
+                              formik?.current?.values[field.name] ||
+                              field?.defaultValue ||
+                              ""
+                            }
                             className={`block w-full h-10 p-1 px-3 text-sm text-gray-900 rounded-md border ${
                               errors[field.name] && touched[field.name]
                                 ? "border-red-300"
@@ -452,33 +456,6 @@ const ProfileDetailForm = ({
                           <div className="inline-flex items-center w-full country-phone-picker">
                             {field?.name === "phone" ? (
                               <React.Fragment>
-                                {/* <div
-                                  className={`inline-flex items-center justify-center text-center h-[40px] min-w-[40px] max-w-[80px] text-sm rounded-l-md rounded-r-none border border-r-[#e3ebf0] ${
-                                    errors[field.name] && touched[field.name]
-                                      ? "border-red-300"
-                                      : "border-[#006EB4]"
-                                  }`}
-                                  onClick={() => {
-                                    const showDropdown = function (element) {
-                                      var event;
-                                      event =
-                                        document.createEvent("MouseEvents");
-                                      event.initMouseEvent(
-                                        "mousedown",
-                                        true,
-                                        true,
-                                        window
-                                      );
-                                      element.dispatchEvent(event);
-                                    };
-
-                                    var dropdown =
-                                      document.getElementById("dropdown");
-                                    showDropdown(dropdown);
-                                  }}
-                                >
-                                  +{selectedCountryPhoneCode}
-                                </div> */}
                                 <select
                                   id="dropdown"
                                   value={selectedCountryPhoneCode}
