@@ -567,7 +567,8 @@ const ProfileDetailForm = ({
                   buttonType="submit"
                   label={isStandalone ? "Continue" : "Update changes"}
                   disabled={
-                    values.phone === userObject.userData.phone ||
+                    (values.phone === userObject.userData.phone &&
+                      userObject.userData.is_phone_verified) ||
                     Object.keys(errors).length
                   }
                   onClick={() => {

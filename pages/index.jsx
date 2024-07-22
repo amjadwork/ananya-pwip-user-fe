@@ -263,6 +263,7 @@ export default function Home() {
 
       if (
         (userDetails && userDetails.phone === null) ||
+        (userDetails && !userDetails.is_phone_verified) ||
         (userDetails && !userDetails.email)
       ) {
         stopLoading();
@@ -274,6 +275,10 @@ export default function Home() {
         }
 
         if (!userDetails?.phone) {
+          fields = [...contactFields].filter((f) => f.type !== "email");
+        }
+
+        if (userDetails?.phone && !userDetails.is_phone_verified) {
           fields = [...contactFields].filter((f) => f.type !== "email");
         }
 
