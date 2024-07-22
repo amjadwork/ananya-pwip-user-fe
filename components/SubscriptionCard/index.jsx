@@ -10,7 +10,7 @@ const SubscriptionCard = ({
   subscriptionValidity,
   subscription_id,
   expiresInDays,
-  subscription_status
+  subscription_status,
 }) => {
   const router = useRouter();
   const isPremium = subscriptionType === "Premium";
@@ -34,7 +34,9 @@ const SubscriptionCard = ({
         {inSubscription}
         <div className="w-full">
           <div className="flex justify-between">
-            <h2 className="text-xs font-semibold ml-3">{subscriptionName}</h2>
+            <h2 className="text-xs font-semibold ml-3 capitalize">
+              {subscriptionName}
+            </h2>
             <p className="text-[rgb(27,27,27)] text-[10px] bg-[#F6F6F6] px-3 pt-0.5 rounded-md mb-0.5 flex">
               {isPremium && (
                 <div className=" flex items-center mr-0.5">

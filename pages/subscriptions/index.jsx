@@ -137,7 +137,7 @@ function Subscription() {
           >
             <div className="text-[#1B1B1B] text-sm font-normal flex justify-between">
               <span>All Subscriptions</span>
-              {filterIcon}
+              {/* {filterIcon} */}
             </div>
 
             <React.Fragment>
