@@ -16,6 +16,7 @@ import {
   fetchAllMyCostingsSuccess,
   fetchAllMyCostingsFailure,
 } from "../actions/myCosting.actions";
+import { setTermsOfShipmentRequest } from "../actions/shipmentTerms.actions";
 
 import { makeApiCall } from "./_commonFunctions.saga";
 
@@ -85,6 +86,12 @@ function* getMyCostingSheetById(action) {
       });
 
       if (action?.apiType === "shared") {
+        const action = {
+          selected: response.data[0]?.termOfAgreement || "FOB",
+          showShipmentTermDropdown: false,
+        };
+        yield put(setTermsOfShipmentRequest(action));
+
         sessionStorage.setItem("previewIdData", JSON.stringify(response.data));
       }
 
@@ -99,7 +106,7 @@ function* getAllMyCostingSheets() {
   try {
     const response = yield call(makeApiCall, `/myCosting`, "get");
 
-    yield put(fetchAllMyCostingsSuccess(response.data));
+    yield put(fetchAllMyCostingsSuccess(response.data.data));
   } catch (error) {
     yield put(fetchAllMyCostingsFailure(error));
   }

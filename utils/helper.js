@@ -256,7 +256,7 @@ export function getCostingToSaveHistoryPayloadForPreview(
     exportDuty: inputJson?.constants?.exportDutyCharge || 0,
     pwipFullfillment: inputJson?.constants?.pwipFullfillment || 0,
     FOB: inputJson?.grandTotalFob || 0,
-    CIF: inputJson?.grandTotalCif || 0,
+    CIF: inputJson?.grandTotalCif || inputJson?.CIF || 0,
     grandTotal: inputJson?.grandTotal || 0,
   };
 }

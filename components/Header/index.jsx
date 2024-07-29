@@ -13,10 +13,6 @@ import {
   pencilIcon,
   // editIcon,
 } from "../../theme/icon";
-// import {
-//   setTermsOfShipmentRequest,
-//   // setTermsOfShipmentFailure,
-// } from "@/redux/actions/shipmentTerms.actions";
 
 // import { selectedVariantForDetailFailure } from "@/redux/actions/variant-prices.actions";
 

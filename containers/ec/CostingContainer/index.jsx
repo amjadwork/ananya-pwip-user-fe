@@ -9,13 +9,18 @@ import { useOverlayContext } from "@/context/OverlayContext";
 // Import Components
 import { Header } from "@/components/Header";
 import { Button } from "@/components/Button";
-import { apiUtilsURL, getCostingToSaveHistoryPayload } from "@/utils/helper";
+import {
+  apiUtilsURL,
+  getCostingToSaveHistoryPayload,
+  getCostingToSaveHistoryPayloadForPreview,
+} from "@/utils/helper";
 
 import {
   generateQuickCostingRequest,
   fetchGeneratedCostingFailure,
   generateCustomCostingRequest,
   resetCostingSelection,
+  resetCustomCostingSelection,
 } from "@/redux/actions/costing.actions";
 import {
   updateCostingRequest,
@@ -23,6 +28,7 @@ import {
   saveCostingFailure,
   fetchMyCostingFailure,
   updateCostingFailure,
+  saveCostingRequest,
 } from "@/redux/actions/myCosting.actions";
 
 import {
@@ -509,7 +515,7 @@ function CostingOverviewContainer() {
   }, [isShipmentTermDropdownOpen]);
 
   React.useEffect(() => {
-    if (shipmentTerm && componentShipmentTerm) {
+    if (shipmentTerm && componentShipmentTerm && !router?.query?.id) {
       const payloadBody = {
         shipmentTermType: shipmentTerm || "FOB",
         termOfAgreement: shipmentTerm || "FOB",
@@ -519,7 +525,7 @@ function CostingOverviewContainer() {
       dispatch(fetchGeneratedCostingFailure());
       dispatch(fetchMyCostingFailure());
     }
-  }, [shipmentTerm]);
+  }, [shipmentTerm, router?.query?.id]);
 
   React.useEffect(() => {
     if (generatedCosting && selectedUnit && isChangingUnit && shipmentTerm) {
@@ -568,6 +574,12 @@ function CostingOverviewContainer() {
 
       setSelectedUnit(selected);
 
+      // const action = {
+      //   selected: currentCostingFromHistory[0]?.termOfAgreement || "FOB",
+      //   showShipmentTermDropdown: false,
+      // };
+      // dispatch(setTermsOfShipmentRequest(action));
+
       if (
         currentCostingFromHistory[0]?.details?.transportObject
           ?.isfactoryStuffing
@@ -594,11 +606,6 @@ function CostingOverviewContainer() {
       await dispatch(saveCostingFailure());
       await dispatch(fetchGeneratedCostingFailure());
       await dispatch(fetchMyCostingRequest(router?.query?.id, "shared"));
-      // const action = {
-      //   selected: items?.termOfAgreement,
-      //   showShipmentTermDropdown: false,
-      // };
-      // await dispatch(setTermsOfShipmentRequest(action));
     }
   }
 
@@ -703,6 +710,42 @@ function CostingOverviewContainer() {
     openBottomSheet(content);
   };
 
+  const handleSaveForPreviewCosting = async (terms) => {
+    if (router?.query?.id) {
+      await dispatch(resetCustomCostingSelection());
+      const fromSessionStorageECData = sessionStorage.getItem("previewIdData");
+      const payloadData = JSON.parse(fromSessionStorageECData);
+      const shipmentTerm = terms || payloadData?.shipmentTerm || "FOB";
+      const saveHistoryPayload = getCostingToSaveHistoryPayloadForPreview(
+        {
+          ...payloadData[0],
+          CIF:
+            payloadData[0]?.grandTotalCif ||
+            payloadData[0]?.grandTotalFob + payloadData[0]?.costing?.ofcCost,
+          grandTotal:
+            terms === "CIF"
+              ? payloadData[0]?.grandTotalCif ||
+                payloadData[0]?.grandTotalFob + payloadData[0]?.costing?.ofcCost
+              : payloadData[0]?.grandTotal,
+          costingName: "Shared " + payloadData[0]?.costingName,
+        },
+        shipmentTerm
+      );
+      const payloadBody = {
+        ...saveHistoryPayload,
+        isQuickCosting: false,
+      };
+      await dispatch(saveCostingRequest(payloadBody));
+      await dispatch(fetchMyCostingFailure());
+      await dispatch(fetchGeneratedCostingFailure());
+      await dispatch(saveCostingFailure());
+      await dispatch(updateCostingFailure());
+      await dispatch(resetCustomCostingSelection());
+      sessionStorage.removeItem("previewIdData");
+      router.replace("/export-costing/costing");
+    }
+  };
+
   const handleOpenShipmentTermSelectBottomSheet = () => {
     const content = (
       <React.Fragment>
@@ -733,11 +776,16 @@ function CostingOverviewContainer() {
                 <div
                   key={items.label + index}
                   onClick={async () => {
+                    if (router?.query?.id) {
+                      handleSaveForPreviewCosting(items?.value);
+                    }
+
                     const action = {
                       selected: items?.value,
                       showShipmentTermDropdown: false,
                     };
                     dispatch(setTermsOfShipmentRequest(action));
+
                     closeBottomSheet();
                   }}
                   className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex items-center"
@@ -840,6 +888,9 @@ function CostingOverviewContainer() {
                     }
                     setIsChangingUnit(true);
                     setSelectedUnit(items);
+                    if (router?.query?.id) {
+                      handleSaveForPreviewCosting();
+                    }
                     closeBottomSheet();
                   }}
                   className="cursor-pointer h-auto w-full rounded-md bg-pwip-white-100 inline-flex flex-col items-center space-t"

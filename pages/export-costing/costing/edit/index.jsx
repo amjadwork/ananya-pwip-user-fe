@@ -577,7 +577,7 @@ function EditCosting() {
     await dispatch(resetCustomCostingSelection());
 
     setIsGenerated(false);
-    router.back("/export-costing/costing");
+    router.replace("/export-costing/costing");
   }
 
   useEffect(() => {

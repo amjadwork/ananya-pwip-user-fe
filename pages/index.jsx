@@ -230,22 +230,6 @@ export default function Home() {
       };
       dispatch(handleSettingAuthDataSuccess(userPayload, authToken));
       stopLoading();
-      // if (userPayload?.newUser) {
-      //   stopLoading();
-      //   handleNavigation("/onboarding");
-      // } else {
-      //   stopLoading();
-
-      //   // const eximTrends = localStorage.getItem("eximTrends");
-
-      //   // if (eximTrends) {
-      //   //   setEximTrendsData(JSON.parse(eximTrends));
-      //   // } else {
-      //   //   fetchEXIMTrend();
-      //   // }
-
-      //   // redirectToApp();
-      // }
     }
   }, [profileObject, userObject]);
 
@@ -255,16 +239,25 @@ export default function Home() {
         userDetails?.phone &&
         userDetails?.phone?.toString()?.length > 5 &&
         userDetails?.is_phone_verified &&
-        userDetails?.email
+        userDetails?.email &&
+        userDetails?.apiMessage === "success"
       ) {
         closeBottomSheet();
         redirectToApp();
+
+        return;
       }
 
       if (
-        (userDetails && userDetails.phone === null) ||
-        (userDetails && !userDetails.is_phone_verified) ||
-        (userDetails && !userDetails.email)
+        (userDetails &&
+          userDetails?.apiMessage === "success" &&
+          userDetails.phone === null) ||
+        (userDetails &&
+          userDetails?.apiMessage === "success" &&
+          !userDetails.is_phone_verified) ||
+        (userDetails &&
+          userDetails?.apiMessage === "success" &&
+          !userDetails.email)
       ) {
         stopLoading();
 
