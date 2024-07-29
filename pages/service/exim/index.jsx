@@ -485,7 +485,7 @@ function getMonthsForYear(year) {
   const currentMonth = new Date().getMonth() + 1; // getMonth() returns 0-11
 
   if (year === currentYear) {
-    return fullMonths.slice(0, currentMonth - 1);
+    return fullMonths.slice(0, currentMonth);
   }
   return fullMonths;
 }
