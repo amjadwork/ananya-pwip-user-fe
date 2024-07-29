@@ -1348,7 +1348,10 @@ function CostingOverviewContainer() {
               }}
               className="w-full inline-flex items-center justify-end space-x-3 text-white text-xs"
             >
-              <span>USD = ₹{router?.query?.id ? 82 : forexRate?.USD}</span>
+              <span>
+                USD = ₹
+                {router?.query?.id && !forexRate?.USD ? 82 : forexRate?.USD}
+              </span>
               {pencilIcon}
             </div>
           </div>
