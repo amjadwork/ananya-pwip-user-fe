@@ -106,7 +106,7 @@ function* getAllMyCostingSheets() {
   try {
     const response = yield call(makeApiCall, `/myCosting`, "get");
 
-    yield put(fetchAllMyCostingsSuccess(response.data));
+    yield put(fetchAllMyCostingsSuccess(response.data.data));
   } catch (error) {
     yield put(fetchAllMyCostingsFailure(error));
   }
