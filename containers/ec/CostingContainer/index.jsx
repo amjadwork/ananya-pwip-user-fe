@@ -710,7 +710,7 @@ function CostingOverviewContainer() {
     openBottomSheet(content);
   };
 
-  const handleSaveForPreviewCosting = async (terms) => {
+  const handleSaveForPreviewCosting = async (terms, isDownloading) => {
     if (router?.query?.id) {
       await dispatch(resetCustomCostingSelection());
       const fromSessionStorageECData = sessionStorage.getItem("previewIdData");
@@ -742,9 +742,34 @@ function CostingOverviewContainer() {
       await dispatch(updateCostingFailure());
       await dispatch(resetCustomCostingSelection());
       sessionStorage.removeItem("previewIdData");
+
       router.replace("/export-costing/costing");
+
+      openToastMessage({
+        type: "info",
+        message: "Saving the costing to your account",
+      });
+
+      if (isDownloading) {
+        setTimeout(() => {
+          sessionStorage.setItem("readyToDownloadSharedPreview", true);
+        }, 2000);
+      }
     }
   };
+
+  useEffect(() => {
+    const readyToDownloadSharedPreview = sessionStorage.getItem(
+      "readyToDownloadSharedPreview"
+    );
+
+    if (myRecentSavedCosting?._id && readyToDownloadSharedPreview === "true") {
+      handleDownload(myRecentSavedCosting?._id);
+    }
+  }, [
+    myRecentSavedCosting?._id,
+    sessionStorage.getItem("readyToDownloadSharedPreview"),
+  ]);
 
   const handleOpenShipmentTermSelectBottomSheet = () => {
     const content = (
@@ -940,7 +965,7 @@ function CostingOverviewContainer() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = (id) => {
     openToastMessage({
       type: "info",
       message: "Downloading...",
@@ -950,7 +975,7 @@ function CostingOverviewContainer() {
       .post(
         apiUtilsURL + "api/generateCostingSheet/download",
         {
-          historyId: generatedCostingData?._id,
+          historyId: id || generatedCostingData?._id,
         },
         {
           responseType: "arraybuffer",
@@ -962,6 +987,10 @@ function CostingOverviewContainer() {
         }
       )
       .then((response) => {
+        if (id) {
+          sessionStorage.removeItem("readyToDownloadSharedPreview");
+        }
+
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
@@ -1487,7 +1516,13 @@ function CostingOverviewContainer() {
                     return;
                   }
 
-                  handleDownload();
+                  if (router?.query?.id) {
+                    handleSaveForPreviewCosting(null, true);
+                  }
+
+                  if (!router?.query?.id) {
+                    handleDownload();
+                  }
                 }}
               />
             </div>

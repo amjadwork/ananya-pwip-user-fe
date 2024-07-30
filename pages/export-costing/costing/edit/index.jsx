@@ -655,6 +655,18 @@ function EditCosting() {
     }
   }, [formik?.current?.values, isBottomSheetOpen]);
 
+  // In progesss, waiting on logic confirmation
+  useEffect(() => {
+    if (grandTotal) {
+      const formikRef = formik.current;
+      const defaultDuty = grandTotal * 0.2;
+
+      if (formikRef?.values?.exportDuty) {
+        // formikRef?.setFieldValue("exportDutyValue", defaultDuty.toFixed(2));
+      }
+    }
+  }, [grandTotal]);
+
   useEffect(() => {
     if (customCostingSelection?.bags) {
       breakupArr[0].rowItems[1].label = customCostingSelection?.bags
