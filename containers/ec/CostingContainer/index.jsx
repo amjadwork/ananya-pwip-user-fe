@@ -376,7 +376,7 @@ function CostingOverviewContainer() {
   const generatedCosting = useSelector(
     (state) => state.costing.generatedCosting
   );
-  // const selectedCosting = useSelector((state) => state.costing);
+  const authToken = useSelector((state) => state?.auth?.token);
 
   const myRecentSavedCosting = useSelector(
     (state) => state.myCosting.myRecentSavedCosting
@@ -955,7 +955,7 @@ function CostingOverviewContainer() {
         {
           responseType: "arraybuffer",
           headers: {
-            Authorization: "Bearer " + session?.accessToken,
+            Authorization: "Bearer " + authToken || session?.accessToken,
             "Content-Type": "application/json",
             Accept: "application/pdf",
           },
